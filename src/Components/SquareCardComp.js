@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useMemo} from 'react';
 import {
   View,
   Text,
@@ -15,18 +15,13 @@ import theme from '../utility/theme';
 const SquareCardComp = ({filteredData, onPress}) => {
   const {currentTextColor} = useSelector(state => state.user);
 
-  const renderSquareCardItem = props => {
-    const {item, itemsLength} = props; // Accepting itemsLength as a prop
-    console.tron.log(
-      'Category: ' + item.category + ', Items Length: ' + itemsLength,
-    );
-    return (
+  const renderSquareCardItem = useCallback(
+    ({item, itemsLength}) => (
       <TouchableOpacity
         onPress={() => onPress(item)}
         style={[
           styles.cardContainer,
           [0, 1, 2].includes(itemsLength) && {
-            // Example usage of itemsLength
             marginRight: getResWidth(2),
           },
           {
@@ -50,8 +45,9 @@ const SquareCardComp = ({filteredData, onPress}) => {
           {item.title}
         </Text>
       </TouchableOpacity>
-    );
-  };
+    ),
+    [currentTextColor, onPress],
+  );
 
   const EmptyListComp = useCallback(
     () => (
@@ -73,43 +69,48 @@ const SquareCardComp = ({filteredData, onPress}) => {
         </Text>
       </View>
     ),
-    [],
+    [currentTextColor],
+  );
+
+  const renderCategoryItem = useCallback(
+    ({item}) => (
+      <View
+        style={[
+          styles.container,
+          {
+            borderColor: currentTextColor,
+          },
+        ]}
+        key={item.id}>
+        <Text style={[styles.categoryTitle, {color: currentTextColor}]}>
+          {item.category}
+        </Text>
+        <View
+          style={[
+            styles.itemsContainer,
+            ![1, 2].includes(item.items.length) && {
+              justifyContent: 'space-between',
+            },
+          ]}>
+          {item.items.map(subItem =>
+            renderSquareCardItem({
+              item: subItem,
+              itemsLength: item.items.length,
+            }),
+          )}
+        </View>
+      </View>
+    ),
+    [currentTextColor, renderSquareCardItem],
   );
 
   return (
     <View style={styles.mainContainer}>
       <FlatList
         data={filteredData}
-        ListEmptyComponent={<EmptyListComp />}
-        renderItem={({item}) => (
-          <React.Fragment key={item.id}>
-            <View
-              style={[
-                styles.container,
-                {
-                  borderColor: currentTextColor,
-                },
-              ]}>
-              <Text style={[styles.categoryTitle, {color: currentTextColor}]}>
-                {item.category}
-              </Text>
-              <View
-                style={[
-                  styles.itemsContainer,
-                  ![1, 2].includes(item.items.length) && {
-                    justifyContent: 'space-between',
-                  },
-                ]}>
-                {item.items.map(subItem =>
-                  renderSquareCardItem({
-                    item: subItem,
-                    itemsLength: item.items.length, // Passing items length here
-                  }),
-                )}
-              </View>
-            </View>
-          </React.Fragment>
-        )}
+        ListEmptyComponent={EmptyListComp}
+        renderItem={renderCategoryItem}
+        keyExtractor={item => item.id} // Ensure consistent key extraction
       />
     </View>
   );

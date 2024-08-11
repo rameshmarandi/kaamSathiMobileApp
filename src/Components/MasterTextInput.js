@@ -1,4 +1,11 @@
-import React, {forwardRef, useImperativeHandle, useState, useRef} from 'react';
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useState,
+  useRef,
+  useMemo,
+  useCallback,
+} from 'react';
 import {View, StyleSheet, TouchableOpacity, Text} from 'react-native';
 import {TextInput as PaperTextInput, HelperText} from 'react-native-paper';
 import DatePicker from 'react-native-ui-datepicker';
@@ -13,14 +20,13 @@ const MasterTextInput = forwardRef(
   (
     {
       label,
-
       value,
       onChangeText,
       timePicker,
       placeholder,
-      mode = 'outlined', // 'outlined' or 'flat'
+      mode = 'outlined',
       secureTextEntry = false,
-      keyboardType = 'default', // 'numeric', 'email-address', etc.
+      keyboardType = 'default',
       isDate = false,
       onSubmitEditing,
       style,
@@ -34,92 +40,127 @@ const MasterTextInput = forwardRef(
     ref,
   ) => {
     const [showDatePicker, setShowDatePicker] = useState(false);
-    let {isDarkMode, currentBgColor, isAdmin, currentTextColor} = useSelector(
+    const {isDarkMode, currentBgColor, isAdmin, currentTextColor} = useSelector(
       state => state.user,
     );
     const [isSecureEntry, setIsSecureEntry] = useState(secureTextEntry);
     const textInputRef = useRef(null);
 
-    const handleConfirm = params => {
-      const selectedDate = moment(params.date).format('YYYY-MM-DD HH:mm');
-      onChangeText(selectedDate); // Format date and time
-    };
-
     useImperativeHandle(ref, () => ({
-      focus: () => {
-        textInputRef.current?.focus();
-      },
-      blur: () => {
-        textInputRef.current?.blur();
-      },
+      focus: () => textInputRef.current?.focus(),
+      blur: () => textInputRef.current?.blur(),
     }));
+
+    const handleConfirm = useCallback(
+      params => {
+        const selectedDate = moment(params.date).format('YYYY-MM-DD HH:mm');
+        onChangeText(selectedDate);
+      },
+      [onChangeText],
+    );
+
+    const toggleSecureEntry = useCallback(() => {
+      setIsSecureEntry(prev => !prev);
+    }, []);
+
+    const renderDatePicker = useMemo(
+      () => (
+        <Modal
+          isVisible={showDatePicker}
+          animationIn="zoomIn"
+          animationOut="zoomOut"
+          animationOutTiming={500}
+          animationInTiming={600}
+          backdropTransitionOutTiming={0}
+          onBackdropPress={() => setShowDatePicker(false)}>
+          <View style={styles.datePickerContainer}>
+            <DatePicker
+              mode={calendarMode || 'single'}
+              date={value ? new Date(value) : new Date()}
+              onChange={handleConfirm}
+              timePicker={timePicker !== undefined ? timePicker : true}
+              displayFullDays={true}
+              locale="en"
+              minDate={minDate}
+              maxDate={maxDate}
+              style={styles.datePicker}
+              headerTextStyle={styles.headerTextStyle}
+              yearContainerStyle={styles.yearContainerStyle}
+              monthContainerStyle={styles.monthContainerStyle}
+              headerButtonColor={'#45A245'}
+              selectedItemColor={'#45A245'}
+              selectedTextStyle={{
+                fontFamily: theme.font.semiBold,
+                fontSize: getFontSize(1.3),
+                color: 'white',
+              }}
+            />
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.closeButton,
+                  {
+                    backgroundColor: 'transparent',
+                    borderColor: theme.color.primary,
+                    borderWidth: 1,
+                  },
+                ]}
+                onPress={() => setShowDatePicker(false)}>
+                <Text style={[styles.closeButtonText, {color: 'black'}]}>
+                  Close
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setShowDatePicker(false)}>
+                <Text style={styles.closeButtonText}>OK</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      ),
+      [
+        showDatePicker,
+        value,
+        calendarMode,
+        timePicker,
+        minDate,
+        maxDate,
+        handleConfirm,
+      ],
+    );
+
+    // Define border color based on error presence
+    const borderColor = error ? 'red' : currentTextColor;
 
     return (
       <View style={[styles.container, style]}>
         {isDate ? (
           <>
             <TouchableOpacity
-              style={styles.dateInputWrapper}
-              onPress={() => {
-                setShowDatePicker(true);
-              }}>
-              <Text style={styles.dateInputText}>
-                {value ? moment(value).format('YYYY-MM-DD HH:mm') : placeholder}
+              style={[
+                styles.dateInputWrapper,
+                {
+                  backgroundColor: currentBgColor,
+                  textAlignVertical: 'center',
+                  height: getResHeight(6),
+                },
+              ]}
+              onPress={() => setShowDatePicker(true)}>
+              <Text
+                style={[
+                  styles.dateInputText,
+                  {
+                    color: currentTextColor,
+                  },
+                ]}>
+                {
+                  value ? value : placeholder
+                  // moment(value).format('YYYY-MM-DD HH:mm') : placeholder
+                }
               </Text>
             </TouchableOpacity>
-            <Modal
-              isVisible={showDatePicker}
-              animationIn="zoomIn"
-              animationOut="zoomOut"
-              animationOutTiming={500}
-              animationInTiming={600}
-              backdropTransitionOutTiming={0}
-              onBackdropPress={() => setShowDatePicker(false)}>
-              <View style={styles.datePickerContainer}>
-                <DatePicker
-                  mode={calendarMode ? calendarMode : 'single'} // 'single', 'range', 'multiple'
-                  date={value ? new Date(value) : new Date()}
-                  onChange={handleConfirm}
-                  timePicker={timePicker !== undefined ? timePicker : true} // Enable time picker
-                  displayFullDays={true}
-                  locale="en"
-                  minDate={minDate}
-                  maxDate={maxDate}
-                  style={styles.datePicker}
-                  headerTextStyle={styles.headerTextStyle}
-                  yearContainerStyle={styles.yearContainerStyle}
-                  monthContainerStyle={styles.monthContainerStyle}
-                  headerButtonColor={'#45A245'}
-                  selectedItemColor={'#45A245'}
-                  selectedTextStyle={{
-                    fontFamily: theme.font.semiBold,
-                    fontSize: getFontSize(1.3),
-                    color: 'white',
-                  }}
-                />
-                <View style={styles.buttonContainer}>
-                  <TouchableOpacity
-                    style={[
-                      styles.closeButton,
-                      {
-                        backgroundColor: 'transparent',
-                        borderColor: theme.color.primary,
-                        borderWidth: 1,
-                      },
-                    ]}
-                    onPress={() => setShowDatePicker(false)}>
-                    <Text style={[styles.closeButtonText, {color: 'black'}]}>
-                      Close
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.closeButton}
-                    onPress={() => setShowDatePicker(false)}>
-                    <Text style={styles.closeButtonText}>OK</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </Modal>
+            {renderDatePicker}
           </>
         ) : (
           <View style={styles.textInputWrapper}>
@@ -130,33 +171,23 @@ const MasterTextInput = forwardRef(
               onChangeText={onChangeText}
               placeholder={placeholder}
               secureTextEntry={isSecureEntry}
-              outlineColor={currentTextColor}
-              placeholderTextColor={'green'}
-              activeOutlineColor={currentTextColor}
+              outlineColor={borderColor} // Apply border color based on error
+              placeholderTextColor={'grey'} // Adjusted placeholder color here
+              activeOutlineColor={borderColor} // Apply border color on focus
               keyboardType={keyboardType}
               onSubmitEditing={onSubmitEditing}
               maxLength={maxLength}
               selectionColor="green"
-              backgroundColor={{}}
-              activeUnderlineColor={'red'}
               cursorColor={currentTextColor}
-              theme={{
-                colors: {
-                  primary: 'white', // Active color
-                  placeholder: 'white', // Inactive color
-                  text: 'white', // Floating label color
-                },
+              style={{
+                backgroundColor: currentBgColor,
+                textAlignVertical: 'center',
               }}
-              style={[
-                {
-                  backgroundColor: currentBgColor,
-                  textAlignVertical: 'center',
-                },
-              ]}
               contentStyle={{
                 fontFamily: theme.font.regular,
-                fontSize: getFontSize(1.7),
+                fontSize: getFontSize(1.9),
                 textAlignVertical: 'center',
+                height: getResHeight(6),
               }}
               textColor={isDarkMode ? currentTextColor : 'green'}
               ref={textInputRef}
@@ -165,7 +196,7 @@ const MasterTextInput = forwardRef(
             {secureTextEntry && (
               <TouchableOpacity
                 style={styles.eyeIcon}
-                onPress={() => setIsSecureEntry(!isSecureEntry)}>
+                onPress={toggleSecureEntry}>
                 <Icon
                   name={isSecureEntry ? 'eye-off' : 'eye'}
                   size={24}
@@ -175,7 +206,17 @@ const MasterTextInput = forwardRef(
             )}
           </View>
         )}
-        {error && <HelperText type="error">{error}</HelperText>}
+        {error && (
+          <Text
+            style={{
+              fontFamily: theme.font.regular,
+              marginTop: '2%',
+              fontSize: getFontSize(1.5),
+              color: 'red',
+            }}>
+            {error}
+          </Text>
+        )}
       </View>
     );
   },
@@ -185,9 +226,7 @@ const styles = StyleSheet.create({
   container: {
     marginVertical: getResHeight(1),
   },
-
   dateInputWrapper: {
-    backgroundColor: 'white',
     borderRadius: 4,
     padding: 12,
     borderWidth: 1,
@@ -245,4 +284,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MasterTextInput;
+export default React.memo(MasterTextInput);
