@@ -155,51 +155,97 @@ const DrawerData = () => {
 
 const adminDashboardCardData = [
   {
-    id: 0,
-    title: 'All Members',
-    image: theme.assets.members,
-    routeName: 'Members',
+    category: 'User Management',
+    items: [
+      {
+        id: 0,
+        title: 'All Members',
+        image: theme.assets.members,
+        routeName: 'Members',
+      },
+      {
+        id: 1,
+        title: 'Admin Management',
+        image: theme.assets.adminManag,
+        routeName: 'AdminManagment',
+      },
+    ],
   },
   {
-    id: 1,
-    title: 'Admin Management',
-    image: theme.assets.adminManag,
-    routeName: 'AdminManagment',
-  },
-  {id: 2, title: 'Momentous Posts', image: theme.assets.camera, routeName: ''},
-  {id: 3, title: 'Daily Verses', image: theme.assets.DBible, routeName: ''},
-  {
-    id: 4,
-    title: 'Notification Controls',
-    image: theme.assets.alert,
-    routeName: '',
-  },
-  {id: 5, title: 'Free Resources', image: theme.assets.pdf, routeName: ''},
-  {id: 6, title: 'Prayer Request', image: theme.assets.prayer, routeName: ''},
-  {
-    id: 7,
-    title: 'Contact us',
-    image: theme.assets.contact,
-    routeName: 'AdminContact',
-  },
-  {
-    id: 8,
-    title: 'Testimonial Wall',
-    image: theme.assets.contact,
-    routeName: '',
-  },
-  {
-    id: 9,
-    title: 'What We Believe',
-    image: theme.assets.contact,
-    routeName: '',
+    category: 'Spiritual Resources',
+    items: [
+      {
+        id: 3,
+        title: 'Daily Verses',
+        image: theme.assets.DBible,
+        routeName: '', // Add the route name
+      },
+      {
+        id: 5,
+        title: 'Free Resources',
+        image: theme.assets.pdf,
+        routeName: '', // Add the route name
+      },
+      {
+        id: 6,
+        title: 'Prayer Request',
+        image: theme.assets.prayer,
+        routeName: '', // Add the route name
+      },
+      {
+        id: 9,
+        title: 'What We Believe',
+        image: theme.assets.contact,
+        routeName: '', // Add the route name
+      },
+    ],
   },
   {
-    id: 10,
-    title: 'Church Locations',
-    image: theme.assets.churchLocation,
-    routeName: 'ChurchMap',
+    category: 'Community Engagement',
+    items: [
+      {
+        id: 2,
+        title: 'Momentous Posts',
+        image: theme.assets.camera,
+        routeName: '', // Add the route name
+      },
+      {
+        id: 8,
+        title: 'Testimonial Wall',
+        image: theme.assets.contact,
+        routeName: '', // Add the route name
+      },
+      {
+        id: 4,
+        title: 'Notification Controls',
+        image: theme.assets.alert,
+        routeName: '', // Add the route name
+      },
+    ],
   },
+  {
+    category: 'Support and Contact',
+    items: [
+      {
+        id: 7,
+        title: 'Contact Us',
+        image: theme.assets.contact,
+        routeName: 'AdminContact',
+      },
+      {
+        id: 10,
+        title: 'Church Locations',
+        image: theme.assets.churchLocation,
+        routeName: 'ChurchMap',
+      },
+    ],
+  },
+  // {
+  //   category: 'Location and Navigation',
+  //   items: [
+
+  //   ],
+  // },
 ];
 
 export {adminDashboardCardData, DrawerData};

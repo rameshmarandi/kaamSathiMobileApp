@@ -14,7 +14,7 @@ const MarqueeComp = props => {
         }}>
         <Text
           style={{
-            fontSize: getFontSize(2),
+            fontSize: getFontSize(1.7),
             fontFamily: theme.font.semiBold,
             color: theme.color.error,
           }}>

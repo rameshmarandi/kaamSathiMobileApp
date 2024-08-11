@@ -11,11 +11,12 @@ import UserNotification from './User/Notification/UserNotification';
 
 // Admin Dashboard
 
-import Dashboard from './Admin/AdminDashboard/index';
+import AdminDashboard from './Admin/AdminDashboard/index';
 import AdminManagment from './Admin/AdminManagment/index';
 import Members from './Admin/Members/index';
 import AdminContact from './Admin/Contactus/AdminContact';
 import ChurchMap from './Admin/ChurchMap/index';
+import AddMemberForm from './Admin/Members/AddMemberForm';
 const UserAllScreens = {
   HomePage,
   ProfilePage,
@@ -28,11 +29,12 @@ const UserAllScreens = {
 };
 
 const AdminScreens = {
-  Dashboard,
+  AdminDashboard,
   AdminManagment,
   Members,
   AdminContact,
   ChurchMap,
+  AddMemberForm,
 };
 
 export default AllScreens = {

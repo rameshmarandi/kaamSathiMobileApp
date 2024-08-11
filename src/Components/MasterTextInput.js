@@ -6,12 +6,14 @@ import Modal from 'react-native-modal';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import theme from '../utility/theme';
-import {getFontSize} from '../utility/responsive';
+import {getFontSize, getResHeight} from '../utility/responsive';
+import {useSelector} from 'react-redux';
 
 const MasterTextInput = forwardRef(
   (
     {
       label,
+
       value,
       onChangeText,
       timePicker,
@@ -32,6 +34,9 @@ const MasterTextInput = forwardRef(
     ref,
   ) => {
     const [showDatePicker, setShowDatePicker] = useState(false);
+    let {isDarkMode, currentBgColor, isAdmin, currentTextColor} = useSelector(
+      state => state.user,
+    );
     const [isSecureEntry, setIsSecureEntry] = useState(secureTextEntry);
     const textInputRef = useRef(null);
 
@@ -125,12 +130,35 @@ const MasterTextInput = forwardRef(
               onChangeText={onChangeText}
               placeholder={placeholder}
               secureTextEntry={isSecureEntry}
-              outlineColor={'red'}
-              activeOutlineColor="green"
+              outlineColor={currentTextColor}
+              placeholderTextColor={'green'}
+              activeOutlineColor={currentTextColor}
               keyboardType={keyboardType}
               onSubmitEditing={onSubmitEditing}
               maxLength={maxLength}
-              style={styles.input}
+              selectionColor="green"
+              backgroundColor={{}}
+              activeUnderlineColor={'red'}
+              cursorColor={currentTextColor}
+              theme={{
+                colors: {
+                  primary: 'white', // Active color
+                  placeholder: 'white', // Inactive color
+                  text: 'white', // Floating label color
+                },
+              }}
+              style={[
+                {
+                  backgroundColor: currentBgColor,
+                  textAlignVertical: 'center',
+                },
+              ]}
+              contentStyle={{
+                fontFamily: theme.font.regular,
+                fontSize: getFontSize(1.7),
+                textAlignVertical: 'center',
+              }}
+              textColor={isDarkMode ? currentTextColor : 'green'}
               ref={textInputRef}
               {...rest}
             />
@@ -141,7 +169,7 @@ const MasterTextInput = forwardRef(
                 <Icon
                   name={isSecureEntry ? 'eye-off' : 'eye'}
                   size={24}
-                  color="gray"
+                  color={currentTextColor}
                 />
               </TouchableOpacity>
             )}
@@ -155,12 +183,9 @@ const MasterTextInput = forwardRef(
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 8,
+    marginVertical: getResHeight(1),
   },
-  input: {
-    backgroundColor: 'white',
-    borderColor: 'red',
-  },
+
   dateInputWrapper: {
     backgroundColor: 'white',
     borderRadius: 4,

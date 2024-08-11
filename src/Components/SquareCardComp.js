@@ -1,122 +1,162 @@
-import React from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import React, {useCallback} from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Platform,
+} from 'react-native';
 import {useSelector} from 'react-redux';
 import {getFontSize, getResHeight, getResWidth} from '../utility/responsive';
 import theme from '../utility/theme';
-import {ButtonIconComp} from './commonComp';
-import {VectorIcon} from './VectorIcon';
-import {Image} from 'react-native';
 
-const SquareCardComp = ({filteredData  , onPress}) => {
-  const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
-    state => state.user,
-  );
+const SquareCardComp = ({filteredData, onPress}) => {
+  const {currentTextColor} = useSelector(state => state.user);
 
-  const renderSquareCardItem = ({item, index}) => {
+  const renderSquareCardItem = props => {
+    const {item, itemsLength} = props; // Accepting itemsLength as a prop
+    console.tron.log(
+      'Category: ' + item.category + ', Items Length: ' + itemsLength,
+    );
     return (
       <TouchableOpacity
-        onPress={ ()=>{onPress(item)}}
-        style={[styles.cardContainer, {
-          borderColor: currentTextColor}]}
+        onPress={() => onPress(item)}
+        style={[
+          styles.cardContainer,
+          [0, 1, 2].includes(itemsLength) && {
+            // Example usage of itemsLength
+            marginRight: getResWidth(2),
+          },
+          {
+            borderColor: currentTextColor,
+          },
+        ]}
         key={item.id.toString()}>
-        {index === 0 && item.id === 0 && (
-          <View style={styles.notificationIndicator} />
-        )}
         <Image
           source={item.image}
           resizeMode="cover"
-          style={{
-            height: getResHeight(8),
-            width: getResHeight(8),
-            alignSelf:"center"
-          }}
+          style={styles.cardImage}
         />
-      
-        <View
+        <Text
           style={[
+            styles.cardTitle,
             {
-              width:"100%",
-              flexDirection: 'row',
-              marginTop:"3%",
-              
+              color: currentTextColor,
+              fontFamily: theme.font.semiBold,
             },
-            styles.cardContent,
           ]}>
-          <Text
-            style={[
-              styles.cardTitle,
-              {
-                color: currentTextColor,
-              },
-            ]}>
-            {item.title}
-          </Text>
-          <ButtonIconComp
-          onPress={()=>onPress(item)}
-            icon={
-              <VectorIcon
-                type={'FontAwesome5'}
-                name={'arrow-right'}
-                size={getFontSize(2.5)}
-                color={currentTextColor}
-              />
-            }
-          />
-        </View>
+          {item.title}
+        </Text>
       </TouchableOpacity>
     );
   };
 
+  const EmptyListComp = useCallback(
+    () => (
+      <View
+        style={{
+          width: '100%',
+          height: '100%',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Text
+          style={{
+            fontFamily: theme.font.bold,
+            fontSize: getFontSize(1.7),
+            color: currentTextColor,
+            marginTop: getResHeight(4),
+          }}>
+          ✨ Oops! nothing here. ✨
+        </Text>
+      </View>
+    ),
+    [],
+  );
+
   return (
-    <View style={[styles.container , {
-      flexDirection :filteredData.length === 1 ? 'column' : 'row'
-    }]}>
-      {filteredData.map((item, index) => (
-        <React.Fragment key={item.id}>
-          {renderSquareCardItem({item, index})}
-        </React.Fragment>
-      ))}
+    <View style={styles.mainContainer}>
+      <FlatList
+        data={filteredData}
+        ListEmptyComponent={<EmptyListComp />}
+        renderItem={({item}) => (
+          <React.Fragment key={item.id}>
+            <View
+              style={[
+                styles.container,
+                {
+                  borderColor: currentTextColor,
+                },
+              ]}>
+              <Text style={[styles.categoryTitle, {color: currentTextColor}]}>
+                {item.category}
+              </Text>
+              <View
+                style={[
+                  styles.itemsContainer,
+                  ![1, 2].includes(item.items.length) && {
+                    justifyContent: 'space-between',
+                  },
+                ]}>
+                {item.items.map(subItem =>
+                  renderSquareCardItem({
+                    item: subItem,
+                    itemsLength: item.items.length, // Passing items length here
+                  }),
+                )}
+              </View>
+            </View>
+          </React.Fragment>
+        )}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    paddingHorizontal: '5%',
+    justifyContent: 'space-between',
+  },
   container: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    flexWrap: 'wrap',
-    
+    borderWidth: 1,
+    padding: getResWidth(3),
+    marginBottom: getResHeight(2),
+    borderRadius: getResHeight(1),
   },
   cardContainer: {
-    width: getResWidth(44),
-    height: getResHeight(17),
+    width: Platform.OS == 'ios' ? getResHeight(12) : getResHeight(12.5),
+    minHeight: getResHeight(11),
     borderWidth: 1,
-    borderRadius:getResHeight(1),
-    marginBottom: getResHeight(2),
-    paddingVertical: getResHeight(1),
-    paddingHorizontal: getResHeight(2),
-  },
-  notificationIndicator: {
-    position: 'absolute',
-    right: getResHeight(0.5),
-    top: getResHeight(0.5),
-    height: getResHeight(2),
-    width: getResHeight(2),
-    borderRadius: getResHeight(100),
-    backgroundColor: 'red',
-  },
-  cardContent: {
-    justifyContent: 'space-between',
+    borderRadius: getResHeight(1),
+    marginBottom: getResHeight(1),
+    paddingHorizontal: '1%',
+    justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
+  },
+  cardImage: {
+    height: getResHeight(5.5),
+    width: getResHeight(5.5),
   },
   cardTitle: {
-    width:"70%",
-    
+    textAlign: 'center',
+    marginTop: '3%',
+    fontSize: getFontSize(1.4),
+  },
+  categoryTitle: {
+    marginBottom: getResHeight(1.5),
+    fontFamily: theme.font.semiBold,
     fontSize: getFontSize(1.7),
-    fontFamily: theme.font.medium,
+  },
+  itemsContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
 });
 
-export default SquareCardComp;
+export default React.memo(SquareCardComp);

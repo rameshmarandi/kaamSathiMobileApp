@@ -510,7 +510,8 @@ const Index = props => {
         }}>
         <WaveButton
           onPress={() => {
-            props.navigation.navigate('Members');
+            props.navigation.navigate('AddMemberForm');
+            // alert('sdf');
           }}
         />
       </View>
@@ -545,7 +546,7 @@ const Index = props => {
           paddingHorizontal: '2%',
           paddingTop: '2%',
         }}>
-        <ExampleUsage />
+        {/* <ExampleUsage /> */}
         <FlatList
           data={userData}
           keyExtractor={(item, index) => item.id}

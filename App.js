@@ -92,7 +92,7 @@ const InitialRender = () => {
           style={{
             width: '100%',
             alignSelf: 'center',
-            fontSize: getFontSize(2),
+            fontSize: getFontSize(1.5),
             fontFamily: theme.font.semiBold,
             color: 'white',
             justifyContent: 'center',

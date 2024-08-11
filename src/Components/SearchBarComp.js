@@ -1,71 +1,64 @@
-import {View, Text} from 'react-native';
 import React from 'react';
+import {View} from 'react-native';
 import {SearchBar} from 'react-native-elements';
 import theme from '../utility/theme';
 import {useSelector} from 'react-redux';
-import {getFontSize, getResWidth} from '../utility/responsive';
-import {fonts} from 'react-native-elements/dist/config';
+import {getFontSize, getResHeight, getResWidth} from '../utility/responsive';
 
-const SearchBarComp = props => {
-  let {isDarkMode, currentBgColor, currentTextColor} = useSelector(
+const SearchBarComp = ({
+  autoFocus = false,
+  placeholder,
+  containerStyle,
+  onChangeText,
+  value,
+  placeholderTextColor,
+  autoCapitalize = 'none',
+  isLoading,
+  round = 10,
+}) => {
+  const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
   );
-  const {
-    autoFocus,
-    placeholder,
-    containerStyle,
-    onChangeText,
-    value,
-    placeholderTextColor,
-    autoCapitalize,
-    isLoading,
-    round,
-  } = props;
+
   return (
-    <View>
+    <View
+      style={{
+        marginBottom: '14%',
+      }}>
       <SearchBar
         placeholder={placeholder}
-        placeholderTextColor={
-          placeholderTextColor ? placeholderTextColor : theme.color.dimGray
-        }
+        placeholderTextColor={placeholderTextColor || theme.color.dimGray}
         searchIcon={{
           iconStyle: {
             fontSize: getFontSize(3),
           },
         }}
         showLoading={isLoading}
-        autoCapitalize={autoCapitalize ? autoCapitalize : 'none'}
-        autoFocus={autoFocus ? autoFocus : false}
+        autoCapitalize={autoCapitalize}
+        autoFocus={autoFocus}
         onChangeText={onChangeText}
         value={value}
-        round={round ? round : 10}
+        round={round}
         cursorColor={isDarkMode ? theme.color.darkTheme : currentTextColor}
         containerStyle={[
-          containerStyle
-            ? containerStyle
-            : {
-                width: getResWidth(95),
-                alignSelf: 'center',
-                borderTopWidth: 0,
-                borderBottomWidth: 0,
-                backgroundColor: currentBgColor,
-                margin: 0,
-                alignItems: 'center',
-                // backgroundColor:"red"
-              },
+          containerStyle || {
+            width: getResWidth(95),
+            height: getResHeight(2),
+            alignSelf: 'center',
+            borderTopWidth: 0,
+            borderBottomWidth: 0,
+            backgroundColor: currentBgColor,
+            margin: 0,
+            alignItems: 'center',
+          },
         ]}
         inputStyle={{
-          color: isDarkMode ? theme.color.darkTheme : theme.color.darkTheme,
-
+          color: theme.color.darkTheme,
           fontSize: getFontSize(1.6),
           fontFamily: theme.font.medium,
-          // backgroundColor:"red",
           alignItems: 'center',
           marginTop: '1%',
-          // backgroundColor:"red",
-          // paddingTop:"4%"
         }}
-        // cursorColor={'red'}
         inputContainerStyle={{
           alignItems: 'center',
           backgroundColor: isDarkMode ? currentTextColor : theme.color.dimWhite,
@@ -75,4 +68,4 @@ const SearchBarComp = props => {
   );
 };
 
-export default SearchBarComp;
+export default React.memo(SearchBarComp);

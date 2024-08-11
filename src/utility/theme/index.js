@@ -60,25 +60,6 @@ const fontSizes = {
 };
 
 const styles = StyleSheet.create({
-  // inputPlaceholder: {
-  //   color: '#232731B2',
-  //   fontFamily: font.regular,
-  //   fontSize: getFontSize(15),
-  //   fontWeight: '400',
-  // },
-  // btnTitleStyle: {
-  //   fontFamily: font.regular,
-  //   fontSize: getFontSize(13),
-  //   fontWeight: '600',
-  //   color: color.accent,
-  // },
-  // inputTitle: {
-  //   color: '#232323',
-  //   // opacity: 0.7,
-  //   fontFamily: font.Helvetica,
-  //   fontSize: getFontSize(13),
-  //   fontWeight: '500',
-  // },
   roundBtnShadow: {
     shadowColor: '#000',
     shadowOffset: {
@@ -90,14 +71,15 @@ const styles = StyleSheet.create({
     elevation: 15,
   },
   cardEffect: {
+    backgroundColor: color.accent,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: getResHeight(2),
+      height: getResHeight(0.3),
     },
     shadowOpacity: 0.25,
     shadowRadius: 8,
-    elevation: 15,
+    elevation: 4,
   },
 });
 

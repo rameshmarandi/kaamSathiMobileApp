@@ -108,6 +108,14 @@ export default function DrawerStack(props) {
           }}
         />
         <Drawer.Screen
+          name="AddMemberForm"
+          component={AllScreens.AddMemberForm}
+          options={{
+            headerShadowVisible: false,
+            headerShown: false,
+          }}
+        />
+        <Drawer.Screen
           name="FreeResource"
           component={AllScreens.FreeResource}
           options={{

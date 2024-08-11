@@ -25,9 +25,9 @@ export function AdminHomeStack(props) {
     <>
       <Stack.Navigator screenOptions={{...transitionCard, ...screenOptions}}>
         <Stack.Screen
-          initialRouteName={'Dashboard'}
+          initialRouteName={'AdminDashboard'}
           name={'Dashboard'}
-          component={AllScreens.Dashboard}
+          component={AllScreens.AdminDashboard}
           // options={screenOptions}
         />
         <Stack.Screen

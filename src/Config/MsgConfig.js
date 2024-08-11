@@ -42,6 +42,8 @@ const headerTitle = {
   allMembers: 'All Members',
   ChurchMap: 'View all church',
   // contactUS  : 'Contact Us',
+
+  AddMemberForm: 'Add Member Form',
 };
 
 export default message = {
