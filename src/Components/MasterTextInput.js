@@ -6,15 +6,24 @@ import React, {
   useMemo,
   useCallback,
 } from 'react';
-import {View, StyleSheet, TouchableOpacity, Text} from 'react-native';
-import {TextInput as PaperTextInput, HelperText} from 'react-native-paper';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  Animated,
+  Easing,
+} from 'react-native';
+import {TextInput as PaperTextInput} from 'react-native-paper';
 import DatePicker from 'react-native-ui-datepicker';
 import Modal from 'react-native-modal';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import theme from '../utility/theme';
 import {getFontSize, getResHeight} from '../utility/responsive';
 import {useSelector} from 'react-redux';
+import {Dropdown} from 'react-native-element-dropdown';
 
 const MasterTextInput = forwardRef(
   (
@@ -35,22 +44,36 @@ const MasterTextInput = forwardRef(
       maxDate,
       calendarMode,
       maxLength,
+      isDropdown = false,
+      dropdownData = [],
+      onDropdownChange,
+      dropdownSearch,
+      isValid,
       ...rest
     },
     ref,
   ) => {
+    // State to manage the visibility of the date picker modal
     const [showDatePicker, setShowDatePicker] = useState(false);
+    // Fetching current theme settings from Redux store
     const {isDarkMode, currentBgColor, isAdmin, currentTextColor} = useSelector(
       state => state.user,
     );
+    // State to manage secure text entry visibility
     const [isSecureEntry, setIsSecureEntry] = useState(secureTextEntry);
+    // Reference to the text input field
     const textInputRef = useRef(null);
 
+    // Animated value for shake effect
+    const shakeAnim = useRef(new Animated.Value(0)).current;
+
+    // Expose focus and blur methods for the text input field to parent components via ref
     useImperativeHandle(ref, () => ({
       focus: () => textInputRef.current?.focus(),
       blur: () => textInputRef.current?.blur(),
     }));
 
+    // Handle the date selection and format the date as 'YYYY-MM-DD HH:mm'
     const handleConfirm = useCallback(
       params => {
         const selectedDate = moment(params.date).format('YYYY-MM-DD HH:mm');
@@ -59,10 +82,50 @@ const MasterTextInput = forwardRef(
       [onChangeText],
     );
 
+    // Toggle visibility of secure text entry (e.g., show/hide password)
     const toggleSecureEntry = useCallback(() => {
       setIsSecureEntry(prev => !prev);
     }, []);
 
+    // Function to trigger shake animation
+    const triggerShake = () => {
+      Animated.sequence([
+        Animated.timing(shakeAnim, {
+          toValue: -10, // Smaller displacement for a subtle effect
+          duration: 50, // Shorter duration for quicker shake
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnim, {
+          toValue: 10, // Smaller displacement for a subtle effect
+          duration: 50, // Shorter duration for quicker shake
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnim, {
+          toValue: -5, // Smaller displacement for a subtle effect
+          duration: 50, // Shorter duration for quicker shake
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnim, {
+          toValue: 5, // Smaller displacement for a subtle effect
+          duration: 50, // Shorter duration for quicker shake
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnim, {
+          toValue: 0, // Reset position
+          duration: 50, // Shorter duration for quicker shake
+          useNativeDriver: true,
+        }),
+      ]).start();
+    };
+
+    // Trigger shake animation if there's an error
+    React.useEffect(() => {
+      if (error) {
+        triggerShake();
+      }
+    }, [error]);
+
+    // Memoized function to render the date picker modal
     const renderDatePicker = useMemo(
       () => (
         <Modal
@@ -133,6 +196,14 @@ const MasterTextInput = forwardRef(
     // Define border color based on error presence
     const borderColor = error ? 'red' : currentTextColor;
 
+    const animatedStyle = {
+      transform: [
+        {
+          translateX: shakeAnim,
+        },
+      ],
+    };
+
     return (
       <View style={[styles.container, style]}>
         {isDate ? (
@@ -154,45 +225,71 @@ const MasterTextInput = forwardRef(
                     color: currentTextColor,
                   },
                 ]}>
-                {
-                  value ? value : placeholder
-                  // moment(value).format('YYYY-MM-DD HH:mm') : placeholder
-                }
+                {value ? value : placeholder}
               </Text>
             </TouchableOpacity>
             {renderDatePicker}
           </>
+        ) : isDropdown ? (
+          <Dropdown
+            data={dropdownData}
+            labelField="label"
+            valueField="value"
+            search={dropdownSearch}
+            placeholder={placeholder}
+            value={value}
+            onChange={onDropdownChange}
+            style={[
+              styles.dropdown,
+              {
+                borderColor: borderColor,
+                backgroundColor: currentBgColor,
+              },
+            ]}
+            placeholderStyle={{
+              color: 'grey',
+              fontFamily: theme.font.regular,
+              fontSize: getFontSize(1.9),
+            }}
+            selectedTextStyle={{
+              color: currentTextColor,
+              fontFamily: theme.font.regular,
+              fontSize: getFontSize(1.9),
+            }}
+          />
         ) : (
           <View style={styles.textInputWrapper}>
-            <PaperTextInput
-              mode={mode}
-              label={label}
-              value={value}
-              onChangeText={onChangeText}
-              placeholder={placeholder}
-              secureTextEntry={isSecureEntry}
-              outlineColor={borderColor} // Apply border color based on error
-              placeholderTextColor={'grey'} // Adjusted placeholder color here
-              activeOutlineColor={borderColor} // Apply border color on focus
-              keyboardType={keyboardType}
-              onSubmitEditing={onSubmitEditing}
-              maxLength={maxLength}
-              selectionColor="green"
-              cursorColor={currentTextColor}
-              style={{
-                backgroundColor: currentBgColor,
-                textAlignVertical: 'center',
-              }}
-              contentStyle={{
-                fontFamily: theme.font.regular,
-                fontSize: getFontSize(1.9),
-                textAlignVertical: 'center',
-                height: getResHeight(6),
-              }}
-              textColor={isDarkMode ? currentTextColor : 'green'}
-              ref={textInputRef}
-              {...rest}
-            />
+            <Animated.View style={[animatedStyle]}>
+              <PaperTextInput
+                mode={mode}
+                label={label}
+                value={value}
+                onChangeText={onChangeText}
+                placeholder={placeholder}
+                secureTextEntry={isSecureEntry}
+                outlineColor={borderColor}
+                placeholderTextColor={'grey'}
+                activeOutlineColor={borderColor}
+                keyboardType={keyboardType}
+                onSubmitEditing={onSubmitEditing}
+                maxLength={maxLength}
+                selectionColor="green"
+                cursorColor={currentTextColor}
+                style={{
+                  backgroundColor: currentBgColor,
+                  textAlignVertical: 'center',
+                }}
+                contentStyle={{
+                  fontFamily: theme.font.regular,
+                  fontSize: getFontSize(1.9),
+                  textAlignVertical: 'center',
+                  height: getResHeight(6),
+                }}
+                textColor={isDarkMode ? currentTextColor : 'green'}
+                ref={textInputRef}
+                {...rest}
+              />
+            </Animated.View>
             {secureTextEntry && (
               <TouchableOpacity
                 style={styles.eyeIcon}
@@ -207,21 +304,38 @@ const MasterTextInput = forwardRef(
           </View>
         )}
         {error && (
-          <Text
-            style={{
-              fontFamily: theme.font.regular,
-              marginTop: '2%',
-              fontSize: getFontSize(1.5),
-              color: 'red',
-            }}>
-            {error}
-          </Text>
+          <>
+            <Text
+              style={{
+                fontFamily: theme.font.regular,
+                marginTop: '2%',
+                fontSize: getFontSize(1.5),
+                color: 'red',
+              }}>
+              {error}
+            </Text>
+            <AntDesign
+              name="closecircle"
+              size={getResHeight(2.3)}
+              color="red"
+              style={styles.eyeIcon}
+            />
+          </>
+        )}
+        {isValid && !error && (
+          <Icon
+            name="check-circle"
+            size={getResHeight(2.7)}
+            color="#66FF00"
+            style={styles.eyeIcon}
+          />
         )}
       </View>
     );
   },
 );
 
+// Styles for the MasterTextInput component
 const styles = StyleSheet.create({
   container: {
     marginVertical: getResHeight(1),
@@ -263,8 +377,8 @@ const styles = StyleSheet.create({
   },
   eyeIcon: {
     position: 'absolute',
-    right: 10,
-    top: 20,
+    right: getResHeight(1.5),
+    top: getResHeight(2.5),
   },
   buttonContainer: {
     width: '100%',
@@ -281,6 +395,13 @@ const styles = StyleSheet.create({
   closeButtonText: {
     color: 'white',
     fontSize: 16,
+  },
+  dropdown: {
+    height: getResHeight(6),
+    borderRadius: 4,
+    padding: 12,
+    borderWidth: 1,
+    justifyContent: 'center',
   },
 });
 

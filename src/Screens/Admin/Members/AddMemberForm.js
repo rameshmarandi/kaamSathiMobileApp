@@ -8,7 +8,6 @@ import {
   SafeAreaView,
   Keyboard,
   BackHandler,
-  Text,
 } from 'react-native';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
@@ -17,17 +16,31 @@ import CustomHeader from '../../../Components/CustomHeader';
 import MsgConfig from '../../../Config/MsgConfig';
 import MasterTextInput from '../../../Components/MasterTextInput';
 import {CommonButtonComp} from '../../../Components/commonComp';
-import {getResHeight} from '../../../utility/responsive/index';
+import {getResHeight, getResWidth} from '../../../utility/responsive/index';
+import PrivacyPolicy from './PrivacyPolicy';
+import CustomBottomSheet from '../../../Components/CustomBottomSheet';
+import MasterRadioButtonGroup from '../../../Components/MasterRadioButton';
+import {MasterCheckBoxGroup} from '../../../Components/MasterCheckBox';
+import {
+  handleEmailChange,
+  handleNumberChange,
+  handleTextChange,
+} from '../../../Components/InputHandlers';
 
 const Index = props => {
   const {navigation} = props;
+
+  // Get values from Redux state
   const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
   );
 
-  const [step, setStep] = useState(1); // State to track the current step
-  const [keyboardHeight, setKeyboardHeight] = useState(0); // Track keyboard height
-  const [isOTPFildVisible, setIsOTPFildVisible] = useState(false);
+  // Local component states
+  const [step, setStep] = useState(1); // To track the current step in the form
+  const [keyboardHeight, setKeyboardHeight] = useState(getResHeight(0)); // To track the keyboard height
+  const [isOTPFildVisible, setIsOTPFildVisible] = useState(false); // To show/hide the OTP field
+
+  // References to input fields
   const inputRefs = {
     name: useRef(null),
     email: useRef(null),
@@ -36,15 +49,27 @@ const Index = props => {
     baptismDate: useRef(null),
     password: useRef(null),
   };
-  const formikRef = useRef(null);
 
+  // Reference for Formik
+  const formikRef = useRef(null);
+  const bottomSheetRef = useRef(null);
+  const scrollRef = useRef(null);
+  const [bottomSheetContent, setBottomSheetContent] = useState(null);
+
+  const openBottomSheetWithContent = content => {
+    // setBottomSheetContent(content);
+    bottomSheetRef.current?.open();
+  };
+
+  // Set up event listeners for keyboard visibility and back button press
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       event => {
-        setKeyboardHeight(event.endCoordinates.height - getResHeight(35));
+        setKeyboardHeight(event.endCoordinates.height - getResHeight(15));
       },
     );
+
     const keyboardDidHideListener = Keyboard.addListener(
       'keyboardDidHide',
       () => {
@@ -57,11 +82,12 @@ const Index = props => {
         setStep(step - 1);
         return true; // Prevent default behavior (e.g., exiting the app)
       }
-      return false; // Allow default behavior (e.g., exiting the app if on the first step)
+      return false; // Allow default behavior if on the first step
     };
 
     BackHandler.addEventListener('hardwareBackPress', handleBackPress);
 
+    // Cleanup event listeners on component unmount
     return () => {
       keyboardDidHideListener.remove();
       keyboardDidShowListener.remove();
@@ -69,23 +95,37 @@ const Index = props => {
     };
   }, [step]);
 
+  const onAcceptButtonClick = () => {
+    console.log(' formikRef.current', formikRef.current.values);
+
+    // return;
+    setKeyboardHeight(0);
+    formikRef.current.resetForm(); // Reset the form
+    setIsOTPFildVisible(false); // Hide OTP field
+    setStep(1); // Reset to step 1
+    navigation.goBack(); // Navigate back
+  };
+  // Handle form submission
   const handleSubmit = values => {
     console.log(values);
-    // Navigate to next step or handle final submission
+
     if (step === 3) {
+      openBottomSheetWithContent();
       // Final submission
-      console.log('Final Values:', values);
+      // console.log('Final Values:', values);
+    } else if (step === 1 && !isOTPFildVisible) {
+      setIsOTPFildVisible(true); // Show OTP field
     } else {
-      setIsOTPFildVisible(true);
-      // setStep(step + 1); // Move to the next step
+      setStep(step + 1); // Move to the next step
+      scrollRef.current?.scrollTo({y: 0, animated: true});
     }
   };
 
+  // Handle back navigation
   const handleBack = () => {
     if (step > 1) {
       if (step === 1) {
-        // Reset form values when going back to step 1
-        formikRef.current.resetForm();
+        formikRef.current.resetForm(); // Reset form when returning to step 1
       }
       setStep(step - 1);
     } else {
@@ -113,12 +153,21 @@ const Index = props => {
       .required('Password is required'),
   });
 
+  // Determine the current validation schema based on the step
   const getValidationSchema = () => {
-    if (step === 1) return stepOneSchema;
-    if (step === 2) return stepTwoSchema;
-    if (step === 3) return stepThreeSchema;
+    switch (step) {
+      case 1:
+        return stepOneSchema;
+      case 2:
+        return stepTwoSchema;
+      case 3:
+        return stepThreeSchema;
+      default:
+        return stepOneSchema;
+    }
   };
 
+  // Render the appropriate form fields based on the current step
   const renderStep = (
     values,
     handleChange,
@@ -127,6 +176,8 @@ const Index = props => {
     touched,
     handleSubmit,
   ) => {
+    const isFieldValid = field => touched[field] && !errors[field];
+
     switch (step) {
       case 1:
         return (
@@ -136,50 +187,72 @@ const Index = props => {
               placeholder="Enter full name"
               ref={inputRefs.name}
               value={values.name}
-              onChangeText={handleChange('name')}
+              onChangeText={text =>
+                formikRef.current.setFieldValue('name', handleTextChange(text))
+              }
               onBlur={handleBlur('name')}
               onSubmitEditing={() => inputRefs.email.current.focus()}
               error={touched.name && errors.name}
+              isValid={isFieldValid('name')}
             />
             <MasterTextInput
               label="Email"
               placeholder="Enter email address"
               ref={inputRefs.email}
+              keyboardType="email-address"
               value={values.email}
-              onChangeText={handleChange('email')}
+              onChangeText={text =>
+                formikRef.current.setFieldValue(
+                  'email',
+                  handleEmailChange(text),
+                )
+              }
               onBlur={handleBlur('email')}
               onSubmitEditing={() => inputRefs.mobile.current.focus()}
               error={touched.email && errors.email}
+              isValid={isFieldValid('email')}
             />
             <MasterTextInput
               label="Mobile"
               placeholder="Enter number"
               ref={inputRefs.mobile}
-              keyboardType={'numeric'}
+              keyboardType="numeric"
               value={values.mobile}
               maxLength={10}
-              onChangeText={handleChange('mobile')}
+              onChangeText={text =>
+                formikRef.current.setFieldValue(
+                  'mobile',
+                  handleNumberChange(text),
+                )
+              }
               onBlur={handleBlur('mobile')}
               onSubmitEditing={() => setStep(2)} // Move to next step on enter
               error={touched.mobile && errors.mobile}
+              isValid={isFieldValid('mobile')}
             />
+
             {isOTPFildVisible && (
               <MasterTextInput
                 label="OTP"
-                placeholder="Enter email otp"
-                ref={inputRefs.mobile}
-                keyboardType={'numeric'}
-                value={values.mobile}
+                placeholder="Enter email OTP"
+                ref={inputRefs.otp}
+                keyboardType="numeric"
+                value={values.otp}
                 maxLength={4}
-                onChangeText={handleChange('mobile')}
-                onBlur={handleBlur('mobile')}
+                // onChangeText={handleChange('otp')}
+                onChangeText={text =>
+                  formikRef.current.setFieldValue(
+                    'otp',
+                    handleNumberChange(text),
+                  )
+                }
+                onBlur={handleBlur('otp')}
                 onSubmitEditing={() => setStep(2)} // Move to next step on enter
-                error={touched.mobile && errors.mobile}
               />
             )}
           </>
         );
-      case 3:
+      case 2:
         return (
           <>
             <MasterTextInput
@@ -197,6 +270,7 @@ const Index = props => {
               label="Date of baptism"
               placeholder="Select baptism date"
               isDate={true}
+              // timePicker={true}
               ref={inputRefs.baptismDate}
               value={values.baptismDate}
               onChangeText={handleChange('baptismDate')}
@@ -204,9 +278,24 @@ const Index = props => {
               onSubmitEditing={() => setStep(3)} // Move to next step on enter
               error={touched.baptismDate && errors.baptismDate}
             />
+
+            <MasterTextInput
+              label="Gender"
+              placeholder="Select gender"
+              isDropdown={true}
+              dropdownData={[
+                {label: 'Male', value: 'male'},
+                {label: 'Female', value: 'female'},
+              ]}
+              value={'Female'}
+              // value={values.gender}
+              onDropdownChange={handleChange('gender')}
+              onBlur={handleBlur('gender')}
+              error={touched.gender && errors.gender}
+            />
           </>
         );
-      case 4:
+      case 3:
         return (
           <MasterTextInput
             label="Password"
@@ -226,21 +315,20 @@ const Index = props => {
   };
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: currentBgColor,
-      }}>
+    <SafeAreaView style={{flex: 1, backgroundColor: currentBgColor}}>
       <CustomHeader
         backPress={handleBack}
         screenTitle={MsgConfig.AddMemberForm}
       />
 
-      <KeyboardAvoidingView
+      {/* <KeyboardAvoidingView
         style={{flex: 1}}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0} // Adjust based on header height if needed
-      >
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}> */}
+      <ScrollView
+        ref={scrollRef}
+        contentContainerStyle={{flexGrow: 1}}
+        keyboardShouldPersistTaps="handled">
         <View style={{flex: 1, paddingHorizontal: '5%'}}>
           <Formik
             innerRef={formikRef}
@@ -251,6 +339,8 @@ const Index = props => {
               birthDate: '',
               baptismDate: '',
               password: '',
+              otp: '',
+              gender: '',
             }}
             validationSchema={getValidationSchema()}
             onSubmit={handleSubmit}>
@@ -277,8 +367,35 @@ const Index = props => {
                     )}
                   </View>
                 </ScrollView>
+                <CustomBottomSheet
+                  ref={bottomSheetRef}
+                  modalHeight={getResHeight(86)}>
+                  {<PrivacyPolicy onAccept={onAcceptButtonClick} />}
+                </CustomBottomSheet>
+
                 <View
-                  style={[styles.buttonContainer, {bottom: keyboardHeight}]}>
+                  style={{
+                    width: getResWidth(20),
+                    alignSelf: 'center',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexDirection: 'row',
+                    marginBottom: '5%',
+                  }}>
+                  {[0, 1, 2].map((item, index) => (
+                    <View
+                      style={{
+                        width: getResWidth(5),
+                        height: getResHeight(0.7),
+                        borderRadius: 10,
+                        backgroundColor:
+                          step == index + 1 ? currentTextColor : 'grey',
+                      }}></View>
+                  ))}
+                </View>
+                <View
+                // style={[styles.buttonContainer, {bottom: keyboardHeight}]}
+                >
                   <CommonButtonComp
                     title={step === 3 ? 'Submit' : 'Next'}
                     onPress={handleSubmit}
@@ -288,20 +405,19 @@ const Index = props => {
             )}
           </Formik>
         </View>
-      </KeyboardAvoidingView>
+      </ScrollView>
+      {/* </KeyboardAvoidingView> */}
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    // position: 'absolute',
-    // left: 0,
-    // right: 0,
     backgroundColor: 'transparent',
     alignItems: 'center',
+    justifyContent: 'flex-end',
     width: '100%',
-    // paddingBottom: 10,
+    // backgroundColor: 'red',
   },
 });
 

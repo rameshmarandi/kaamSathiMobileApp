@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     marginLeft: '5%',
   },
   btnContainerStyle: {
-    marginBottom: getResHeight(6),
+    marginBottom: getResHeight(2),
     width: '100%',
     height: getResHeight(5),
   },

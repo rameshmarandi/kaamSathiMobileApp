@@ -22,10 +22,11 @@ const SquareCardComp = ({filteredData, onPress}) => {
         style={[
           styles.cardContainer,
           [0, 1, 2].includes(itemsLength) && {
-            marginRight: getResWidth(2),
+            marginRight: getResWidth(3),
           },
           {
             borderColor: currentTextColor,
+            marginBottom: getResWidth(3),
           },
         ]}
         key={item.id.toString()}>
