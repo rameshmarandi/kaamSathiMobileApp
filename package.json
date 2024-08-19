@@ -56,6 +56,7 @@
     "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "^2.16.0",
     "react-native-inappbrowser-reborn": "^3.7.0",
+    "react-native-linear-gradient": "^2.8.3",
     "react-native-lottie-loader": "^1.0.0",
     "react-native-maps": "^1.14.0",
     "react-native-marquee-view": "^1.0.5",

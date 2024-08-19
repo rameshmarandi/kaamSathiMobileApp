@@ -1,32 +1,33 @@
-import React, {useState, useCallback, useMemo} from 'react';
+import React, {useState, useCallback, useMemo, memo, useRef} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Ripple from 'react-native-material-ripple';
-import {StyleSheet, View, Text, Animated} from 'react-native';
-import {useIsFocused} from '@react-navigation/native';
+import {StyleSheet, View, Text, Animated, TouchableOpacity} from 'react-native';
 import {VectorIcon} from '../Components/VectorIcon';
 import {getFontSize, getResHeight} from '../utility/responsive';
-import theme from '../utility/theme';
 import {useSelector} from 'react-redux';
-import {AdminHomeStack, ProfileStack} from './StackNav';
+import {AdminHomeStack, ApprovalStack, ProfileStack} from './StackNav';
+import theme from '../utility/theme';
 
 const Tab = createBottomTabNavigator();
 
 const tabArrays = [
   {
     title: 'Home',
-    icon: {
-      type: 'Foundation',
-      name: 'home',
-    },
+    icon: {type: 'Feather', name: 'home'},
+    activeIcon: {type: 'Entypo', name: 'home'},
     routeNames: 'Dashboard',
     component: AdminHomeStack,
   },
   {
+    title: 'Approval',
+    icon: {type: 'Ionicons', name: 'checkmark-circle-outline'},
+    activeIcon: {type: 'Ionicons', name: 'checkmark-circle-sharp'},
+    routeNames: 'ApprovalScreen',
+    component: ApprovalStack,
+  },
+  {
     title: 'Profile',
-    icon: {
-      type: 'FontAwesome5',
-      name: 'user-alt',
-    },
+    icon: {type: 'FontAwesome', name: 'user-o'},
+    activeIcon: {type: 'FontAwesome', name: 'user'},
     routeNames: 'Profile',
     component: ProfileStack,
   },
@@ -37,65 +38,100 @@ const CustomTabBar = ({
   selectedTabIndex,
   currentBgColor,
   currentTextColor,
+  isDarkMode,
 }) => {
   const [selectedTab, setSelectedTab] = useState(selectedTabIndex);
+  const animatedValue = useRef(new Animated.Value(selectedTabIndex)).current;
 
   const onPress = useCallback(
     index => {
       setSelectedTab(index);
+      Animated.timing(animatedValue, {
+        toValue: index,
+        duration: 100,
+        useNativeDriver: false,
+      }).start();
       navigation.navigate(tabArrays[index].routeNames);
     },
-    [navigation],
+    [navigation, animatedValue],
+  );
+
+  const animatedBackgroundColor = useMemo(
+    () =>
+      animatedValue.interpolate({
+        inputRange: tabArrays.map((_, i) => i),
+        outputRange: tabArrays.map(() =>
+          isDarkMode ? 'rgb(240,248,255)' : 'rgba(0, 0, 0, 0.4)',
+        ),
+      }),
+    [animatedValue, isDarkMode],
   );
 
   return (
-    <View style={[styles.tabBar, {backgroundColor: '#EA2C62'}]}>
-      {tabArrays.map((route, index) => {
-        const isFocused = useIsFocused();
-
-        return (
-          <Ripple
-            key={index}
-            onPress={() => onPress(index)}
-            rippleCentered
-            rippleSize={100}
-            rippleColor={theme.color.dimWhite}
-            style={styles.tabButton}>
-            <Animated.View
-              style={[
-                styles.iconContainer,
-                {
-                  borderTopWidth: index === selectedTab ? 2 : 0,
-                  borderTopColor: 'white',
-                },
-              ]}>
-              <VectorIcon
-                type={route.icon.type}
-                name={route.icon.name}
-                color={'white'}
-                size={getFontSize(2.5)}
-              />
-              {selectedTab === index && (
-                <Animated.Text
-                  style={[
-                    styles.tabText,
-                    {
-                      color: 'white',
-                    },
-                  ]}>
-                  {isFocused ? route.title : ''}
-                </Animated.Text>
-              )}
-            </Animated.View>
-          </Ripple>
-        );
-      })}
+    <View
+      style={[
+        styles.tabBar,
+        {
+          backgroundColor: isDarkMode ? currentBgColor : '#F5F5F5',
+          borderTopWidth: 0.5,
+          borderTopColor: isDarkMode ? '#F5F5F5' : currentTextColor,
+        },
+      ]}>
+      {tabArrays.map((route, index) => (
+        <TouchableOpacity
+          key={index}
+          onPress={() => onPress(index)}
+          style={styles.iconContainer}>
+          <Animated.View
+            style={[
+              selectedTab === index && styles.selectedTab,
+              {
+                backgroundColor:
+                  selectedTab === index
+                    ? animatedBackgroundColor
+                    : 'transparent',
+              },
+            ]}>
+            <VectorIcon
+              type={
+                selectedTab === index ? route.activeIcon.type : route.icon.type
+              }
+              name={
+                selectedTab === index ? route.activeIcon.name : route.icon.name
+              }
+              color={
+                (isDarkMode && selectedTab === index) ||
+                (!isDarkMode && selectedTab !== index)
+                  ? 'black'
+                  : 'white'
+              }
+              size={getFontSize(selectedTab === index ? 2.6 : 2.5)}
+            />
+          </Animated.View>
+          <Text
+            style={[
+              styles.tabText,
+              {
+                fontFamily:
+                  selectedTab === index
+                    ? theme.font.semiBold
+                    : theme.font.medium,
+                color: isDarkMode ? 'white' : 'black',
+              },
+            ]}>
+            {route.title}
+          </Text>
+        </TouchableOpacity>
+      ))}
     </View>
   );
 };
 
-const TabNav = props => {
-  const {currentBgColor, currentTextColor} = useSelector(state => state.user);
+const TabNav = memo(() => {
+  const {currentBgColor, currentTextColor, isDarkMode} = useSelector(
+    state => state.user,
+  );
+
   const tabBarOptions = useMemo(
     () => ({
       initialRouteName: tabArrays[0].routeNames,
@@ -109,8 +145,15 @@ const TabNav = props => {
   return (
     <View style={styles.navigatorContainer}>
       <Tab.Navigator
+        sceneContainerStyle={styles.sceneContainer}
         tabBar={navigation => (
-          <CustomTabBar {...navigation} {...tabBarOptions} />
+          <CustomTabBar
+            {...navigation}
+            {...tabBarOptions}
+            currentBgColor={currentBgColor}
+            currentTextColor={currentTextColor}
+            isDarkMode={isDarkMode}
+          />
         )}>
         {tabArrays.map((e, i) => (
           <Tab.Screen
@@ -123,46 +166,41 @@ const TabNav = props => {
       </Tab.Navigator>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   navigatorContainer: {
     flex: 1,
-    // borderTopLeftRadius: 15,
-    // borderTopRightRadius: 15,
-    overflow: 'hidden',
   },
   tabBar: {
     height: getResHeight(8),
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: 'grey',
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: getResHeight(2),
-    },
+    shadowOffset: {width: 0, height: getResHeight(2)},
     shadowOpacity: 0.25,
     shadowRadius: 8,
     elevation: 5.5,
   },
-  tabButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   iconContainer: {
     height: getResHeight(8),
     width: getResHeight(8),
-    // borderRadius:""
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'hidden',
+  },
+  selectedTab: {
+    paddingHorizontal: getResHeight(2),
+    paddingVertical: getResHeight(0.2),
+    borderRadius: 20,
   },
   tabText: {
-    fontFamily: theme.font.medium,
+    fontFamily: theme.font.regular,
     fontSize: getFontSize(1.5),
-    // marginTop: 4,
+  },
+  sceneContainer: {
+    // Additional styles can be added here if needed
   },
 });
 

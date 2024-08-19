@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, memo} from 'react';
 import {View, SafeAreaView, Animated, Keyboard} from 'react-native';
 import {useSelector} from 'react-redux';
 import CustomHeader from '../../../Components/CustomHeader.js';
@@ -15,7 +15,7 @@ const initialState = {
   searchText: '',
 };
 
-const index = props => {
+const index = memo(props => {
   const {navigation} = props;
   const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
@@ -101,6 +101,6 @@ const index = props => {
       </View>
     </SafeAreaView>
   );
-};
+});
 
 export default index;

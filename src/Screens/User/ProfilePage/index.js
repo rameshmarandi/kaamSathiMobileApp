@@ -6,7 +6,7 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import React from 'react';
+import React, {memo} from 'react';
 import theme from '../../../utility/theme';
 import {
   ButtonIconComp,
@@ -25,7 +25,7 @@ import {VectorIcon} from '../../../Components/VectorIcon';
 import {useSelector} from 'react-redux';
 import {Image} from 'react-native';
 
-const index = props => {
+const index = memo(props => {
   const {navigation} = props;
   const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
@@ -47,8 +47,18 @@ const index = props => {
         flex: 1,
         backgroundColor: currentBgColor,
       }}>
-      <StatusBarComp />
+      {/* <StatusBarComp /> */}
 
+      <CustomHeader
+        Hamburger={() => {
+          navigation.openDrawer();
+          // Keyboard.dismiss();
+        }}
+        onPressNotificaiton={() => {
+          navigation.navigate('UserNotification');
+        }}
+        centerLogo={true}
+      />
       <FlatList
         data={[0, 1, 2]}
         renderItem={({item, index}) => {
@@ -57,7 +67,7 @@ const index = props => {
               return (
                 <>
                   <View>
-                    <View
+                    {/* <View
                       style={{
                         position: 'absolute',
                         zIndex: 1,
@@ -70,7 +80,7 @@ const index = props => {
                         }}
                         // screenTitle={MsgConfig.profile}
                       />
-                    </View>
+                    </View> */}
 
                     <View
                       style={{
@@ -186,9 +196,9 @@ const index = props => {
       />
     </SafeAreaView>
   );
-};
+});
 
-const BioCompoent = props => {
+const BioCompoent = memo(props => {
   const {currentBgColor, bioData, currentTextColor} = props;
   return (
     <>
@@ -287,7 +297,7 @@ const BioCompoent = props => {
       </View>
     </>
   );
-};
+});
 const styles = StyleSheet.create({
   bioRow: {
     flexDirection: 'row',

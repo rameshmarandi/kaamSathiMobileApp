@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, memo} from 'react';
 import {View, Text, Image, FlatList, SafeAreaView, Button} from 'react-native';
 import {useSelector} from 'react-redux';
 import {
@@ -13,6 +13,7 @@ import ConfirmAlert from '../../../Components/ConfirmAlert';
 import CustomBottomSheet from '../../../Components/CustomBottomSheet';
 import {VectorIcon} from '../../../Components/VectorIcon';
 import theme from '../../../utility/theme';
+import {Surface} from 'react-native-paper';
 import MsgConfig from '../../../Config/MsgConfig';
 import {
   ButtonIconComp,
@@ -23,7 +24,6 @@ import {ScrollView} from 'react-native-gesture-handler';
 import FormikHandler from '../../../Components/FormikHandler';
 import {TextInput} from 'react-native';
 import WaveButton from '../../../Components/WaveButton';
-import ExampleUsage from '../../../Components/ExampleUsage';
 
 const demoUsers = [
   {
@@ -333,7 +333,7 @@ const initialState = {
   searchText: '',
 };
 
-const Index = props => {
+const Index = memo(props => {
   const {navigation} = props;
   const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
@@ -680,6 +680,6 @@ const Index = props => {
       </View>
     </SafeAreaView>
   );
-};
+});
 
 export default Index;

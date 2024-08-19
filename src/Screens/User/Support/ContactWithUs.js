@@ -1,25 +1,19 @@
-import React, {Component, useState, useRef, useEffect} from 'react';
-import {
-  Text,
-  View,
-  SafeAreaView,
- 
-} from 'react-native';
+import React, {Component, useState, useRef, memo, useEffect} from 'react';
+import {Text, View, SafeAreaView} from 'react-native';
 
 import {Formik} from 'formik';
 import theme from '../../../utility/theme';
 
-
-
-import {
-  getFontSize,
-} from '../../../utility/responsive';
+import {getFontSize} from '../../../utility/responsive';
 
 import CustomHeader from '../../../Components/CustomHeader';
-import { backgroundColorHandler, textColorHandler } from '../../../Components/commonHelper';
+import {
+  backgroundColorHandler,
+  textColorHandler,
+} from '../../../Components/commonHelper';
 import MsgConfig from '../../../Config/MsgConfig';
 
-const ContactWithUs = props => {
+const ContactWithUs = memo(props => {
   useEffect(() => {}, []);
   return (
     <>
@@ -53,7 +47,7 @@ const ContactWithUs = props => {
       </SafeAreaView>
     </>
   );
-};
+});
 
 const HeaderAndDescComp = props => {
   const {title, desc} = props;
@@ -65,10 +59,10 @@ const HeaderAndDescComp = props => {
         }}>
         <Text
           style={{
-              color: textColorHandler(),
+            color: textColorHandler(),
             fontSize: getFontSize(2),
             fontFamily: theme.font.medium,
-            fontWeight:"800"
+            fontWeight: '800',
           }}>
           {title}
         </Text>

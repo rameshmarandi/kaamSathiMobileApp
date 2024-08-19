@@ -26,6 +26,7 @@ import {
   handleNumberChange,
   handleTextChange,
 } from '../../../Components/InputHandlers';
+import {TextInput} from 'react-native-paper';
 
 const Index = props => {
   const {navigation} = props;
@@ -167,6 +168,9 @@ const Index = props => {
     }
   };
 
+  const [value, setValue] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
+
   // Render the appropriate form fields based on the current step
   const renderStep = (
     values,
@@ -182,6 +186,27 @@ const Index = props => {
       case 1:
         return (
           <>
+            <TextInput
+              label="Username"
+              value={value}
+              onChangeText={setValue}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              theme={{
+                colors: {
+                  primary: isFocused ? 'green' : 'green', // Label color when focused (and underline color)
+                  text: 'aqua', // Text color inside the input
+                  placeholder: 'green', // Placeholder color when input is empty
+                  background: 'pink', // Background color of the input
+                  accent: 'purple', // Accent color (like underline when not focused)
+                },
+              }}
+              style={{
+                backgroundColor: 'pink',
+                color: 'black', // Default text color
+              }}
+              placeholderTextColor={isFocused || value ? 'red' : 'red'} // Placeholder color when not focused
+            />
             <MasterTextInput
               label="Full name"
               placeholder="Enter full name"

@@ -68,7 +68,7 @@ const initialState = {
   searchText: '',
 };
 
-const index = props => {
+const index = memo(props => {
   const {navigation} = props;
   let {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
@@ -380,6 +380,6 @@ const index = props => {
       </View>
     </SafeAreaView>
   );
-};
+});
 
 export default index;

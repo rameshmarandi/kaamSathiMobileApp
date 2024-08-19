@@ -17,6 +17,8 @@ import Members from './Admin/Members/index';
 import AdminContact from './Admin/Contactus/AdminContact';
 import ChurchMap from './Admin/ChurchMap/index';
 import AddMemberForm from './Admin/Members/AddMemberForm';
+import Approval from './Admin/Members/Approval';
+
 const UserAllScreens = {
   HomePage,
   ProfilePage,
@@ -35,6 +37,7 @@ const AdminScreens = {
   AdminContact,
   ChurchMap,
   AddMemberForm,
+  Approval,
 };
 
 export default AllScreens = {

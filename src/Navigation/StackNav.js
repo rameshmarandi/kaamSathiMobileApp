@@ -30,11 +30,12 @@ export function AdminHomeStack(props) {
           component={AllScreens.AdminDashboard}
           // options={screenOptions}
         />
-        <Stack.Screen
+
+        {/* <Stack.Screen
           name={'Profile'}
           component={AllScreens.ProfilePage}
           // options={screenOptions}
-        />
+        /> */}
       </Stack.Navigator>
     </>
   );
@@ -60,6 +61,19 @@ export function ProfileStack() {
         <Stack.Screen
           name={'Profile'}
           component={AllScreens.ProfilePage}
+          // options={screenOptions}
+        />
+      </Stack.Navigator>
+    </>
+  );
+}
+export function ApprovalStack() {
+  return (
+    <>
+      <Stack.Navigator screenOptions={{...transitionCard, ...screenOptions}}>
+        <Stack.Screen
+          name={'ApprovalScreen'}
+          component={AllScreens.Approval}
           // options={screenOptions}
         />
       </Stack.Navigator>
