@@ -21,8 +21,8 @@ const Stack = createNativeStackNavigator();
 LogBox.ignoreAllLogs(true);
 
 const App = () => {
-  // StatusBar.setBarStyle('light-content');
-  // StatusBar.setBackgroundColor(theme.color.darkTheme); // Set your desired background color
+  StatusBar.setBarStyle('light-content');
+  StatusBar.setBackgroundColor(theme.color.darkTheme); // Set your desired background color
 
   const [isLoading, setIsLoading] = useState(true);
   const [isLogedIn, setIsLogedIn] = useState(true);

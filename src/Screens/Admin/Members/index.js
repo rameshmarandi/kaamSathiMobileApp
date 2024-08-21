@@ -488,12 +488,7 @@ const Index = memo(props => {
       }}>
       <StatusBarComp />
 
-      <View
-        style={
-          {
-            // marginTop: '4%',
-          }
-        }>
+      <View style={{}}>
         <CustomHeader
           backPress={() => {
             navigation.goBack();
@@ -511,7 +506,6 @@ const Index = memo(props => {
         <WaveButton
           onPress={() => {
             props.navigation.navigate('AddMemberForm');
-            // alert('sdf');
           }}
         />
       </View>

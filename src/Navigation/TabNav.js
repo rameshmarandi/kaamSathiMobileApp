@@ -56,16 +56,28 @@ const CustomTabBar = ({
     [navigation, animatedValue],
   );
 
-  const animatedBackgroundColor = useMemo(
-    () =>
-      animatedValue.interpolate({
-        inputRange: tabArrays.map((_, i) => i),
-        outputRange: tabArrays.map(() =>
-          isDarkMode ? 'rgb(240,248,255)' : 'rgba(0, 0, 0, 0.4)',
-        ),
-      }),
-    [animatedValue, isDarkMode],
-  );
+  // const animatedBackgroundColor = useMemo(
+  //   () =>
+  //     animatedValue.interpolate({
+  //       inputRange: tabArrays.map((_, i) => i),
+  //       outputRange: tabArrays.map(() =>
+  //         isDarkMode ? 'rgb(240,248,255)' : 'rgba(0, 0, 0, 0.4)',
+  //       ),
+  //     }),
+  //   [animatedValue, isDarkMode],
+  // );
+
+  const animatedBackgroundColor = useMemo(() => {
+    const totalTabs = tabArrays.length;
+
+    return animatedValue.interpolate({
+      inputRange: tabArrays.map((_, i) => i),
+      outputRange: tabArrays.map((_, i) =>
+        isDarkMode ? `rgb(240,248,255)` : `rgba(0, 0, 0)`,
+      ),
+      extrapolate: 'clamp', // Prevents the animation from going beyond the input range
+    });
+  }, [animatedValue, isDarkMode, selectedTabIndex]);
 
   return (
     <View
@@ -90,6 +102,7 @@ const CustomTabBar = ({
                   selectedTab === index
                     ? animatedBackgroundColor
                     : 'transparent',
+                // zIndex: -9999999,
               },
             ]}>
             <VectorIcon
@@ -105,6 +118,9 @@ const CustomTabBar = ({
                   ? 'black'
                   : 'white'
               }
+              style={{
+                zIndex: 9999999,
+              }}
               size={getFontSize(selectedTab === index ? 2.6 : 2.5)}
             />
           </Animated.View>
@@ -185,10 +201,14 @@ const styles = StyleSheet.create({
     elevation: 5.5,
   },
   iconContainer: {
-    height: getResHeight(8),
-    width: getResHeight(8),
+    flex: 1,
+    // height: getResHeight(8),
+    // width: getResHeight(8),
     justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: getResHeight(1), // Dynamic padding to adjust for smaller screens
+    minWidth: getResHeight(6),
+    // backgroundColor: 'red',
   },
   selectedTab: {
     paddingHorizontal: getResHeight(2),

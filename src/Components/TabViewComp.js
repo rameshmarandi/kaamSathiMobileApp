@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
+import React, {useState, memo} from 'react';
 import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 
 const initialLayout = {width: Dimensions.get('window').width};
 
-const TabViewComp = props => {
+const TabViewComp = memo(props => {
   const {
     routes,
     scenes,
@@ -44,6 +44,6 @@ const TabViewComp = props => {
       initialLayout={initialLayout}
     />
   );
-};
+});
 
 export default TabViewComp;

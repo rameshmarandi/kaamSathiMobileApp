@@ -1,5 +1,5 @@
 import React, {useState, useEffect, memo} from 'react';
-import {View, SafeAreaView, Animated, Keyboard} from 'react-native';
+import {View, SafeAreaView, Animated, Text, Keyboard} from 'react-native';
 import {useSelector} from 'react-redux';
 import CustomHeader from '../../../Components/CustomHeader.js';
 import {StatusBarComp} from '../../../Components/commonComp.js';
@@ -8,6 +8,14 @@ import SearchBarComp from '../../../Components/SearchBarComp.js';
 import SquareCardComp from '../../../Components/SquareCardComp.js';
 import useScrollDirection from '../../../Components/useScrollDirection';
 import {adminDashboardCardData} from '../../../Components/StaticDataHander.js';
+import {StyleSheet} from 'react-native';
+import {
+  getFontSize,
+  getResHeight,
+  getResWidth,
+} from '../../../utility/responsive/index.js';
+import theme from '../../../utility/theme/index.js';
+import AdminUpcomingEvents from '../AdminEvents/AdminUpcomingEvents.js';
 
 const initialState = {
   filteredData: adminDashboardCardData,
@@ -82,25 +90,44 @@ const index = memo(props => {
 
       <View style={{flex: 1}}>
         <Animated.FlatList
-          data={[0]}
+          data={[0, 1]}
           showsVerticalScrollIndicator={false}
           onScroll={Animated.event(
             [{nativeEvent: {contentOffset: {y: scrollY}}}],
             {useNativeDriver: false},
           )}
-          renderItem={() => (
-            <SquareCardComp
-              filteredData={filteredData}
-              onPress={item => {
-                console.log('Navigate_route', item.routeName);
-                props.navigation.navigate(item.routeName);
-              }}
-            />
-          )}
+          renderItem={({item, index}) => {
+            switch (index) {
+              case 0:
+                return (
+                  <>
+                    <View style={styles.upcomingContainer}>
+                      <AdminUpcomingEvents />
+                    </View>
+                  </>
+                );
+              case 1:
+                return (
+                  <SquareCardComp
+                    filteredData={filteredData}
+                    onPress={item => {
+                      console.log('Navigate_route', item.routeName);
+                      props.navigation.navigate(item.routeName);
+                    }}
+                  />
+                );
+            }
+          }}
         />
       </View>
     </SafeAreaView>
   );
+});
+
+const styles = StyleSheet.create({
+  upcomingContainer: {
+    marginHorizontal: getResWidth(5),
+  },
 });
 
 export default index;

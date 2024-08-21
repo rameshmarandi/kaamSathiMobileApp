@@ -16,6 +16,7 @@ import {useSelector} from 'react-redux';
 import theme from '../../../utility/theme';
 import CustomHeader from '../../../Components/CustomHeader';
 // import {getResHeight, getFontSize} from '../utility/responsive'; // Assuming you have responsive utilities
+import ConfirmAlert from '../../../Components/ConfirmAlert';
 
 const sampleData = [
   {id: '1', name: 'John Doe', image: ''},
@@ -72,43 +73,61 @@ const ApprovalCard = memo(
             ]}>
             {item.name}
           </Text>
-          <Text
-            style={[
-              styles.textStyles,
-              {color: currentTextColor},
-              {},
-            ]}>{`Gender : Male`}</Text>
-          <Text
-            style={[
-              styles.textStyles,
-              {color: currentTextColor},
-              {},
-            ]}>{`Dob : 7 Aug 2021`}</Text>
-          <Text
-            style={[
-              styles.textStyles,
-              {color: currentTextColor},
-              {},
-            ]}>{`Mobile : 9999999887`}</Text>
-          <Text
-            style={[
-              styles.textStyles,
-              {color: currentTextColor},
-              {},
-            ]}>{`DOJ : 5 Aug 2024`}</Text>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={[styles.button, styles.rejectButton]}
-              onPress={() => onReject(item.id)}>
+          <View
+            style={{
+              flexDirection: 'column',
+              flexWrap: 'wrap',
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+              }}>
               <Text
                 style={[
-                  styles.buttonText,
-                  {
-                    // color: currentTextColor,
-                  },
-                ]}>
-                Reject
-              </Text>
+                  styles.textStyles,
+                  {color: currentTextColor},
+                  {},
+                ]}>{`Gender : Male`}</Text>
+              <Text
+                style={[
+                  styles.textStyles,
+                  {color: currentTextColor},
+                  {},
+                ]}>{`Dob : 7 Aug 2021`}</Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+              }}>
+              <Text
+                style={[
+                  styles.textStyles,
+                  {color: currentTextColor},
+                  {},
+                ]}>{`Mob : 9999999887`}</Text>
+              <Text
+                style={[
+                  styles.textStyles,
+                  {color: currentTextColor},
+                  {},
+                ]}>{`DOJ : 5 Aug 2024`}</Text>
+            </View>
+          </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[
+                styles.button,
+                styles.rejectButton,
+                {
+                  marginRight: getResHeight(0.5),
+                },
+              ]}
+              onPress={() => onReject(item.id)}>
+              <Text style={[styles.buttonText, {}]}>Reject</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.button, styles.acceptButton]}
@@ -158,6 +177,7 @@ const Approval = memo(props => {
   const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
   );
+  const [showAlert, setShowAlert] = useState(false);
   const {navigation} = props;
   const handleAccept = id => {
     // Handle accept logic
@@ -187,6 +207,13 @@ const Approval = memo(props => {
           backgroundColor: currentBgColor,
         },
       ]}>
+      <ConfirmAlert
+        visible={showAlert}
+        onCancel={() => setShowAlert(false)}
+        onConfirm={() => {
+          setShowAlert(false);
+        }}
+      />
       <CustomHeader
         Hamburger={() => {
           navigation.openDrawer();
@@ -231,29 +258,31 @@ const styles = StyleSheet.create({
     marginBottom: getResHeight(1),
     overflow: 'hidden',
     // alignItems: 'center',
-    padding: getResHeight(1),
+    paddingHorizontal: getResHeight(1.5),
+    paddingVertical: getResHeight(2),
     margin: getResHeight(0.4),
   },
   image: {
     width: getResHeight(10),
     height: getResHeight(10),
     borderRadius: 50,
-    marginRight: getResHeight(2),
+    marginRight: getResHeight(1),
     backgroundColor: '#f2f2f2',
   },
   textContainer: {
     flex: 1,
   },
   name: {
-    fontSize: getFontSize(2.1),
+    fontSize: getFontSize(1.9),
     fontFamily: theme.font.bold,
   },
   textStyles: {
     fontFamily: theme.font.medium,
-    fontSize: getFontSize(1.7),
+    fontSize: getFontSize(1.5),
     marginBottom: getResHeight(0.5),
   },
   buttonContainer: {
+    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -261,7 +290,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 5,
     paddingVertical: getResHeight(1),
-    marginHorizontal: getResHeight(0.5),
+
     justifyContent: 'center',
     alignItems: 'center',
   },
