@@ -12,17 +12,36 @@ import theme from '../../../utility/theme/index.js';
 import * as Animatable from 'react-native-animatable';
 
 const AdminUpcomingEvents = memo(() => {
-  const {currentBgColor, currentTextColor} = useSelector(state => state.user);
+  const {currentBgColor, currentTextColor, isDarkMode} = useSelector(
+    state => state.user,
+  );
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
 
   const routes = [{title: 'Birthday'}, {title: 'Anniversaries'}];
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          borderWidth: 1,
+          borderColor: 'white',
+          padding: getResHeight(2),
+          borderRadius: getResHeight(1),
+        },
+      ]}>
       <Text style={[styles.categoryTitle, {color: currentTextColor}]}>
         Upcoming Birthday & Anniversaries
       </Text>
-      <View style={styles.tabContainer}>
+      <View
+        style={[
+          styles.tabContainer,
+          {
+            borderColor: isDarkMode ? currentBgColor : currentTextColor,
+            backgroundColor: isDarkMode ? currentTextColor : currentBgColor,
+            borderWidth: 1,
+          },
+        ]}>
         {routes.map((item, index) => {
           const isActive = currentTabIndex === index;
           return (
@@ -87,9 +106,7 @@ const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: 'row',
     width: '100%',
-    borderColor: 'white',
-    backgroundColor: 'white',
-    borderWidth: 1,
+    paddingHorizontal: '1%',
     borderRadius: 50,
     overflow: 'hidden', // Ensure the content inside does not overflow
   },
@@ -98,7 +115,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: '3%',
-
+    marginVertical: '1%',
     borderRadius: 50,
     borderWidth: 1,
   },
