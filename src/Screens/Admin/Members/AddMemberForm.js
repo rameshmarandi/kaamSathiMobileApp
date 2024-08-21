@@ -186,7 +186,7 @@ const Index = props => {
       case 1:
         return (
           <>
-            <TextInput
+            {/* <TextInput
               label="Username"
               value={value}
               onChangeText={setValue}
@@ -206,7 +206,7 @@ const Index = props => {
                 color: 'black', // Default text color
               }}
               placeholderTextColor={isFocused || value ? 'red' : 'red'} // Placeholder color when not focused
-            />
+            /> */}
             <MasterTextInput
               label="Full name"
               placeholder="Enter full name"

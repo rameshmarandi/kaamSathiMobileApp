@@ -7,6 +7,7 @@ import {getFontSize, getResHeight, getResWidth} from '../utility/responsive';
 
 const SearchBarComp = ({
   autoFocus = false,
+  disabled = false,
   placeholder,
   containerStyle,
   onChangeText,
@@ -14,6 +15,7 @@ const SearchBarComp = ({
   placeholderTextColor,
   autoCapitalize = 'none',
   isLoading,
+  onFocus,
   round = 10,
 }) => {
   const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
@@ -33,10 +35,12 @@ const SearchBarComp = ({
             fontSize: getFontSize(3),
           },
         }}
+        disabled={disabled}
         showLoading={isLoading}
         autoCapitalize={autoCapitalize}
         autoFocus={autoFocus}
         onChangeText={onChangeText}
+        onFocus={onFocus}
         value={value}
         round={round}
         cursorColor={isDarkMode ? theme.color.darkTheme : currentTextColor}

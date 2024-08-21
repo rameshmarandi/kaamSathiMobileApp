@@ -20,6 +20,7 @@ import ebook from '../../assets/resources/ebook.png';
 
 //Admin
 import members from '../../assets/admin/members.png';
+import add_new_user from '../../assets/admin/add_new_user.png';
 import camera from '../../assets/admin/camera.png';
 import DBible from '../../assets/admin/3DBible.png';
 import pdf from '../../assets/admin/pdf.png';
@@ -54,6 +55,7 @@ const homeIcons = {
   birthday,
   members,
   camera,
+  add_new_user,
   DBible,
   pdf,
   prayer,

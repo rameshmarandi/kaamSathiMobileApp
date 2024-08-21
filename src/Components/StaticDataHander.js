@@ -169,6 +169,12 @@ const adminDashboardCardData = [
         image: theme.assets.adminManag,
         routeName: 'AdminManagment',
       },
+      {
+        id: 1,
+        title: 'Add New User',
+        image: theme.assets.add_new_user,
+        routeName: 'AddMemberForm',
+      },
     ],
   },
   {
