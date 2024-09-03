@@ -227,6 +227,7 @@ const Approval = memo(props => {
       <View
         style={{
           paddingHorizontal: '3%',
+          flex: 1,
         }}>
         <FlatList
           data={sampleData}

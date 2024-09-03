@@ -13,8 +13,6 @@ import {getFontSize, getResHeight, getResWidth} from '../../utility/responsive';
 import {
   textColorHandler,
   backgroundColorHandler,
-  setAsyncValue,
-  getAsyncValue,
 } from '../../Components/commonHelper';
 import theme from '../../utility/theme';
 import {Button} from 'react-native-elements';

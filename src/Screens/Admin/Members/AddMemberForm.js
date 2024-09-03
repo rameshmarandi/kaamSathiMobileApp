@@ -63,44 +63,44 @@ const Index = props => {
   };
 
   // Set up event listeners for keyboard visibility and back button press
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      event => {
-        setKeyboardHeight(event.endCoordinates.height - getResHeight(15));
-      },
-    );
+  // useEffect(() => {
+  //   const keyboardDidShowListener = Keyboard.addListener(
+  //     'keyboardDidShow',
+  //     event => {
+  //       setKeyboardHeight(event.endCoordinates.height - getResHeight(15));
+  //     },
+  //   );
 
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        setKeyboardHeight(0);
-      },
-    );
+  //   const keyboardDidHideListener = Keyboard.addListener(
+  //     'keyboardDidHide',
+  //     () => {
+  //       setKeyboardHeight(0);
+  //     },
+  //   );
 
-    const handleBackPress = () => {
-      if (step > 1) {
-        setStep(step - 1);
-        return true; // Prevent default behavior (e.g., exiting the app)
-      }
-      return false; // Allow default behavior if on the first step
-    };
+  //   const handleBackPress = () => {
+  //     if (step > 1) {
+  //       setStep(step - 1);
+  //       return true; // Prevent default behavior (e.g., exiting the app)
+  //     }
+  //     return false; // Allow default behavior if on the first step
+  //   };
 
-    BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+  //   BackHandler.addEventListener('hardwareBackPress', handleBackPress);
 
-    // Cleanup event listeners on component unmount
-    return () => {
-      keyboardDidHideListener.remove();
-      keyboardDidShowListener.remove();
-      BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
-    };
-  }, [step]);
+  //   // Cleanup event listeners on component unmount
+  //   return () => {
+  //     keyboardDidHideListener.remove();
+  //     keyboardDidShowListener.remove();
+  //     BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+  //   };
+  // }, [step]);
 
   const onAcceptButtonClick = () => {
     console.log(' formikRef.current', formikRef.current.values);
 
     // return;
-    setKeyboardHeight(0);
+    // setKeyboardHeight(0);
     formikRef.current.resetForm(); // Reset the form
     setIsOTPFildVisible(false); // Hide OTP field
     setStep(1); // Reset to step 1

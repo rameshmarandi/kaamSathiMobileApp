@@ -2,7 +2,7 @@ import React, {useState, useCallback, useMemo, memo, useRef} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {StyleSheet, View, Text, Animated, TouchableOpacity} from 'react-native';
 import {VectorIcon} from '../Components/VectorIcon';
-import {getFontSize, getResHeight} from '../utility/responsive';
+import {getFontSize, getResHeight, getResWidth} from '../utility/responsive';
 import {useSelector} from 'react-redux';
 import {AdminHomeStack, ApprovalStack, ProfileStack} from './StackNav';
 import theme from '../utility/theme';
@@ -137,6 +137,34 @@ const CustomTabBar = ({
             ]}>
             {route.title}
           </Text>
+          {index == 1 && (
+            <>
+              <View
+                style={{
+                  position: 'absolute',
+                  right:
+                    selectedTab === index ? getResWidth(9.3) : getResWidth(9.0),
+                  top: getResHeight(0.3),
+                  height: getResHeight(2.4),
+                  width: getResHeight(2.4),
+                  backgroundColor: 'red',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 100,
+                  borderColor: currentTextColor,
+                  borderWidth: 1,
+                }}>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontFamily: theme.font.semiBold,
+                    fontSize: getFontSize(1.4),
+                  }}>
+                  12
+                </Text>
+              </View>
+            </>
+          )}
         </TouchableOpacity>
       ))}
     </View>

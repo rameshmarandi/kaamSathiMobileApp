@@ -1,13 +1,15 @@
-import React, {useState, useEffect, memo} from 'react';
+import React, {useState, useEffect, memo, useRef} from 'react';
 import {
   View,
   SafeAreaView,
   Animated,
-  Text,
   Keyboard,
   TouchableWithoutFeedback,
   Modal,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import CustomHeader from '../../../Components/CustomHeader.js';
@@ -17,7 +19,6 @@ import SearchBarComp from '../../../Components/SearchBarComp.js';
 import SquareCardComp from '../../../Components/SquareCardComp.js';
 import useScrollDirection from '../../../Components/useScrollDirection';
 import {adminDashboardCardData} from '../../../Components/StaticDataHander.js';
-import {StyleSheet} from 'react-native';
 import {
   getFontSize,
   getResHeight,
@@ -34,15 +35,16 @@ const initialState = {
   searchModalVisible: false,
 };
 
-const index = memo(props => {
+const Index = memo(props => {
   const {navigation} = props;
   const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
   );
 
   const [state, setState] = useState(initialState);
-  // const [searchModalVisible, setSearchModalVisible] = useState(false);
   const {filteredData, isLoading, searchText, searchModalVisible} = state;
+
+  const searchBarRef = useRef(null);
 
   const updateState = newState =>
     setState(prevState => ({...prevState, ...newState}));
@@ -71,6 +73,15 @@ const index = memo(props => {
       ? {transform: [{translateY: -100}, {scale: 0.9}]}
       : {transform: [{translateY: 0}, {scale: 1}]};
 
+  useEffect(() => {
+    if (searchModalVisible) {
+      // Use timeout to wait for the modal to be fully visible
+      setTimeout(() => {
+        searchBarRef.current?.focus();
+      }, 100); // Adjust timeout as necessary
+    }
+  }, [searchModalVisible]);
+
   return (
     <SafeAreaView
       style={{
@@ -81,8 +92,7 @@ const index = memo(props => {
       <ControlPanelSearchModal
         visible={searchModalVisible}
         onClose={() => {
-          setState(prevState => ({...prevState, searchModalVisible: false}));
-          updateState({searchText: ''});
+          updateState({searchModalVisible: false, searchText: ''});
         }}
         handleSearch={handleSearch}
         searchText={searchText}
@@ -93,6 +103,7 @@ const index = memo(props => {
         }}
         currentBgColor={currentBgColor}
         currentTextColor={currentTextColor}
+        searchBarRef={searchBarRef}
       />
       <CustomHeader
         Hamburger={() => {
@@ -108,17 +119,10 @@ const index = memo(props => {
       <MarqueeComp textRender={`Nice to see you back, Mr Ramesh`} />
       <TouchableWithoutFeedback
         onPress={() => {
-          // setSearchModalVisible(true);
-          setState(prevState => ({...prevState, searchModalVisible: true}));
+          updateState({searchModalVisible: true});
         }}>
         <View style={{marginTop: '3%', paddingHorizontal: '1%'}}>
-          <SearchBarComp
-            placeholder="Search menus.."
-            // isLoading={isLoading}
-            // onChangeText={handleSearch}
-            // value={searchText}
-            disabled={true}
-          />
+          <SearchBarComp placeholder="Search menus.." disabled={true} />
         </View>
       </TouchableWithoutFeedback>
       <View style={{flex: 1}}>
@@ -133,11 +137,9 @@ const index = memo(props => {
             switch (index) {
               case 0:
                 return (
-                  <>
-                    <View style={styles.upcomingContainer}>
-                      <AdminUpcomingEvents />
-                    </View>
-                  </>
+                  <View style={styles.upcomingContainer}>
+                    <AdminUpcomingEvents />
+                  </View>
                 );
               case 1:
                 return (
@@ -160,9 +162,9 @@ const index = memo(props => {
 const ControlPanelSearchModal = ({
   visible,
   onClose,
-  children,
   handleSearch,
   searchText,
+  searchBarRef,
   filteredData,
   currentBgColor,
   currentTextColor,
@@ -179,49 +181,53 @@ const ControlPanelSearchModal = ({
           flex: 1,
           backgroundColor: currentBgColor,
         }}>
-        <View style={{flex: 1}}>
-          <View
-            style={{
-              paddingTop: '5%',
-              marginBottom: '3%',
-              flexDirection: 'row',
-              alignItems: 'center',
-              paddingHorizontal: '5%',
-            }}>
-            <TouchableOpacity onPress={onClose}>
-              <VectorIcon
-                type={'Ionicons'}
-                name={'arrow-back-circle'}
-                size={getFontSize(5)}
-                color={currentTextColor}
-                style={{}}
-              />
-            </TouchableOpacity>
-            <SearchBarComp
-              placeholder="Search menus.."
-              onChangeText={handleSearch}
-              value={searchText}
-              autoFocus={true}
-              containerStyle={{
-                width: getResWidth(80),
-                height: getResHeight(2),
-                alignSelf: 'center',
-                borderTopWidth: 0,
-                borderBottomWidth: 0,
-                backgroundColor: currentBgColor,
-                margin: 0,
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{flex: 1}}>
+          <View style={{flex: 1}}>
+            <View
+              style={{
+                paddingTop: '5%',
+                marginBottom: '3%',
+                flexDirection: 'row',
                 alignItems: 'center',
+                paddingHorizontal: '5%',
+              }}>
+              <TouchableOpacity onPress={onClose}>
+                <VectorIcon
+                  type={'Ionicons'}
+                  name={'arrow-back-circle'}
+                  size={getFontSize(5)}
+                  color={currentTextColor}
+                />
+              </TouchableOpacity>
+              <SearchBarComp
+                ref={searchBarRef}
+                placeholder="Search menus.."
+                onChangeText={handleSearch}
+                value={searchText}
+                autoFocus={true}
+                containerStyle={{
+                  width: getResWidth(80),
+                  height: getResHeight(2),
+                  alignSelf: 'center',
+                  borderTopWidth: 0,
+                  borderBottomWidth: 0,
+                  backgroundColor: currentBgColor,
+                  margin: 0,
+                  alignItems: 'center',
+                }}
+              />
+            </View>
+            <SquareCardComp
+              filteredData={filteredData}
+              onPress={item => {
+                onCardPress(item);
+                onClose();
               }}
             />
           </View>
-          <SquareCardComp
-            filteredData={filteredData}
-            onPress={item => {
-              onCardPress(item);
-              onClose();
-            }}
-          />
-        </View>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </Modal>
   );
@@ -233,4 +239,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default index;
+export default Index;

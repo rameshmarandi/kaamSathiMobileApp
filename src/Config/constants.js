@@ -1,6 +1,6 @@
-export const asyncKeys = {
-  loginSession: '@IsLogdIn',
-  token: '@Token',
+export const STORAGE_KEYS = {
+  USER: 'user',
+  // Add more keys here as needed
 };
 //Google map co-ordinate
 export const MapCoordinate = {

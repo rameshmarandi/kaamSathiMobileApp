@@ -184,7 +184,7 @@ const adminDashboardCardData = [
         id: 3,
         title: 'Daily Verses',
         image: theme.assets.DBible,
-        routeName: '', // Add the route name
+        routeName: 'DailyVerse', // Add the route name
       },
       {
         id: 5,

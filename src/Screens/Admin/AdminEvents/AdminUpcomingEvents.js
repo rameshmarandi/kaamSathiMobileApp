@@ -58,7 +58,8 @@ const users2 = [
     id: '2',
     name: 'John Doe',
     date: '15 September',
-    imageUri: ImgURL2,
+    imageUri:
+      'https://images.unsplash.com/photo-1480455624313-e29b44bbfde1?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Z3V5fGVufDB8fDB8fHww',
   },
   {
     id: '3',
@@ -192,7 +193,7 @@ const AdminUpcomingEvents = memo(() => {
                 color: currentTextColor,
               },
             ]}>
-            {`Next 30 Days ( ${users2.length} )`}
+            {`Next 7 Days ( ${users2.length} )`}
           </Text>
           <EventsUserList eventsUsersData={users2} />
         </View>
@@ -219,7 +220,7 @@ const AdminUpcomingEvents = memo(() => {
               color: currentTextColor,
             },
           ]}>
-          {`Next 30 Days ( ${users2.length} )`}
+          {`Next 7 Days ( ${users2.length} )`}
         </Text>
         <EventsUserList eventsUsersData={users2} />
       </>
@@ -321,7 +322,7 @@ const styles = StyleSheet.create({
     width: '50%', // Each button takes up 50% of the parent width
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: '3%',
+    paddingVertical: '2%',
     marginVertical: '1%',
     borderRadius: 50,
     borderWidth: 1,

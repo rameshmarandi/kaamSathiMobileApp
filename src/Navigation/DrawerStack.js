@@ -87,6 +87,14 @@ export default function DrawerStack(props) {
                 headerShown: false,
               }}
             />
+            <Drawer.Screen
+              name="DailyVerse"
+              component={AllScreens.DailyVerse}
+              options={{
+                headerShadowVisible: false,
+                headerShown: false,
+              }}
+            />
           </>
         ) : (
           <Drawer.Screen
