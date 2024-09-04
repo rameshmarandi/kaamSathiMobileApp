@@ -35,6 +35,7 @@ import {TouchableOpacity} from '@gorhom/bottom-sheet';
 import FAQList from '../../../Components/FAQList';
 import SectionHeader from '../../../Components/SectionHeader';
 import RadioAndCheckBoxComp from '../../../Components/RadioAndCheckBoxComp';
+import {openInAppBrowser} from '../../../Components/InAppBrowserComp';
 // import AdminContact from './AdminContact';
 
 const AdminContact = React.memo(props => {

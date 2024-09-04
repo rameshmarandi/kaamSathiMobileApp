@@ -27,6 +27,7 @@ import {
   handleTextChange,
 } from '../../../Components/InputHandlers';
 import {TextInput} from 'react-native-paper';
+import {dateFormatHander} from '../../../Components/commonHelper';
 
 const Index = props => {
   const {navigation} = props;
@@ -282,8 +283,9 @@ const Index = props => {
           <>
             <MasterTextInput
               label="Date of birth"
-              placeholder="Select birth date"
+              placeholder="Date of birth "
               isDate={true}
+              timePicker={true}
               ref={inputRefs.birthDate}
               value={values.birthDate}
               onChangeText={handleChange('birthDate')}
@@ -293,11 +295,12 @@ const Index = props => {
             />
             <MasterTextInput
               label="Date of baptism"
-              placeholder="Select baptism date"
+              placeholder="Date of baptism"
               isDate={true}
               // timePicker={true}
               ref={inputRefs.baptismDate}
               value={values.baptismDate}
+              // value={dateFormatHander(values.baptismDate, 'DD/MM/YYYY') }
               onChangeText={handleChange('baptismDate')}
               onBlur={handleBlur('baptismDate')}
               onSubmitEditing={() => setStep(3)} // Move to next step on enter
@@ -312,9 +315,13 @@ const Index = props => {
                 {label: 'Male', value: 'male'},
                 {label: 'Female', value: 'female'},
               ]}
-              value={'Female'}
-              // value={values.gender}
-              onDropdownChange={handleChange('gender')}
+              // value={'Female'}
+              value={values.gender}
+              onDropdownChange={() => {
+                setTimeout(() => {
+                  handleChange('gender');
+                }, 100);
+              }}
               onBlur={handleBlur('gender')}
               error={touched.gender && errors.gender}
             />
@@ -346,92 +353,92 @@ const Index = props => {
         screenTitle={MsgConfig.AddMemberForm}
       />
 
-      {/* <KeyboardAvoidingView
+      <KeyboardAvoidingView
         style={{flex: 1}}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}> */}
-      <ScrollView
-        ref={scrollRef}
-        contentContainerStyle={{flexGrow: 1}}
-        keyboardShouldPersistTaps="handled">
-        <View style={{flex: 1, paddingHorizontal: '5%'}}>
-          <Formik
-            innerRef={formikRef}
-            initialValues={{
-              name: '',
-              email: '',
-              mobile: '',
-              birthDate: '',
-              baptismDate: '',
-              password: '',
-              otp: '',
-              gender: '',
-            }}
-            validationSchema={getValidationSchema()}
-            onSubmit={handleSubmit}>
-            {({
-              handleChange,
-              handleBlur,
-              handleSubmit,
-              values,
-              errors,
-              touched,
-            }) => (
-              <>
-                <ScrollView
-                  contentContainerStyle={{flexGrow: 1}}
-                  keyboardShouldPersistTaps="handled">
-                  <View style={{flex: 1}}>
-                    {renderStep(
-                      values,
-                      handleChange,
-                      handleBlur,
-                      errors,
-                      touched,
-                      handleSubmit,
-                    )}
-                  </View>
-                </ScrollView>
-                <CustomBottomSheet
-                  ref={bottomSheetRef}
-                  modalHeight={getResHeight(86)}>
-                  {<PrivacyPolicy onAccept={onAcceptButtonClick} />}
-                </CustomBottomSheet>
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
+        <ScrollView
+          ref={scrollRef}
+          contentContainerStyle={{flexGrow: 1}}
+          keyboardShouldPersistTaps="handled">
+          <View style={{flex: 1, paddingHorizontal: '5%'}}>
+            <Formik
+              innerRef={formikRef}
+              initialValues={{
+                name: '',
+                email: '',
+                mobile: '',
+                birthDate: '',
+                baptismDate: '',
+                password: '',
+                otp: '',
+                gender: '',
+              }}
+              validationSchema={getValidationSchema()}
+              onSubmit={handleSubmit}>
+              {({
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                values,
+                errors,
+                touched,
+              }) => (
+                <>
+                  <ScrollView
+                    contentContainerStyle={{flexGrow: 1}}
+                    keyboardShouldPersistTaps="handled">
+                    <View style={{flex: 1}}>
+                      {renderStep(
+                        values,
+                        handleChange,
+                        handleBlur,
+                        errors,
+                        touched,
+                        handleSubmit,
+                      )}
+                    </View>
+                  </ScrollView>
+                  <CustomBottomSheet
+                    ref={bottomSheetRef}
+                    modalHeight={getResHeight(86)}>
+                    {<PrivacyPolicy onAccept={onAcceptButtonClick} />}
+                  </CustomBottomSheet>
 
-                <View
-                  style={{
-                    width: getResWidth(20),
-                    alignSelf: 'center',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    flexDirection: 'row',
-                    marginBottom: '5%',
-                  }}>
-                  {[0, 1, 2].map((item, index) => (
-                    <View
-                      style={{
-                        width: getResWidth(5),
-                        height: getResHeight(0.7),
-                        borderRadius: 10,
-                        backgroundColor:
-                          step == index + 1 ? currentTextColor : 'grey',
-                      }}></View>
-                  ))}
-                </View>
-                <View
-                // style={[styles.buttonContainer, {bottom: keyboardHeight}]}
-                >
-                  <CommonButtonComp
-                    title={step === 3 ? 'Submit' : 'Next'}
-                    onPress={handleSubmit}
-                  />
-                </View>
-              </>
-            )}
-          </Formik>
-        </View>
-      </ScrollView>
-      {/* </KeyboardAvoidingView> */}
+                  <View
+                    style={{
+                      width: getResWidth(20),
+                      alignSelf: 'center',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                      marginBottom: '5%',
+                    }}>
+                    {[0, 1, 2].map((item, index) => (
+                      <View
+                        style={{
+                          width: getResWidth(5),
+                          height: getResHeight(0.7),
+                          borderRadius: 10,
+                          backgroundColor:
+                            step == index + 1 ? currentTextColor : 'grey',
+                        }}></View>
+                    ))}
+                  </View>
+                  <View
+                  // style={[styles.buttonContainer, {bottom: keyboardHeight}]}
+                  >
+                    <CommonButtonComp
+                      title={step === 3 ? 'Submit' : 'Next'}
+                      onPress={handleSubmit}
+                    />
+                  </View>
+                </>
+              )}
+            </Formik>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };

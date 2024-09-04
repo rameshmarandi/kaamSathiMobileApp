@@ -24,6 +24,7 @@ import theme from '../utility/theme';
 import {getFontSize, getResHeight} from '../utility/responsive';
 import {useSelector} from 'react-redux';
 import {Dropdown} from 'react-native-element-dropdown';
+import {VectorIcon} from './VectorIcon';
 
 const MasterTextInput = forwardRef(
   (
@@ -55,6 +56,7 @@ const MasterTextInput = forwardRef(
   ) => {
     // State to manage the visibility of the date picker modal
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const [isFocus, setIsFocus] = useState(false);
     // Fetching current theme settings from Redux store
     const {isDarkMode, currentBgColor, isAdmin, currentTextColor} = useSelector(
       state => state.user,
@@ -147,15 +149,25 @@ const MasterTextInput = forwardRef(
               minDate={minDate}
               maxDate={maxDate}
               style={styles.datePicker}
-              headerTextStyle={styles.headerTextStyle}
+              todayTextStyle={{
+                color: 'orange',
+              }}
+              // selectedTextStyle
+              headerTextStyle={[
+                styles.headerTextStyle,
+                {
+                  color: currentBgColor,
+                },
+              ]}
               yearContainerStyle={styles.yearContainerStyle}
               monthContainerStyle={styles.monthContainerStyle}
-              headerButtonColor={'#45A245'}
-              selectedItemColor={'#45A245'}
+              headerButtonColor={currentBgColor}
+              selectedItemColor={currentBgColor}
               selectedTextStyle={{
                 fontFamily: theme.font.semiBold,
                 fontSize: getFontSize(1.3),
-                color: 'white',
+                color: currentTextColor,
+                // 'white',
               }}
             />
             <View style={styles.buttonContainer}>
@@ -174,7 +186,12 @@ const MasterTextInput = forwardRef(
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.closeButton}
+                style={[
+                  styles.closeButton,
+                  {
+                    backgroundColor: currentBgColor,
+                  },
+                ]}
                 onPress={() => setShowDatePicker(false)}>
                 <Text style={styles.closeButtonText}>OK</Text>
               </TouchableOpacity>
@@ -215,6 +232,7 @@ const MasterTextInput = forwardRef(
                   backgroundColor: currentBgColor,
                   textAlignVertical: 'center',
                   height: getResHeight(6),
+                  borderColor: currentTextColor,
                 },
               ]}
               onPress={() => setShowDatePicker(true)}>
@@ -238,6 +256,8 @@ const MasterTextInput = forwardRef(
             search={dropdownSearch}
             placeholder={placeholder}
             value={value}
+            onFocus={() => setIsFocus(true)}
+            onBlur={() => setIsFocus(false)}
             onChange={onDropdownChange}
             style={[
               styles.dropdown,
@@ -246,11 +266,44 @@ const MasterTextInput = forwardRef(
                 backgroundColor: currentBgColor,
               },
             ]}
+            selectedTextProps={{
+              color: 'red',
+            }}
+            activeColor={currentBgColor}
+            containerStyle={{
+              backgroundColor: currentBgColor,
+              borderBottomLeftRadius: 10,
+              borderBottomRightRadius: 10,
+              borderTopLeftRadius: 5,
+              borderTopRightRadius: 5,
+              marginTop: '-2%',
+              borderWidth: 1,
+              borderColor: currentTextColor,
+              overflow: 'hidden',
+            }}
+            itemTextStyle={{
+              color: currentTextColor,
+              fontFamily: theme.font.regular,
+              fontSize: getFontSize(1.8),
+              margin: 0,
+              padding: 0,
+            }}
             placeholderStyle={{
-              color: 'grey',
+              color: currentTextColor,
               fontFamily: theme.font.regular,
               fontSize: getFontSize(1.9),
             }}
+            renderRightIcon={() => (
+              <VectorIcon
+                type={'AntDesign'}
+                name={isFocus ? 'upcircle' : 'downcircle'}
+                size={getFontSize(2.5)}
+                color={currentTextColor}
+                style={{
+                  zIndex: 1,
+                }}
+              />
+            )}
             selectedTextStyle={{
               color: currentTextColor,
               fontFamily: theme.font.regular,
@@ -273,7 +326,7 @@ const MasterTextInput = forwardRef(
                 keyboardType={keyboardType}
                 onSubmitEditing={onSubmitEditing}
                 maxLength={maxLength}
-                selectionColor="green"
+                selectionColor={currentTextColor}
                 cursorColor={currentTextColor}
                 style={{
                   backgroundColor: currentBgColor,
@@ -285,7 +338,7 @@ const MasterTextInput = forwardRef(
                   textAlignVertical: 'center',
                   height: getResHeight(6),
                 }}
-                textColor={isDarkMode ? currentTextColor : 'green'}
+                textColor={currentTextColor}
                 ref={textInputRef}
                 {...rest}
               />
@@ -349,6 +402,7 @@ const styles = StyleSheet.create({
   },
   dateInputText: {
     fontSize: 16,
+    // color: 'orange',
     color: 'black',
   },
   datePickerContainer: {
@@ -362,7 +416,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   headerTextStyle: {
-    color: '#45A245',
+    // color: 'red',
+    // '#45A245',
     fontFamily: theme.font.bold,
     fontSize: getFontSize(2),
   },

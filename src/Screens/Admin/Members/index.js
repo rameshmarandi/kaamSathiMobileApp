@@ -1,5 +1,13 @@
 import React, {useState, useRef, useEffect, memo} from 'react';
-import {View, Text, Image, FlatList, SafeAreaView, Button} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  FlatList,
+  SafeAreaView,
+  Button,
+} from 'react-native';
 import {useSelector} from 'react-redux';
 import {
   getResHeight,
@@ -20,8 +28,6 @@ import {
   EmptyUserProfile,
   StatusBarComp,
 } from '../../../Components/commonComp';
-import {ScrollView} from 'react-native-gesture-handler';
-import FormikHandler from '../../../Components/FormikHandler';
 import {TextInput} from 'react-native';
 import WaveButton from '../../../Components/WaveButton';
 
@@ -405,16 +411,6 @@ const Index = memo(props => {
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
       />
-    );
-  };
-
-  const renderContent1 = () => {
-    return (
-      <>
-        <View>
-          <Text>Ramesh Test herer</Text>
-        </View>
-      </>
     );
   };
 

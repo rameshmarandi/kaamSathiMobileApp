@@ -28,6 +28,7 @@ import closeIcon from '../../assets/admin/closeIcon.png';
 import deleteIcon from '../../assets/admin/deleteIcon.png';
 import prayer from '../../assets/admin/prayer.png';
 import contact from '../../assets/admin/contact.png';
+import chatGPT from '../../assets/admin/chatGPT.jpeg';
 import alert from '../../assets/admin/alert.png';
 import adminManag from '../../assets/admin/adminManag.png';
 import churchLocation from '../../assets/admin/churchLocation.png';
@@ -61,6 +62,7 @@ const homeIcons = {
   prayer,
   closeIcon,
   deleteIcon,
+  chatGPT,
   contact,
   alert,
   adminManag,

@@ -1,6 +1,7 @@
 import theme from '../utility/theme';
 
 import {useSelector, useDispatch} from 'react-redux';
+import moment from 'moment';
 
 export const backgroundColorHandler = () => {
   let {isDarkMode} = useSelector(state => state.user);
@@ -26,4 +27,14 @@ export const textColorHandler = () => {
   } else {
     return theme.color.primary;
   }
+};
+
+export const dateFormatHander = (date, format) => {
+  // Check if the date is valid
+  if (!moment(date).isValid()) {
+    return 'Invalid date';
+  }
+
+  // Return the formatted date
+  return moment(date).format(format);
 };

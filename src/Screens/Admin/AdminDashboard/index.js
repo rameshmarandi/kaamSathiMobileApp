@@ -27,6 +27,7 @@ import {
 import theme from '../../../utility/theme/index.js';
 import AdminUpcomingEvents from '../AdminEvents/AdminUpcomingEvents.js';
 import {VectorIcon} from '../../../Components/VectorIcon.js';
+import {openInAppBrowser} from '../../../Components/InAppBrowserComp.js';
 
 const initialState = {
   filteredData: adminDashboardCardData,
@@ -116,7 +117,9 @@ const Index = memo(props => {
         centerLogo={true}
       />
 
-      <MarqueeComp textRender={`Nice to see you back, Mr Ramesh`} />
+      <MarqueeComp
+        textRender={`I can do all things through Christ who strengthens me. [Philippians 4:13] जो मुझे सामर्थ देता है उस में मैं सब कुछ कर सकता हूं। [फिलिप्पियों 4:13]`}
+      />
       <TouchableWithoutFeedback
         onPress={() => {
           updateState({searchModalVisible: true});
@@ -146,8 +149,12 @@ const Index = memo(props => {
                   <SquareCardComp
                     filteredData={filteredData}
                     onPress={item => {
+                      if (item.routeName.includes('https')) {
+                        openInAppBrowser(item.routeName);
+                      } else {
+                        props.navigation.navigate(item.routeName);
+                      }
                       console.log('Navigate_route', item.routeName);
-                      props.navigation.navigate(item.routeName);
                     }}
                   />
                 );

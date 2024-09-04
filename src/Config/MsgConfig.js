@@ -41,6 +41,7 @@ const headerTitle = {
   AdminManag: 'Admin Management',
   allMembers: 'All Members',
   ChurchMap: 'View all church',
+  dailyVerse: 'Daily verses',
   // contactUS  : 'Contact Us',
 
   AddMemberForm: 'Add Member Form',

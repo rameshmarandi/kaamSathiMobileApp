@@ -12,48 +12,8 @@ import {
 } from '../../../utility/responsive';
 import MsgConfig from '../../../Config/MsgConfig';
 import SquareCardComp from '../../../Components/SquareCardComp';
-import InAppBrowserComp, {
-  openInAppBrowser,
-} from '../../../Components/InAppBrowserComp';
-
-const FreeResourceData = [
-  {
-    id: 6,
-    title: 'E-Books (Free)',
-    image: theme.assets.ebook,
-    route: ALL_LINKS.E_BOOKS,
-  },
-  {
-    id: 1,
-    title: 'Theology & More',
-    image: theme.assets.theology,
-    route: 'theology',
-  },
-  {
-    id: 2,
-    title: 'GotQuestion (English)',
-    image: theme.assets.gotquestion,
-    route: ALL_LINKS.GOTQUESTION_ENGLISH,
-  },
-  {
-    id: 3,
-    title: 'GotQuestion (Hindi)',
-    image: theme.assets.gotquestion,
-    route: ALL_LINKS.GOTQUESTION_HINDI,
-  },
-  {
-    id: 0,
-    title: 'Missionary Biography',
-    image: theme.assets.missionary,
-    route: ALL_LINKS.MISSIONARY_BIOGRAPHY,
-  },
-  {
-    id: 4,
-    title: 'Christian Rights',
-    image: theme.assets.unity,
-    route: ALL_LINKS.CHRISTIAN_RIGHTS,
-  },
-];
+import {openInAppBrowser} from '../../../Components/InAppBrowserComp';
+import {freeResourceData} from '../../../Components/StaticDataHander';
 
 const FreeResource = ({navigation}) => {
   const handleOpenBrowser = url => {
@@ -89,9 +49,9 @@ const FreeResource = ({navigation}) => {
           }}>
           <SquareCardComp
             onPress={item => {
-              handleOpenBrowser(item.route);
+              handleOpenBrowser(item.routeName);
             }}
-            filteredData={FreeResourceData}
+            filteredData={freeResourceData}
           />
         </View>
       </View>

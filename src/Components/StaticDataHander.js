@@ -5,6 +5,7 @@ import {getFontSize} from '../utility/responsive';
 import theme from '../utility/theme';
 import {VectorIcon} from './VectorIcon';
 import {checkIsDarkMode, textColorHandler} from './commonHelper';
+import {ALL_LINKS} from '../Config/constants';
 
 const DrawerData = () => {
   const [currentTextColor, setCurrentTextColor] = useState(textColorHandler());
@@ -227,6 +228,12 @@ const adminDashboardCardData = [
         image: theme.assets.alert,
         routeName: '', // Add the route name
       },
+      {
+        id: 4,
+        title: 'ChatGPT AI',
+        image: theme.assets.chatGPT,
+        routeName: 'https://chatgpt.com/', // Add the route name
+      },
     ],
   },
   {
@@ -254,4 +261,48 @@ const adminDashboardCardData = [
   // },
 ];
 
-export {adminDashboardCardData, DrawerData};
+const freeResourceData = [
+  {
+    category: 'Spiritual Resources',
+    items: [
+      {
+        id: 6,
+        title: 'E-Books (Free)',
+        image: theme.assets.ebook,
+        routeName: ALL_LINKS.E_BOOKS,
+      },
+      {
+        id: 1,
+        title: 'Theology & More',
+        image: theme.assets.theology,
+        routeName: 'theology',
+      },
+      {
+        id: 2,
+        title: 'GotQuestion (English)',
+        image: theme.assets.gotquestion,
+        routeName: ALL_LINKS.GOTQUESTION_ENGLISH,
+      },
+      {
+        id: 3,
+        title: 'GotQuestion (Hindi)',
+        image: theme.assets.gotquestion,
+        routeName: ALL_LINKS.GOTQUESTION_HINDI,
+      },
+      {
+        id: 0,
+        title: 'Missionary Biography',
+        image: theme.assets.missionary,
+        routeName: ALL_LINKS.MISSIONARY_BIOGRAPHY,
+      },
+      {
+        id: 4,
+        title: 'Christian Rights',
+        image: theme.assets.unity,
+        routeName: ALL_LINKS.CHRISTIAN_RIGHTS,
+      },
+    ],
+  },
+];
+
+export {adminDashboardCardData, DrawerData, freeResourceData};

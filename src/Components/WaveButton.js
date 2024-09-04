@@ -14,6 +14,7 @@ const WaveButton = React.memo(props => {
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
 
+  const {circleContainer, circleStyle} = props;
   React.useEffect(() => {
     // Scale animation for expanding wave effect
     scale.value = withRepeat(
@@ -45,9 +46,32 @@ const WaveButton = React.memo(props => {
 
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.circle, animatedStyle]} />
-      <TouchableOpacity style={styles.button} onPress={props.onPress}>
-        <Icon name="plus" size={getFontSize(2.5)} color="#FFF" />
+      <Animated.View
+        style={
+          circleContainer
+            ? [
+                circleContainer,
+                animatedStyle,
+                {
+                  position: 'absolute',
+                },
+              ]
+            : [
+                styles.circle,
+                animatedStyle,
+                {
+                  position: 'absolute',
+                },
+              ]
+        }
+      />
+      <TouchableOpacity
+        style={circleStyle ? circleStyle : [styles.button]}
+        // disabled={ci}
+        onPress={props.onPress}>
+        {circleStyle ? null : (
+          <Icon name="plus" size={getFontSize(2.5)} color="#FFF" />
+        )}
       </TouchableOpacity>
     </View>
   );
@@ -55,9 +79,9 @@ const WaveButton = React.memo(props => {
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1,
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    // flex: 1,
   },
   circle: {
     position: 'absolute',
