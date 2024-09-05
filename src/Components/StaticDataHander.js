@@ -6,6 +6,7 @@ import theme from '../utility/theme';
 import {VectorIcon} from './VectorIcon';
 import {checkIsDarkMode, textColorHandler} from './commonHelper';
 import {ALL_LINKS} from '../Config/constants';
+import {BaseToast, ErrorToast} from 'react-native-toast-message';
 
 const DrawerData = () => {
   const [currentTextColor, setCurrentTextColor] = useState(textColorHandler());
@@ -305,4 +306,47 @@ const freeResourceData = [
   },
 ];
 
-export {adminDashboardCardData, DrawerData, freeResourceData};
+const toastConfig = {
+  success: props => (
+    <BaseToast
+      {...props}
+      style={{borderLeftColor: '#13e913'}}
+      contentContainerStyle={{paddingHorizontal: 15}}
+      text1Style={{
+        fontFamily: theme.font.bold,
+        fontSize: getFontSize(2),
+      }}
+      text2Style={{
+        fontFamily: theme.font.semiBold,
+        fontSize: getFontSize(1.3),
+      }}
+    />
+  ),
+  /*
+    Overwrite 'error' type,
+    by modifying the existing `ErrorToast` component
+  */
+  error: props => (
+    <ErrorToast
+      {...props}
+      style={{borderLeftColor: '#ff0303'}}
+      text1Style={{
+        fontFamily: theme.font.bold,
+        fontSize: getFontSize(2),
+      }}
+      text2Style={{
+        fontFamily: theme.font.semiBold,
+        fontSize: getFontSize(1.5),
+      }}
+    />
+  ),
+
+  tomatoToast: ({text1, props}) => (
+    <View style={{height: 60, width: '100%', backgroundColor: 'tomato'}}>
+      <Text>{text1}</Text>
+      <Text>{props.uuid}</Text>
+    </View>
+  ),
+};
+
+export {adminDashboardCardData, DrawerData, freeResourceData, toastConfig};

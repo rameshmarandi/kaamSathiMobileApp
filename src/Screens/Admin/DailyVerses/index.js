@@ -5,9 +5,11 @@ import {
   Image,
   ScrollView,
   FlatList,
+  Alert,
   SafeAreaView,
   StyleSheet,
   KeyboardAvoidingView,
+  TouchableOpacity,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {
@@ -35,6 +37,9 @@ import {
 import WaveButton from '../../../Components/WaveButton';
 import TabViewComp from '../../../Components/TabViewComp';
 import {TouchableWithoutFeedback} from 'react-native';
+import ToastAlertComp from '../../../Components/ToastAlertComp';
+import MasterTextInput from '../../../Components/MasterTextInput';
+import ImagePickerComp from '../../../Components/ImagePickerComp';
 
 const Card = ({
   backgroundColor,
@@ -83,6 +88,9 @@ const Index = memo(({navigation}) => {
   const bottomSheetRef = useRef(null);
   const scrollRef = useRef(null);
 
+  useEffect(() => {
+    openBottomSheetWithContent();
+  }, []);
   const inputRefs = {
     name: useRef(null),
     email: useRef(null),
@@ -100,6 +108,10 @@ const Index = memo(({navigation}) => {
   const openBottomSheetWithContent = content => {
     // setBottomSheetContent(content);
     bottomSheetRef.current?.open();
+  };
+  const closeBottomSheetWithContent = content => {
+    // setBottomSheetContent(content);
+    bottomSheetRef.current?.close();
   };
 
   const waveButtonPropsFirstRoute = {
@@ -196,31 +208,65 @@ const Index = memo(({navigation}) => {
   };
 
   const DailyVersUploadForm = () => {
+    const [selectedImage, setSelectedImage] = React.useState(null);
+
+    // Success callback
+    const onImageSuccess = imageData => {
+      console.log('Image data: ', imageData);
+      setSelectedImage(imageData.uri); // Set the image URI for display
+    };
+
+    // Error callback
+    const onImageError = errorMessage => {
+      closeBottomSheetWithContent();
+      ToastAlertComp('error', `Failed`, `${errorMessage}`);
+    };
+
     return (
       <>
         <KeyboardAvoidingView
           style={{flex: 1}}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
+          <TouchableOpacity
+            onPress={() => {
+              closeBottomSheetWithContent();
+            }}
+            style={{
+              position: 'absolute',
+              right: 0,
+              top: 0,
+              zIndex: 99,
+            }}>
+            <VectorIcon
+              type={'FontAwesome'}
+              name={'close'}
+              size={getFontSize(3)}
+              color={currentTextColor}
+            />
+          </TouchableOpacity>
           <ScrollView
             ref={scrollRef}
             contentContainerStyle={{flexGrow: 1}}
             keyboardShouldPersistTaps="handled">
-            <View style={{flex: 1, paddingHorizontal: '5%'}}>
+            <View style={{flex: 1}}>
               <Formik
                 innerRef={formikRef}
                 initialValues={{
-                  name: '',
-                  email: '',
-                  mobile: '',
-                  birthDate: '',
-                  baptismDate: '',
-                  password: '',
-                  otp: '',
-                  gender: '',
+                  posterImage: '',
+                  scheduleData: '',
                 }}
                 // validationSchema={getValidationSchema()}
-                onSubmit={() => {}}>
+                onSubmit={() => {
+                  closeBottomSheetWithContent();
+                  setTimeout(() => {
+                    ToastAlertComp(
+                      'success',
+                      `Success`,
+                      'Post scheduled successfully.',
+                    );
+                  }, 1000);
+                }}>
                 {({
                   handleChange,
                   handleBlur,
@@ -233,15 +279,90 @@ const Index = memo(({navigation}) => {
                     <ScrollView
                       contentContainerStyle={{flexGrow: 1}}
                       keyboardShouldPersistTaps="handled">
-                      <View style={{flex: 1}}>
-                        {/* {renderStep(
-                          values,
-                          handleChange,
-                          handleBlur,
-                          errors,
-                          touched,
-                          handleSubmit,
-                        )} */}
+                      <View style={{flex: 1, marginTop: getResHeight(4)}}>
+                        <View>
+                          <Text
+                            style={{
+                              color: currentTextColor,
+                              fontFamily: theme.font.medium,
+                            }}>
+                            Please select the poster
+                          </Text>
+                          <TouchableOpacity
+                            activeOpacity={0.8}
+                            style={{
+                              overflow: 'hidden',
+                            }}
+                            onPress={() => {
+                              ImagePickerComp(
+                                'gallery',
+                                {mediaType: 'photo', quality: 0.8},
+                                onImageSuccess,
+                                onImageError,
+                              );
+                            }}>
+                            {selectedImage !== null ? (
+                              <Image
+                                source={{uri: selectedImage}}
+                                resizeMode="cover"
+                                style={[
+                                  styles.imageContainer,
+                                  {
+                                    overflow: 'hidden',
+                                  },
+                                ]}
+                              />
+                            ) : (
+                              <>
+                                <View
+                                  style={[
+                                    styles.uploadContainer,
+                                    {
+                                      borderColor: currentTextColor,
+                                    },
+                                  ]}>
+                                  <VectorIcon
+                                    type={'MaterialCommunityIcons'}
+                                    name={'cloud-upload'}
+                                    size={getFontSize(8)}
+                                    color={currentTextColor}
+                                  />
+
+                                  <Text
+                                    style={{
+                                      color: currentTextColor,
+                                      fontFamily: theme.font.medium,
+                                      fontSize: getFontSize(1.8),
+                                    }}>
+                                    Click here to upload
+                                  </Text>
+                                </View>
+                              </>
+                            )}
+                          </TouchableOpacity>
+                          <Text
+                            style={{
+                              color: currentTextColor,
+                              fontFamily: theme.font.medium,
+                              marginTop: getResHeight(3),
+                            }}>
+                            Select data and time
+                          </Text>
+                          <MasterTextInput
+                            label="Click to select date"
+                            placeholder="Click to select date"
+                            isDate={true}
+                            timePicker={true}
+                            minDate={new Date()}
+                            ref={inputRefs.scheduleData}
+                            value={values.scheduleData}
+                            // value={dateFormatHander(values.scheduleData, 'DD/MM/YYYY') }
+                            onChangeText={handleChange('scheduleData')}
+                            onBlur={handleBlur('scheduleData')}
+                            onSubmitEditing={() => setStep(3)} // Move to next step on enter
+                            error={touched.scheduleData && errors.scheduleData}
+                          />
+                        </View>
                       </View>
                     </ScrollView>
 
@@ -303,7 +424,7 @@ const Index = memo(({navigation}) => {
             }}>
             <WaveButton
               onPress={() => {
-                // props.navigation.navigate('AddMemberForm');
+                openBottomSheetWithContent();
               }}
             />
           </View>
@@ -362,6 +483,17 @@ const styles = StyleSheet.create({
   },
   labelStyle: {
     fontFamily: theme.font.bold,
+  },
+
+  // Upload image container
+  uploadContainer: {
+    marginTop: getResHeight(1),
+    height: getResHeight(30),
+    width: getResWidth(90),
+    borderWidth: 1,
+    borderRadius: getResHeight(2),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

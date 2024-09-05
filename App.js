@@ -8,6 +8,8 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import RootNavigation from './src/Navigation';
 import {PaperProvider} from 'react-native-paper';
 
+import Toast, {BaseToast, ErrorToast} from 'react-native-toast-message';
+
 // import AllScreens from './src/Screens/index';
 import {createStackNavigator} from '@react-navigation/stack';
 
@@ -16,6 +18,7 @@ import {getFontSize, getResHeight} from './src/utility/responsive';
 import {persistor, store} from './src/utility/store';
 import theme from './src/utility/theme';
 import {setNavigator} from './src/Services/NavigationService';
+import {toastConfig} from './src/Components/StaticDataHander';
 
 const Stack = createNativeStackNavigator();
 LogBox.ignoreAllLogs(true);
@@ -136,6 +139,7 @@ const AllNavContainer = props => {
           </PersistGate>
         </PaperProvider>
       </Provider>
+      <Toast config={toastConfig} />
     </>
   );
 };
