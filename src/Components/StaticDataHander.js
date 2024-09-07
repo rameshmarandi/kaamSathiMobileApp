@@ -192,7 +192,7 @@ const adminDashboardCardData = [
         id: 5,
         title: 'Free Resources',
         image: theme.assets.pdf,
-        routeName: '', // Add the route name
+        routeName: 'AdminResource', // Add the route name
       },
       {
         id: 6,
@@ -314,11 +314,11 @@ const toastConfig = {
       contentContainerStyle={{paddingHorizontal: 15}}
       text1Style={{
         fontFamily: theme.font.bold,
-        fontSize: getFontSize(2),
+        fontSize: getFontSize(1.5),
       }}
       text2Style={{
         fontFamily: theme.font.semiBold,
-        fontSize: getFontSize(1.3),
+        fontSize: getFontSize(1.2),
       }}
     />
   ),
@@ -332,11 +332,11 @@ const toastConfig = {
       style={{borderLeftColor: '#ff0303'}}
       text1Style={{
         fontFamily: theme.font.bold,
-        fontSize: getFontSize(2),
+        fontSize: getFontSize(1.5),
       }}
       text2Style={{
         fontFamily: theme.font.semiBold,
-        fontSize: getFontSize(1.5),
+        fontSize: getFontSize(1.2),
       }}
     />
   ),
@@ -349,4 +349,183 @@ const toastConfig = {
   ),
 };
 
-export {adminDashboardCardData, DrawerData, freeResourceData, toastConfig};
+// Study resouces samples data
+
+const adminStudyResouce = [
+  {
+    id: 1,
+    title: 'The Power of Prayer',
+    tag: 'Hindi',
+    posterUrl:
+      'https://familyradio316.com/wp-content/uploads/2022/03/power-of-prayer.jpg',
+    pdfUrl: 'https://example.com/pdfs/the-power-of-prayer.pdf',
+    pdfName: 'The Power of Prayer.pdf',
+  },
+  {
+    id: 2,
+    title: 'Understanding Faith',
+    tag: 'English',
+    posterUrl:
+      'https://d1zx0zj5kmre28.cloudfront.net/images/covers/understanding_faith.jpg',
+    pdfUrl: '',
+    pdfName: 'Understanding Faith.pdf',
+  },
+  {
+    id: 3,
+    title: 'Journey Through Psalms',
+    tag: 'Marathi',
+    posterUrl:
+      'https://m.media-amazon.com/images/I/71onirxyEkS._AC_UF1000,1000_QL80_.jpg',
+    pdfUrl: 'https://example.com/pdfs/journey-through-psalms.pdf',
+    pdfName: 'Journey Through Psalms.pdf',
+  },
+  {
+    id: 4,
+    title: 'The Ten Commandments',
+    tag: 'Marathi',
+    posterUrl:
+      'https://spaces.filmstories.co.uk/uploads/2021/02/the-ten-commandments.jpg',
+    pdfUrl: '',
+    pdfName: 'The Ten Commandments.pdf',
+  },
+  {
+    id: 5,
+    title: 'Living in Grace',
+    tag: 'English',
+    posterUrl:
+      'https://cdn.msia.org/shop/wp-content/uploads/sites/9/2008/06/3903-CD-artwork.jpg',
+    pdfUrl: 'https://example.com/pdfs/living-in-grace.pdf',
+    pdfName: 'Living in Grace.pdf',
+  },
+  {
+    id: 6,
+    title: 'Biblical Wisdom',
+    tag: 'Hindi',
+    posterUrl:
+      'https://m.media-amazon.com/images/I/91I8Om24MDL._AC_UF1000,1000_QL80_.jpg',
+    pdfUrl: 'https://example.com/pdfs/biblical-wisdom.pdf',
+    pdfName: 'Biblical Wisdom.pdf',
+  },
+  {
+    id: 7,
+    title: 'Hope for All',
+    tag: 'English',
+    posterUrl: 'https://pictures.abebooks.com/isbn/9780977279357-us.jpg',
+    pdfUrl: 'https://example.com/pdfs/faith-and-hope.pdf',
+    pdfName: 'Faith and Hope.pdf',
+  },
+  {
+    id: 8,
+    title: 'Spiritual Growth',
+    tag: 'Marathi',
+    posterUrl:
+      'https://joemarino.org/wp-content/uploads/2018/05/SpiritualGrowth-1-608x405.jpg',
+    pdfUrl: 'https://example.com/pdfs/spiritual-growth.pdf',
+    pdfName: 'Spiritual Growth.pdf',
+  },
+  {
+    id: 9,
+    title: 'God’s Love Revealed',
+    tag: 'Hindi',
+    posterUrl: 'https://i.ytimg.com/vi/BXy2QkBuZwY/sddefault.jpg?v=64f54773',
+    pdfUrl: 'https://example.com/pdfs/gods-love-revealed.pdf',
+    pdfName: 'God’s Love Revealed.pdf',
+  },
+  {
+    id: 10,
+    title: 'Foundation of faith',
+    tag: 'English',
+    posterUrl:
+      'https://marvel-b1-cdn.bc0a.com/f00000000039764/cmsedit.cbn.com/sites/default/files/styles/image_xl_640x480/public/foundations-of-the-faith_si_0.jpg?itok=hxi_GJ-P',
+    pdfUrl: 'https://example.com/pdfs/the-role-of-faith.pdf',
+    pdfName: 'The Role of Faith.pdf',
+  },
+  {
+    id: 11,
+    title: 'The Wisdom of Proverbs',
+    tag: 'Marathi',
+    posterUrl: '',
+    pdfUrl: 'https://example.com/pdfs/the-wisdom-of-proverbs.pdf',
+    pdfName: 'The Wisdom of Proverbs.pdf',
+  },
+  {
+    id: 12,
+    title: 'Grace and Forgiveness',
+    tag: 'Hindi',
+    posterUrl: '',
+    pdfUrl: 'https://example.com/pdfs/grace-and-forgiveness.pdf',
+    pdfName: 'Grace and Forgiveness.pdf',
+  },
+  {
+    id: 13,
+    title: 'Prayer for Strength',
+    tag: 'English',
+    posterUrl: '',
+    pdfUrl: 'https://example.com/pdfs/prayer-for-strength.pdf',
+    pdfName: 'Prayer for Strength.pdf',
+  },
+  {
+    id: 14,
+    title: 'Understanding Salvation',
+    tag: 'Marathi',
+    posterUrl: '',
+    pdfUrl: 'https://example.com/pdfs/understanding-salvation.pdf',
+    pdfName: 'Understanding Salvation.pdf',
+  },
+  {
+    id: 15,
+    title: 'The Gift of Grace',
+    tag: 'Hindi',
+    posterUrl: '',
+    pdfUrl: 'https://example.com/pdfs/the-gift-of-grace.pdf',
+    pdfName: 'The Gift of Grace.pdf',
+  },
+  {
+    id: 16,
+    title: 'Living in Faith',
+    tag: 'English',
+    posterUrl: '',
+    pdfUrl: 'https://example.com/pdfs/living-in-faith.pdf',
+    pdfName: 'Living in Faith.pdf',
+  },
+  {
+    id: 17,
+    title: 'The Fruit of the Spirit',
+    tag: 'Marathi',
+    posterUrl: '',
+    pdfUrl: 'https://example.com/pdfs/the-fruit-of-the-spirit.pdf',
+    pdfName: 'The Fruit of the Spirit.pdf',
+  },
+  {
+    id: 18,
+    title: 'The Essence of Worship',
+    tag: 'Hindi',
+    posterUrl: '',
+    pdfUrl: 'https://example.com/pdfs/the-essence-of-worship.pdf',
+    pdfName: 'The Essence of Worship.pdf',
+  },
+  {
+    id: 19,
+    title: 'Overcoming Doubt',
+    tag: 'English',
+    posterUrl: '',
+    pdfUrl: 'https://example.com/pdfs/overcoming-doubt.pdf',
+    pdfName: 'Overcoming Doubt.pdf',
+  },
+  {
+    id: 20,
+    title: 'The Path of Righteousness',
+    tag: 'Marathi',
+    posterUrl: '',
+    pdfUrl: 'https://example.com/pdfs/the-path-of-righteousness.pdf',
+    pdfName: 'The Path of Righteousness.pdf',
+  },
+];
+
+export {
+  adminDashboardCardData,
+  DrawerData,
+  freeResourceData,
+  adminStudyResouce,
+  toastConfig,
+};

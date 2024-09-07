@@ -39,6 +39,7 @@ const MasterTextInput = forwardRef(
       keyboardType = 'default',
       isDate = false,
       onSubmitEditing,
+      topLableName,
       style,
       error,
       minDate,
@@ -223,6 +224,16 @@ const MasterTextInput = forwardRef(
 
     return (
       <View style={[styles.container, style]}>
+        {topLableName && (
+          <Text
+            style={{
+              color: currentTextColor,
+              fontFamily: theme.font.medium,
+              marginVertical: getResHeight(1),
+            }}>
+            {topLableName} <Text style={{color: 'red'}}>{'*'}</Text>
+          </Text>
+        )}
         {isDate ? (
           <>
             <TouchableOpacity

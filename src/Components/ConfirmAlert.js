@@ -11,7 +11,7 @@ import {useSelector} from 'react-redux';
 import {getFontSize, getResHeight, getResWidth} from '../utility/responsive';
 import theme from '../utility/theme';
 
-const ConfirmAlert = ({visible, onCancel, onConfirm}) => {
+const ConfirmAlert = ({visible, onCancel, alertTitle, onConfirm}) => {
   const [opacity] = useState(new Animated.Value(0));
   let {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
@@ -50,7 +50,7 @@ const ConfirmAlert = ({visible, onCancel, onConfirm}) => {
             fontFamily: theme.font.medium,
             fontSize: getFontSize(2),
           }}>
-          Are you sure?
+          {alertTitle ? alertTitle : 'Are you sure?'}
         </Text>
         <View
           style={[

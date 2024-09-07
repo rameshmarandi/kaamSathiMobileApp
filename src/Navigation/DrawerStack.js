@@ -95,6 +95,14 @@ export default function DrawerStack(props) {
                 headerShown: false,
               }}
             />
+            <Drawer.Screen
+              name="AdminResource"
+              component={AllScreens.AdminResource}
+              options={{
+                headerShadowVisible: false,
+                headerShown: false,
+              }}
+            />
           </>
         ) : (
           <Drawer.Screen

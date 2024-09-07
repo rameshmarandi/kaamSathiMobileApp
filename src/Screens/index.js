@@ -19,6 +19,7 @@ import ChurchMap from './Admin/ChurchMap/index';
 import AddMemberForm from './Admin/Members/AddMemberForm';
 import Approval from './Admin/Members/Approval';
 import DailyVerse from './Admin/DailyVerses/index';
+import AdminResource from './Admin/AdminResource/index';
 const UserAllScreens = {
   HomePage,
   ProfilePage,
@@ -39,6 +40,7 @@ const AdminScreens = {
   AddMemberForm,
   Approval,
   DailyVerse,
+  AdminResource,
 };
 
 export default AllScreens = {

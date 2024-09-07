@@ -1,11 +1,21 @@
 import React, {memo, useCallback} from 'react';
-import {View, StatusBar, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  View,
+  StatusBar,
+  PermissionsAndroid,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {Button, Image} from 'react-native-elements';
 import {useSelector} from 'react-redux';
 import {getFontSize, getResHeight, getResWidth} from '../utility/responsive';
 import theme from '../utility/theme';
 import {VectorIcon} from './VectorIcon';
+import RNFetchBlob from 'react-native-blob-util';
+const trimText = (text, maxLength = 10) => {
+  return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+};
 
 // StatusBarComp Component
 const StatusBarComp = memo(() => {
@@ -189,10 +199,81 @@ const styles = StyleSheet.create({
   },
 });
 
+export const CheckFilePermissions = async () => {
+  if (Platform.OS === 'android') {
+    try {
+      const granted = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      ]);
+      if (
+        granted['android.permission.POST_NOTIFICATIONS'] &&
+        granted['android.permission.READ_EXTERNAL_STORAGE'] &&
+        granted['android.permission.WRITE_EXTERNAL_STORAGE']
+      ) {
+        // user granted permissions
+        return true;
+      } else {
+        // user didn't grant permission... handle with toastr, popup, something...
+        return false;
+      }
+    } catch (err) {
+      console.log('err', err);
+      // unexpected error
+      return false;
+    }
+  } else {
+    // platform is iOS
+    return true;
+  }
+};
+
+export function downloadFileHandler(pathUrl, fileName) {
+  let filePath = RNFetchBlob.fs.dirs.DocumentDir;
+  filePath = filePath + fileName;
+  return new Promise((resolve, reject) => {
+    RNFetchBlob.config({
+      fileCache: true,
+      title: fileName,
+      path: filePath,
+      appendExt: 'pdf',
+      addAndroidDownloads: {
+        useDownloadManager: true,
+        notification: true,
+        title: fileName,
+        description: 'File downloaded by download manager.',
+        mime: 'application/pdf',
+      },
+    })
+      .fetch('GET', pathUrl)
+      .then(result => {
+        if (Platform.OS == 'ios') {
+          filePath = result.path();
+          console.log('result', filePath);
+          let options = {
+            type: 'application/pdf',
+            url: filePath,
+            saveToFiles: true,
+          };
+          Share.open(options)
+            .then(resp => resolve(result))
+            .catch(reject);
+        } else {
+          resolve(result);
+        }
+      })
+      .catch(e => {
+        reject(e);
+      });
+  });
+}
+
 export {
   StatusBarComp,
   CopyToClipBoard,
   EmptyUserProfile,
   ButtonIconComp,
   CommonButtonComp,
+  trimText,
 };

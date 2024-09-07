@@ -3,26 +3,20 @@ import React, {useState, memo, useEffect, useRef} from 'react';
 import {
   View,
   Text,
-  Animated,
-  TouchableOpacity,
   SafeAreaView,
-  Dimensions,
   ScrollView,
-  StatusBar,
   Image,
   FlatList,
 } from 'react-native';
 import theme from '../../../utility/theme';
 import {useSelector} from 'react-redux';
 import CustomHeader from '../../../Components/CustomHeader';
-import {Button, Menu, Divider, PaperProvider} from 'react-native-paper';
 
 import {
   ButtonIconComp,
   EmptyUserProfile,
   StatusBarComp,
 } from '../../../Components/commonComp';
-import MarqueeComp from '../../../Components/MarqueeComp';
 import {
   getFontSize,
   getResHeight,
@@ -30,14 +24,12 @@ import {
 } from '../../../utility/responsive';
 
 import SearchBarComp from '../../../Components/SearchBarComp';
-import SquareCardComp from '../../../Components/SquareCardComp';
 import MsgConfig from '../../../Config/MsgConfig';
 import {VectorIcon} from '../../../Components/VectorIcon';
 import SmallMenuComp from '../../../Components/SmallMenuComp';
 import ConfirmAlert from '../../../Components/ConfirmAlert';
 import CustomBottomSheet from '../../../Components/CustomBottomSheet';
 import WaveButton from '../../../Components/WaveButton';
-// import { updateState } from '../../../Helpers/CommonHelpers';
 
 const cardDataArray = [
   {id: 0, title: 'All Members', image: theme.assets.members, routeName: ''},

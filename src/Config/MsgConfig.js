@@ -42,9 +42,11 @@ const headerTitle = {
   allMembers: 'All Members',
   ChurchMap: 'View all church',
   dailyVerse: 'Daily verses',
+  adminResouce: 'Study resources',
   // contactUS  : 'Contact Us',
 
   AddMemberForm: 'Add Member Form',
+  uploadResource: 'Upload Resource',
 };
 
 export default message = {
