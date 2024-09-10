@@ -37,6 +37,7 @@ const color = {
   outlineColor: '#999999',
   placeholder: '#C0C0C0',
   error: '#FF0000',
+  green: '#25D366',
   black: '#000000',
 };
 

@@ -374,14 +374,14 @@ const MasterTextInput = forwardRef(
                 fontFamily: theme.font.regular,
                 marginTop: '2%',
                 fontSize: getFontSize(1.5),
-                color: 'red',
+                color: '#ff0038',
               }}>
               {error}
             </Text>
             <AntDesign
               name="closecircle"
               size={getResHeight(2.3)}
-              color="red"
+              color={'#ff0038'}
               style={styles.eyeIcon}
             />
           </>
@@ -390,7 +390,7 @@ const MasterTextInput = forwardRef(
           <Icon
             name="check-circle"
             size={getResHeight(2.7)}
-            color="#66FF00"
+            color={theme.color.green}
             style={styles.eyeIcon}
           />
         )}
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
   },
   headerTextStyle: {
     // color: 'red',
-    // '#45A245',
+    // theme.color.green,
     fontFamily: theme.font.bold,
     fontSize: getFontSize(2),
   },
@@ -454,7 +454,7 @@ const styles = StyleSheet.create({
   closeButton: {
     width: '48%',
     padding: 10,
-    backgroundColor: '#45A245',
+    backgroundColor: theme.color.green,
     borderRadius: 5,
     alignItems: 'center',
   },

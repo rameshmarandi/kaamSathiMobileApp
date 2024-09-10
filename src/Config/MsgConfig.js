@@ -47,6 +47,7 @@ const headerTitle = {
 
   AddMemberForm: 'Add Member Form',
   uploadResource: 'Upload Resource',
+  allPrayerReq: 'All prayer requests',
 };
 
 export default message = {

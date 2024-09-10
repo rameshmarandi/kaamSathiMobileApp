@@ -35,6 +35,34 @@ const SquareCardComp = ({filteredData, onPress}) => {
           resizeMode="cover"
           style={styles.cardImage}
         />
+        {console.log('sdfsdfsdfsdfsdf', item.title)}
+
+        {item.title == 'Prayer Request' && (
+          <>
+            <View
+              style={{
+                position: 'absolute',
+                height: getResHeight(2.3),
+                width: getResHeight(2.3),
+                backgroundColor: 'red',
+                justifyContent: 'center',
+                alignItems: 'center',
+                right: 0,
+                top: 0,
+                overflow: 'hidden',
+                borderRadius: 8,
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  overflow: 'hidden',
+                  fontSize: getFontSize(1.3),
+                }}>
+                12
+              </Text>
+            </View>
+          </>
+        )}
         <Text
           style={[
             styles.cardTitle,

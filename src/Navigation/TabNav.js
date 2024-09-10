@@ -230,8 +230,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     flex: 1,
-    // height: getResHeight(8),
-    // width: getResHeight(8),
+
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: getResHeight(1), // Dynamic padding to adjust for smaller screens
