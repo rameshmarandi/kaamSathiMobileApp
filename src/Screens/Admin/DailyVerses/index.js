@@ -92,6 +92,7 @@ const Card = memo(
 const Index = memo(({navigation}) => {
   const {currentBgColor, currentTextColor} = useSelector(state => state.user);
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
+  const [isUploadResModalOpen, setIsUploadResModalOpen] = useState(false);
   const [isLoginPressed, setIsLongPressed] = useState(false);
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
   const [alertText, setAlertText] = useState(null);
@@ -100,11 +101,7 @@ const Index = memo(({navigation}) => {
   const bottomSheetRef = useRef(null);
 
   const openBottomSheetWithContent = useCallback(() => {
-    bottomSheetRef.current?.open();
-  }, []);
-
-  const closeBottomSheetWithContent = useCallback(() => {
-    bottomSheetRef.current?.close();
+    setIsUploadResModalOpen(true);
   }, []);
 
   const waveButtonProps = useCallback(
@@ -155,10 +152,10 @@ const Index = memo(({navigation}) => {
             : [...prevSelectedCard, index],
         );
       } else {
-        openBottomSheetWithContent();
+        // openBottomSheetWithContent();
       }
     },
-    [isLoginPressed, openBottomSheetWithContent],
+    [isLoginPressed],
   );
 
   const handleLongPress = useCallback(index => {
@@ -211,11 +208,19 @@ const Index = memo(({navigation}) => {
 
   const SecondRoute = () => (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <CustomBottomSheet ref={bottomSheetRef} modalHeight={getResHeight(90)}>
-        <DailyVersUploadForm
+      {/* <CustomBottomSheet ref={bottomSheetRef} modalHeight={getResHeight(90)}> */}
+      {/* <DailyVersUploadForm
           closeBottomSheetWithContent={closeBottomSheetWithContent}
-        />
-      </CustomBottomSheet>
+        /> */}
+
+      <DailyVersUploadForm
+        visible={isUploadResModalOpen}
+        closeBottomSheetWithContent={() => {
+          setIsUploadResModalOpen(false);
+        }}
+        navigation={navigation}
+      />
+      {/* </CustomBottomSheet> */}
       <FlatList
         data={scheduleData}
         renderItem={renderItem}

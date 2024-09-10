@@ -28,12 +28,14 @@ import theme from '../../../utility/theme/index.js';
 import AdminUpcomingEvents from '../AdminEvents/AdminUpcomingEvents.js';
 import {VectorIcon} from '../../../Components/VectorIcon.js';
 import {openInAppBrowser} from '../../../Components/InAppBrowserComp.js';
+import AddMemberForm from '../Members/AddMemberForm.js';
 
 const initialState = {
   filteredData: adminDashboardCardData,
   isLoading: false,
   searchText: '',
   searchModalVisible: false,
+  addNewMemberModalVisible: false,
 };
 
 const Index = memo(props => {
@@ -43,7 +45,13 @@ const Index = memo(props => {
   );
 
   const [state, setState] = useState(initialState);
-  const {filteredData, isLoading, searchText, searchModalVisible} = state;
+  const {
+    filteredData,
+    addNewMemberModalVisible,
+    isLoading,
+    searchText,
+    searchModalVisible,
+  } = state;
 
   const searchBarRef = useRef(null);
 
@@ -116,7 +124,18 @@ const Index = memo(props => {
         }}
         centerLogo={true}
       />
-
+      <View>
+        <AddMemberForm
+          visible={addNewMemberModalVisible}
+          closeModal={() => {
+            setState(prevState => ({
+              ...prevState,
+              addNewMemberModalVisible: false,
+            }));
+          }}
+          navigation={navigation}
+        />
+      </View>
       <MarqueeComp
         textRender={`I can do all things through Christ who strengthens me. [Philippians 4:13] जो मुझे सामर्थ देता है उस में मैं सब कुछ कर सकता हूं। [फिलिप्पियों 4:13]`}
       />
@@ -151,6 +170,12 @@ const Index = memo(props => {
                     onPress={item => {
                       if (item.routeName.includes('https')) {
                         openInAppBrowser(item.routeName);
+                      }
+                      if (item.routeName == 'AddMemberForm') {
+                        setState(prevState => ({
+                          ...prevState,
+                          addNewMemberModalVisible: true,
+                        }));
                       } else {
                         props.navigation.navigate(item.routeName);
                       }

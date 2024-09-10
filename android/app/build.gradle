@@ -68,12 +68,21 @@ android {
         debug {
             signingConfig signingConfigs.debug
         }
-        release {
+        
+         release {
             minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             shrinkResources true
-            // You should generate your own keystore file for production
-            // signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            debuggable false // Ensure that debug info is not included in release builds
+        }
+
+    }
+     splits {
+        abi {
+            enable true
+            reset()
+            include "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+            universalApk false // Do not generate a universal APK
         }
     }
     applicationVariants.all { variant ->

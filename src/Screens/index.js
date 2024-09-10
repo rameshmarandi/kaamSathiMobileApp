@@ -20,6 +20,7 @@ import AddMemberForm from './Admin/Members/AddMemberForm';
 import Approval from './Admin/Members/Approval';
 import DailyVerse from './Admin/DailyVerses/index';
 import AdminResource from './Admin/AdminResource/index';
+import AllPrayerReq from './Admin/PrayerModule/AllPrayerReq';
 const UserAllScreens = {
   HomePage,
   ProfilePage,
@@ -41,6 +42,7 @@ const AdminScreens = {
   Approval,
   DailyVerse,
   AdminResource,
+  AllPrayerReq,
 };
 
 export default AllScreens = {

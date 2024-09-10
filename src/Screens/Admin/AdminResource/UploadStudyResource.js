@@ -28,8 +28,6 @@ const UploadStudyResource = ({
   const [selectedImage1, setSelectedImage1] = useState(null);
   const {currentTextColor, currentBgColor} = useSelector(state => state.user);
 
-  const scrollRef = useRef(null);
-
   // Handle image success
   const handleImageSuccess = useCallback(imageData => {
     setSelectedImage(imageData.uri);
@@ -129,7 +127,26 @@ const UploadStudyResource = ({
                       onImageError={handleImageError1}
                       customHeight={getResHeight(21)}
                     />
-
+                    <MasterTextInput
+                      label="Language"
+                      placeholder="Select language"
+                      topLableName={'Select language'}
+                      isDropdown={true}
+                      dropdownData={[
+                        {label: 'English', value: 'english'},
+                        {label: 'Marathi', value: 'marathi'},
+                        {label: 'Hindi', value: 'hindi'},
+                      ]}
+                      // value={'Female'}
+                      value={values.lang}
+                      onDropdownChange={() => {
+                        setTimeout(() => {
+                          handleChange('lang');
+                        }, 100);
+                      }}
+                      onBlur={handleBlur('lang')}
+                      error={touched.lang && errors.lang}
+                    />
                     <MasterTextInput
                       label="Click to select date"
                       placeholder="Click to select date"
@@ -141,13 +158,7 @@ const UploadStudyResource = ({
                     />
                   </ScrollView>
 
-                  <View
-                    style={
-                      {
-                        // paddingHorizontal: '5%',
-                        // paddingVertical: ,
-                      }
-                    }>
+                  <View style={{}}>
                     <CommonButtonComp title="Submit" onPress={handleSubmit} />
                   </View>
                 </View>

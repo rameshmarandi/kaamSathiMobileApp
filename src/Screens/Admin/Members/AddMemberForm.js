@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect, memo} from 'react';
+import React, {useState, useRef, useEffect, memo, useCallback} from 'react';
 import {
   View,
   StyleSheet,
@@ -7,6 +7,7 @@ import {
   Platform,
   SafeAreaView,
   Keyboard,
+  Modal,
   BackHandler,
 } from 'react-native';
 import {Formik} from 'formik';
@@ -19,23 +20,122 @@ import {CommonButtonComp} from '../../../Components/commonComp';
 import {getResHeight, getResWidth} from '../../../utility/responsive/index';
 import PrivacyPolicy from './PrivacyPolicy';
 import CustomBottomSheet from '../../../Components/CustomBottomSheet';
-import MasterRadioButtonGroup from '../../../Components/MasterRadioButton';
-import {MasterCheckBoxGroup} from '../../../Components/MasterCheckBox';
 import {
   handleEmailChange,
   handleNumberChange,
   handleTextChange,
 } from '../../../Components/InputHandlers';
-import {TextInput} from 'react-native-paper';
-import {dateFormatHander} from '../../../Components/commonHelper';
 
-const Index = props => {
-  const {navigation} = props;
+const AddMemberForm = ({visible, closeModal, navigation}) => {
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImage1, setSelectedImage1] = useState(null);
+  const {currentTextColor, currentBgColor} = useSelector(state => state.user);
 
-  // Get values from Redux state
-  const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
-    state => state.user,
+  // Handle image success
+  const handleImageSuccess = useCallback(imageData => {
+    setSelectedImage(imageData.uri);
+  }, []);
+  const handleImageSuccess1 = useCallback(imageData => {
+    setSelectedImage1(imageData.uri);
+  }, []);
+
+  const getValidationSchema = () => {
+    switch (step) {
+      case 1:
+        return stepOneSchema;
+      case 2:
+        return stepTwoSchema;
+      case 3:
+        return stepThreeSchema;
+      default:
+        return stepOneSchema;
+    }
+  };
+
+  const onAcceptButtonClick = () => {
+    console.log(' formikRef.current', formikRef.current.values);
+
+    // return;
+    // setKeyboardHeight(0);
+    formikRef.current.resetForm(); // Reset the form
+    setIsOTPFildVisible(false); // Hide OTP field
+    setStep(1); // Reset to step 1
+    // navigation.goBack(); // Navigate back
+    closeModal();
+  };
+
+  const stepOneSchema = Yup.object().shape({
+    name: Yup.string().required('Full name is required'),
+    email: Yup.string().email('Invalid email').required('Email is required'),
+    mobile: Yup.string()
+      .required('Mobile number is required')
+      .length(10, 'Mobile number must be 10 digits'),
+  });
+
+  const stepTwoSchema = Yup.object().shape({
+    birthDate: Yup.string().required('Date of birth is required'),
+    baptismDate: Yup.string().required('Date of baptism is required'),
+  });
+
+  const stepThreeSchema = Yup.object().shape({
+    password: Yup.string()
+      .min(6, 'Password must be at least 6 characters')
+      .required('Password is required'),
+  });
+
+  //   // References to input fields
+
+  // Handle image error
+  const handleImageError = useCallback(
+    errorMessage => {
+      closeModal();
+      ToastAlertComp('error', 'Failed', errorMessage);
+    },
+    [closeModal],
   );
+
+  const handleSubmit = values => {
+    console.log(values);
+
+    if (step === 3) {
+      openBottomSheetWithContent();
+      // Final submission
+      // console.log('Final Values:', values);
+    } else if (step === 1 && !isOTPFildVisible) {
+      setIsOTPFildVisible(true); // Show OTP field
+    } else {
+      setStep(step + 1); // Move to the next step
+      scrollRef.current?.scrollTo({y: 0, animated: true});
+    }
+  };
+
+  // Handle back navigation
+  const handleBack = () => {
+    if (step > 1) {
+      if (step === 1) {
+        formikRef.current.resetForm(); // Reset form when returning to step 1
+      }
+      setStep(step - 1);
+    } else {
+      closeModal();
+    }
+  };
+
+  const handleImageError1 = useCallback(
+    errorMessage => {
+      // closeBottomSheetWithContent();
+      ToastAlertComp('error', 'Failed', errorMessage);
+    },
+    [closeModal],
+  );
+
+  // Handle form submission
+  const handleSubmitForm = useCallback(() => {
+    closeModal();
+    setTimeout(() => {
+      ToastAlertComp('success', 'Success', 'Post scheduled successfully.');
+    }, 1000);
+  }, [closeModal]);
 
   // Local component states
   const [step, setStep] = useState(1); // To track the current step in the form
@@ -97,82 +197,6 @@ const Index = props => {
   //   };
   // }, [step]);
 
-  const onAcceptButtonClick = () => {
-    console.log(' formikRef.current', formikRef.current.values);
-
-    // return;
-    // setKeyboardHeight(0);
-    formikRef.current.resetForm(); // Reset the form
-    setIsOTPFildVisible(false); // Hide OTP field
-    setStep(1); // Reset to step 1
-    navigation.goBack(); // Navigate back
-  };
-  // Handle form submission
-  const handleSubmit = values => {
-    console.log(values);
-
-    if (step === 3) {
-      openBottomSheetWithContent();
-      // Final submission
-      // console.log('Final Values:', values);
-    } else if (step === 1 && !isOTPFildVisible) {
-      setIsOTPFildVisible(true); // Show OTP field
-    } else {
-      setStep(step + 1); // Move to the next step
-      scrollRef.current?.scrollTo({y: 0, animated: true});
-    }
-  };
-
-  // Handle back navigation
-  const handleBack = () => {
-    if (step > 1) {
-      if (step === 1) {
-        formikRef.current.resetForm(); // Reset form when returning to step 1
-      }
-      setStep(step - 1);
-    } else {
-      navigation.goBack();
-    }
-  };
-
-  // Validation schemas for each step
-  const stepOneSchema = Yup.object().shape({
-    name: Yup.string().required('Full name is required'),
-    email: Yup.string().email('Invalid email').required('Email is required'),
-    mobile: Yup.string()
-      .required('Mobile number is required')
-      .length(10, 'Mobile number must be 10 digits'),
-  });
-
-  const stepTwoSchema = Yup.object().shape({
-    birthDate: Yup.string().required('Date of birth is required'),
-    baptismDate: Yup.string().required('Date of baptism is required'),
-  });
-
-  const stepThreeSchema = Yup.object().shape({
-    password: Yup.string()
-      .min(6, 'Password must be at least 6 characters')
-      .required('Password is required'),
-  });
-
-  // Determine the current validation schema based on the step
-  const getValidationSchema = () => {
-    switch (step) {
-      case 1:
-        return stepOneSchema;
-      case 2:
-        return stepTwoSchema;
-      case 3:
-        return stepThreeSchema;
-      default:
-        return stepOneSchema;
-    }
-  };
-
-  const [value, setValue] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
-
-  // Render the appropriate form fields based on the current step
   const renderStep = (
     values,
     handleChange,
@@ -187,27 +211,6 @@ const Index = props => {
       case 1:
         return (
           <>
-            {/* <TextInput
-              label="Username"
-              value={value}
-              onChangeText={setValue}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-              theme={{
-                colors: {
-                  primary: isFocused ? 'green' : 'green', // Label color when focused (and underline color)
-                  text: 'aqua', // Text color inside the input
-                  placeholder: 'green', // Placeholder color when input is empty
-                  background: 'pink', // Background color of the input
-                  accent: 'purple', // Accent color (like underline when not focused)
-                },
-              }}
-              style={{
-                backgroundColor: 'pink',
-                color: 'black', // Default text color
-              }}
-              placeholderTextColor={isFocused || value ? 'red' : 'red'} // Placeholder color when not focused
-            /> */}
             <MasterTextInput
               label="Full name"
               placeholder="Enter full name"
@@ -347,110 +350,134 @@ const Index = props => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: currentBgColor}}>
-      <CustomHeader
-        backPress={handleBack}
-        screenTitle={MsgConfig.AddMemberForm}
-      />
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: currentBgColor,
+      }}>
+      <Modal
+        visible={visible}
+        animationType="fade"
+        style={{
+          flex: 1,
+        }}
+        onRequestClose={handleBack} // Handle back press on Android
+        // transparent={true}
+      >
+        <KeyboardAvoidingView
+          style={{
+            flex: 1,
 
-      <KeyboardAvoidingView
-        style={{flex: 1}}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
-        <ScrollView
-          ref={scrollRef}
-          contentContainerStyle={{flexGrow: 1}}
-          keyboardShouldPersistTaps="handled">
-          <View style={{flex: 1, paddingHorizontal: '5%'}}>
-            <Formik
-              innerRef={formikRef}
-              initialValues={{
-                name: '',
-                email: '',
-                mobile: '',
-                birthDate: '',
-                baptismDate: '',
-                password: '',
-                otp: '',
-                gender: '',
-              }}
-              validationSchema={getValidationSchema()}
-              onSubmit={handleSubmit}>
-              {({
-                handleChange,
-                handleBlur,
-                handleSubmit,
-                values,
-                errors,
-                touched,
-              }) => (
-                <>
-                  <ScrollView
-                    contentContainerStyle={{flexGrow: 1}}
-                    keyboardShouldPersistTaps="handled">
-                    <View style={{flex: 1}}>
-                      {renderStep(
-                        values,
-                        handleChange,
-                        handleBlur,
-                        errors,
-                        touched,
-                        handleSubmit,
-                      )}
-                    </View>
-                  </ScrollView>
-                  <CustomBottomSheet
-                    ref={bottomSheetRef}
-                    modalHeight={getResHeight(86)}>
-                    {<PrivacyPolicy onAccept={onAcceptButtonClick} />}
-                  </CustomBottomSheet>
+            backgroundColor: currentBgColor, // Semi-transparent background
+          }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} // Adjust offset if needed
+        >
+          <CustomHeader
+            backPress={handleBack}
+            screenTitle={MsgConfig.AddMemberForm}
+          />
 
-                  <View
-                    style={{
-                      width: getResWidth(20),
-                      alignSelf: 'center',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      flexDirection: 'row',
-                      marginBottom: '5%',
-                    }}>
-                    {[0, 1, 2].map((item, index) => (
-                      <View
-                        style={{
-                          width: getResWidth(5),
-                          height: getResHeight(0.7),
-                          borderRadius: 10,
-                          backgroundColor:
-                            step == index + 1 ? currentTextColor : 'grey',
-                        }}></View>
-                    ))}
-                  </View>
-                  <View
-                  // style={[styles.buttonContainer, {bottom: keyboardHeight}]}
-                  >
-                    <CommonButtonComp
-                      title={step === 3 ? 'Submit' : 'Next'}
-                      onPress={handleSubmit}
-                    />
-                  </View>
-                </>
-              )}
-            </Formik>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+          {/* <View
+            style={
+              {
+                // flex: 1,
+                // // backgroundColor: currentBgColor,
+                // justifyContent: 'center',
+                // alignItems: 'center', // Align modal to the center
+              }
+            }> */}
+          <Formik
+            innerRef={formikRef}
+            initialValues={{
+              name: '',
+              email: '',
+              mobile: '',
+              birthDate: '',
+              baptismDate: '',
+              password: '',
+              otp: '',
+              gender: '',
+            }}
+            validationSchema={getValidationSchema()}
+            onSubmit={handleSubmit}>
+            {({
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              values,
+              errors,
+              touched,
+            }) => (
+              <View
+                style={{
+                  flex: 1,
+                  // width: '100%',
+                  // // height: '100%',
+                  // backgroundColor: currentBgColor,
+                  // justifyContent: 'center',
+                  // alignItems: 'center', // Align modal to the center
+                }}>
+                <ScrollView
+                  style={{
+                    width: '90%',
+                    alignSelf: 'center',
+                  }}
+                  showsVerticalScrollIndicator={false}>
+                  {renderStep(
+                    values,
+                    handleChange,
+                    handleBlur,
+                    errors,
+                    touched,
+                    handleSubmit,
+                  )}
+                </ScrollView>
+                <CustomBottomSheet
+                  ref={bottomSheetRef}
+                  modalHeight={getResHeight(86)}>
+                  {<PrivacyPolicy onAccept={onAcceptButtonClick} />}
+                </CustomBottomSheet>
+
+                <View
+                  style={{
+                    width: getResWidth(20),
+                    alignSelf: 'center',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexDirection: 'row',
+                    marginBottom: '5%',
+                  }}>
+                  {[0, 1, 2].map((item, index) => (
+                    <View
+                      style={{
+                        width: getResWidth(5),
+                        height: getResHeight(0.7),
+                        borderRadius: 10,
+                        backgroundColor:
+                          step == index + 1 ? currentTextColor : 'grey',
+                      }}></View>
+                  ))}
+                </View>
+                <View
+                  style={{
+                    width: '90%',
+                    alignSelf: 'center',
+                    backgroundColor: currentBgColor,
+                    // backgroundColor: 'red',
+                  }}>
+                  <CommonButtonComp
+                    title={step === 3 ? 'Submit' : 'Next'}
+                    onPress={handleSubmit}
+                  />
+                </View>
+              </View>
+            )}
+          </Formik>
+        </KeyboardAvoidingView>
+      </Modal>
     </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({
-  buttonContainer: {
-    backgroundColor: 'transparent',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    width: '100%',
-    // backgroundColor: 'red',
-  },
-});
-
-export default memo(Index);
+export default memo(AddMemberForm);

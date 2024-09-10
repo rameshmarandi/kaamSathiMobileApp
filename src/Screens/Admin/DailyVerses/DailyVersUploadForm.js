@@ -4,6 +4,9 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   TouchableOpacity,
+  Modal,
+  Platform,
+  SafeAreaView,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {Formik} from 'formik';
@@ -13,21 +16,35 @@ import {CommonButtonComp} from '../../../Components/commonComp';
 import ToastAlertComp from '../../../Components/ToastAlertComp';
 import MasterTextInput from '../../../Components/MasterTextInput';
 import FileUploadComponent from '../../../Components/FileUploadComponent';
+import CustomHeader from '../../../Components/CustomHeader';
+import MsgConfig from '../../../Config/MsgConfig';
 
-const DailyVersUploadForm = ({closeBottomSheetWithContent}) => {
+const DailyVersUploadForm = ({
+  visible,
+  closeBottomSheetWithContent,
+  navigation,
+}) => {
   const [selectedImage, setSelectedImage] = useState(null);
-  const {currentTextColor} = useSelector(state => state.user);
-
-  const scrollRef = useRef(null);
-  const inputRefs = {scheduleData: useRef(null)};
+  const [selectedImage1, setSelectedImage1] = useState(null);
+  const {currentTextColor, currentBgColor} = useSelector(state => state.user);
 
   // Handle image success
   const handleImageSuccess = useCallback(imageData => {
     setSelectedImage(imageData.uri);
   }, []);
+  const handleImageSuccess1 = useCallback(imageData => {
+    setSelectedImage1(imageData.uri);
+  }, []);
 
   // Handle image error
   const handleImageError = useCallback(
+    errorMessage => {
+      closeBottomSheetWithContent();
+      ToastAlertComp('error', 'Failed', errorMessage);
+    },
+    [closeBottomSheetWithContent],
+  );
+  const handleImageError1 = useCallback(
     errorMessage => {
       closeBottomSheetWithContent();
       ToastAlertComp('error', 'Failed', errorMessage);
@@ -44,78 +61,114 @@ const DailyVersUploadForm = ({closeBottomSheetWithContent}) => {
   }, [closeBottomSheetWithContent]);
 
   return (
-    <KeyboardAvoidingView
-      style={{flex: 1}}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
-      <TouchableOpacity
-        onPress={closeBottomSheetWithContent}
+    <SafeAreaView
+      style={{
+        flex: 1,
+      }}>
+      <Modal
+        visible={visible}
+        animationType="fade"
         style={{
-          position: 'absolute',
-          right: 0,
-          top: 0,
-          zIndex: 99,
-        }}>
-        <VectorIcon
-          type="FontAwesome"
-          name="close"
-          size={getFontSize(3)}
-          color={currentTextColor}
-        />
-      </TouchableOpacity>
+          flex: 1,
+        }}
+        onRequestClose={closeBottomSheetWithContent} // Handle back press on Android
+        transparent={true}>
+        <KeyboardAvoidingView
+          style={{
+            flex: 1,
+            backgroundColor: currentBgColor, // Semi-transparent background
+          }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} // Adjust offset if needed
+        >
+          <CustomHeader
+            backPress={closeBottomSheetWithContent}
+            screenTitle={MsgConfig.uploadResource}
+          />
 
-      <ScrollView
-        ref={scrollRef}
-        contentContainerStyle={{flexGrow: 1}}
-        keyboardShouldPersistTaps="handled">
-        <View style={{flex: 1}}>
-          <Formik
-            initialValues={{posterImage: '', scheduleData: ''}}
-            onSubmit={handleSubmitForm}>
-            {({
-              handleChange,
-              handleBlur,
-              handleSubmit,
-              values,
-              errors,
-              touched,
-            }) => (
-              <View style={{flex: 1, marginTop: getResHeight(4)}}>
-                <FileUploadComponent
-                  selectedImage={selectedImage}
-                  onImageSuccess={handleImageSuccess}
-                  labelText="Please select the poster"
-                  onImageError={handleImageError}
-                />
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: currentBgColor,
+              justifyContent: 'center',
+              alignItems: 'center', // Align modal to the center
+            }}>
+            <Formik
+              initialValues={{
+                pdfThubnail: '',
+                pdfImage: '',
+                pdfName: '',
+                lang: '',
+              }}
+              onSubmit={handleSubmitForm}>
+              {({
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                values,
+                errors,
+                touched,
+              }) => (
+                <View style={{}}>
+                  <ScrollView
+                    contentContainerStyle={{flexGrow: 1, paddingBottom: 20}}
+                    keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}>
+                    <FileUploadComponent
+                      selectedImage={selectedImage}
+                      onImageSuccess={handleImageSuccess}
+                      labelText="Please select pdf thumbnail"
+                      onImageError={handleImageError}
+                      customHeight={getResHeight(21)}
+                    />
+                    <MasterTextInput
+                      label="Language"
+                      placeholder="Select language"
+                      topLableName={'Select language'}
+                      isDropdown={true}
+                      dropdownData={[
+                        {label: 'English', value: 'english'},
+                        {label: 'Marathi', value: 'marathi'},
+                        {label: 'Hindi', value: 'hindi'},
+                      ]}
+                      // value={'Female'}
+                      value={values.lang}
+                      onDropdownChange={() => {
+                        setTimeout(() => {
+                          handleChange('lang');
+                        }, 100);
+                      }}
+                      onBlur={handleBlur('lang')}
+                      error={touched.lang && errors.lang}
+                    />
 
-                <MasterTextInput
-                  label="Click to select date"
-                  placeholder="Click to select date"
-                  topLableName="Select data and time"
-                  isDate
-                  timePicker
-                  minDate={new Date()}
-                  ref={inputRefs.scheduleData}
-                  value={values.scheduleData}
-                  onChangeText={handleChange('scheduleData')}
-                  onBlur={handleBlur('scheduleData')}
-                  error={touched.scheduleData && errors.scheduleData}
-                />
+                    <MasterTextInput
+                      label="Click to select date"
+                      placeholder="Click to select date"
+                      topLableName="Select data and time"
+                      value={values.pdfName}
+                      onChangeText={handleChange('pdfName')}
+                      onBlur={handleBlur('pdfName')}
+                      error={touched.pdfName && errors.pdfName}
+                    />
+                  </ScrollView>
 
-                <View
-                  style={{
-                    width: '100%',
-                    position: 'absolute',
-                    bottom: 10,
-                  }}>
-                  <CommonButtonComp title="Submit" onPress={handleSubmit} />
+                  <View
+                    style={
+                      {
+                        // paddingHorizontal: '5%',
+                        // paddingVertical: ,
+                      }
+                    }>
+                    <CommonButtonComp title="Submit" onPress={handleSubmit} />
+                  </View>
                 </View>
-              </View>
-            )}
-          </Formik>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+              )}
+            </Formik>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
+    </SafeAreaView>
   );
 };
 

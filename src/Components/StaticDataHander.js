@@ -198,7 +198,7 @@ const adminDashboardCardData = [
         id: 6,
         title: 'Prayer Request',
         image: theme.assets.prayer,
-        routeName: '', // Add the route name
+        routeName: 'AllPrayerReq', // Add the route name
       },
       {
         id: 9,

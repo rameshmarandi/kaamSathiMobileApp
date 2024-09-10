@@ -132,6 +132,14 @@ export default function DrawerStack(props) {
           }}
         />
         <Drawer.Screen
+          name="AllPrayerReq"
+          component={AllScreens.AllPrayerReq}
+          options={{
+            headerShadowVisible: false,
+            headerShown: false,
+          }}
+        />
+        <Drawer.Screen
           name="FreeResource"
           component={AllScreens.FreeResource}
           options={{

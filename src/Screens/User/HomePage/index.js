@@ -52,7 +52,7 @@ const languageArray = [
   {key: 'marathi', tabTitle: 'Marathi', bg: 'red'},
 ];
 
-const index = props => {
+const index = memo(props => {
   const {navigation} = props;
   let {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
@@ -314,9 +314,9 @@ const index = props => {
       </View>
     </SafeAreaView>
   );
-};
+});
 
-const YoutubeComp = () => {
+const YoutubeComp = memo(() => {
   return (
     <>
       <YoutubePlayer
@@ -341,9 +341,9 @@ const YoutubeComp = () => {
       />
     </>
   );
-};
+});
 
-const DailyVerbs = () => {
+const DailyVerbs = memo(() => {
   return (
     <Animatable.View
       style={{flex: 1}}
@@ -384,7 +384,7 @@ const DailyVerbs = () => {
       />
     </Animatable.View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {

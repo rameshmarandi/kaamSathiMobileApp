@@ -42,8 +42,8 @@ const UserNotification = props => {
 
   const routes = [
     {key: 'first', title: 'All'},
-    {key: 'second', title: 'Birthday'},
-    {key: 'third', title: 'Daily verbs'},
+    {key: 'second', title: 'Daily verbs'},
+    {key: 'third', title: 'Birthday'},
   ];
 
   const scenes = {
