@@ -1,29 +1,14 @@
 import {StyleSheet} from 'react-native';
-// import {CardStyleInterpolators} from 'react-navigation-stack';
 
 import assets from './assets';
 import {getResHeight} from '../responsive';
 
-const regex = {
-  percentage: /^(\d*\.{0,1}\d{0,2}$)/,
-  email: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
-  instagram:
-    /(?:(?:http|https):\/\/)?(?:www.)?(?:instagram.com|instagr.am)\/([A-Za-z0-9-_]+)/im,
-  facebook: /^(https?:\/\/)?((w{3}\.)?)facebook.com\/.*/i,
-  twitter: /^(https?:\/\/)?((w{3}\.)?)twitter\.com\/(#!\/)?[a-z0-9_]+$/i,
-  linkedin:
-    'http[s]?://www.linkedin.com/(in|pub|public-profile/in|public-profile/pub)/([w]{6}-[w]{1,}-[w]+)$',
-  youtube:
-    /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/,
-};
 const color = {
   primary: '#2F3B75',
   darkTheme: '#012537',
   // "#000f0b",
   iconCircleBg: '#011621',
 
-  darkModeTextInputOutline: '#666666',
-  normalModeTextInputOutline: '#C4C4C4',
   // Textinput end
   seletedBtn: '#303254',
   disabledBtn: '#434e82',
@@ -41,7 +26,7 @@ const color = {
   black: '#000000',
 };
 
-const font = {
+const englishFont = {
   regular: 'Poppins-Regular',
   semiBold: 'Poppins-SemiBold',
   medium: 'Poppins-Medium',
@@ -50,15 +35,14 @@ const font = {
   italic: 'Poppins-Italic',
   thin: 'Poppins-Thin',
 };
-
-const fontSizes = {
-  extraSmall: 10,
-  small: 12,
-  regular: 14,
-  medium: 16,
-  large: 18,
-  extraLarge: 25,
-  ultraLarge: 45,
+const hindiFont = {
+  regular: 'hindi-Regular',
+  semiBold: 'hindi-SemiBold',
+  medium: 'hindi-Medium',
+  bold: 'hindi-Bold',
+  extraBold: 'hindi-ExtraBold',
+  italic: 'hindi-Thin',
+  thin: 'hindi-Thin',
 };
 
 const styles = StyleSheet.create({
@@ -87,7 +71,9 @@ const styles = StyleSheet.create({
 
 const theme = {
   color,
-  font,
+  font:
+    // hindiFont,
+    englishFont,
   styles,
 
   assets,

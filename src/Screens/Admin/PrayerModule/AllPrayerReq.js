@@ -259,6 +259,7 @@ const AllPrayerReq = props => {
                     }}
                     style={styles.profileImage}
                   />
+
                   <View
                     style={[
                       item.senderId === 'user1'
@@ -266,19 +267,93 @@ const AllPrayerReq = props => {
                         : styles.receivedMessage,
                       {maxWidth: '80%'},
                     ]}>
+                    {/* Message Content */}
                     <Text
                       style={{
                         fontFamily: theme.font.medium,
                         fontSize: getFontSize(1.5),
                         color: '#363434',
+                        lineHeight: getFontSize(2), // Control the line height to reduce vertical space
                       }}>
                       {item.content}
                     </Text>
-                    <Text style={styles.timestamp}>
-                      {dateFormatHander(item.timestamp, 'DD MMM')}
-                    </Text>
+
+                    {/* Checkmark and Timestamp */}
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'flex-end',
+                        // marginTop: 2, // Reduced margin to make it more compact
+                      }}>
+                      {item.senderId === 'user1' && (
+                        <VectorIcon
+                          type={'Ionicons'}
+                          name={'checkmark-done-outline'}
+                          size={getFontSize(1.9)}
+                          color={'#4FB6EC'}
+                          style={{marginRight: 3}} // Adjusted for closer spacing to the timestamp
+                        />
+                      )}
+                      <Text style={styles.timestamp}>
+                        {dateFormatHander(item.timestamp, 'DD MMM')}
+                      </Text>
+                    </View>
                   </View>
                 </View>
+
+                // <View
+                //   style={[
+                //     styles.messageWrapper,
+                //     item.senderId === 'user1'
+                //       ? styles.sentMessageWrapper
+                //       : styles.receivedMessageWrapper,
+                //     {
+                //       maxWidth: getResWidth(100),
+                //     },
+                //   ]}>
+                //   <Image
+                //     source={{
+                //       uri:
+                //         item.senderId === 'user1'
+                //           ? 'https://www.esri.com/about/newsroom/wp-content/uploads/2024/06/arcnews-article-simplifyinghow-1-768x433.jpg' // Replace with user1 profile image
+                //           : 'https://www.esri.com/content/dam/esrisites/en-us/arcgis/products/arcgis-solutions/assets/arcgis-solutions-overview-mts-intersecting-business-technology.png', // Replace with user2 profile image
+                //     }}
+                //     style={styles.profileImage}
+                //   />
+                //   <View
+                //     style={[
+                //       item.senderId === 'user1'
+                //         ? styles.sentMessage
+                //         : styles.receivedMessage,
+                //       {maxWidth: '80%'},
+                //     ]}>
+                //     <Text
+                //       style={{
+                //         fontFamily: theme.font.medium,
+                //         fontSize: getFontSize(1.5),
+                //         color: '#363434',
+                //       }}>
+                //       {item.content}{' '}
+                //       <View
+                //         style={{
+                //           width: '100%',
+                //           flexDirection: 'row',
+                //           justifyContent: 'flex-end',
+                //         }}>
+                //         <VectorIcon
+                //           type={'Ionicons'}
+                //           name={'checkmark-done-outline'}
+                //           size={getFontSize(1.9)}
+                //           color={'#4FB6EC'}
+                //         />
+                //         <Text style={styles.timestamp}>
+                //           {dateFormatHander(item.timestamp, 'DD MMM')}
+                //         </Text>
+                //       </View>
+                //     </Text>
+                //   </View>
+                // </View>
               )}
               contentContainerStyle={styles.messageContainer}
               keyboardShouldPersistTaps="handled"
@@ -372,11 +447,9 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   timestamp: {
-    textAlign: 'right',
     marginTop: 2,
-
-    fontFamily: theme.font.medium,
-    fontSize: getFontSize(1.2),
+    fontFamily: theme.font.regular,
+    fontSize: getFontSize(1.4),
     color: '#363434',
   },
   inputContainer: {
