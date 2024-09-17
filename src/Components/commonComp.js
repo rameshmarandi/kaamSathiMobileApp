@@ -5,6 +5,7 @@ import {
   PermissionsAndroid,
   StyleSheet,
   TouchableOpacity,
+  Text,
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {Button, Image} from 'react-native-elements';
@@ -13,6 +14,8 @@ import {getFontSize, getResHeight, getResWidth} from '../utility/responsive';
 import theme from '../utility/theme';
 import {VectorIcon} from './VectorIcon';
 import RNFetchBlob from 'react-native-blob-util';
+import {verseResourceCommonStyle} from '../Screens/Styles/verseResourceCommonStyle';
+import WaveButton from './WaveButton';
 const trimText = (text, maxLength = 10) => {
   return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
 };
@@ -184,6 +187,131 @@ const CommonButtonComp = memo(props => {
     />
   );
 });
+
+export const CommonImageCard = memo(
+  ({
+    backgroundColor,
+    borderColor,
+    textColor,
+    onLongPress,
+    isFooterVisilbe,
+    onCardPress,
+    waveButtonProps,
+    scheduleText,
+    date,
+    imageSource,
+    isSelected,
+  }) => {
+    const {isDarkMode, currentTextColor, currentBgColor} = useSelector(
+      state => state.user,
+    );
+    return (
+      <TouchableOpacity
+        onLongPress={onLongPress}
+        onPress={onCardPress}
+        activeOpacity={0.8}>
+        <View
+          style={[
+            verseResourceCommonStyle.card,
+
+            !isFooterVisilbe && {paddingBottom: '4%'},
+            {
+              backgroundColor,
+
+              borderColor,
+            },
+          ]}>
+          {isSelected && (
+            <View
+              style={[
+                verseResourceCommonStyle.overlay,
+                {backgroundColor: 'rgba(255, 255, 255, 0.5)'},
+              ]}
+            />
+          )}
+          <View style={verseResourceCommonStyle.cardHeader}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <WaveButton {...waveButtonProps} disabled />
+              <Text
+                style={[
+                  verseResourceCommonStyle.boldText,
+                  {
+                    color: textColor,
+                    marginLeft: 10,
+                  },
+                ]}>
+                {scheduleText}
+              </Text>
+            </View>
+            <Text
+              style={[
+                verseResourceCommonStyle.regularText,
+                {color: textColor},
+              ]}>
+              {date}
+            </Text>
+          </View>
+          <View style={verseResourceCommonStyle.imageContainer}>
+            <Image
+              source={
+                // imageSource
+                // imageSource !== 'undefined' && imageSource.includes('https://')
+                //   ? {uri: imageSource}
+                //   :
+                imageSource
+              }
+              resizeMode="cover"
+              style={verseResourceCommonStyle.image}
+            />
+          </View>
+          {isFooterVisilbe && (
+            <>
+              <View
+                style={{
+                  marginVertical: getResHeight(1),
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                  <VectorIcon
+                    type={'Ionicons'}
+                    name={'eye'}
+                    size={getFontSize(3.3)}
+                    color={currentTextColor}
+                  />
+                  <Text
+                    style={{
+                      color: currentTextColor,
+                      fontFamily: theme.font.medium,
+                      fontSize: getFontSize(1.8),
+                      marginLeft: getResWidth(2),
+                    }}>
+                    12
+                  </Text>
+                </View>
+                <TouchableOpacity>
+                  <Text
+                    style={{
+                      color: currentTextColor,
+                      fontFamily: theme.font.medium,
+                      fontSize: getFontSize(1.8),
+                    }}>
+                    12 Comments
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+        </View>
+      </TouchableOpacity>
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   btnTitleStyle: {

@@ -200,8 +200,9 @@ const AllPrayerReq = props => {
                       <Text
                         style={{
                           color: 'black',
-                          fontFamily: 'SemiBold',
-                          fontSize: 12,
+                          fontFamily: theme.font.medium,
+
+                          fontSize: getFontSize(1.4),
                         }}>
                         {item.unreadCount}
                       </Text>
@@ -434,20 +435,20 @@ const styles = StyleSheet.create({
   },
   sentMessage: {
     backgroundColor: '#DCF8C6',
-    // padding: 8,
+
     padding: getResHeight(0.4),
 
     borderRadius: 5,
-    marginVertical: 4,
+    // marginVertical: getResHeight(0.7),
   },
   receivedMessage: {
     backgroundColor: '#FFFFFF',
     padding: 8,
     borderRadius: 5,
-    marginVertical: 4,
+    marginVertical: getResHeight(0.7),
   },
   timestamp: {
-    marginTop: 2,
+    // marginTop: 2,
     fontFamily: theme.font.regular,
     fontSize: getFontSize(1.4),
     color: '#363434',

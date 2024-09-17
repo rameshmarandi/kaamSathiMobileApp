@@ -103,6 +103,22 @@ export default function DrawerStack(props) {
                 headerShown: false,
               }}
             />
+            <Drawer.Screen
+              name="AdminOurBelieve"
+              component={AllScreens.AdminOurBelieve}
+              options={{
+                headerShadowVisible: false,
+                headerShown: false,
+              }}
+            />
+            <Drawer.Screen
+              name="UploadBanner"
+              component={AllScreens.UploadBanner}
+              options={{
+                headerShadowVisible: false,
+                headerShown: false,
+              }}
+            />
           </>
         ) : (
           <Drawer.Screen

@@ -14,7 +14,7 @@ const WaveButton = React.memo(props => {
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
 
-  const {circleContainer, circleStyle} = props;
+  const {circleContainer, circleStyle, disabled} = props;
   React.useEffect(() => {
     // Scale animation for expanding wave effect
     scale.value = withRepeat(
@@ -67,7 +67,7 @@ const WaveButton = React.memo(props => {
       />
       <TouchableOpacity
         style={circleStyle ? circleStyle : [styles.button]}
-        // disabled={ci}
+        disabled={disabled}
         onPress={props.onPress}>
         {circleStyle ? null : (
           <Icon name="plus" size={getFontSize(2.5)} color="#FFF" />

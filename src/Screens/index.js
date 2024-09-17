@@ -21,6 +21,9 @@ import Approval from './Admin/Members/Approval';
 import DailyVerse from './Admin/DailyVerses/index';
 import AdminResource from './Admin/AdminResource/index';
 import AllPrayerReq from './Admin/PrayerModule/AllPrayerReq';
+import AdminOurBelieve from './Admin/AdminOurBelieve';
+import UploadBanner from './Admin/Posts/UploadBanner';
+
 const UserAllScreens = {
   HomePage,
   ProfilePage,
@@ -43,6 +46,8 @@ const AdminScreens = {
   DailyVerse,
   AdminResource,
   AllPrayerReq,
+  AdminOurBelieve,
+  UploadBanner,
 };
 
 export default AllScreens = {

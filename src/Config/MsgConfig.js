@@ -48,6 +48,8 @@ const headerTitle = {
   AddMemberForm: 'Add Member Form',
   uploadResource: 'Upload Resource',
   allPrayerReq: 'All prayer requests',
+  adminOurBelieve: 'Our believe',
+  postsUploadBanner: 'All banners',
 };
 
 export default message = {

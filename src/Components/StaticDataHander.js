@@ -204,7 +204,7 @@ const adminDashboardCardData = [
         id: 9,
         title: 'What We Believe',
         image: theme.assets.contact,
-        routeName: '', // Add the route name
+        routeName: 'AdminOurBelieve', // Add the route name
       },
     ],
   },
@@ -215,7 +215,7 @@ const adminDashboardCardData = [
         id: 2,
         title: 'Momentous Posts',
         image: theme.assets.camera,
-        routeName: '', // Add the route name
+        routeName: 'UploadBanner', // Add the route name
       },
       {
         id: 8,
@@ -303,6 +303,84 @@ const freeResourceData = [
         routeName: ALL_LINKS.CHRISTIAN_RIGHTS,
       },
     ],
+  },
+];
+
+const beliefsData = [
+  {
+    id: 1,
+    text: 'That the Bible (66 books) is the inspired and infallible Word of God, the sole and sufficient guide for our life on earth.',
+  },
+  {
+    id: 2,
+    text: 'That there is one God eternally existent in three Persons: Father, Son and Holy Spirit.',
+  },
+  {
+    id: 3,
+    text: 'In the Deity of our Lord Jesus Christ, His virgin birth, His humanity, His perfectly sinless life, His substitutionary death as an atonement for our sins, His bodily resurrection, His ascension to the Father, and His personal return to the earth for His saints.',
+  },
+  {
+    id: 4,
+    text: 'That all human beings are dead in sin and utterly lost and that the only way their sins can be forgiven is through repentance and through faith in the death and resurrection of our Lord Jesus Christ.',
+  },
+  {
+    id: 5,
+    text: 'In the regenerating work of the Holy Spirit, whereby a person is born again to be a child of God.',
+  },
+  {
+    id: 6,
+    text: 'That justification is by faith in Christ alone, the evidence of this being good works that glorify God.',
+  },
+  {
+    id: 7,
+    text: 'In baptism in water, by immersion, after regeneration, in the Name of the Father, the Son and the Holy Spirit.',
+  },
+  {
+    id: 8,
+    text: 'In the necessity of being filled with the Holy Spirit continually in order to have power to be witnesses for Christ - by life and by word.',
+  },
+  {
+    id: 9,
+    text: 'In the resurrection of the righteous to eternal life and the resurrection of the unrighteous to eternal damnation.',
+  },
+];
+
+const HindiBeliefsData = [
+  {
+    id: 1,
+    text: 'कि बाइबल (66 पुस्तकें) परमेश्वर का प्रेरित और अचूक वचन है, जो पृथ्वी पर हमारे जीवन के लिए एकमात्र और पर्याप्त मार्गदर्शक है।',
+  },
+  {
+    id: 2,
+    text: 'कि एक ही परमेश्वर है जो तीन व्यक्तियों में अनन्तकाल से विद्यमान है: पिता, पुत्र और पवित्र आत्मा।',
+  },
+  {
+    id: 3,
+    text: 'हमारे प्रभु यीशु मसीह की दिव्यता, उनका कुँवारी से जन्म, उनकी मानवता, उनका पापरहित जीवन, हमारे पापों का प्रायश्चित करने के लिए उनका स्थानापन्न बलिदान, उनका शारीरिक पुनरुत्थान, पिता के पास उनका आरोहण और उनके संतों के लिए पृथ्वी पर उनका व्यक्तिगत आगमन।',
+  },
+  {
+    id: 4,
+    text: 'सभी मनुष्य पाप में मृत और पूरी तरह से खोए हुए हैं, और उनके पापों की क्षमा केवल हमारे प्रभु यीशु मसीह की मृत्यु और पुनरुत्थान में विश्वास और पश्चाताप के द्वारा ही संभव है।',
+  },
+  {
+    id: 5,
+    text: 'पवित्र आत्मा के पुनर्जनन कार्य में विश्वास, जिसके द्वारा एक व्यक्ति परमेश्वर का पुत्र बनकर नया जन्म पाता है।',
+  },
+  {
+    id: 6,
+    text: 'कि धार्मिकता केवल मसीह में विश्वास के द्वारा है, और इसका प्रमाण अच्छे कार्य हैं जो परमेश्वर की महिमा के लिए होते हैं।',
+  },
+  {
+    id: 7,
+    text: 'पुनर्जनन के बाद, पिता, पुत्र और पवित्र आत्मा के नाम से जल में पूर्ण रूप से बपतिस्मा लेने में विश्वास।',
+  },
+  {
+    id: 8,
+    text: 'यह आवश्यक है कि हमें लगातार पवित्र आत्मा से भरना चाहिए, ताकि हमारे जीवन और शब्दों के द्वारा मसीह के साक्षी बनने की शक्ति प्राप्त हो।',
+  },
+  {
+    id: 9,
+    text: 'धार्मिकों का अनंत जीवन के लिए और अधार्मिकों का अनंत दंड के लिए पुनरुत्थान में विश्वास।',
   },
 ];
 
@@ -528,4 +606,6 @@ export {
   freeResourceData,
   adminStudyResouce,
   toastConfig,
+  beliefsData,
+  HindiBeliefsData,
 };

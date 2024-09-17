@@ -8,8 +8,10 @@ export const verseResourceCommonStyle = StyleSheet.create({
   },
   card: {
     borderWidth: 1,
-    padding: '3%',
-    marginBottom: '5%',
+    // padding: '3%',
+    paddingHorizontal: '4%',
+    paddingTop: '4%',
+    marginBottom: '4%',
     borderRadius: getResHeight(1),
   },
   cardHeader: {
