@@ -72,10 +72,8 @@ export const AutoScrollBtnCom = memo(props => {
                 numberOfLines={3}
                 style={{
                   fontSize: getFontSize(2),
-                  fontFamily: theme.font.bold,
-                  color: isSelected
-                    ? currentTextColor
-                    : theme.color.outlineColor,
+                  fontFamily: isSelected ? theme.font.bold : theme.font.medium,
+                  color: isSelected ? currentTextColor : theme.color.dimWhite,
                 }}>
                 {`${name[0]}${name[1]}`}
               </Text>
@@ -83,8 +81,8 @@ export const AutoScrollBtnCom = memo(props => {
             <Text
               style={{
                 fontSize: getFontSize(1.6),
-                fontFamily: theme.font.medium,
-                color: isSelected ? currentTextColor : theme.color.outlineColor,
+                fontFamily: isSelected ? theme.font.bold : theme.font.medium,
+                color: isSelected ? currentTextColor : theme.color.dimWhite,
               }}>
               {name}
             </Text>

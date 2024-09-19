@@ -108,7 +108,7 @@ const ChurchMap = React.memo(props => {
       <View
         style={{
           width: '100%',
-          height: getResHeight(50),
+          height: getResHeight(63),
         }}>
         <GoogleUIComp selectedChurch={selectedChurch} />
       </View>
