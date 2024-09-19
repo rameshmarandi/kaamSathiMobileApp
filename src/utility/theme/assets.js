@@ -7,6 +7,7 @@ import birthday from '../../assets/birthday.png';
 import dailyVerbsBanner from '../../assets/dailyVerbsBanner.jpg';
 import SignIn from '../../assets/signIn.png';
 import SignUp from '../../assets/signUp.png';
+import google_img from '../../assets/google_img.png';
 //Loader Animations
 
 import WaveAnimation from '../../assets/animationLoader/wave-animation.json';
@@ -60,6 +61,7 @@ const homeIcons = {
   DBible,
   pdf,
   prayer,
+  google_img,
   closeIcon,
   deleteIcon,
   chatGPT,

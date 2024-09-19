@@ -336,7 +336,7 @@ const DrawerItems = ({navigation}) => {
           // title={'Log Out'}
           title={'Are you a member?'}
           onPress={() => {
-            // navigation.navigate("Login")
+            navigation.navigate('LoginPage');
             // navigation.closeDrawer();
           }}
           iconLeft

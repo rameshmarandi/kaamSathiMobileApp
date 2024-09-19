@@ -117,7 +117,10 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
       }
       setStep(step - 1);
     } else {
-      closeModal();
+      setTimeout(() => {
+        closeModal();
+        setSelectedImage;
+      }, 1300);
     }
   };
 

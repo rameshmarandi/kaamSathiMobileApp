@@ -172,25 +172,14 @@ const AdminContact = React.memo(props => {
                               right: getResWidth(-1.4),
                               top: getResHeight(-1),
                             }}>
-                            <ButtonIconComp
-                              onPress={() => {
-                                setLongPress(false);
-                              }}
-                              icon={
-                                <VectorIcon
-                                  type={'Entypo'}
-                                  name={'plus'}
-                                  size={getFontSize(2)}
-                                  color={currentBgColor}
-                                />
-                              }
-                              containerStyle={[
-                                style.btnContainer,
-                                {
-                                  backgroundColor: currentTextColor,
-                                },
-                              ]}
-                            />
+                            <TouchableOpacity activeOpacity={0.8}>
+                              <VectorIcon
+                                type={'AntDesign'}
+                                name={'pluscircle'}
+                                size={getFontSize(3.5)}
+                                color={currentTextColor}
+                              />
+                            </TouchableOpacity>
                           </View>
                         </View>
                         {tableSection.map((e, i) => {
@@ -267,23 +256,14 @@ const AdminContact = React.memo(props => {
                 alignItems: 'center',
               }}>
               <SectionHeader sectionTitle={`Frequenly asked questions`} />
-              <ButtonIconComp
-                onPress={() => {}}
-                icon={
-                  <VectorIcon
-                    type={'Entypo'}
-                    name={'plus'}
-                    size={getFontSize(2)}
-                    color={currentBgColor}
-                  />
-                }
-                containerStyle={[
-                  style.btnContainer,
-                  {
-                    backgroundColor: currentTextColor,
-                  },
-                ]}
-              />
+              <TouchableOpacity activeOpacity={0.8}>
+                <VectorIcon
+                  type={'AntDesign'}
+                  name={'pluscircle'}
+                  size={getFontSize(3.5)}
+                  color={currentTextColor}
+                />
+              </TouchableOpacity>
             </View>
             <FAQList />
           </View>

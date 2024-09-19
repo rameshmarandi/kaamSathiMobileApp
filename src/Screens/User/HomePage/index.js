@@ -119,10 +119,10 @@ const index = memo(props => {
               case 1:
                 return (
                   <>
-                    <Animatable.View
-                      animation="fadeInUp"
-                      duration={500}
-                      delay={200}
+                    <View
+                      // animation="fadeInUp"
+                      // duration={500}
+                      // delay={200}
                       style={{
                         paddingHorizontal: '7%',
                         marginTop: '5%',
@@ -169,7 +169,7 @@ const index = memo(props => {
                           inactiveDotScale={0.6}
                         /> */}
                       </View>
-                    </Animatable.View>
+                    </View>
                     <View
                       style={
                         {
@@ -283,24 +283,27 @@ const index = memo(props => {
                 return (
                   <>
                     <Animatable.View
-                      animation="fadeInUp"
-                      duration={500}
-                      delay={200}
+                      // animation="fadeInUp"
+                      // duration={500}
+                      // delay={200}
                       style={{
-                        paddingHorizontal: '5%',
+                        // paddingHorizontal: '5%',
                         marginTop: '5%',
                         marginBottom: '4%',
-                        borderRadius: 10,
+                        // borderRadius: 40,
+                        // overflow: 'hidden',
+                        // backgroundColor: 'red',
                       }}>
                       <SectionHeader
                         sectionTitle={`${MsgConfig.chruchLocation}`}
                       />
                       <View
                         style={{
-                          marginBottom: '70%',
+                          marginBottom: '40%',
                           width: '100%',
-                          height: getResHeight(45),
-
+                          height: getResHeight(70),
+                          // paddingHorizontal: '5%',
+                          // borderRadius: 40,
                           marginTop: '6%',
                         }}>
                         <GoogleMapComp />

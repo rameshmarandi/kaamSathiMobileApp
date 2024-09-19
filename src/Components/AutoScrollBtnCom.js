@@ -60,7 +60,9 @@ export const AutoScrollBtnCom = memo(props => {
               onPress={() => handlePress(item, index)}
               style={[
                 styles.touchable,
+
                 {
+                  margin: 10,
                   backgroundColor: currentBgColor,
                   borderWidth: 1,
                   borderColor: isSelected
@@ -81,6 +83,8 @@ export const AutoScrollBtnCom = memo(props => {
             <Text
               style={{
                 fontSize: getFontSize(1.6),
+                // marginTop: '2%',
+                textAlign: 'center',
                 fontFamily: isSelected ? theme.font.bold : theme.font.medium,
                 color: isSelected ? currentTextColor : theme.color.dimWhite,
               }}>
@@ -136,7 +140,7 @@ const styles = {
     backgroundColor: 'red',
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 10,
+    // margin: 10,
     borderRadius: getResHeight(100),
   },
 

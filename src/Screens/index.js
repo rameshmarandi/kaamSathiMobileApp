@@ -23,6 +23,7 @@ import AdminResource from './Admin/AdminResource/index';
 import AllPrayerReq from './Admin/PrayerModule/AllPrayerReq';
 import AdminOurBelieve from './Admin/AdminOurBelieve';
 import UploadBanner from './Admin/Posts/UploadBanner';
+import LoginPage from './Auth/LoginPage';
 
 const UserAllScreens = {
   HomePage,
@@ -48,6 +49,7 @@ const AdminScreens = {
   AllPrayerReq,
   AdminOurBelieve,
   UploadBanner,
+  LoginPage,
 };
 
 export default AllScreens = {

@@ -1,16 +1,17 @@
-import React, {useState, useEffect, useRef, memo} from 'react';
+import React, {useState, useEffect, useRef, useCallback, memo} from 'react';
 import {TouchableOpacity, View, Text} from 'react-native';
 import MapView, {Marker, Callout} from 'react-native-maps';
 import {useSelector} from 'react-redux';
 import {Svg, Image as ImageSvg} from 'react-native-svg';
 
-import {getFontSize, getResWidth} from '../utility/responsive';
+import {getFontSize, getResWidth, getResHeight} from '../utility/responsive';
 import theme from '../utility/theme';
 import {VectorIcon} from './VectorIcon';
 import {Linking} from 'react-native';
+import {AutoScrollBtnCom} from './AutoScrollBtnCom';
 
-const GoogleUIComp = ({selectedChurch}) => {
-  const {isDarkMode, currentBgColor, currntTextColor} = useSelector(
+const GoogleUIComp = () => {
+  const {isDarkMode, currentBgColor, isAdmin, currentTextColor} = useSelector(
     state => state.user,
   );
 
@@ -51,6 +52,14 @@ const GoogleUIComp = ({selectedChurch}) => {
     {id: '14', name: 'Surat', latitude: 21.1702, longitude: 72.8311},
     {id: '15', name: 'Nagpur', latitude: 21.1458, longitude: 79.0882},
   ];
+  const [selectedChurch, setSelectedChurch] = useState(null);
+  const handleCardPress = useCallback(
+    church => {
+      setSelectedChurch(church);
+    },
+    [handleCardPress, selectedChurch],
+  );
+  const [selectedItem, setSelectedItem] = useState(0);
 
   // Animate to the selected church when a card is pressed
   useEffect(() => {
@@ -93,7 +102,7 @@ const GoogleUIComp = ({selectedChurch}) => {
           zIndex: 9999,
           backgroundColor: currentBgColor,
           borderRadius: 5,
-          padding: 10,
+          padding: 5,
         }}
         onPress={handleReset}>
         <VectorIcon
@@ -145,6 +154,47 @@ const GoogleUIComp = ({selectedChurch}) => {
           </Marker>
         ))}
       </MapView>
+      <View>
+        <View
+          style={{
+            width: '100%',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginTop: getResHeight(3),
+            paddingHorizontal: '5%',
+            marginBottom: '2%',
+          }}>
+          <Text
+            style={{
+              color: currentTextColor,
+              fontFamily: theme.font.bold,
+            }}>
+            All church branch list
+          </Text>
+          {isAdmin && (
+            <>
+              <TouchableOpacity activeOpacity={0.8}>
+                <VectorIcon
+                  type={'Entypo'}
+                  name={'squared-plus'}
+                  size={getFontSize(3.5)}
+                  color={currentTextColor}
+                />
+              </TouchableOpacity>
+            </>
+          )}
+        </View>
+
+        <AutoScrollBtnCom
+          data={coordinates}
+          selectedTab={selectedItem}
+          onPress={(item, index) => {
+            handleCardPress(item);
+            setSelectedItem(index);
+          }}
+        />
+      </View>
     </>
   );
 };
