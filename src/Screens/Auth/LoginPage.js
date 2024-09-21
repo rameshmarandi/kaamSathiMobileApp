@@ -104,6 +104,9 @@ const LoginPage = props => {
                 />
                 <TouchableOpacity
                   activeOpacity={0.8}
+                  style={{
+                    width: '35%',
+                  }}
                   onPress={() => {
                     navigation.navigate('ForgotPassword');
                   }}>

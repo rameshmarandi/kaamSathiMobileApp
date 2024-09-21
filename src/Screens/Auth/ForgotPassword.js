@@ -20,51 +20,11 @@ import {
   handleEmailChange,
   handleNumberChange,
 } from '../../Components/InputHandlers';
-import Icon from 'react-native-vector-icons/FontAwesome'; // For icons
-
-// Custom Hook for password validation with debounce
-const usePasswordValidation = (password, delay = 500) => {
-  const [validations, setValidations] = useState({
-    hasUppercase: false,
-    hasLowercase: false,
-    hasNumber: false,
-    hasSpecialChar: false,
-    minLength: false,
-  });
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setValidations({
-        hasUppercase: /[A-Z]/.test(password),
-        hasLowercase: /[a-z]/.test(password),
-        hasNumber: /\d/.test(password),
-        hasSpecialChar: /[@$!%*?&]/.test(password),
-        minLength: password.length >= 6,
-      });
-    }, delay);
-
-    return () => clearTimeout(handler); // Clean up
-  }, [password, delay]);
-
-  return validations;
-};
-
-// useEffect(() => {
-//   setIsOTPFildVisible(false);
-//   setIsChangePasswordVisible(false);
-// }, []);
-// PasswordCheckItem Component for each validation point
-const PasswordCheckItem = ({isValid, label}) => (
-  <View style={{flexDirection: 'row', alignItems: 'center', marginVertical: 5}}>
-    <Icon
-      name={isValid ? 'check-circle' : 'times-circle'}
-      size={20}
-      color={isValid ? theme.color.green : theme.color.error}
-    />
-    <Text style={{marginLeft: 10}}>{label}</Text>
-  </View>
-);
-
+import {
+  PasswordCheckItem,
+  usePasswordValidation,
+} from '../../utility/PasswordUtils';
+import {forgotPasswordValidation} from '../../utility/theme/validation';
 const ForgotPassword = props => {
   const {navigation} = props;
   const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
@@ -77,34 +37,34 @@ const ForgotPassword = props => {
     password: useRef(null),
   };
 
-  // Validation Schema for Formik
-  const validationSchema = Yup.object().shape({
-    email: Yup.string()
-      .email('Please enter a valid email')
-      .required('Email is required'),
-    otp: Yup.string()
-      .length(4, 'OTP must be 4 digits')
-      .when('isOTPFildVisible', {
-        is: true,
-        then: Yup.string().required('OTP is required'),
-      }),
-    password: Yup.string()
-      .min(6, 'Password must be at least 6 characters')
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
-        'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
-      )
-      .when('isChangePasswordVisible', {
-        is: true,
-        then: Yup.string().required('Password is required'),
-      }),
-    cpassword: Yup.string()
-      .oneOf([Yup.ref('password'), null], 'Passwords must match')
-      .when('isChangePasswordVisible', {
-        is: true,
-        then: Yup.string().required('Confirm password is required'),
-      }),
-  });
+  // // Validation Schema for Formik
+  // const validationSchema = Yup.object().shape({
+  //   email: Yup.string()
+  //     .email('Please enter a valid email')
+  //     .required('Email is required'),
+  //   otp: Yup.string()
+  //     .length(4, 'OTP must be 4 digits')
+  //     .when('isOTPFildVisible', {
+  //       is: true,
+  //       then: Yup.string().required('OTP is required'),
+  //     }),
+  //   password: Yup.string()
+  //     .min(6, 'Password must be at least 6 characters')
+  //     .matches(
+  //       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
+  //       'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
+  //     )
+  //     .when('isChangePasswordVisible', {
+  //       is: true,
+  //       then: Yup.string().required('Password is required'),
+  //     }),
+  //   cpassword: Yup.string()
+  //     .oneOf([Yup.ref('password'), null], 'Passwords must match')
+  //     .when('isChangePasswordVisible', {
+  //       is: true,
+  //       then: Yup.string().required('Confirm password is required'),
+  //     }),
+  // });
 
   return (
     <SafeAreaView style={[styles.container, {backgroundColor: currentBgColor}]}>
@@ -122,7 +82,11 @@ const ForgotPassword = props => {
         keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}>
         <Formik
           initialValues={{email: '', password: '', cpassword: '', otp: ''}}
-          validationSchema={validationSchema}
+          // validationSchema={forgotPasswordValidation}
+
+          validationSchema={forgotPasswordValidation} // Ensure this is set
+          validateOnChange={true} // Change this to true for immediate validation
+          validateOnBlur={true} // Change this to true for validation on blur
           onSubmit={(values, {resetForm}) => {
             if (isChangePasswordVisible) {
               resetForm(); // Reset form after submission
@@ -179,6 +143,7 @@ const ForgotPassword = props => {
                     keyboardType="numeric"
                     value={values.otp}
                     maxLength={4}
+                    autoFocus
                     onChangeText={text =>
                       setFieldValue('otp', handleNumberChange(text))
                     }
@@ -216,7 +181,7 @@ const ForgotPassword = props => {
                       label="Confirm Password*"
                       placeholder="Enter confirm password"
                       secureTextEntry
-                      ref={inputRefs.cpassword}
+                      // ref={inputRefs.cpassword}
                       value={values.cpassword}
                       onChangeText={handleChange('cpassword')}
                       onBlur={handleBlur('cpassword')}
@@ -285,10 +250,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollView: {
-    width: '90%',
+    width: '95%',
     alignSelf: 'center',
   },
-  scrollViewContent: {},
+  scrollViewContent: {
+    paddingHorizontal: '5%',
+  },
   header: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -304,7 +271,7 @@ const styles = StyleSheet.create({
     fontSize: getFontSize(2),
   },
   loginButton: {
-    width: '95%',
+    width: '100%',
     paddingVertical: '2.5%',
     flexDirection: 'row',
     alignItems: 'center',

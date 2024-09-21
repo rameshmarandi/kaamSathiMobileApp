@@ -1,167 +1,74 @@
-// import * as Yup from 'yup';
+// validationSchema.js
+import * as Yup from 'yup';
 
-// //New Validation START
-// const prayerRequest = Yup.object().shape({
-//   name: Yup.string().required('Please enter your name'),
+export const stepOneSchema = Yup.object().shape({
+  name: Yup.string().required('Full name is required'),
+  email: Yup.string().email('Invalid email').required('Email is required'),
+  mobile: Yup.string()
+    .required('Mobile number is required')
+    .length(10, 'Mobile number must be 10 digits'),
+});
+
+export const stepTwoSchema = Yup.object().shape({
+  birthDate: Yup.string().required('Date of birth is required'),
+  baptismDate: Yup.string().required('Date of baptism is required'),
+});
+
+export const passConfirmPassValidation = Yup.object().shape({
+  password: Yup.string()
+    .min(6, 'Password must be at least 6 characters')
+    .required('Password is required'),
+  cpassword: Yup.string()
+    .oneOf([Yup.ref('password'), null], 'Passwords must match')
+    .when('isChangePasswordVisible', {
+      is: true,
+      then: Yup.string().required('Confirm password is required'),
+    }),
+});
+
+// Validation Schema for Formik
+// export const forgotPasswordValidation = Yup.object().shape({
 //   email: Yup.string()
-//     .email('Please enter valid email')
-//     .required('Please enter valid email'),
+//     .email('Please enter a valid email')
+//     .required('Email is required'),
+//   otp: Yup.string()
+//     .length(4, 'OTP must be 4 digits')
+//     .when('isOTPFildVisible', {
+//       is: true,
+//       then: Yup.string().required('OTP is required'),
+//     }),
+
+//   ...passConfirmPassValidation,
 // });
 
-// //New Validation END
-// const login = Yup.object().shape({
-//   // mobile: Yup.string()
-//   //   .required('The mobile number is required')
-//   //   .matches(/^[0-9]+$/, 'Must be only digits')
-//   //   .min(10, 'Must be exactly 10 digits')
-//   //   .max(10, 'Must be exactly 10 digits'),
-//   Username: Yup.string().required('Please enter username '),
+// Validation Schema for Formik
+export const forgotPasswordValidation = Yup.object().shape({
+  email: Yup.string()
+    .email('Please enter a valid email')
+    .required('Email is required'),
 
-//   Password: Yup.string().required('Please enter a passoword'),
-// });
+  otp: Yup.lazy((value, {context}) =>
+    context.isOTPFildVisible
+      ? Yup.string()
+          .length(4, 'OTP must be 4 digits')
+          .required('OTP is required')
+      : Yup.string().notRequired(),
+  ),
 
-// const registerUser = Yup.object().shape({
-//   firstName: Yup.string().required('Enter your first name'),
-//   lastName: Yup.string().required('Enter your last name'),
-//   email: Yup.string()
-//     .required('Email is required!')
-//     .email('Please enter valid email'),
-// });
-// const registerCompny = Yup.object().shape({
-//   companyName: Yup.string().notRequired('Enter your company name'),
-//   GST_no: Yup.string().notRequired('Enter your GST Code'),
-//   mobile: Yup.string()
-//     .required('The mobile number is required')
-//     .matches(/^[0-9]+$/, 'Must be only digits')
-//     .min(10, 'Must be exactly 10 digits')
-//     .max(10, 'Must be exactly 10 digits'),
-// });
-// const registerPassword = Yup.object().shape({
-//   userName: Yup.string().required('Enter your user name'),
-//   password: Yup.string()
-//     .required(
-//       'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character',
-//     )
-//     .matches(/[A-Z]/, 'Password requires an uppercase letter')
-//     .matches(/[a-z]/, 'Password requires a lowercase letter')
-//     .matches(/[0-9]/, 'Password requires a number')
-//     .matches(/[^\w]/, 'Password requires a symbol')
-//     .min(8, 'Password must be 8 characters long'),
-//   confirmpassword: Yup.string().oneOf(
-//     [Yup.ref('password')],
-//     'Both password need to be the same',
-//   ),
-//   // tpolicy: Yup.bool().required('read and select Terms & Conditions'),
-// });
+  password: Yup.lazy((value, {context}) =>
+    context.isChangePasswordVisible
+      ? Yup.string()
+          .min(6, 'Password must be at least 6 characters')
+          .required('Password is required')
+      : Yup.string().notRequired(),
+  ),
 
-// const forgotPassword = Yup.object().shape({
-//   email: Yup.string()
-//     .required('Email is required!')
-//     .email('Please enter valid email'),
-// });
-
-// const changePassword = Yup.object().shape({
-//   password: Yup.string()
-//     .required(
-//       'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character',
-//     )
-//     .matches(/[A-Z]/, 'Password requires an uppercase letter')
-//     .matches(/[a-z]/, 'Password requires a lowercase letter')
-//     .matches(/[0-9]/, 'Password requires a number')
-//     .matches(/[^\w]/, 'Password requires a symbol')
-//     .min(8, 'Password must be 8 characters long'),
-//   confirmpassword: Yup.string().oneOf(
-//     [Yup.ref('password')],
-//     'Both password need to be the same',
-//   ),
-// });
-
-// const register = Yup.object().shape({
-//   FirstName: Yup.string().required('Enter your first name'),
-//   LastName: Yup.string().required('Enter your last name'),
-//   EmailAddress: Yup.string()
-//     .required('Email is required!')
-//     .email('Please enter valid email'),
-//   CompanyName: Yup.string().required('Enter your company name'),
-//   GST: Yup.string().required('Enter your GST Code'),
-//   mobile: Yup.string()
-//     .required('The mobile number is required')
-//     .matches(/^[0-9]+$/, 'Must be only digits')
-//     .min(10, 'Must be exactly 10 digits')
-//     .max(10, 'Must be exactly 10 digits'),
-//   Username: Yup.string().required('Please enter username '),
-
-//   Password: Yup.string()
-//     .min(
-//       8,
-//       'Please enter at least 8 Character, 1 uppercase character and 1 number',
-//     )
-//     .matches(
-//       /[A-Z]+/,
-//       'Please enter at least 8 Character, 1 uppercase character and 1 number',
-//     )
-//     .matches(
-//       /\d+/,
-//       'Please enter at least 8 Character, 1 uppercase character and 1 number',
-//     ),
-//   ConfirmPassword: Yup.string()
-//     .min(
-//       8,
-//       'Please enter at least 8 Character, 1 uppercase character and 1 number',
-//     )
-//     .matches(
-//       /[A-Z]+/,
-//       'Please enter at least 8 Character, 1 uppercase character and 1 number',
-//     )
-//     .matches(
-//       /\d+/,
-//       'Please enter at least 8 Character, 1 uppercase character and 1 number',
-//     ),
-// });
-
-// // Input filed validation
-
-// const OnlyCharacter = text => {
-//   let enterText = text.trim(); 
-//   enterText = enterText.replace(/\s+/g, ' '); // Removing all the extra space, it allow only one space between two words
-//   enterText = enterText.replace(/[^a-zA-Z ]/g, ''); // Remove all special characters
-
-//   return enterText;
-// };
-// const OnlyNumber = text => {
-//   let enterText = text.trim(); // Remove leading and trailing spaces
-//   enterText = enterText.replace(/\s+/g, ' '); // Removing all the extra space, it allow only one space between two words
-//    enterText = enterText.replace(/[^0-9]/g, ''); // Accept only number, remove the character & spceial letter
-
-//   return enterText;
-// };
-
-// const ValidateEmail = email => {
-//   let trimmedEmail = email.trim(); // Remove leading and trailing spaces
-//   trimmedEmail = trimmedEmail.replace(/\s+/g, ''); // Removing all spaces
-
-//   // Use a regular expression to check if the email contains only allowed characters
-//   const isValid = /^[A-Za-z0-9@]+$/.test(trimmedEmail);
-
-//   return isValid ? trimmedEmail : null; // Return the trimmed email or null if it's not valid
-// };
-
-// export default validation = {
-//   //New validation START
-//   prayerRequest,
-
-//   // Input field validation
-
-//   OnlyCharacter,
-//   OnlyNumber,
-//   ValidateEmail,
-//   //New validation END
-
-//   login,
-//   registerUser,
-//   registerCompny,
-//   registerPassword,
-//   forgotPassword,
-//   changePassword,
-//   register,
-// };
+  cpassword: Yup.lazy((value, {context}) => {
+    console.log('Context:', context);
+    return context.isChangePasswordVisible
+      ? Yup.string()
+          .oneOf([Yup.ref('password'), null], 'Passwords must match')
+          .required('Confirm password is required')
+      : Yup.string().notRequired();
+  }),
+});

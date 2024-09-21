@@ -7,11 +7,14 @@ import {
   Platform,
   SafeAreaView,
   Keyboard,
+  Text,
   Modal,
   BackHandler,
 } from 'react-native';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
+import Icon from 'react-native-vector-icons/FontAwesome'; // For icons
+
 import {useSelector} from 'react-redux';
 import CustomHeader from '../../../Components/CustomHeader';
 import MsgConfig from '../../../Config/MsgConfig';
@@ -31,19 +34,19 @@ import {
 } from '../../../Components/InputHandlers';
 import {TextInput} from 'react-native-paper';
 import {VectorIcon} from '../../../Components/VectorIcon';
+import theme from '../../../utility/theme';
+import {
+  passConfirmPassValidation,
+  stepOneSchema,
+  stepTwoSchema,
+} from '../../../utility/theme/validation';
+import {
+  PasswordCheckItem,
+  usePasswordValidation,
+} from '../../../utility/PasswordUtils';
 
 const AddMemberForm = ({visible, closeModal, navigation}) => {
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [selectedImage1, setSelectedImage1] = useState(null);
   const {currentTextColor, currentBgColor} = useSelector(state => state.user);
-
-  // Handle image success
-  const handleImageSuccess = useCallback(imageData => {
-    setSelectedImage(imageData.uri);
-  }, []);
-  const handleImageSuccess1 = useCallback(imageData => {
-    setSelectedImage1(imageData.uri);
-  }, []);
 
   const getValidationSchema = () => {
     switch (step) {
@@ -52,53 +55,19 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
       case 2:
         return stepTwoSchema;
       case 3:
-        return stepThreeSchema;
+        return passConfirmPassValidation;
       default:
         return stepOneSchema;
     }
   };
 
   const onAcceptButtonClick = () => {
-    console.log(' formikRef.current', formikRef.current.values);
-
-    // return;
-    // setKeyboardHeight(0);
     formikRef.current.resetForm(); // Reset the form
     setIsOTPFildVisible(false); // Hide OTP field
     setStep(1); // Reset to step 1
-    // navigation.goBack(); // Navigate back
+
     closeModal();
   };
-
-  const stepOneSchema = Yup.object().shape({
-    name: Yup.string().required('Full name is required'),
-    email: Yup.string().email('Invalid email').required('Email is required'),
-    mobile: Yup.string()
-      .required('Mobile number is required')
-      .length(10, 'Mobile number must be 10 digits'),
-  });
-
-  const stepTwoSchema = Yup.object().shape({
-    birthDate: Yup.string().required('Date of birth is required'),
-    baptismDate: Yup.string().required('Date of baptism is required'),
-  });
-
-  const stepThreeSchema = Yup.object().shape({
-    password: Yup.string()
-      .min(6, 'Password must be at least 6 characters')
-      .required('Password is required'),
-  });
-
-  //   // References to input fields
-
-  // Handle image error
-  const handleImageError = useCallback(
-    errorMessage => {
-      closeModal();
-      ToastAlertComp('error', 'Failed', errorMessage);
-    },
-    [closeModal],
-  );
 
   const handleSubmit = values => {
     console.log(values);
@@ -106,7 +75,6 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
     if (step === 3) {
       openBottomSheetWithContent();
       // Final submission
-      // console.log('Final Values:', values);
     } else if (step === 1 && !isOTPFildVisible) {
       setIsOTPFildVisible(true); // Show OTP field
     } else {
@@ -123,10 +91,7 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
       }
       setStep(step - 1);
     } else {
-      setTimeout(() => {
-        closeModal();
-        setSelectedImage;
-      }, 1300);
+      closeModal();
     }
   };
 
@@ -148,7 +113,6 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
 
   // Local component states
   const [step, setStep] = useState(1); // To track the current step in the form
-  const [keyboardHeight, setKeyboardHeight] = useState(getResHeight(0)); // To track the keyboard height
   const [isOTPFildVisible, setIsOTPFildVisible] = useState(false); // To show/hide the OTP field
 
   // References to input fields
@@ -165,47 +129,10 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
   const formikRef = useRef(null);
   const bottomSheetRef = useRef(null);
   const scrollRef = useRef(null);
-  const [bottomSheetContent, setBottomSheetContent] = useState(null);
 
   const openBottomSheetWithContent = content => {
-    // setBottomSheetContent(content);
     bottomSheetRef.current?.open();
   };
-
-  // Set up event listeners for keyboard visibility and back button press
-  // useEffect(() => {
-  //   const keyboardDidShowListener = Keyboard.addListener(
-  //     'keyboardDidShow',
-  //     event => {
-  //       setKeyboardHeight(event.endCoordinates.height - getResHeight(15));
-  //     },
-  //   );
-
-  //   const keyboardDidHideListener = Keyboard.addListener(
-  //     'keyboardDidHide',
-  //     () => {
-  //       setKeyboardHeight(0);
-  //     },
-  //   );
-
-  //   const handleBackPress = () => {
-  //     if (step > 1) {
-  //       setStep(step - 1);
-  //       return true; // Prevent default behavior (e.g., exiting the app)
-  //     }
-  //     return false; // Allow default behavior if on the first step
-  //   };
-
-  //   BackHandler.addEventListener('hardwareBackPress', handleBackPress);
-
-  //   // Cleanup event listeners on component unmount
-  //   return () => {
-  //     keyboardDidHideListener.remove();
-  //     keyboardDidShowListener.remove();
-  //     BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
-  //   };
-  // }, [step]);
-
   const renderStep = (
     values,
     handleChange,
@@ -214,6 +141,8 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
     touched,
     handleSubmit,
   ) => {
+    const passwordValidations = usePasswordValidation(values.password); // Hook for validation
+
     const isFieldValid = field => touched[field] && !errors[field];
 
     switch (step) {
@@ -263,19 +192,6 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
                   size={getFontSize(3)}
                 />
               }
-            />
-            <MasterTextInput
-              label="Date of baptism"
-              placeholder="Date of baptism"
-              isDate={true}
-              // timePicker={true}
-              ref={inputRefs.baptismDate}
-              value={values.baptismDate}
-              // value={dateFormatHander(values.baptismDate, 'DD/MM/YYYY') }
-              onChangeText={handleChange('baptismDate')}
-              onBlur={handleBlur('baptismDate')}
-              onSubmitEditing={() => setStep(3)} // Move to next step on enter
-              error={touched.baptismDate && errors.baptismDate}
             />
 
             <MasterTextInput
@@ -378,28 +294,86 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
               onBlur={handleBlur('gender')}
               error={touched.gender && errors.gender}
             />
+            <MasterTextInput
+              label="Church branch"
+              placeholder="Select church branch"
+              isDropdown={true}
+              dropdownData={[
+                {label: 'Ambegano', value: 'ambegano'},
+                {label: 'Pimple guruv', value: 'pimpleguruv'},
+                {label: 'Beed', value: 'beed'},
+              ]}
+              // value={'Female'}
+              value={values.churchBranch}
+              onDropdownChange={() => {
+                setTimeout(() => {
+                  handleChange('churchBranch');
+                }, 100);
+              }}
+              onBlur={handleBlur('churchBranch')}
+              error={touched.churchBranch && errors.churchBranch}
+            />
           </>
         );
       case 3:
         return (
-          <MasterTextInput
-            label="Password"
-            placeholder="Enter your password"
-            secureTextEntry
-            ref={inputRefs.password}
-            value={values.password}
-            onChangeText={handleChange('password')}
-            onBlur={handleBlur('password')}
-            onSubmitEditing={handleSubmit}
-            error={touched.password && errors.password}
-            left={
-              <TextInput.Icon
-                icon="lock"
-                color={currentTextColor}
-                size={getFontSize(3)}
+          <>
+            <MasterTextInput
+              label="Password"
+              placeholder="Enter your password"
+              secureTextEntry
+              ref={inputRefs.password}
+              value={values.password}
+              onChangeText={handleChange('password')}
+              onBlur={handleBlur('password')}
+              onSubmitEditing={handleSubmit}
+              error={touched.password && errors.password}
+              left={
+                <TextInput.Icon
+                  icon="lock"
+                  color={currentTextColor}
+                  size={getFontSize(3)}
+                />
+              }
+            />
+
+            <MasterTextInput
+              label="Confirm Password*"
+              placeholder="Enter confirm password"
+              secureTextEntry
+              // ref={inputRefs.cpassword}
+              value={values.cpassword}
+              onChangeText={handleChange('cpassword')}
+              onBlur={handleBlur('cpassword')}
+              error={touched.cpassword && errors.cpassword}
+              left={<TextInput.Icon icon="lock" color={currentTextColor} />}
+            />
+            <View
+              style={{
+                marginTop: '5%',
+              }}>
+              <PasswordCheckItem
+                isValid={passwordValidations.hasUppercase}
+                label="At least one uppercase letter"
               />
-            }
-          />
+              <PasswordCheckItem
+                isValid={passwordValidations.hasLowercase}
+                label="At least one lowercase letter"
+              />
+              <PasswordCheckItem
+                isValid={passwordValidations.hasNumber}
+                label="At least one number"
+              />
+              <PasswordCheckItem
+                isValid={passwordValidations.hasSpecialChar}
+                label="At least one special character (@, $, %, etc.)"
+              />
+              <PasswordCheckItem
+                isValid={passwordValidations.minLength}
+                label="Minimum 6 characters"
+              />
+            </View>
+          </>
         );
       default:
         return null;
@@ -414,6 +388,7 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
       }}>
       <Modal
         visible={visible}
+        transparent={true}
         animationType="fade"
         style={{
           flex: 1,
@@ -435,15 +410,6 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
             screenTitle={MsgConfig.AddMemberForm}
           />
 
-          {/* <View
-            style={
-              {
-                // flex: 1,
-                // // backgroundColor: currentBgColor,
-                // justifyContent: 'center',
-                // alignItems: 'center', // Align modal to the center
-              }
-            }> */}
           <Formik
             innerRef={formikRef}
             initialValues={{
@@ -453,8 +419,10 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
               birthDate: '',
               baptismDate: '',
               password: '',
+              cpassword: '',
               otp: '',
               gender: '',
+              churchBranch: '',
             }}
             validationSchema={getValidationSchema()}
             onSubmit={handleSubmit}>
@@ -469,11 +437,6 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
               <View
                 style={{
                   flex: 1,
-                  // width: '100%',
-                  // // height: '100%',
-                  // backgroundColor: currentBgColor,
-                  // justifyContent: 'center',
-                  // alignItems: 'center', // Align modal to the center
                 }}>
                 <ScrollView
                   style={{
@@ -521,7 +484,6 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
                     width: '90%',
                     alignSelf: 'center',
                     backgroundColor: currentBgColor,
-                    // backgroundColor: 'red',
                   }}>
                   <CommonButtonComp
                     title={step === 3 ? 'Submit' : 'Next'}

@@ -297,6 +297,9 @@ const DrawerItems = ({navigation}) => {
         <View
           style={{
             marginLeft: '5%',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
           }}>
           <Text
             style={{
@@ -305,6 +308,17 @@ const DrawerItems = ({navigation}) => {
             }}>
             Ramesh Marandi
           </Text>
+          <View
+            style={{
+              marginLeft: '5%',
+            }}>
+            <VectorIcon
+              type={'MaterialIcons'}
+              name={'verified'}
+              size={getFontSize(3)}
+              color={theme.color.green}
+            />
+          </View>
         </View>
       </View>
       <View style={{flex: 1, backgroundColor: backgroundColorHandler()}}>

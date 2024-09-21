@@ -15,7 +15,6 @@ import {
 import {useSelector} from 'react-redux';
 import theme from '../../../utility/theme';
 import CustomHeader from '../../../Components/CustomHeader';
-// import {getResHeight, getFontSize} from '../utility/responsive'; // Assuming you have responsive utilities
 import ConfirmAlert from '../../../Components/ConfirmAlert';
 
 const sampleData = [
@@ -119,6 +118,7 @@ const ApprovalCard = memo(
           </View>
           <View style={styles.buttonContainer}>
             <TouchableOpacity
+              activeOpacity={0.8}
               style={[
                 styles.button,
                 styles.rejectButton,
@@ -130,6 +130,7 @@ const ApprovalCard = memo(
               <Text style={[styles.buttonText, {}]}>Reject</Text>
             </TouchableOpacity>
             <TouchableOpacity
+              activeOpacity={0.8}
               style={[styles.button, styles.acceptButton]}
               onPress={() => onAccept(item.id)}>
               <Text

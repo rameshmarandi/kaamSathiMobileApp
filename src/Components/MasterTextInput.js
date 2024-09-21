@@ -266,6 +266,7 @@ const MasterTextInput = forwardRef(
                   alignItems: 'center',
                 },
               ]}
+              activeOpacity={0.8}
               onPress={() => setShowDatePicker(true)}>
               <View
                 style={{
@@ -283,7 +284,6 @@ const MasterTextInput = forwardRef(
                   styles.dateInputText,
                   {
                     color: currentTextColor,
-                    // marginLeft: '2%',
                   },
                 ]}>
                 {'    '}
@@ -316,6 +316,7 @@ const MasterTextInput = forwardRef(
             activeColor={currentBgColor}
             containerStyle={{
               backgroundColor: currentBgColor,
+              // backgroundColor: 'green', // Ensure this is your intended background color
               borderBottomLeftRadius: 10,
               borderBottomRightRadius: 10,
               borderTopLeftRadius: 5,
@@ -324,11 +325,17 @@ const MasterTextInput = forwardRef(
               borderWidth: 1,
               borderColor: currentTextColor,
               overflow: 'hidden',
+              paddingVertical: 0, // Ensure padding is minimal
             }}
             itemTextStyle={{
               color: currentTextColor,
               fontFamily: theme.font.regular,
               fontSize: getFontSize(1.8),
+              marginVertical: 0, // Remove vertical spacing
+              paddingVertical: 0, // Remove padding
+            }}
+            itemContainerStyle={{
+              // height: 40, // Fixed height
               margin: 0,
               padding: 0,
             }}
@@ -355,6 +362,71 @@ const MasterTextInput = forwardRef(
             }}
           />
         ) : (
+          // <Dropdown
+          //   data={dropdownData}
+          //   labelField="label"
+          //   valueField="value"
+          //   search={dropdownSearch}
+          //   placeholder={placeholder}
+          //   value={value}
+          //   onFocus={() => setIsFocus(true)}
+          //   onBlur={() => setIsFocus(false)}
+          //   onChange={onDropdownChange}
+          //   style={[
+          //     styles.dropdown,
+          //     {
+          //       borderColor: borderColor,
+          //       backgroundColor: currentBgColor,
+          //     },
+          //   ]}
+          //   selectedTextProps={{
+          //     color: 'red',
+          //   }}
+          //   activeColor={currentBgColor}
+          //   containerStyle={{
+          //     backgroundColor: currentBgColor,
+          //     borderBottomLeftRadius: 10,
+          //     borderBottomRightRadius: 10,
+          //     borderTopLeftRadius: 5,
+          //     borderTopRightRadius: 5,
+          //     marginTop: '-2%',
+          //     borderWidth: 1,
+          //     borderColor: currentTextColor,
+          //     overflow: 'hidden',
+          //   }}
+          //   itemTextStyle={{
+          //     color: currentTextColor,
+          //     fontFamily: theme.font.regular,
+          //     fontSize: getFontSize(1.8),
+          //     margin: 0,
+          //     padding: 0,
+          //   }}
+          //   itemContainerStyle={{
+          //     margin: 0,
+          //     padding: 0,
+          //   }}
+          //   placeholderStyle={{
+          //     color: currentTextColor,
+          //     fontFamily: theme.font.regular,
+          //     fontSize: getFontSize(1.9),
+          //   }}
+          //   renderRightIcon={() => (
+          //     <VectorIcon
+          //       type={'AntDesign'}
+          //       name={isFocus ? 'upcircle' : 'downcircle'}
+          //       size={getFontSize(2.1)}
+          //       color={currentTextColor}
+          //       style={{
+          //         zIndex: 1,
+          //       }}
+          //     />
+          //   )}
+          //   selectedTextStyle={{
+          //     color: currentTextColor,
+          //     fontFamily: theme.font.regular,
+          //     fontSize: getFontSize(1.9),
+          //   }}
+          // />
           <View style={styles.textInputWrapper}>
             <Animated.View style={[animatedStyle]}>
               <PaperTextInput
@@ -405,7 +477,7 @@ const MasterTextInput = forwardRef(
           <>
             <Text
               style={{
-                fontFamily: theme.font.regular,
+                fontFamily: theme.font.medium,
                 marginTop: '2%',
                 fontSize: getFontSize(1.5),
                 color: '#ff0038',
