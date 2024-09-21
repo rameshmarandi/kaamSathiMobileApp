@@ -14,7 +14,7 @@ import {
   Animated,
   Easing,
 } from 'react-native';
-import {TextInput as PaperTextInput} from 'react-native-paper';
+import {TextInput as PaperTextInput, TextInput} from 'react-native-paper';
 import DatePicker from 'react-native-ui-datepicker';
 import Modal from 'react-native-modal';
 import moment from 'moment';
@@ -79,8 +79,23 @@ const MasterTextInput = forwardRef(
     // Handle the date selection and format the date as 'YYYY-MM-DD HH:mm'
     const handleConfirm = useCallback(
       params => {
-        const selectedDate = moment(params.date).format('YYYY-MM-DD HH:mm');
-        onChangeText(selectedDate);
+        const selectedDate = new Date(params.date);
+        // Get the year, month, and date explicitly to avoid timezone issues
+        const year = selectedDate.getFullYear();
+        const month = selectedDate.getMonth() + 1; // Months are 0-based, so we add 1
+        const day = selectedDate.getDate();
+
+        // Format the date as YYYY-MM-DD without any timezone or time adjustment
+        const formattedDate = `${year}-${month < 10 ? '0' : ''}${month}-${
+          day < 10 ? '0' : ''
+        }${day}`;
+
+        console.log('Selected Date:', formattedDate);
+        onChangeText(formattedDate); // Send the formatted date back to the parent or handle it
+
+        // console.log('Selected_DAtes', params);
+        // const selectedDate = moment(params.date).format('YYYY-MM-DD HH:mm');
+        // onChangeText(selectedDate);
       },
       [onChangeText],
     );
@@ -141,36 +156,42 @@ const MasterTextInput = forwardRef(
           onBackdropPress={() => setShowDatePicker(false)}>
           <View style={styles.datePickerContainer}>
             <DatePicker
+              // Set defaults for mode and date, ensuring proper value handling
               mode={calendarMode || 'single'}
               date={value ? new Date(value) : new Date()}
               onChange={handleConfirm}
-              timePicker={timePicker !== undefined ? timePicker : true}
+              // Simplified timePicker logic
+              timePicker={timePicker || false}
               displayFullDays={true}
               locale="en"
-              minDate={minDate}
-              maxDate={maxDate}
+              minDate={minDate || new Date('2020-01-01')}
+              maxDate={maxDate || new Date('2030-12-31')}
               style={styles.datePicker}
-              todayTextStyle={{
-                color: 'orange',
-              }}
-              // selectedTextStyle
+              // Styling for today and other components
+              todayTextStyle={{color: 'orange'}}
               headerTextStyle={[
                 styles.headerTextStyle,
-                {
-                  color: currentBgColor,
-                },
+                {color: currentBgColor},
               ]}
-              yearContainerStyle={styles.yearContainerStyle}
-              monthContainerStyle={styles.monthContainerStyle}
-              headerButtonColor={currentBgColor}
-              selectedItemColor={currentBgColor}
+              todayContainerStyle={{backgroundColor: 'red', color: 'blue'}}
+              weekDaysTextStyle={{color: 'black'}}
+              yearContainerStyle={{backgroundColor: '#7a7a7a'}}
+              timePickerTextStyle={{color: 'black'}}
+              timePickerIndicatorStyle={{color: 'black'}}
+              dayContainerStyle={{backgroundColor: '#7a7a7a'}}
+              monthContainerStyle={{backgroundColor: '#7a7a7a'}}
+              // Style for unselected and selected dates
+              itemTextStyle={{color: 'gray'}} // Unselected dates
               selectedTextStyle={{
                 fontFamily: theme.font.semiBold,
                 fontSize: getFontSize(1.3),
-                color: currentTextColor,
-                // 'white',
+                color: currentTextColor, // Selected date color
               }}
+              // Button styles for OK and Close
+              headerButtonColor={currentBgColor}
+              selectedItemColor={currentBgColor}
             />
+
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 style={[
@@ -186,13 +207,9 @@ const MasterTextInput = forwardRef(
                   Close
                 </Text>
               </TouchableOpacity>
+
               <TouchableOpacity
-                style={[
-                  styles.closeButton,
-                  {
-                    backgroundColor: currentBgColor,
-                  },
-                ]}
+                style={[styles.closeButton, {backgroundColor: currentBgColor}]}
                 onPress={() => setShowDatePicker(false)}>
                 <Text style={styles.closeButtonText}>OK</Text>
               </TouchableOpacity>
@@ -244,16 +261,32 @@ const MasterTextInput = forwardRef(
                   textAlignVertical: 'center',
                   height: getResHeight(6),
                   borderColor: currentTextColor,
+                  justifyContent: 'flex-start',
+                  flexDirection: 'row',
+                  alignItems: 'center',
                 },
               ]}
               onPress={() => setShowDatePicker(true)}>
+              <View
+                style={{
+                  marginLeft: '1%',
+                }}>
+                <VectorIcon
+                  type="Ionicons"
+                  name="calendar-sharp"
+                  size={getFontSize(2.7)}
+                  color={currentTextColor}
+                />
+              </View>
               <Text
                 style={[
                   styles.dateInputText,
                   {
                     color: currentTextColor,
+                    // marginLeft: '2%',
                   },
                 ]}>
+                {'    '}
                 {value ? value : placeholder}
               </Text>
             </TouchableOpacity>
@@ -308,7 +341,7 @@ const MasterTextInput = forwardRef(
               <VectorIcon
                 type={'AntDesign'}
                 name={isFocus ? 'upcircle' : 'downcircle'}
-                size={getFontSize(2.5)}
+                size={getFontSize(2.1)}
                 color={currentTextColor}
                 style={{
                   zIndex: 1,
@@ -344,8 +377,9 @@ const MasterTextInput = forwardRef(
                   textAlignVertical: 'center',
                 }}
                 contentStyle={{
+                  width: '75%',
                   fontFamily: theme.font.regular,
-                  fontSize: getFontSize(1.9),
+                  fontSize: getFontSize(1.8),
                   textAlignVertical: 'center',
                   height: getResHeight(6),
                 }}
@@ -378,12 +412,17 @@ const MasterTextInput = forwardRef(
               }}>
               {error}
             </Text>
-            <AntDesign
-              name="closecircle"
-              size={getResHeight(2.3)}
-              color={'#ff0038'}
-              style={styles.eyeIcon}
-            />
+
+            {!secureTextEntry && (
+              <>
+                <AntDesign
+                  name="closecircle"
+                  size={getResHeight(2.3)}
+                  color={'#ff0038'}
+                  style={styles.eyeIcon}
+                />
+              </>
+            )}
           </>
         )}
         {isValid && !error && (
@@ -412,9 +451,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   dateInputText: {
-    fontSize: 16,
-    // color: 'orange',
-    color: 'black',
+    fontSize: getFontSize(1.8),
+    fontFamily: theme.font.regular, // color: 'orange',
   },
   datePickerContainer: {
     backgroundColor: 'white',

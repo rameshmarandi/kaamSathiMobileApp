@@ -16,7 +16,7 @@ import AdminManagment from './Admin/AdminManagment/index';
 import Members from './Admin/Members/index';
 import AdminContact from './Admin/Contactus/AdminContact';
 import ChurchMap from './Admin/ChurchMap/index';
-import AddMemberForm from './Admin/Members/AddMemberForm';
+// import AddMemberForm from './Admin/Members/AddMemberForm';
 import Approval from './Admin/Members/Approval';
 import DailyVerse from './Admin/DailyVerses/index';
 import AdminResource from './Admin/AdminResource/index';
@@ -24,6 +24,7 @@ import AllPrayerReq from './Admin/PrayerModule/AllPrayerReq';
 import AdminOurBelieve from './Admin/AdminOurBelieve';
 import UploadBanner from './Admin/Posts/UploadBanner';
 import LoginPage from './Auth/LoginPage';
+import ForgotPassword from './Auth/ForgotPassword';
 
 const UserAllScreens = {
   HomePage,
@@ -42,13 +43,13 @@ const AdminScreens = {
   Members,
   AdminContact,
   ChurchMap,
-  AddMemberForm,
   Approval,
   DailyVerse,
   AdminResource,
   AllPrayerReq,
   AdminOurBelieve,
   UploadBanner,
+  ForgotPassword,
   LoginPage,
 };
 

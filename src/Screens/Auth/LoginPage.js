@@ -19,6 +19,7 @@ import {Formik} from 'formik';
 import {handleEmailChange} from '../../Components/InputHandlers';
 import {color} from 'react-native-elements/dist/helpers';
 import AddMemberForm from '../Admin/Members/AddMemberForm';
+import {TextInput} from 'react-native-paper';
 
 const LoginPage = props => {
   const {navigation} = props;
@@ -73,8 +74,8 @@ const LoginPage = props => {
                 contentContainerStyle={styles.scrollViewContent}
                 showsVerticalScrollIndicator={false}>
                 <MasterTextInput
-                  label="Email/Mobile*"
-                  placeholder="Enter email or mobile number"
+                  label="Email*"
+                  placeholder="Enter email address"
                   ref={inputRefs.email}
                   keyboardType="email-address"
                   value={values.email}
@@ -85,6 +86,9 @@ const LoginPage = props => {
                   onSubmitEditing={() => inputRefs.password.current.focus()}
                   error={touched.email && errors.email}
                   isValid={isFieldValid('email')}
+                  left={
+                    <TextInput.Icon icon="email" color={currentTextColor} />
+                  }
                 />
                 <MasterTextInput
                   label="Password*"
@@ -96,8 +100,13 @@ const LoginPage = props => {
                   onBlur={handleBlur('password')}
                   onSubmitEditing={handleSubmit}
                   error={touched.password && errors.password}
+                  left={<TextInput.Icon icon="lock" color={currentTextColor} />}
                 />
-                <TouchableOpacity activeOpacity={0.8}>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => {
+                    navigation.navigate('ForgotPassword');
+                  }}>
                   <Text
                     style={[
                       styles.forgotPasswordText,
@@ -147,9 +156,16 @@ const LoginPage = props => {
                 <LoginWithGoogle
                   currentTextColor={currentTextColor}
                   currentBgColor={currentBgColor}
+                  btnTitle={'Singin with Google'}
                   onPress={() => {}}
                 />
-                <View style={[styles.registerContainer, {}]}>
+                <View
+                  style={[
+                    styles.registerContainer,
+                    {
+                      marginTop: '5%',
+                    },
+                  ]}>
                   <Text
                     style={{
                       fontFamily: theme.font.regular,
@@ -158,7 +174,7 @@ const LoginPage = props => {
                     }}>
                     Don’t have an account yet? {/* <TouchableOpacity> */}
                     <Text
-                      onPress={() => navigation.navigate('AddMemberForm')}
+                      onPress={() => setAddNewMemberModalVisible(true)}
                       style={[
                         styles.registerText,
                         {
@@ -168,7 +184,6 @@ const LoginPage = props => {
                       ]}>
                       Register
                     </Text>
-                    {/* </TouchableOpacity> */}
                   </Text>
                 </View>
               </ScrollView>
@@ -215,7 +230,7 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     width: '95%',
-    paddingVertical: '3%',
+    paddingVertical: '2.5%',
     borderWidth: 1,
     flexDirection: 'row',
     alignItems: 'center',

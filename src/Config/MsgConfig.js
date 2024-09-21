@@ -45,7 +45,7 @@ const headerTitle = {
   adminResouce: 'Study resources',
   // contactUS  : 'Contact Us',
 
-  AddMemberForm: 'Add Member Form',
+  AddMemberForm: 'Member registration form',
   uploadResource: 'Upload Resource',
   allPrayerReq: 'All prayer requests',
   adminOurBelieve: 'Our believe',

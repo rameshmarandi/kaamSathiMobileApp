@@ -3,7 +3,12 @@ import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import {getFontSize, getResWidth, getResHeight} from '../utility/responsive';
 import theme from '../utility/theme';
 
-const LoginWithGoogle = ({currentTextColor, currentBgColor, onPress}) => {
+const LoginWithGoogle = ({
+  currentTextColor,
+  currentBgColor,
+  btnTitle,
+  onPress,
+}) => {
   return (
     <TouchableOpacity
       activeOpacity={0.9}
@@ -13,7 +18,7 @@ const LoginWithGoogle = ({currentTextColor, currentBgColor, onPress}) => {
           backgroundColor: currentTextColor,
           borderColor: currentTextColor,
           borderRadius: getResWidth(10),
-          marginBottom: '15%',
+          // marginBottom: '15%',
         },
       ]}
       onPress={onPress}>
@@ -27,7 +32,7 @@ const LoginWithGoogle = ({currentTextColor, currentBgColor, onPress}) => {
             marginLeft: getResWidth(2),
           },
         ]}>
-        Signin with Google
+        {btnTitle}
       </Text>
     </TouchableOpacity>
   );
@@ -36,7 +41,7 @@ const LoginWithGoogle = ({currentTextColor, currentBgColor, onPress}) => {
 const styles = StyleSheet.create({
   button: {
     width: '95%',
-    paddingVertical: '3%',
+    paddingVertical: '2.5%',
     borderWidth: 1,
     flexDirection: 'row',
     alignItems: 'center',

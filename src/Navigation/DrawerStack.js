@@ -148,8 +148,8 @@ export default function DrawerStack(props) {
           }}
         />
         <Drawer.Screen
-          name="AddMemberForm"
-          component={AllScreens.AddMemberForm}
+          name="ForgotPassword"
+          component={AllScreens.ForgotPassword}
           options={{
             headerShadowVisible: false,
             headerShown: false,

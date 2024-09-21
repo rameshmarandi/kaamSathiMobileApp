@@ -17,7 +17,11 @@ import CustomHeader from '../../../Components/CustomHeader';
 import MsgConfig from '../../../Config/MsgConfig';
 import MasterTextInput from '../../../Components/MasterTextInput';
 import {CommonButtonComp} from '../../../Components/commonComp';
-import {getResHeight, getResWidth} from '../../../utility/responsive/index';
+import {
+  getFontSize,
+  getResHeight,
+  getResWidth,
+} from '../../../utility/responsive/index';
 import PrivacyPolicy from './PrivacyPolicy';
 import CustomBottomSheet from '../../../Components/CustomBottomSheet';
 import {
@@ -25,6 +29,8 @@ import {
   handleNumberChange,
   handleTextChange,
 } from '../../../Components/InputHandlers';
+import {TextInput} from 'react-native-paper';
+import {VectorIcon} from '../../../Components/VectorIcon';
 
 const AddMemberForm = ({visible, closeModal, navigation}) => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -226,6 +232,13 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
               onSubmitEditing={() => inputRefs.email.current.focus()}
               error={touched.name && errors.name}
               isValid={isFieldValid('name')}
+              left={
+                <TextInput.Icon
+                  icon="account"
+                  color={currentTextColor}
+                  size={getFontSize(3.5)}
+                />
+              }
             />
             <MasterTextInput
               label="Email"
@@ -243,7 +256,28 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
               onSubmitEditing={() => inputRefs.mobile.current.focus()}
               error={touched.email && errors.email}
               isValid={isFieldValid('email')}
+              left={
+                <TextInput.Icon
+                  icon="email"
+                  color={currentTextColor}
+                  size={getFontSize(3)}
+                />
+              }
             />
+            <MasterTextInput
+              label="Date of baptism"
+              placeholder="Date of baptism"
+              isDate={true}
+              // timePicker={true}
+              ref={inputRefs.baptismDate}
+              value={values.baptismDate}
+              // value={dateFormatHander(values.baptismDate, 'DD/MM/YYYY') }
+              onChangeText={handleChange('baptismDate')}
+              onBlur={handleBlur('baptismDate')}
+              onSubmitEditing={() => setStep(3)} // Move to next step on enter
+              error={touched.baptismDate && errors.baptismDate}
+            />
+
             <MasterTextInput
               label="Mobile"
               placeholder="Enter number"
@@ -261,6 +295,13 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
               onSubmitEditing={() => setStep(2)} // Move to next step on enter
               error={touched.mobile && errors.mobile}
               isValid={isFieldValid('mobile')}
+              left={
+                <TextInput.Icon
+                  icon={'phone'}
+                  color={currentTextColor}
+                  size={getFontSize(3)}
+                />
+              }
             />
 
             {isOTPFildVisible && (
@@ -271,7 +312,6 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
                 keyboardType="numeric"
                 value={values.otp}
                 maxLength={4}
-                // onChangeText={handleChange('otp')}
                 onChangeText={text =>
                   formikRef.current.setFieldValue(
                     'otp',
@@ -280,6 +320,13 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
                 }
                 onBlur={handleBlur('otp')}
                 onSubmitEditing={() => setStep(2)} // Move to next step on enter
+                left={
+                  <TextInput.Icon
+                    icon="lock"
+                    color={currentTextColor}
+                    size={getFontSize(3)}
+                  />
+                }
               />
             )}
           </>
@@ -291,7 +338,7 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
               label="Date of birth"
               placeholder="Date of birth "
               isDate={true}
-              timePicker={true}
+              // timePicker={true}
               ref={inputRefs.birthDate}
               value={values.birthDate}
               onChangeText={handleChange('birthDate')}
@@ -345,6 +392,13 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
             onBlur={handleBlur('password')}
             onSubmitEditing={handleSubmit}
             error={touched.password && errors.password}
+            left={
+              <TextInput.Icon
+                icon="lock"
+                color={currentTextColor}
+                size={getFontSize(3)}
+              />
+            }
           />
         );
       default:
