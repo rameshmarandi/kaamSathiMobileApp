@@ -39,6 +39,6 @@ export const PasswordCheckItem = ({isValid, label}) => (
       size={20}
       color={isValid ? theme.color.green : theme.color.error}
     />
-    <Text style={{marginLeft: 10}}>{label}</Text>
+    <Text style={{marginLeft: 10, color: 'white'}}>{label}</Text>
   </View>
 );

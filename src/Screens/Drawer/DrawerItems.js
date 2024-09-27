@@ -327,17 +327,6 @@ const DrawerItems = ({navigation}) => {
           renderItem={renderItem}
           keyExtractor={item => item.id?.toString()}
         />
-
-        <View style={{marginTop: '15%', paddingHorizontal: '5%'}}>
-          <Text
-            style={{
-              alignSelf: 'center',
-              color: currentTextColor,
-              fontFamily: theme.font.medium,
-            }}>
-            V 1.0.0
-          </Text>
-        </View>
       </View>
       <View
         style={{
@@ -366,6 +355,17 @@ const DrawerItems = ({navigation}) => {
             />
           }
         />
+        <View style={{paddingHorizontal: '5%'}}>
+          <Text
+            style={{
+              alignSelf: 'center',
+              color: currentTextColor,
+              marginBottom: '5%',
+              fontFamily: theme.font.medium,
+            }}>
+            V 1.0.0
+          </Text>
+        </View>
       </View>
     </SafeAreaView>
   );

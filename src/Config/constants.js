@@ -2,6 +2,8 @@ export const STORAGE_KEYS = {
   USER: 'user',
   // Add more keys here as needed
 };
+
+export const LOCAL_BASE_URL = 'http://10.0.2.2:8000';
 //Google map co-ordinate
 export const MapCoordinate = {
   latitude: 18.4494122,

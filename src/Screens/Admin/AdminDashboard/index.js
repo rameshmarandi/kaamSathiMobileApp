@@ -29,6 +29,8 @@ import AdminUpcomingEvents from '../AdminEvents/AdminUpcomingEvents.js';
 import {VectorIcon} from '../../../Components/VectorIcon.js';
 import {openInAppBrowser} from '../../../Components/InAppBrowserComp.js';
 import AddMemberForm from '../Members/AddMemberForm.js';
+import axios from 'axios';
+import {LOCAL_BASE_URL} from '../../../Config/constants.js';
 
 const initialState = {
   filteredData: adminDashboardCardData,
@@ -52,6 +54,19 @@ const Index = memo(props => {
     searchText,
     searchModalVisible,
   } = state;
+
+  useEffect(() => {
+    axios
+      .get(`${LOCAL_BASE_URL}/mobile`)
+      .then(response => {
+        console.log('Axios Newtowrk Response', response.data);
+      })
+      .catch(error => {
+        console.error('Axios Newtowrk Error', error);
+        // setError(error);
+        // setLoading(false);
+      });
+  }, []);
 
   const searchBarRef = useRef(null);
 
