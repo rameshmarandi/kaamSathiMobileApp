@@ -20,6 +20,19 @@ import {handleEmailChange} from '../../Components/InputHandlers';
 import {color} from 'react-native-elements/dist/helpers';
 import AddMemberForm from '../Admin/Members/AddMemberForm';
 import {TextInput} from 'react-native-paper';
+// import {
+//   GoogleOneTapSignIn,
+//   statusCodes,
+//   isErrorWithCode,
+//   GoogleSignin,
+// } from '@react-native-google-signin/google-signin';
+
+import {
+  GoogleOneTapSignIn,
+  statusCodes,
+  isErrorWithCode,
+  GoogleSignin,
+} from '@react-native-google-signin/google-signin';
 
 const LoginPage = props => {
   const {navigation} = props;
@@ -160,7 +173,35 @@ const LoginPage = props => {
                   currentTextColor={currentTextColor}
                   currentBgColor={currentBgColor}
                   btnTitle={'Singin with Google'}
-                  onPress={() => {}}
+                  onPress={async () => {
+                    try {
+                      await GoogleSignin.hasPlayServices();
+                      // const response = await GoogleOneTapSignIn.signIn();
+                      const response = await GoogleSignin.signIn();
+                      console.log('google_API_es', response);
+                      // if (isSuccessResponse(response)) {
+                      //   // setState({userInfo: response.data});
+                      // } else {
+                      //   // sign in was cancelled by user
+                      // }
+                    } catch (error) {
+                      console.log('Failed', error.code, error.message);
+                      // if (isErrorWithCode(error)) {
+                      //   switch (error.code) {
+                      //     case statusCodes.IN_PROGRESS:
+                      //       // operation (eg. sign in) already in progress
+                      //       break;
+                      //     case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+                      //       // Android only, play services not available or outdated
+                      //       break;
+                      //     default:
+                      //     // some other error happened
+                      //   }
+                      // } else {
+                      //   // an error that's not related to google sign in occurred
+                      // }
+                    }
+                  }}
                 />
                 <View
                   style={[

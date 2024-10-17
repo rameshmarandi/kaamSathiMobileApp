@@ -19,6 +19,7 @@ import {persistor, store} from './src/utility/store';
 import theme from './src/utility/theme';
 import {setNavigator} from './src/Services/NavigationService';
 import {toastConfig} from './src/Components/StaticDataHander';
+import messaging from '@react-native-firebase/messaging';
 
 const Stack = createNativeStackNavigator();
 LogBox.ignoreAllLogs(true);
@@ -29,11 +30,20 @@ const App = () => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isLogedIn, setIsLogedIn] = useState(true);
+
   // const []
   useEffect(() => {
     setTimeout(() => {
       setIsLoading(false);
     }, 2000);
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    });
+
+    return unsubscribe;
   }, []);
 
   return (

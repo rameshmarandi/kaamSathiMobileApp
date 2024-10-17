@@ -1,4 +1,4 @@
-import React, {useState, memo, useRef} from 'react';
+import React, {useState, memo, useRef, useEffect} from 'react';
 
 import {
   View,
@@ -23,13 +23,14 @@ import MsgConfig from '../../../Config/MsgConfig';
 import SectionHeader from '../../../Components/SectionHeader';
 import {StyleSheet} from 'react-native';
 import {getFontSize, getResHeight} from '../../../utility/responsive';
-
+import messaging from '@react-native-firebase/messaging';
 import QuickRouteComp from '../../../Components/QuickRouteComp';
 import {ALL_LINKS} from '../../../Config/constants';
 import GoogleMapComp from '../../../Components/GoogleMapComp';
 import TabViewComp from '../../../Components/TabViewComp';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import {Platform} from 'react-native';
+import {requestUserPermission} from '../../../utility/PermissionContoller';
 
 const {width} = Dimensions.get('window');
 const itemWidth = width - 40; // Adjust this according to your layout
@@ -58,6 +59,14 @@ const index = memo(props => {
   let {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
   );
+
+  useEffect(async () => {
+    requestUserPermission();
+    await messaging().registerDeviceForRemoteMessages();
+    const token = await messaging().getToken();
+
+    console.log('Firebase_OTkem', token);
+  }, []);
   // const [activeSlide, setActiveSlide] = useState(0);
   // _renderItem = ({item}) => {
   //   return (
