@@ -4,7 +4,6 @@ import {Button} from 'react-native-elements';
 import {getFontSize} from '../utility/responsive';
 import {VectorIcon} from './VectorIcon';
 import theme from '../utility/theme';
-import {store} from '../utility/store';
 import {textColorHandler} from './commonHelper';
 import MsgConfig from '../Config/MsgConfig';
 import {useSelector} from 'react-redux';

@@ -1,8 +1,8 @@
 import {configureStore} from '@reduxjs/toolkit';
-import rootReducer from '../reducer';
 import {persistStore, persistReducer} from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import reactotron from '../Config/ReactotronConfig';
+import rootReducer from './reducer';
 
 // Configuration for persisting state
 const persistConfig = {

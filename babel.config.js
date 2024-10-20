@@ -1,14 +1,18 @@
-api.cache(false);
+const envFile =
+  process.env.NODE_ENV === 'production'
+    ? '.env.production'
+    : '.env.development';
+
 module.exports = {
   presets: ['module:@react-native/babel-preset'],
   plugins: [
     'react-native-reanimated/plugin',
     [
       'module:react-native-dotenv',
-
       {
-        moduleName: '@env', // Use @env to import variables
-        path: '.env', // Path to your .env file
+        moduleName: '@env',
+        path: envFile, // Dynamically set the path
+        allowUndefined: true,
       },
     ],
   ],

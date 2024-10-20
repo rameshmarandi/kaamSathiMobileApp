@@ -60,13 +60,17 @@ const index = memo(props => {
     state => state.user,
   );
 
-  useEffect(async () => {
+  useEffect(() => {
+    InitRender();
+  }, []);
+
+  const InitRender = async () => {
     requestUserPermission();
     await messaging().registerDeviceForRemoteMessages();
     const token = await messaging().getToken();
 
     console.log('Firebase_OTkem', token);
-  }, []);
+  };
   // const [activeSlide, setActiveSlide] = useState(0);
   // _renderItem = ({item}) => {
   //   return (

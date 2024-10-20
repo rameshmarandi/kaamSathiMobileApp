@@ -1,11 +1,11 @@
-import { createSlice } from '@reduxjs/toolkit';
-import theme from '../../utility/theme';
+import {createSlice} from '@reduxjs/toolkit';
+import theme from '../../../utility/theme';
 
 const initialState = {
   isDarkMode: true, // Assuming you have user data,
-  isAdmin :false,
+  isAdmin: false,
   currentTextColor: theme.color.white,
-  currentBgColor: theme.color.darkTheme
+  currentBgColor: theme.color.darkTheme,
 };
 
 const authSlice = createSlice({
@@ -27,5 +27,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { setDarkMode ,setAdmin, setTextColor , setBackgroundColor} = authSlice.actions;
+export const {setDarkMode, setAdmin, setTextColor, setBackgroundColor} =
+  authSlice.actions;
 export default authSlice.reducer;

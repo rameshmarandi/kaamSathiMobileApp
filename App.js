@@ -15,7 +15,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 // import NavigationService, { setNavigator } from "./src/Services/NavigationService.js"
 import {getFontSize, getResHeight} from './src/utility/responsive';
-import {persistor, store} from './src/utility/store';
+import {persistor, store} from './src/redux/store';
 import theme from './src/utility/theme';
 import {setNavigator} from './src/Services/NavigationService';
 import {toastConfig} from './src/Components/StaticDataHander';

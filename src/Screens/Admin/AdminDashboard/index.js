@@ -31,9 +31,8 @@ import {openInAppBrowser} from '../../../Components/InAppBrowserComp.js';
 import AddMemberForm from '../Members/AddMemberForm.js';
 import axios from 'axios';
 import {LOCAL_BASE_URL} from '../../../Config/constants.js';
-// import {API_URL} from '../../../Config/index.js';
-// import {API_URL} from '../../../Config/index.js';
-import {API_URL, API_TOKEN} from '@env';
+import storageKeys from '../../../Config/StorageKeys.js';
+
 const initialState = {
   filteredData: adminDashboardCardData,
   isLoading: false,
@@ -60,11 +59,13 @@ const Index = memo(props => {
   useEffect(() => {
     console.log(
       'API_URL',
+      process.env.NODE_ENV,
       // process.env.API_URL
-      API_URL,
-      API_TOKEN,
+      // StorageKeys.API_BASE_URL,
+      storageKeys.API_BASE_URL,
+      // API_BASE_URL,
     );
-    apiHandler();
+    // apiHandler();
   }, []);
 
   const apiHandler = async () => {

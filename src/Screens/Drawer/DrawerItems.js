@@ -22,7 +22,7 @@ import {
   setBackgroundColor,
   setDarkMode,
   setTextColor,
-} from '../../reducer/Auth';
+} from '../../redux/reducer/Auth';
 import {styles} from './DrawerItem.style';
 import {VectorIcon} from '../../Components/VectorIcon';
 import {TouchableOpacity} from 'react-native-gesture-handler';
