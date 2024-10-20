@@ -57,6 +57,7 @@
     "react-native-blob-util": "^0.19.11",
     "react-native-calendar-strip": "^1.4.2",
     "react-native-collapsible": "^1.6.1",
+    "react-native-dotenv": "^3.4.11",
     "react-native-element-dropdown": "^2.12.1",
     "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "^2.16.0",

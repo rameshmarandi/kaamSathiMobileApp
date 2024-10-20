@@ -29,9 +29,11 @@ import AdminUpcomingEvents from '../AdminEvents/AdminUpcomingEvents.js';
 import {VectorIcon} from '../../../Components/VectorIcon.js';
 import {openInAppBrowser} from '../../../Components/InAppBrowserComp.js';
 import AddMemberForm from '../Members/AddMemberForm.js';
-// import axios from 'axios';
+import axios from 'axios';
 import {LOCAL_BASE_URL} from '../../../Config/constants.js';
-
+// import {API_URL} from '../../../Config/index.js';
+// import {API_URL} from '../../../Config/index.js';
+import {API_URL, API_TOKEN} from '@env';
 const initialState = {
   filteredData: adminDashboardCardData,
   isLoading: false,
@@ -55,18 +57,33 @@ const Index = memo(props => {
     searchModalVisible,
   } = state;
 
-  // useEffect(() => {
-  //   axios
-  //     .get(`${LOCAL_BASE_URL}/mobile`)
-  //     .then(response => {
-  //       console.log('Axios Newtowrk Response', response.data);
-  //     })
-  //     .catch(error => {
-  //       console.error('Axios Newtowrk Error', error);
-  //       // setError(error);
-  //       // setLoading(false);
-  //     });
-  // }, []);
+  useEffect(() => {
+    console.log(
+      'API_URL',
+      // process.env.API_URL
+      API_URL,
+      API_TOKEN,
+    );
+    apiHandler();
+  }, []);
+
+  const apiHandler = async () => {
+    let token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmZhZjM3ZWMyMGE4MTQ1NWZiZWMwZDAiLCJlbWFpbCI6InJhbWVzaDFAZ21haWwuY29tIiwiZnVsbE5hbWUiOiJSYW1lc2ggS3VtYXIgTWFyYW5kaSIsImNodXJjaEJyYW5jaCI6IjY2ZmFmMTM4ZDQ1YjUxYzUzNjg3MjliOCIsInJvbGUiOiJzdXBlcl9hZG1pbiIsImlhdCI6MTcyOTMzNTc1OCwiZXhwIjoxNzI5NDIyMTU4fQ.lsiKZnSCTC-xnr_K2-M5I9piuboCY49mi8Ywf5a-Nbg`;
+    await axios
+      .get(`${LOCAL_BASE_URL}/api/v1/user/get-profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Adjust based on your API requirements
+        },
+      })
+      .then(response => {
+        console.log('Axios Newtowrk Response', response.data);
+      })
+      .catch(error => {
+        console.error('Axios Newtowrk Error', error);
+        // setError(error);
+        // setLoading(false);
+      });
+  };
 
   const searchBarRef = useRef(null);
 
