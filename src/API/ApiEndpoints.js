@@ -5,6 +5,7 @@ const APIEndpoint = {
     refreshToken: '/user/refresh-token',
     generateOtp: '/user/generate-otp',
     logout: '/user/logout',
+    login: '/user/login',
   },
 
   // Add more modules as needed

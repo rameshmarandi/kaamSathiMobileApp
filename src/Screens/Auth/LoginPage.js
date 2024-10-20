@@ -33,6 +33,8 @@ import {
   isErrorWithCode,
   GoogleSignin,
 } from '@react-native-google-signin/google-signin';
+import {loginAPIHander} from '../../redux/reducer/Auth/AuthAPI';
+import {store} from '../../redux/store';
 
 const LoginPage = props => {
   const {navigation} = props;
@@ -69,7 +71,21 @@ const LoginPage = props => {
         style={styles.keyboardAvoidingView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}>
-        <Formik initialValues={{email: '', password: ''}} onSubmit={() => {}}>
+        <Formik
+          initialValues={{email: '', password: ''}}
+          onSubmit={async values => {
+            try {
+              const payload = {
+                email: values.email,
+                password: values.password,
+                fcmToken: '',
+              };
+              console.log('Payoad', payload);
+              const apiRes = await store.dispatch(loginAPIHander(payload));
+            } catch (error) {
+              console.error('login_api_error', error);
+            }
+          }}>
           {({
             handleChange,
             handleBlur,

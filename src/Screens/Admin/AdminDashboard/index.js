@@ -43,7 +43,7 @@ const initialState = {
 
 const Index = memo(props => {
   const {navigation} = props;
-  const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
+  const {isDarkMode, loginUser, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
   );
 
@@ -57,34 +57,8 @@ const Index = memo(props => {
   } = state;
 
   useEffect(() => {
-    console.log(
-      'API_URL',
-      process.env.NODE_ENV,
-      // process.env.API_URL
-      // StorageKeys.API_BASE_URL,
-      storageKeys.API_BASE_URL,
-      // API_BASE_URL,
-    );
-    // apiHandler();
+    console.log('LoginUser_Details', loginUser);
   }, []);
-
-  const apiHandler = async () => {
-    let token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmZhZjM3ZWMyMGE4MTQ1NWZiZWMwZDAiLCJlbWFpbCI6InJhbWVzaDFAZ21haWwuY29tIiwiZnVsbE5hbWUiOiJSYW1lc2ggS3VtYXIgTWFyYW5kaSIsImNodXJjaEJyYW5jaCI6IjY2ZmFmMTM4ZDQ1YjUxYzUzNjg3MjliOCIsInJvbGUiOiJzdXBlcl9hZG1pbiIsImlhdCI6MTcyOTMzNTc1OCwiZXhwIjoxNzI5NDIyMTU4fQ.lsiKZnSCTC-xnr_K2-M5I9piuboCY49mi8Ywf5a-Nbg`;
-    await axios
-      .get(`${LOCAL_BASE_URL}/api/v1/user/get-profile`, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Adjust based on your API requirements
-        },
-      })
-      .then(response => {
-        console.log('Axios Newtowrk Response', response.data);
-      })
-      .catch(error => {
-        console.error('Axios Newtowrk Error', error);
-        // setError(error);
-        // setLoading(false);
-      });
-  };
 
   const searchBarRef = useRef(null);
 

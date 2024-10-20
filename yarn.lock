@@ -7939,9 +7939,9 @@ react-native-lottie-loader@^1.0.0:
   integrity sha512-7mXz8DCyDPYwtt0MMErU0jO9w5w1paYLCw6Uy0RZ+X00yC8CCmsVC6bLT7s5Q6mdHJtXE42hJOezJlnxTAicVg==
 
 "react-native-macos@^0.61.0 || ^0.62.0 || ^0.63.0 || ^0.64.0 || ^0.65.0 || ^0.66.0 || ^0.67.0 || ^0.68.0 || ^0.69.0 || ^0.70.0 || ^0.71.0 || ^0.72.0 || ^0.73.0":
-  version "0.73.33"
-  resolved "https://registry.npmjs.org/react-native-macos/-/react-native-macos-0.73.33.tgz"
-  integrity sha512-gkA9WXDSpOjuBGnufZ14qT7tTzPGM1ZPdR2zl54fMCdU6+u+Bmd74Hu4Y/mLp7oFcbZH5VotB8/JY7fYUCH8xA==
+  version "0.73.35"
+  resolved "https://registry.npmjs.org/react-native-macos/-/react-native-macos-0.73.35.tgz"
+  integrity sha512-WNrmIzHUOOPm2XjHS/sfGJX78oRTYKnhw4CLfboMdf6rqE59+pFIzMXjwCKOvmnvG/RlosrUFRYjH4NzpFfgpQ==
   dependencies:
     "@jest/create-cache-key-function" "^29.6.3"
     "@react-native-community/cli" "12.3.6"

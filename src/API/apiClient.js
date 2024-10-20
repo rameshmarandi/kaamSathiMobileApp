@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-import {getToken, refreshAccessToken} from './authService'; // Functions to manage tokens
+// import {getToken, refreshAccessToken} from './authService'; // Functions to manage tokens
 import StorageKeys from '../Config/StorageKeys';
+import {getToken, refreshAccessToken} from './AuthService';
 
 // Create an Axios instance for public API requests
 const publicAxiosInstance = axios.create({
@@ -18,6 +19,18 @@ const authAxiosInstance = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+// Add request interceptor for the public instance
+publicAxiosInstance.interceptors.request.use(
+  config => {
+    // Construct the full URL
+    const fullURL = `${config.baseURL}${config.url}`;
+    console.log('Public Request URL:', fullURL); // Log the complete URL
+
+    return config;
+  },
+  error => Promise.reject(error),
+);
 
 // Add request interceptor for the authenticated instance
 authAxiosInstance.interceptors.request.use(
