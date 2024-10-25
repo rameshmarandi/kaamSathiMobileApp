@@ -91,6 +91,7 @@ const CustomTabBar = ({
       ]}>
       {tabArrays.map((route, index) => (
         <TouchableOpacity
+          activeOpacity={0.8}
           key={index}
           onPress={() => onPress(index)}
           style={styles.iconContainer}>

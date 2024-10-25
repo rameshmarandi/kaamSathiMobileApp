@@ -11,7 +11,7 @@ export function HomeStack(props) {
     <>
       <Stack.Navigator screenOptions={{...transitionCard, ...screenOptions}}>
         <Stack.Screen
-          initialRouteName={'HomePage'}
+          // initialRouteName={'HomePage'}
           name={'HomePage'}
           component={AllScreens.HomePage}
           // options={screenOptions}

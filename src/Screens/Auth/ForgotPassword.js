@@ -25,46 +25,19 @@ import {
   usePasswordValidation,
 } from '../../utility/PasswordUtils';
 import {forgotPasswordValidation} from '../../utility/theme/validation';
+import {useFocusEffect} from '@react-navigation/native';
 const ForgotPassword = props => {
   const {navigation} = props;
   const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
   );
   const [isOTPFildVisible, setIsOTPFildVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isChangePasswordVisible, setIsChangePasswordVisible] = useState(false);
   const inputRefs = {
     email: useRef(null),
     password: useRef(null),
   };
-
-  // // Validation Schema for Formik
-  // const validationSchema = Yup.object().shape({
-  //   email: Yup.string()
-  //     .email('Please enter a valid email')
-  //     .required('Email is required'),
-  //   otp: Yup.string()
-  //     .length(4, 'OTP must be 4 digits')
-  //     .when('isOTPFildVisible', {
-  //       is: true,
-  //       then: Yup.string().required('OTP is required'),
-  //     }),
-  //   password: Yup.string()
-  //     .min(6, 'Password must be at least 6 characters')
-  //     .matches(
-  //       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
-  //       'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
-  //     )
-  //     .when('isChangePasswordVisible', {
-  //       is: true,
-  //       then: Yup.string().required('Password is required'),
-  //     }),
-  //   cpassword: Yup.string()
-  //     .oneOf([Yup.ref('password'), null], 'Passwords must match')
-  //     .when('isChangePasswordVisible', {
-  //       is: true,
-  //       then: Yup.string().required('Confirm password is required'),
-  //     }),
-  // });
 
   return (
     <SafeAreaView style={[styles.container, {backgroundColor: currentBgColor}]}>
@@ -107,12 +80,18 @@ const ForgotPassword = props => {
             values,
             errors,
             touched,
+            resetForm,
             setFieldValue,
           }) => {
             const passwordValidations = usePasswordValidation(values.password); // Hook for validation
+            const isLoginDisabled = Object.keys(errors).length > 0;
 
             const isFieldValid = field => touched[field] && !errors[field];
-
+            useFocusEffect(
+              React.useCallback(() => {
+                resetForm();
+              }, [resetForm]),
+            );
             return (
               <ScrollView
                 style={styles.scrollView}
@@ -221,9 +200,14 @@ const ForgotPassword = props => {
                 )}
                 <TouchableOpacity
                   activeOpacity={0.9}
+                  disabled={isLoginDisabled || isLoading}
                   style={[
                     styles.loginButton,
                     {backgroundColor: currentTextColor},
+                    isLoading ||
+                      (isLoginDisabled && {
+                        opacity: 0.8,
+                      }),
                   ]}
                   onPress={handleSubmit}>
                   <Text
@@ -239,8 +223,6 @@ const ForgotPassword = props => {
     </SafeAreaView>
   );
 };
-
-// export default ForgotPassword;
 
 const styles = StyleSheet.create({
   container: {

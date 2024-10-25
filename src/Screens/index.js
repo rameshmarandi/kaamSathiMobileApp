@@ -1,6 +1,6 @@
 // Users Screens
 
-import HomePage from './User/HomePage';
+import HomePage from './User/HomePage/index';
 import ProfilePage from './User/ProfilePage';
 import Settings from './Admin/Settings';
 import FreeResource from './User/FreeResource';

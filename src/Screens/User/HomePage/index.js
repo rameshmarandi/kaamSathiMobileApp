@@ -87,23 +87,23 @@ const index = memo(props => {
   //   );
   // };
 
-  // const FirstRoute = () => <DailyVerbs />;
+  const FirstRoute = () => <DailyVerbs />;
 
-  // const SecondRoute = () => <DailyVerbs />;
+  const SecondRoute = () => <DailyVerbs />;
 
-  // const ThirdRoute = () => <DailyVerbs />;
+  const ThirdRoute = () => <DailyVerbs />;
 
-  // const routes = [
-  //   {key: 'first', title: 'Hindi'},
-  //   {key: 'second', title: 'English'},
-  //   {key: 'third', title: 'Marathi'},
-  // ];
+  const routes = [
+    {key: 'first', title: 'Hindi'},
+    {key: 'second', title: 'English'},
+    {key: 'third', title: 'Marathi'},
+  ];
 
-  // const scenes = {
-  //   first: FirstRoute,
-  //   second: SecondRoute,
-  //   third: ThirdRoute,
-  // };
+  const scenes = {
+    first: FirstRoute,
+    second: SecondRoute,
+    third: ThirdRoute,
+  };
 
   const BannerCardComp = memo(() => {
     return (
@@ -116,11 +116,9 @@ const index = memo(props => {
             }
           }>
           <View
-            style={
-              {
-                // marginBottom: '2%',
-              }
-            }>
+            style={{
+              marginBottom: '2%',
+            }}>
             <SectionHeader sectionTitle={`${MsgConfig.specialDay}`} />
           </View>
           <View
@@ -168,7 +166,7 @@ const index = memo(props => {
             }}>
             <SectionHeader sectionTitle={`${MsgConfig.firstHeaderText}`} />
           </View>
-          {/* <View
+          <View
             style={{
               marginTop: getResHeight(1),
               height: getResHeight(35),
@@ -190,7 +188,7 @@ const index = memo(props => {
               }}
               sceneContainerStyle={{}}
             />
-          </View> */}
+          </View>
         </View>
       </>
     );

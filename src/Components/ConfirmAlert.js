@@ -6,6 +6,7 @@ import {
   Animated,
   TouchableOpacity,
   Image,
+  Modal,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {getFontSize, getResHeight, getResWidth} from '../utility/responsive';
@@ -16,6 +17,7 @@ const ConfirmAlert = ({visible, onCancel, alertTitle, onConfirm}) => {
   let {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
   );
+
   React.useEffect(() => {
     Animated.timing(opacity, {
       toValue: visible ? 1 : 0,
@@ -24,50 +26,60 @@ const ConfirmAlert = ({visible, onCancel, alertTitle, onConfirm}) => {
     }).start();
   }, [visible, opacity]);
 
-  if (!visible) return null;
-
   return (
-    <Animated.View style={[styles.container, {opacity}]}>
-      <View
-        style={[
-          styles.alertBox,
-          {
-            width: getResWidth(80),
-            backgroundColor: currentBgColor,
-            borderWidth: 1,
-            borderColor: currentTextColor,
-            paddingTop: '5%',
-          },
-        ]}>
-        <Image
-          source={theme.assets.deleteIcon}
-          resizeMode="cover"
-          style={{height: getResHeight(10), width: getResHeight(10)}}
-        />
-        <Text
-          style={{
-            color: currentTextColor,
-            fontFamily: theme.font.medium,
-            fontSize: getFontSize(2),
-          }}>
-          {alertTitle ? alertTitle : 'Are you sure?'}
-        </Text>
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onCancel}>
+      <Animated.View style={[styles.container, {opacity}]}>
         <View
           style={[
-            styles.buttonsContainer,
+            styles.alertBox,
             {
-              width: '100%',
+              width: getResWidth(80),
+              backgroundColor: currentBgColor,
+              borderWidth: 1,
+              borderColor: currentTextColor,
+              paddingTop: '5%',
             },
           ]}>
-          <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-            <Text style={styles.buttonText}>Cancel</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.cancelButton} onPress={onConfirm}>
-            <Text style={[styles.buttonText]}>OK</Text>
-          </TouchableOpacity>
+          <Image
+            source={theme.assets.deleteIcon}
+            resizeMode="cover"
+            style={{height: getResHeight(10), width: getResHeight(10)}}
+          />
+          <Text
+            style={{
+              color: currentTextColor,
+              fontFamily: theme.font.medium,
+              fontSize: getFontSize(2),
+            }}>
+            {alertTitle ? alertTitle : 'Are you sure?'}
+          </Text>
+          <View
+            style={[
+              styles.buttonsContainer,
+              {
+                width: '100%',
+              },
+            ]}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={styles.cancelButton}
+              onPress={onCancel}>
+              <Text style={styles.buttonText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={styles.cancelButton}
+              onPress={onConfirm}>
+              <Text style={[styles.buttonText]}>OK</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </Animated.View>
+      </Animated.View>
+    </Modal>
   );
 };
 

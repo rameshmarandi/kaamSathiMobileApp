@@ -5,9 +5,14 @@ import {getFontSize, getResHeight} from '../../../utility/responsive';
 import theme from '../../../utility/theme';
 
 const UserProfile = ({name, date, imageUri}) => {
-  const {currentBgColor, currentTextColor, isDarkMode} = useSelector(
+  const {currentBgColor, loginUser, currentTextColor, isDarkMode} = useSelector(
     state => state.user,
   );
+
+  const isUserValid = loginUser?.user && Object.keys(loginUser.user).length > 0;
+
+  const {fullName, avatar} = loginUser?.user || {};
+
   return (
     <View style={styles.container}>
       <Image source={{uri: imageUri}} style={styles.avatar} />

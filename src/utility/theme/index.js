@@ -16,6 +16,7 @@ const color = {
   dimGray: '#828282',
   lableColor: '#666666',
   white: '#F0F8FF',
+  whiteDisabled: '#D3E7F3',
   //  '#FFFFFF',
   iceWhite: '#f9f9f9',
   dimWhite: '#f1f1f1',

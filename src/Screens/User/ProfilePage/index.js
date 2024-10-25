@@ -6,7 +6,7 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import React, {memo} from 'react';
+import React, {memo, useState} from 'react';
 import theme from '../../../utility/theme';
 import {
   ButtonIconComp,
@@ -24,20 +24,43 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {VectorIcon} from '../../../Components/VectorIcon';
 import {useSelector} from 'react-redux';
 import {Image} from 'react-native';
-
+import moment from 'moment';
+import {DateFormator} from '../../../Helpers/CommonHelpers';
+import ImageView from 'react-native-image-viewing';
 const index = memo(props => {
   const {navigation} = props;
-  const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
+  const {isDarkMode, currentBgColor, loginUser, currentTextColor} = useSelector(
     state => state.user,
   );
 
+  const isUserValid = loginUser?.user && Object.keys(loginUser.user).length > 0;
+
+  const {
+    fullName,
+    avatar,
+    coverImage,
+    email,
+    mobile,
+    DOB,
+    baptismDate,
+    marriageDate,
+  } = loginUser?.user || {};
+
+  const [visible, setIsVisible] = useState(false);
+  const [viewImageUrl, setViewImageUrl] = useState('');
   let bioData = [
     {
-      'Full Name': 'Ramesh Marandi',
-      Email: 'rameshtest@gmail.com',
-      Phone: '9090909090',
-      'Date of Birth': '12 April 1998',
-      'Date of Baptism': '16 Jun 20121',
+      'Full Name': `${fullName || ''}`,
+      Email: `${email || ''}`,
+      Phone: `${mobile || ''}`,
+      'Date of Birth': `${DateFormator(DOB, 'DD MMM YYYY') || ''}`,
+      'Date of Baptism': `${DateFormator(baptismDate, 'DD MMM YYYY') || ''}`,
+      'Date of Marriage': `${DateFormator(marriageDate, 'DD MMM YYYY') || '_'}`,
+    },
+  ];
+  const images = [
+    {
+      uri: viewImageUrl,
     },
   ];
 
@@ -59,30 +82,30 @@ const index = memo(props => {
         }}
         centerLogo={true}
       />
+      <ImageView
+        images={images}
+        imageIndex={0}
+        visible={visible}
+        onRequestClose={() => setIsVisible(false)}
+      />
       <FlatList
-        data={[0, 1, 2]}
+        data={[0, 1, 2, 3, 4, 5, 6]}
         renderItem={({item, index}) => {
           switch (item) {
             case 0:
               return (
                 <>
                   <View>
-                    {/* <View
-                      style={{
-                        position: 'absolute',
-                        zIndex: 1,
-                        top: getResHeight(1),
-                        paddingLeft: '5%',
-                      }}>
-                      <CustomHeader
-                        backPress={() => {
-                          navigation.navigate('Dashboard');
-                        }}
-                        // screenTitle={MsgConfig.profile}
-                      />
-                    </View> */}
+                    <TouchableOpacity
+                      activeOpacity={0.8}
+                      onPress={() => {
+                        let viewImageURL = coverImage
+                          ? coverImage
+                          : 'https://i.ytimg.com/vi/jjWSIpXrbUs/maxresdefault.jpg';
 
-                    <View
+                        setViewImageUrl(viewImageURL);
+                        setIsVisible(true);
+                      }}
                       style={{
                         width: '100%',
                         height: getResHeight(30),
@@ -90,7 +113,9 @@ const index = memo(props => {
                       }}>
                       <Image
                         source={{
-                          uri: 'https://dailyverses.net/images/en/niv/romans-15-2-2.jpg',
+                          uri: coverImage
+                            ? coverImage
+                            : 'https://i.ytimg.com/vi/jjWSIpXrbUs/maxresdefault.jpg',
                         }}
                         style={{
                           height: '100%',
@@ -121,62 +146,19 @@ const index = memo(props => {
                           }}
                         />
                       </View>
-
-                      <EmptyUserProfile
-                        onPress={() => {
-                          alert('sdfsd');
-                        }}
-                      />
-                      {/* <View
-                        style={{
-                          width: getResHeight(18),
-                          height: getResHeight(18),
-                          borderRadius: getResHeight(100),
-                          backgroundColor: theme.color.dimWhite,
-                          marginTop: getResHeight(-10),
-                          borderWidth: 2,
-                          borderColor: currentTextColor,
-                          marginLeft: getResWidth(3),
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                        }}>
-                        <VectorIcon
-                          type={'FontAwesome'}
-                          name={'user'}
-                          size={getFontSize(8)}
-                          color={
-                            isDarkMode
-                              ? theme.color.darkTheme
-                              : currentTextColor
-                          }
-                        />
-                        <View
-                          style={{
-                            position: 'absolute',
-                            bottom: getResHeight(1),
-                            right: getResWidth(-1.1),
-                          }}>
-                          <ButtonIconComp
-                            onPress={() => {}}
-                            icon={
-                              <VectorIcon
-                                type={'FontAwesome'}
-                                name={'camera'}
-                                size={getFontSize(2.1)}
-                                color={currentBgColor}
-                              />
-                            }
-                            containerStyle={{
-                              width: getResHeight(5),
-                              height: getResHeight(5),
-                              backgroundColor: currentTextColor,
-
-                              borderRadius: getResHeight(100),
-                            }}
-                          />
-                        </View>
-                      </View> */}
-                    </View>
+                    </TouchableOpacity>
+                    <EmptyUserProfile
+                      avatarURL={avatar}
+                      onViewProfile={() => {
+                        if (avatar !== '') {
+                          setViewImageUrl(avatar);
+                          setIsVisible(true);
+                        }
+                      }}
+                      onPress={() => {
+                        // alert('sdfsd');
+                      }}
+                    />
                   </View>
                 </>
               );
@@ -213,7 +195,7 @@ const BioCompoent = memo(props => {
             paddingLeft: '5%',
             paddingRight: getResWidth(7),
 
-            marginTop: getResHeight(15),
+            marginTop: getResHeight(6),
             width: '95%',
             alignSelf: 'center',
             borderRadius: getResHeight(1),

@@ -69,8 +69,7 @@ authAxiosInstance.interceptors.response.use(
 // Centralized API methods
 const apiService = {
   // Public API requests
-  getPublic: (endpoint, params = {}) =>
-    publicAxiosInstance.get(endpoint, {params}),
+  getPublic: (endpoint, params = {}) => publicAxiosInstance.get(endpoint),
   postPublic: (endpoint, data) => publicAxiosInstance.post(endpoint, data),
 
   // Authenticated API requests

@@ -1,25 +1,25 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import StorageKeys from './storageKeys';
-
-/**
- * AsyncStorage Utility - Production-Grade Implementation
- * Provides methods for setting, getting, removing, and clearing AsyncStorage data
- * Uses centralized key management for consistency
- */
 
 const PREFIX = 'APP_STORAGE_';
 
 /**
+ * Generate a full key with prefix for namespacing.
+ * @param {string} key - The original key.
+ * @returns {string} - Prefixed key.
+ */
+const getPrefixedKey = key => `${PREFIX}${key}`;
+
+/**
  * Set data in AsyncStorage
- * @param {string} key - The key from storageKeys.js
- * @param {any} value - The value to store (automatically stringified if necessary)
+ * @param {string} key - Key without prefix.
+ * @param {any} value - Value to store.
  * @returns {Promise<void>}
  */
 const setItem = async (key, value) => {
   try {
     const stringValue =
       typeof value === 'string' ? value : JSON.stringify(value);
-    await AsyncStorage.setItem(key, stringValue);
+    await AsyncStorage.setItem(getPrefixedKey(key), stringValue);
   } catch (error) {
     console.error(`AsyncStorage: Error setting item for key: ${key}`, error);
   }
@@ -27,12 +27,12 @@ const setItem = async (key, value) => {
 
 /**
  * Get data from AsyncStorage
- * @param {string} key - The key from storageKeys.js
+ * @param {string} key - Key without prefix.
  * @returns {Promise<any|null>}
  */
 const getItem = async key => {
   try {
-    const value = await AsyncStorage.getItem(key);
+    const value = await AsyncStorage.getItem(getPrefixedKey(key));
     return value ? JSON.parse(value) : null;
   } catch (error) {
     console.error(`AsyncStorage: Error getting item for key: ${key}`, error);
@@ -42,20 +42,20 @@ const getItem = async key => {
 
 /**
  * Remove data from AsyncStorage
- * @param {string} key - The key from storageKeys.js
+ * @param {string} key - Key without prefix.
  * @returns {Promise<void>}
  */
 const removeItem = async key => {
   try {
-    await AsyncStorage.removeItem(key);
+    await AsyncStorage.removeItem(getPrefixedKey(key));
   } catch (error) {
     console.error(`AsyncStorage: Error removing item for key: ${key}`, error);
   }
 };
 
 /**
- * Clear all app-specific AsyncStorage data (using a namespaced prefix)
- * @param {boolean} clearAll - If true, clear all AsyncStorage data, not just app-specific
+ * Clear all app-specific AsyncStorage data or all data
+ * @param {boolean} clearAll - If true, clear all AsyncStorage data.
  * @returns {Promise<void>}
  */
 const clearStorage = async (clearAll = false) => {
@@ -73,7 +73,7 @@ const clearStorage = async (clearAll = false) => {
 };
 
 /**
- * Get all keys stored in AsyncStorage (filtered by app-specific prefix)
+ * Get all keys stored in AsyncStorage with app-specific prefix.
  * @returns {Promise<string[]>}
  */
 const getAllKeys = async () => {

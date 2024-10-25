@@ -32,6 +32,7 @@ import AddMemberForm from '../Members/AddMemberForm.js';
 import axios from 'axios';
 import {LOCAL_BASE_URL} from '../../../Config/constants.js';
 import storageKeys from '../../../Config/StorageKeys.js';
+import {checkIsAdmin} from '../../../Helpers/CommonHelpers.js';
 
 const initialState = {
   filteredData: adminDashboardCardData,
@@ -57,6 +58,7 @@ const Index = memo(props => {
   } = state;
 
   useEffect(() => {
+    checkIsAdmin();
     console.log('LoginUser_Details', loginUser);
   }, []);
 

@@ -6,9 +6,10 @@ import {
   StyleSheet,
   TouchableOpacity,
   Text,
+  Image,
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
-import {Button, Image} from 'react-native-elements';
+import {Button} from 'react-native-elements';
 import {useSelector} from 'react-redux';
 import {getFontSize, getResHeight, getResWidth} from '../utility/responsive';
 import theme from '../utility/theme';
@@ -43,36 +44,65 @@ const CopyToClipBoard = text => {
 };
 
 // EmptyUserProfile Component
-const EmptyUserProfile = memo(({onPress}) => {
+const EmptyUserProfile = memo(props => {
   const {isDarkMode, currentTextColor, currentBgColor} = useSelector(
     state => state.user,
   );
+  const {onPress, onViewProfile, avatarURL} = props;
+  console.log('avatarURL', avatarURL);
 
   return (
     <View
       style={{
-        width: getResHeight(18),
-        height: getResHeight(18),
-        borderRadius: getResHeight(100),
-        backgroundColor: theme.color.dimWhite,
-        marginTop: getResHeight(-10),
-        borderWidth: 2,
-        borderColor: currentTextColor,
-        marginLeft: getResWidth(3),
-        justifyContent: 'center',
-        alignItems: 'center',
+        flexDirection: 'row',
       }}>
-      <VectorIcon
-        type={'FontAwesome'}
-        name={'user'}
-        size={getFontSize(8)}
-        color={isDarkMode ? theme.color.darkTheme : currentTextColor}
-      />
+      <TouchableOpacity onPress={onViewProfile} activeOpacity={0.8}>
+        <View
+          style={{
+            width: getResHeight(18),
+            height: getResHeight(18),
+            borderRadius: getResHeight(100),
+            backgroundColor: theme.color.dimWhite,
+            marginTop: getResHeight(-10),
+            borderWidth: getResHeight(0.4),
+            borderColor: currentTextColor,
+            marginLeft: getResWidth(3),
+            justifyContent: 'center',
+            alignItems: 'center',
+            overflow: 'hidden',
+            // zIndex: -999,
+          }}>
+          {/* <TouchableOpacity> */}
+          {avatarURL ? (
+            <Image
+              source={{
+                uri: `${avatarURL}`,
+              }}
+              style={{
+                height: '100%',
+                width: '100%',
+                // overflow: 'hidden',
+                // zIndex: -999,
+              }}
+            />
+          ) : (
+            <>
+              <VectorIcon
+                type={'FontAwesome'}
+                name={'user'}
+                size={getFontSize(8)}
+                color={isDarkMode ? theme.color.darkTheme : currentTextColor}
+              />
+            </>
+          )}
+          {/* </TouchableOpacity> */}
+        </View>
+      </TouchableOpacity>
       <TouchableOpacity
+        onPress={onPress}
         style={{
-          position: 'absolute',
-          bottom: getResHeight(1),
-          right: getResWidth(-1.1),
+          bottom: getResHeight(-2),
+          right: getResWidth(10),
           zIndex: 999,
         }}>
         <ButtonIconComp
@@ -318,7 +348,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontSize: getFontSize(1.5),
     fontFamily: theme.font.semiBold,
-    marginLeft: '5%',
+    marginLeft: '3%',
   },
   btnContainerStyle: {
     marginBottom: getResHeight(2),

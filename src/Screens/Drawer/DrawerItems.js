@@ -28,13 +28,19 @@ import {VectorIcon} from '../../Components/VectorIcon';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {CommonButtonComp} from '../../Components/commonComp';
 import CustomSwitch from '../../Components/CustomSwitch';
+import asyncStorageUtil from '../../utility/asyncStorageUtil';
+import StorageKeys from '../../Config/StorageKeys';
+import ConfirmAlert from '../../Components/ConfirmAlert';
+import {logoutAPIHander} from '../../redux/reducer/Auth/AuthAPI';
+import {store} from '../../redux/store';
+import {checkIsUserLoggedIn} from '../../Helpers/CommonHelpers';
+import ToastAlertComp from '../../Components/ToastAlertComp';
 
 const DrawerItems = ({navigation}) => {
   const dispatch = useDispatch();
-  let {isDarkMode, currentBgColor, isAdmin, currentTextColor} = useSelector(
-    state => state.user,
-  );
-
+  let {isDarkMode, currentBgColor, loginUser, isAdmin, currentTextColor} =
+    useSelector(state => state.user);
+  const [isCofirmAlertVisible, setIsCofirmAlertVisible] = useState(false);
   let iconFontSize = getFontSize(3);
   let navRoute = [
     {
@@ -174,22 +180,6 @@ const DrawerItems = ({navigation}) => {
         />
       ),
     },
-    {
-      id: 9,
-      lable: 'Set Admin',
-      // route: 'HomePage',
-      route: '',
-
-      icon: (
-        <VectorIcon
-          type={'MaterialIcons'}
-          name={'admin-panel-settings'}
-          // size={iconFontSize}
-          size={getFontSize(3.3)}
-          color={currentTextColor}
-        />
-      ),
-    },
   ];
 
   const handleDarkMode = async () => {
@@ -211,6 +201,16 @@ const DrawerItems = ({navigation}) => {
     navigation.closeDrawer();
   };
 
+  const confirmBtnHandler = async () => {
+    try {
+      setIsCofirmAlertVisible(false);
+
+      const res = await store.dispatch(logoutAPIHander());
+      ToastAlertComp('success', `Logout successfully`);
+    } catch (error) {
+      console.error('Logout_api_error', error);
+    }
+  };
   const renderItem = ({item, index}) => {
     return (
       <>
@@ -232,8 +232,6 @@ const DrawerItems = ({navigation}) => {
             onPress={() => {
               if (item.id === 8) {
                 handleDarkMode(); // Functional for dark/Night mode
-              } else if (item.id === 9) {
-                handleSetAdmin(); // Functional for dark/Night mode
               } else {
                 navigation.navigate(item.route);
               }
@@ -267,10 +265,20 @@ const DrawerItems = ({navigation}) => {
       </>
     );
   };
-  console.log('isAdmin', isAdmin);
+
+  const isUserValid = loginUser?.user && Object.keys(loginUser.user).length > 0;
+
+  const {fullName, avatar} = loginUser?.user || {};
+
   return (
     <SafeAreaView
       style={[styles.drawerContainer, {backgroundColor: currentBgColor}]}>
+      <ConfirmAlert
+        visible={isCofirmAlertVisible}
+        alertTitle={'Are you sure you want to log out?'}
+        onCancel={() => setIsCofirmAlertVisible(false)}
+        onConfirm={confirmBtnHandler}
+      />
       <View
         style={[
           styles.imageContainer,
@@ -278,48 +286,59 @@ const DrawerItems = ({navigation}) => {
             backgroundColor: currentBgColor,
             borderBottomWidth: 0.9,
             borderBottomColor: currentTextColor,
+            justifyContent: 'center',
+            alignItems: 'center',
           },
         ]}>
         <View
-          style={{
-            height: getResHeight(8),
-            width: getResHeight(8),
-            borderRadius: getResHeight(100),
-            marginVertical: '5%',
-          }}>
+          style={[
+            !isUserValid && {justifyContent: 'center', alignItems: 'center'},
+            {
+              height: getResHeight(8),
+              width: getResHeight(8),
+              borderRadius: getResHeight(100),
+              marginVertical: '5%',
+              overflow: 'hidden',
+            },
+          ]}>
           <Image
-            source={theme.assets.church_logo_origianl}
+            source={avatar ? {uri: avatar} : theme.assets.church_logo_origianl}
             resizeMode="cover"
-            style={{height: '100%', width: '100%'}}
+            style={{height: '100%', width: '100%', borderRadius: 100}}
           />
         </View>
+        {isUserValid && (
+          <>
+            <View
+              style={{
+                marginLeft: '5%',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <Text
+                style={{
+                  color: currentTextColor,
+                  fontFamily: theme.font.bold,
+                  width: getResWidth(30),
+                }}>
+                {fullName ? fullName : ''}
+              </Text>
 
-        <View
-          style={{
-            marginLeft: '5%',
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}>
-          <Text
-            style={{
-              color: currentTextColor,
-              fontFamily: theme.font.bold,
-            }}>
-            Ramesh Marandi
-          </Text>
-          <View
-            style={{
-              marginLeft: '5%',
-            }}>
-            <VectorIcon
-              type={'MaterialIcons'}
-              name={'verified'}
-              size={getFontSize(3)}
-              color={theme.color.green}
-            />
-          </View>
-        </View>
+              <View
+                style={{
+                  marginLeft: '5%',
+                }}>
+                <VectorIcon
+                  type={'MaterialIcons'}
+                  name={'verified'}
+                  size={getFontSize(3)}
+                  color={theme.color.green}
+                />
+              </View>
+            </View>
+          </>
+        )}
       </View>
       <View style={{flex: 1, backgroundColor: backgroundColorHandler()}}>
         <FlatList
@@ -336,21 +355,25 @@ const DrawerItems = ({navigation}) => {
           bottom: '2%',
         }}>
         <CommonButtonComp
-          // title={'Log Out'}
-          title={'Are you a member?'}
+          title={isUserValid ? 'Log out' : 'Are you a member?'}
           onPress={() => {
-            navigation.navigate('LoginPage');
-            // navigation.closeDrawer();
+            if (isUserValid) {
+              setIsCofirmAlertVisible(true);
+            } else {
+              navigation.navigate('LoginPage');
+            }
+
+            navigation.closeDrawer();
           }}
           iconLeft
           // loading = {true}
           icon={
             <VectorIcon
               // type={'AntDesign'}
-              type={'FontAwesome'}
+              type={isUserValid ? 'Feather' : 'FontAwesome'}
               // name={'logout'}
-              name={'lock'}
-              size={getFontSize(2)}
+              name={isUserValid ? 'log-out' : 'lock'}
+              size={isUserValid ? getFontSize(3) : getFontSize(2)}
               color={currentBgColor}
             />
           }

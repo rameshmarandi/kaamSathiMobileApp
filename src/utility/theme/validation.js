@@ -72,3 +72,11 @@ export const forgotPasswordValidation = Yup.object().shape({
       : Yup.string().notRequired();
   }),
 });
+
+// Define validation schema
+export const loginValidationSchema = Yup.object().shape({
+  email: Yup.string()
+    .email('Please enter a valid email address')
+    .required('Email is required'),
+  password: Yup.string().required('Password is required'),
+});

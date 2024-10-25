@@ -20,6 +20,7 @@ import theme from './src/utility/theme';
 import {setNavigator} from './src/Services/NavigationService';
 import {toastConfig} from './src/Components/StaticDataHander';
 import messaging from '@react-native-firebase/messaging';
+import {checkIsAdmin, checkIsUserLoggedIn} from './src/Helpers/CommonHelpers';
 
 const Stack = createNativeStackNavigator();
 LogBox.ignoreAllLogs(true);
@@ -29,15 +30,29 @@ const App = () => {
   StatusBar.setBackgroundColor(theme.color.darkTheme); // Set your desired background color
 
   const [isLoading, setIsLoading] = useState(true);
-  const [isLogedIn, setIsLogedIn] = useState(true);
+  const [isLogedIn, setIsLogedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   // const []
   useEffect(() => {
+    checkIsAuthUser();
+
     setTimeout(() => {
       setIsLoading(false);
     }, 2000);
   }, []);
 
+  const checkIsAuthUser = async () => {
+    const isUserLoggedIn = await checkIsUserLoggedIn();
+
+    setIsLogedIn(isUserLoggedIn);
+    checkIsAdmin().then(checkTypOfAdmin => {
+      setIsAdmin(checkTypOfAdmin);
+      console.log('ChekcIsAdmin_at_aap', checkTypOfAdmin);
+    });
+
+    console.log('ChekcIsAdmin_at_aap', checkTypOfAdmin);
+  };
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
@@ -51,7 +66,7 @@ const App = () => {
       {isLoading ? (
         <InitialRender />
       ) : (
-        <AllNavContainer isLogedIn={isLogedIn} />
+        <AllNavContainer isLogedIn={isLogedIn} isAdmin={isAdmin} />
       )}
     </>
   );
@@ -123,7 +138,7 @@ const InitialRender = () => {
 };
 
 const AllNavContainer = props => {
-  const {isLogedIn} = props;
+  const {isLogedIn, isAdmin} = props;
   // const navigationRef = React.useRef();
 
   const navigationRef = React.useRef(); // Ensure useRef is imported correctly
@@ -140,10 +155,7 @@ const AllNavContainer = props => {
           <PersistGate persistor={persistor}>
             {/* <MenuProvider> */}
             <NavigationContainer onReady={onNavigationReady}>
-              <RootNavigation
-                isLogedIn={isLogedIn}
-                //  isAdmin = {isAdmin}
-              />
+              <RootNavigation isLogedIn={isLogedIn} />
             </NavigationContainer>
             {/* </MenuProvider> */}
           </PersistGate>
