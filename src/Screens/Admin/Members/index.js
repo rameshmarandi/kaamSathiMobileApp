@@ -30,6 +30,9 @@ import {
 } from '../../../Components/commonComp';
 import {TextInput} from 'react-native';
 import WaveButton from '../../../Components/WaveButton';
+import {store} from '../../../redux/store';
+import {getAllMembersAPIHander} from '../../../redux/reducer/Profile/ProfileAPI';
+import {RefreshControl} from 'react-native';
 
 const demoUsers = [
   {
@@ -344,7 +347,9 @@ const Index = memo(props => {
   const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
   );
+  const {allMembers} = useSelector(state => state.profile);
 
+  // console.log('GEt_All_Memmbers_page', allMembers);
   const [state, setState] = useState(initialState);
   const [userData, setUserData] = useState([...demoUsers]);
   const [showAlert, setShowAlert] = useState(false);
@@ -359,14 +364,27 @@ const Index = memo(props => {
   };
 
   useEffect(() => {
+    APIHandler();
+  }, []);
+
+  const APIHandler = async () => {
+    try {
+      console.log('STATE_____');
+      await store.dispatch(getAllMembersAPIHander());
+      console.log('STATE_____2');
+    } catch (error) {}
+  };
+
+  useEffect(() => {
     updateState({isLoading: true});
-    const filtered = demoUsers.filter(item =>
+    const filtered = allMembers.filter(item =>
       item.userBio['Full name']
         .toLowerCase()
         .includes(searchText.toLowerCase()),
     );
 
-    updateState({setUserData: filtered});
+    console.log('filtered_Membes', filtered);
+    // updateState({setUserData: filtered});
     setTimeout(() => {
       updateState({isLoading: false});
     }, 300);
@@ -429,7 +447,7 @@ const Index = memo(props => {
   const singleUserCardData = item => {
     const {userBio} = item;
 
-    console.log('sing_user', userBio);
+    // console.log('sing_user', userBio);
     return (
       <View
         style={{
@@ -538,9 +556,17 @@ const Index = memo(props => {
         }}>
         {/* <ExampleUsage /> */}
         <FlatList
-          data={userData}
+          data={allMembers}
           keyExtractor={(item, index) => item.id}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={() => {
+                APIHandler(false);
+              }}
+            />
+          }
           contentContainerStyle={{paddingBottom: '20%'}}
           renderItem={({item, index}) => {
             console.log('single_items', item);
@@ -612,7 +638,7 @@ const Index = memo(props => {
                   }}>
                   <Image
                     source={{
-                      uri: 'https://wac-cdn.atlassian.com/dam/jcr:ba03a215-2f45-40f5-8540-b2015223c918/Max-R_Headshot%20(1).jpg?cdnVersion=1719',
+                      uri: item.avatar,
                     }}
                     style={{
                       height: getResHeight(10),
@@ -636,7 +662,7 @@ const Index = memo(props => {
                     }}>
                     {item.userBio['Full name']}
                   </Text>
-                  <Text
+                  {/* <Text
                     style={{
                       width: '98%',
                       fontFamily: theme.font.medium,
@@ -644,7 +670,7 @@ const Index = memo(props => {
                       color: currentTextColor,
                     }}>
                     {item.userBio.Email}
-                  </Text>
+                  </Text> */}
                 </View>
                 <View
                   style={{

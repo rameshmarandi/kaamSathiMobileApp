@@ -110,6 +110,10 @@ const LoginPage = props => {
               );
             }
           } catch (error) {
+            ToastAlertComp(
+              'error',
+              `We are facing some technical issue, please try again later`,
+            );
             console.error('login_api_error', error);
             setIsLoading(false);
           } finally {

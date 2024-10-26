@@ -19,6 +19,7 @@ const setItem = async (key, value) => {
   try {
     const stringValue =
       typeof value === 'string' ? value : JSON.stringify(value);
+
     await AsyncStorage.setItem(getPrefixedKey(key), stringValue);
   } catch (error) {
     console.error(`AsyncStorage: Error setting item for key: ${key}`, error);
@@ -32,14 +33,23 @@ const setItem = async (key, value) => {
  */
 const getItem = async key => {
   try {
+    console.log('GET_Asnc_values', key, getPrefixedKey(key));
     const value = await AsyncStorage.getItem(getPrefixedKey(key));
-    return value ? JSON.parse(value) : null;
+
+    // Try parsing JSON; if it fails, assume it's a plain string
+    try {
+      return value ? JSON.parse(value) : null;
+    } catch (jsonError) {
+      console.warn(
+        `AsyncStorage: Stored value for key ${key} is not JSON, returning as string.`,
+      );
+      return value; // Return as plain string if JSON parsing fails
+    }
   } catch (error) {
     console.error(`AsyncStorage: Error getting item for key: ${key}`, error);
     return null;
   }
 };
-
 /**
  * Remove data from AsyncStorage
  * @param {string} key - Key without prefix.

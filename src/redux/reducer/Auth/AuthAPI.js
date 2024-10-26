@@ -28,7 +28,7 @@ const loginAPIHander = createAsyncThunk(
 
         await asyncStorageUtil.setItem(
           StorageKeys.ACCESS_TOKEN,
-          responseData.accessToken,
+          `${responseData.data.accessToken}`,
         );
 
         thunkAPI.dispatch(setLoginUser(responseData.data));
@@ -36,6 +36,7 @@ const loginAPIHander = createAsyncThunk(
       }
       return true;
     } catch (error) {
+      console.log('Loing_API_Faild', error.response);
       return error.response.data;
     }
   },

@@ -7,7 +7,9 @@ import APIEndpoint from './ApiEndpoints';
 // Get the access token from AsyncStorage
 export const getToken = async () => {
   try {
-    const token = await asyncStorageUtil.getItem(StorageKeys.ACCESS_TOKEN);
+    const token = await asyncStorageUtil.getItem(`${StorageKeys.ACCESS_TOKEN}`);
+    console.log('Async_stoken_', token);
+
     return token;
   } catch (error) {
     console.error('Error getting access token:', error);
@@ -19,6 +21,7 @@ export const getToken = async () => {
 export const refreshAccessToken = async () => {
   try {
     const refreshToken = await getToken();
+    console.log('RefreshToken_At_Start', refreshToken);
     if (!refreshToken) throw new Error('No refresh token available');
 
     // Make the request to refresh the token

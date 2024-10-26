@@ -43,16 +43,16 @@ const images = [
   'https://im.indiatimes.in/content/2023/Aug/Independence-Day-speech4_64ca45b727e08.jpg',
 ];
 
-// const SCREEN_WIDTH = Dimensions.get('window').width;
-// const PADDING = 5; // Padding on the left and right
-// const CARD_WIDTH = SCREEN_WIDTH - 2.3 * PADDING; // Card width minus padding on both sides
-// const CARD_HEIGHT = 200; // Adjust the height as needed
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const PADDING = 5; // Padding on the left and right
+const CARD_WIDTH = SCREEN_WIDTH - 2.3 * PADDING; // Card width minus padding on both sides
+const CARD_HEIGHT = 200; // Adjust the height as needed
 
-// const languageArray = [
-//   {key: 'hindi', tabTitle: 'Hindi', bg: 'blue'},
-//   {key: 'english', tabTitle: 'English', bg: 'green'},
-//   {key: 'marathi', tabTitle: 'Marathi', bg: 'red'},
-// ];
+const languageArray = [
+  {key: 'hindi', tabTitle: 'Hindi', bg: 'blue'},
+  {key: 'english', tabTitle: 'English', bg: 'green'},
+  {key: 'marathi', tabTitle: 'Marathi', bg: 'red'},
+];
 
 const index = memo(props => {
   const {navigation} = props;
@@ -71,21 +71,21 @@ const index = memo(props => {
 
     console.log('Firebase_OTkem', token);
   };
-  // const [activeSlide, setActiveSlide] = useState(0);
-  // _renderItem = ({item}) => {
-  //   return (
-  //     <View
-  //       style={[
-  //         styles.slide,
-  //         {
-  //           borderRadius: 10,
-  //           overflow: 'hidden',
-  //         },
-  //       ]}>
-  //       <Image source={{uri: item}} style={styles.image} />
-  //     </View>
-  //   );
-  // };
+  const [activeSlide, setActiveSlide] = useState(0);
+  _renderItem = ({item}) => {
+    return (
+      <View
+        style={[
+          styles.slide,
+          {
+            borderRadius: 10,
+            overflow: 'hidden',
+          },
+        ]}>
+        <Image source={{uri: item}} style={styles.image} />
+      </View>
+    );
+  };
 
   const FirstRoute = () => <DailyVerbs />;
 
@@ -158,38 +158,6 @@ const index = memo(props => {
       /> */}
           </View>
         </View>
-        <View style={{}}>
-          <View
-            style={{
-              paddingHorizontal: '7%',
-              marginTop: '5%',
-            }}>
-            <SectionHeader sectionTitle={`${MsgConfig.firstHeaderText}`} />
-          </View>
-          <View
-            style={{
-              marginTop: getResHeight(1),
-              height: getResHeight(35),
-              width: '100%',
-            }}>
-            <TabViewComp
-              routes={routes}
-              scenes={scenes}
-              indicatorStyle={{
-                backgroundColor: 'red',
-              }}
-              tabBarContainerStyle={{
-                backgroundColor: currentBgColor,
-                marginBottom: '4%',
-              }}
-              labelStyle={{
-                color: currentTextColor,
-                fontFamily: theme.font.semiBold,
-              }}
-              sceneContainerStyle={{}}
-            />
-          </View>
-        </View>
       </>
     );
   });
@@ -211,7 +179,38 @@ const index = memo(props => {
         centerLogo={true}
       />
       <MarqueeComp textRender={`Welcome to Light of Life Ministries , Pune`} />
-
+      <View style={{}}>
+        <View
+          style={{
+            paddingHorizontal: '7%',
+            marginTop: '5%',
+          }}>
+          <SectionHeader sectionTitle={`${MsgConfig.firstHeaderText}`} />
+        </View>
+        <View
+          style={{
+            marginTop: getResHeight(1),
+            height: getResHeight(35),
+            width: '100%',
+          }}>
+          <TabViewComp
+            routes={routes}
+            scenes={scenes}
+            indicatorStyle={{
+              backgroundColor: 'red',
+            }}
+            tabBarContainerStyle={{
+              backgroundColor: currentBgColor,
+              marginBottom: '4%',
+            }}
+            labelStyle={{
+              color: currentTextColor,
+              fontFamily: theme.font.semiBold,
+            }}
+            sceneContainerStyle={{}}
+          />
+        </View>
+      </View>
       <FlatList
         data={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
         contentContainerStyle={{

@@ -1,9 +1,10 @@
 import {useSelector} from 'react-redux';
-import StorageKeys from '../Config/StorageKeys';
+
 import asyncStorageUtil from '../utility/asyncStorageUtil';
 import {store} from '../redux/store';
 import {setAdmin} from '../redux/reducer/Auth';
 import moment from 'moment';
+import StorageKeys from '../Config/StorageKeys';
 
 export const updateState = newState =>
   setState(prevState => ({...prevState, ...newState}));

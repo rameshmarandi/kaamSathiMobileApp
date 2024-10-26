@@ -26,17 +26,45 @@ import {
 } from '../../utility/PasswordUtils';
 import {forgotPasswordValidation} from '../../utility/theme/validation';
 import {useFocusEffect} from '@react-navigation/native';
+import OTPInput from '../../Components/OTPInput';
 const ForgotPassword = props => {
   const {navigation} = props;
   const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
   );
+
+  const passwordInputRef = useRef(null);
+  const otpInputRef = useRef(null);
+
   const [isOTPFildVisible, setIsOTPFildVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isChangePasswordVisible, setIsChangePasswordVisible] = useState(false);
   const inputRefs = {
     email: useRef(null),
     password: useRef(null),
+  };
+
+  const verifyOtpExternally = () => {
+    if (otpInputRef.current) {
+      otpInputRef.current.verifyOtp(); // Trigger OTP verification
+    }
+  };
+
+  const handleOtpComplete = ({otp, isConfirmed}) => {
+    console.log('Is_confirmed:', otp);
+    if (isConfirmed) {
+      // if (isVerifyMPINVisible) {
+      //   verifyMPINApiHandler(otp);
+      // }
+      // if (isSetMPINVisible) {
+      //   // setMPINApiHandler(otp);
+      // }
+      console.log('OTP confirmed successfully:', otp);
+      // Handle the successful OTP confirmation here
+    } else {
+      console.log('OTP does not match:', otp);
+      // Handle the failed OTP confirmation here
+    }
   };
 
   return (
@@ -92,6 +120,9 @@ const ForgotPassword = props => {
                 resetForm();
               }, [resetForm]),
             );
+            if (values.email == '') {
+              setIsOTPFildVisible(false);
+            }
             return (
               <ScrollView
                 style={styles.scrollView}
@@ -103,9 +134,9 @@ const ForgotPassword = props => {
                   ref={inputRefs.email}
                   keyboardType="email-address"
                   value={values.email}
-                  onChangeText={text =>
-                    setFieldValue('email', handleEmailChange(text))
-                  }
+                  onChangeText={text => {
+                    setFieldValue('email', handleEmailChange(text));
+                  }}
                   onBlur={handleBlur('email')}
                   error={touched.email && errors.email}
                   isValid={isFieldValid('email')}
@@ -115,26 +146,33 @@ const ForgotPassword = props => {
                 />
 
                 {isOTPFildVisible && (
-                  <MasterTextInput
-                    label="OTP"
-                    placeholder="Enter email OTP"
-                    ref={inputRefs.otp}
-                    keyboardType="numeric"
-                    value={values.otp}
-                    maxLength={4}
-                    autoFocus
-                    onChangeText={text =>
-                      setFieldValue('otp', handleNumberChange(text))
-                    }
-                    onBlur={handleBlur('otp')}
-                    left={
-                      <TextInput.Icon
-                        icon="lock"
-                        color={currentTextColor}
-                        size={getFontSize(3)}
-                      />
-                    }
+                  <OTPInput
+                    ref={otpInputRef}
+                    // label="Enter OTP"
+                    length={4}
+                    onComplete={handleOtpComplete}
+                    // otpText="0"
                   />
+                  // <MasterTextInput
+                  //   label="OTP"
+                  //   placeholder="Enter email OTP"
+                  //   ref={inputRefs.otp}
+                  //   keyboardType="numeric"
+                  //   value={values.otp}
+                  //   maxLength={4}
+                  //   autoFocus
+                  //   onChangeText={text =>
+                  //     setFieldValue('otp', handleNumberChange(text))
+                  //   }
+                  //   onBlur={handleBlur('otp')}
+                  //   left={
+                  //     <TextInput.Icon
+                  //       icon="lock"
+                  //       color={currentTextColor}
+                  //       size={getFontSize(3)}
+                  //     />
+                  //   }
+                  // />
                 )}
                 {touched.otp && errors.otp && (
                   <Text style={styles.errorText}>{errors.otp}</Text>
