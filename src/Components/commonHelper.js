@@ -19,6 +19,26 @@ export const checkIsDarkMode = () => {
     return false;
   }
 };
+export const getShortTimeAgo = date => {
+  const now = moment();
+  const duration = moment.duration(now.diff(date));
+
+  if (duration.asMinutes() < 1) {
+    return 'Just now';
+  } else if (duration.asMinutes() < 60) {
+    return `${Math.floor(duration.asMinutes())} min ago`; // e.g., 5m
+  } else if (duration.asHours() < 24) {
+    return `${Math.floor(duration.asHours())} h ago`; // e.g., 3h
+  } else if (duration.asDays() < 7) {
+    return `${Math.floor(duration.asDays())} d ago`; // e.g., 1d
+  } else if (duration.asWeeks() < 4) {
+    return `${Math.floor(duration.asWeeks())} w ago`; // e.g., 2w
+  } else if (duration.asMonths() < 12) {
+    return `${Math.floor(duration.asMonths())} mo ago`; // e.g., 1mo
+  } else {
+    return `${Math.floor(duration.asYears())} y ago`; // e.g., 1y
+  }
+};
 
 export const textColorHandler = () => {
   let {isDarkMode} = useSelector(state => state.user);

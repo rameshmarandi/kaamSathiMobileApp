@@ -7,6 +7,7 @@ import {
   RefreshControl,
   TouchableOpacity,
   FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import {
   getResHeight,
@@ -22,41 +23,15 @@ import {
   getNewApplicationAPIHander,
   updateApplicationStatusAPIHander,
 } from '../../../redux/reducer/Profile/ProfileAPI';
-import {dateFormatHander} from '../../../Components/commonHelper';
+import {
+  dateFormatHander,
+  getShortTimeAgo,
+} from '../../../Components/commonHelper';
 import ImageView from 'react-native-image-viewing';
 import NoDataFound from '../../../Components/NoDataFound';
-
-const sampleData = [
-  {id: '1', name: 'John Doe', image: ''},
-  {id: '2', name: 'Jane Smith', image: ''},
-  {id: '1', name: 'John Doe', image: ''},
-  {id: '2', name: 'Jane Smith', image: ''},
-  {id: '1', name: 'John Doe', image: ''},
-  {id: '2', name: 'Jane Smith', image: ''},
-  {id: '1', name: 'John Doe', image: ''},
-  {id: '2', name: 'Jane Smith', image: ''},
-  {id: '1', name: 'John Doe', image: ''},
-  {id: '2', name: 'Jane Smith', image: ''},
-  {id: '1', name: 'John Doe', image: ''},
-  {id: '2', name: 'Jane Smith', image: ''},
-  {id: '1', name: 'John Doe', image: ''},
-  {id: '2', name: 'Jane Smith', image: ''},
-  {id: '1', name: 'John Doe', image: ''},
-  {id: '2', name: 'Jane Smith', image: ''},
-  {id: '1', name: 'John Doe', image: ''},
-  {id: '2', name: 'Jane Smith', image: ''},
-  {id: '1', name: 'John Doe', image: ''},
-  {id: '2', name: 'Jane Smith', image: ''},
-  {id: '1', name: 'John Doe', image: ''},
-  {id: '2', name: 'Jane Smith', image: ''},
-  {id: '1', name: 'John Doe', image: ''},
-  {id: '2', name: 'Jane Smith', image: ''},
-  {id: '1', name: 'John Doe', image: ''},
-  {id: '2', name: 'Jane Smith', image: ''},
-  {id: '1', name: 'John Doe', image: ''},
-  {id: '2', name: 'Jane Smith', image: ''},
-  // Add more sample data as needed
-];
+import moment from 'moment';
+import ToastAlertComp from '../../../Components/ToastAlertComp';
+import {VectorIcon} from '../../../Components/VectorIcon';
 
 const ApprovalCard = memo(
   ({
@@ -66,7 +41,11 @@ const ApprovalCard = memo(
     onProfileImagePress,
     currentBgColor,
     currentTextColor,
+    isLoading,
+    clickedID,
   }) => {
+    const {isAcceptBtnLoading, isRejectBtnLoading} = isLoading;
+
     return (
       <View
         style={[
@@ -153,14 +132,30 @@ const ApprovalCard = memo(
                   marginRight: getResHeight(0.5),
                 },
               ]}
-              onPress={() => onReject(item._id)}>
-              <Text style={[styles.buttonText, {}]}>Reject</Text>
+              disabled={isRejectBtnLoading || isAcceptBtnLoading}
+              onPress={() => onReject(item._id, 1)}>
+              {isRejectBtnLoading && clickedID === item._id ? (
+                <ActivityIndicator
+                  size={getFontSize(2.5)}
+                  color={currentTextColor}
+                />
+              ) : (
+                <Text style={[styles.buttonText, {}]}>Reject</Text>
+              )}
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.8}
               style={[styles.button, styles.acceptButton]}
-              onPress={() => onAccept(item._id)}>
-              <Text style={[styles.buttonText, {}]}>Accept</Text>
+              disabled={isRejectBtnLoading || isAcceptBtnLoading}
+              onPress={() => onAccept(item._id, 2)}>
+              {isAcceptBtnLoading && clickedID === item._id ? (
+                <ActivityIndicator
+                  size={getFontSize(2.5)}
+                  color={currentTextColor}
+                />
+              ) : (
+                <Text style={[styles.buttonText, {}]}>Accept</Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>
@@ -185,7 +180,7 @@ const ApprovalCard = memo(
                 fontFamily: theme.font.semiBold,
               },
             ]}>
-            6h ago
+            {getShortTimeAgo(moment(item.createdAt))}
           </Text>
         </View>
       </View>
@@ -201,7 +196,15 @@ const Approval = memo(props => {
   const [isImageViewerModal, setIsImageViewerModal] = useState(false);
   const [viewImageUrl, setViewImageUrl] = useState('');
   const [showAlert, setShowAlert] = useState(false);
+  const [clickedID, setClickedID] = useState('');
+  const [clickedBtn, setClickedBtn] = useState('');
+
   const {navigation} = props;
+
+  const [isLoading, setIsLoading] = useState({
+    isRejectBtnLoading: false,
+    isAcceptBtnLoading: false,
+  });
 
   useEffect(() => {
     APIHandler();
@@ -227,42 +230,109 @@ const Approval = memo(props => {
       // 1 - Accept
       // 2 - Reject
       // setShowAlert(true);
-      await store.dispatch(
-        updateApplicationStatusAPIHander({
-          _id: id,
-          status: 1,
-        }),
-      );
+
+      if (clickedID == '') {
+        ToastAlertComp('error', `Selected user not found`);
+      } else {
+        setIsLoading(prevState => ({
+          ...prevState,
+          isAcceptBtnLoading: true,
+        }));
+
+        const res = await store.dispatch(
+          updateApplicationStatusAPIHander({
+            _id: clickedID,
+            status: 1,
+          }),
+        );
+        if (res.payload == true) {
+          setIsLoading(prevState => ({
+            ...prevState,
+            isAcceptBtnLoading: false,
+          }));
+          setClickedID('');
+          ToastAlertComp('success', `Application accepted successfully`);
+        }
+      }
     } catch (error) {
       console.error('Applicaiton Accepter Error:', error);
+      setIsLoading(prevState => ({
+        ...prevState,
+        isAcceptBtnLoading: false,
+      }));
+      setClickedID('');
+    } finally {
+      setIsLoading(prevState => ({
+        ...prevState,
+        isAcceptBtnLoading: false,
+      }));
+      setClickedID('');
     }
   };
 
-  const handleReject = async id => {
+  const handleReject = async () => {
     try {
       // 0 - Pending
       // 1 - Accept
       // 2 - Reject
-      await store.dispatch(
-        updateApplicationStatusAPIHander({
-          _id: id,
-          status: 2,
-        }),
-      );
+
+      if (clickedID == '') {
+        ToastAlertComp('error', `Selected user not found`);
+      } else {
+        setIsLoading(prevState => ({
+          ...prevState,
+          isRejectBtnLoading: true,
+        }));
+
+        const res = await store.dispatch(
+          updateApplicationStatusAPIHander({
+            _id: clickedID,
+            status: 2,
+          }),
+        );
+        if (res.payload == true) {
+          setIsLoading(prevState => ({
+            ...prevState,
+            isRejectBtnLoading: false,
+          }));
+          ToastAlertComp('success', `Application rejected successfully`);
+          setClickedID('');
+        }
+      }
     } catch (error) {
+      setIsLoading(prevState => ({
+        ...prevState,
+        isRejectBtnLoading: false,
+      }));
+      setClickedID('');
       console.error('Applicaiton rejection Error:', error);
+    } finally {
+      setIsLoading(prevState => ({
+        ...prevState,
+        isRejectBtnLoading: false,
+      }));
+      setClickedID('');
     }
   };
 
   const renderItem = ({item}) => (
     <ApprovalCard
       item={item}
-      onAccept={handleAccept}
-      onReject={handleReject}
+      onAccept={(id, selectedBtn) => {
+        setClickedID(id);
+        setClickedBtn(selectedBtn);
+        setShowAlert(true);
+      }}
+      onReject={(id, selectedBtn) => {
+        setClickedID(id);
+        setClickedBtn(selectedBtn);
+        setShowAlert(true);
+      }}
+      isLoading={isLoading}
+      clickedID={clickedID}
       currentTextColor={currentTextColor}
       currentBgColor={currentBgColor}
       onProfileImagePress={item => {
-        console.log('onProfileImagePress', item);
         if (item.avatar !== '') {
           setViewImageUrl(item.avatar);
           setIsImageViewerModal(true);
@@ -271,7 +341,6 @@ const Approval = memo(props => {
     />
   );
 
-  console.log('getAllPendingUser', getAllPendingUser);
   return (
     <View
       style={[
@@ -282,11 +351,55 @@ const Approval = memo(props => {
       ]}>
       <ConfirmAlert
         visible={showAlert}
-        onCancel={() => setShowAlert(false)}
-        onConfirm={() => {
+        onCancel={() => {
           setShowAlert(false);
         }}
+        alertTitle={
+          clickedBtn == 1
+            ? 'Are you sure you want to reject this application?'
+            : 'Are you sure you want to accept this application?'
+        }
+        alertIcon={
+          <Image
+            source={
+              clickedBtn == 1 ? theme.assets.closeIcon : theme.assets.acceptIcon
+            }
+            resizeMode="cover"
+            style={{
+              height: clickedBtn == 1 ? getResHeight(12) : getResHeight(8),
+              width: clickedBtn == 1 ? getResHeight(12) : getResHeight(8),
+            }}
+          />
+        }
+        onConfirm={() => {
+          setShowAlert(false);
+          if (clickedBtn == 1) {
+            handleReject();
+          }
+          if (clickedBtn == 2) {
+            handleAccept();
+          }
+        }}
       />
+      {/* <ConfirmAlert
+        visible={isConfirmModalVisible}
+        onCancel={() => setIsConfirmModalVisible(false)}
+        alertTitle={alertText}
+        onConfirm={() => {
+          setIsConfirmModalVisible(false);
+          setTimeout(
+            () =>
+              ToastAlertComp(
+                'success',
+                'Success',
+                'Post deleted successfully.',
+              ),
+            1000,
+          );
+          setIsLoginPressed(false);
+          setSelectedCard([]);
+        }}
+      /> */}
       <CustomHeader
         Hamburger={() => {
           navigation.openDrawer();

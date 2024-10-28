@@ -12,7 +12,13 @@ import {useSelector} from 'react-redux';
 import {getFontSize, getResHeight, getResWidth} from '../utility/responsive';
 import theme from '../utility/theme';
 
-const ConfirmAlert = ({visible, onCancel, alertTitle, onConfirm}) => {
+const ConfirmAlert = ({
+  visible,
+  onCancel,
+  alertIcon,
+  alertTitle,
+  onConfirm,
+}) => {
   const [opacity] = useState(new Animated.Value(0));
   let {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
@@ -44,16 +50,23 @@ const ConfirmAlert = ({visible, onCancel, alertTitle, onConfirm}) => {
               paddingTop: '5%',
             },
           ]}>
-          <Image
-            source={theme.assets.deleteIcon}
-            resizeMode="cover"
-            style={{height: getResHeight(10), width: getResHeight(10)}}
-          />
+          {alertIcon ? (
+            alertIcon
+          ) : (
+            <Image
+              source={theme.assets.deleteIcon}
+              resizeMode="cover"
+              style={{height: getResHeight(10), width: getResHeight(10)}}
+            />
+          )}
+
           <Text
             style={{
               color: currentTextColor,
               fontFamily: theme.font.medium,
               fontSize: getFontSize(2),
+              textAlign: 'center',
+              paddingHorizontal: '5%',
             }}>
             {alertTitle ? alertTitle : 'Are you sure?'}
           </Text>

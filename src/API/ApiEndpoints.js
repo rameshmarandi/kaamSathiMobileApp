@@ -11,8 +11,9 @@ const APIEndpoint = {
 
   admin: {
     getAllMembers: '/user/get-all-users',
-    getNewApplication: 'user/get-all-new-application',
-    updateApplicationStatus: 'user/update-user-status',
+    getNewApplication: '/user/get-all-new-application',
+    updateApplicationStatus: '/user/update-user-status',
+    getAllBranchAdmins: '/user/get-all-branch-admin',
   },
   // Add more modules as needed
 };

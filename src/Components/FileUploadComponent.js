@@ -5,6 +5,7 @@ import {VectorIcon} from './VectorIcon';
 import {getFontSize, getResHeight, getResWidth} from '../utility/responsive';
 import {useSelector} from 'react-redux';
 import theme from '../utility/theme';
+import LottieView from 'lottie-react-native';
 
 // Memoized component to prevent unnecessary re-renders
 const FileUploadComponent = memo(
@@ -61,13 +62,29 @@ const FileUploadComponent = memo(
                 />
               ) : (
                 <>
-                  <VectorIcon
+                  {/* <VectorIcon
                     type={'MaterialCommunityIcons'}
                     name={'cloud-upload'}
                     size={getFontSize(8)}
                     color={currentTextColor}
+                  /> */}
+                  <LottieView
+                    source={require('../assets/animationLoader/uploadfile.json')}
+                    autoPlay
+                    loop
+                    style={{
+                      height: getResHeight(15),
+                      width: getResWidth(40),
+                    }}
                   />
-                  <Text style={[styles.uploadText, {color: currentTextColor}]}>
+                  <Text
+                    style={[
+                      styles.uploadText,
+                      {
+                        marginTop: getResHeight(-3),
+                        color: currentTextColor,
+                      },
+                    ]}>
                     Click here to upload
                   </Text>
                 </>
