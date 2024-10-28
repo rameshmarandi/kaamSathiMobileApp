@@ -4,6 +4,7 @@ import theme from '../../../utility/theme';
 const initialState = {
   allMembers: [],
   getAllPendingUser: [],
+  allAdmins: [],
 };
 
 const profileSlice = createSlice({
@@ -13,11 +14,15 @@ const profileSlice = createSlice({
     setAllMembers(state, action) {
       state.allMembers = action.payload;
     },
+    setAllAdmins(state, action) {
+      state.allAdmins = action.payload;
+    },
     setAllPendingUser(state, action) {
       state.getAllPendingUser = action.payload;
     },
   },
 });
 
-export const {setAllMembers, setAllPendingUser} = profileSlice.actions;
+export const {setAllMembers, setAllPendingUser, setAllAdmins} =
+  profileSlice.actions;
 export default profileSlice.reducer;

@@ -11,14 +11,25 @@ import {
 import {useSelector} from 'react-redux';
 import {getFontSize, getResHeight, getResWidth} from '../utility/responsive';
 import theme from '../utility/theme';
+import StorageKeys from '../Config/StorageKeys';
+import ToastAlertComp from './ToastAlertComp';
 
 const SquareCardComp = ({filteredData, onPress}) => {
-  const {currentTextColor} = useSelector(state => state.user);
+  const {currentTextColor, logedInuserType} = useSelector(state => state.user);
 
   const renderSquareCardItem = useCallback(
     ({item, itemsLength}) => (
       <TouchableOpacity
-        onPress={() => onPress(item)}
+        onPress={() => {
+          if (
+            !StorageKeys.USER_TYPES.includes(logedInuserType) &&
+            StorageKeys.RESTICTED_PAGES.includes(item.routeName)
+          ) {
+            ToastAlertComp('error', `You have no permission to access!`);
+          } else {
+            onPress(item);
+          }
+        }}
         style={[
           styles.cardContainer,
           [0, 1, 2].includes(itemsLength) && {

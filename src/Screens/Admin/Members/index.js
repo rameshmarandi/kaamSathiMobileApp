@@ -39,8 +39,6 @@ import ImageView from 'react-native-image-viewing';
 import debounce from 'lodash.debounce';
 import NoDataFound from '../../../Components/NoDataFound';
 
-const menuItems = [{title: 'Update'}, {title: 'Block'}, {title: 'Delete'}];
-
 const initialState = {
   isLoading: false,
   searchText: '',
@@ -48,9 +46,9 @@ const initialState = {
 
 const Index = memo(props => {
   const {navigation} = props;
-  const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
-    state => state.user,
-  );
+  const {isDarkMode, currentBgColor, logedInuserType, currentTextColor} =
+    useSelector(state => state.user);
+
   const {allMembers} = useSelector(state => state.profile);
 
   const [state, setState] = useState({
@@ -63,6 +61,79 @@ const Index = memo(props => {
   const [viewImageUrl, setViewImageUrl] = useState('');
 
   const sheetRef1 = useRef(null);
+
+  const [filteredMenuItems, setFilteredMenuItems] = useState([]);
+
+  const menuItems = [
+    {id: 1, title: 'Super admin'},
+    {id: 2, title: 'Branch admin'},
+    {id: 3, title: 'Block'},
+    {id: 4, title: 'Update'},
+    {id: 5, title: 'Delete'},
+  ];
+
+  // useEffect(() => {
+  //   let updatedMenuItems = []; // Initialize empty array
+
+  //   if (logedInuserType === 'branch_admin') {
+  //     // Branch Admin sees only specific items
+  //     updatedMenuItems = [
+  //       {id: 3, title: 'Block'},
+  //       {id: 4, title: 'Update'},
+  //       {id: 5, title: 'Delete'},
+  //     ];
+  //   } else if (logedInuserType === 'super_admin') {
+  //     if (!userRole) {
+  //       // If user is a regular member
+  //       updatedMenuItems = [...menuItems]; // All options available
+  //     } else {
+  //       // User already has a role (Super Admin or Branch Admin)
+  //       updatedMenuItems = [
+  //         {id: 3, title: 'Block'},
+  //         {id: 4, title: 'Update'},
+  //         {id: 5, title: 'Delete'},
+  //         {id: 6, title: 'Remove Admin'}, // Add "Remove Admin" option
+  //       ];
+  //     }
+  //   }
+
+  //   setFilteredMenuItems(updatedMenuItems);
+  // }, [logedInuserType]);
+
+  // Example function to handle removing an admin role
+  const handleRemoveRole = () => {
+    // Logic to remove role goes here...
+
+    // After removing a role, reset the menu to full options
+    if (logedInuserType === 'super_admin') {
+      setFilteredMenuItems([
+        {id: 1, title: 'Super admin'},
+        {id: 2, title: 'Branch admin'},
+        {id: 3, title: 'Block'},
+        {id: 4, title: 'Update'},
+        {id: 5, title: 'Delete'},
+      ]);
+    }
+  };
+
+  // const menuItems = [
+  //   {id: 1, title: 'Super admin'},
+  //   {
+  //     id: 2,
+  //     title: 'Branch admin',
+  //   },
+  //   {
+  //     id: 3,
+  //     title: 'Block',
+  //   },
+
+  //   {
+  //     id: 4,
+
+  //     title: 'Update',
+  //   },
+  //   {id: 5, title: 'Delete'},
+  // ];
 
   const updateState = newState =>
     setState(prevState => ({...prevState, ...newState}));
@@ -169,7 +240,7 @@ const Index = memo(props => {
       <View style={styles.userCardContainer}>
         <ScrollView style={styles.scrollView}>
           <View style={styles.profileContainer}>
-            <EmptyUserProfile onPress={() => alert('sdfsd')} />
+            <EmptyUserProfile onPress={() => alert('')} />
           </View>
           <View style={styles.nameContainer}>
             <Text style={{color: currentTextColor}}>
@@ -188,6 +259,35 @@ const Index = memo(props => {
     );
   };
 
+  const handleMunuData = memo(userDetails => {
+    console.log('USer_Data', userDetails);
+    return;
+    let updatedMenuItems = []; // Initialize empty array
+
+    if (logedInuserType === 'branch_admin') {
+      // Branch Admin sees only specific items
+      updatedMenuItems = [
+        {id: 3, title: 'Block'},
+        {id: 4, title: 'Update'},
+        {id: 5, title: 'Delete'},
+      ];
+    } else if (logedInuserType === 'super_admin') {
+      if (userDetails.role == 'member') {
+        // If user is a regular member
+        updatedMenuItems = [...menuItems]; // All options available
+      } else {
+        // User already has a role (Super Admin or Branch Admin)
+        updatedMenuItems = [
+          {id: 3, title: 'Block'},
+          {id: 4, title: 'Update'},
+          {id: 5, title: 'Delete'},
+          {id: 6, title: 'Remove Admin'}, // Add "Remove Admin" option
+        ];
+      }
+    }
+
+    setFilteredMenuItems(updatedMenuItems);
+  });
   return (
     <SafeAreaView style={[styles.safeArea, {backgroundColor: currentBgColor}]}>
       <StatusBarComp />
@@ -262,72 +362,142 @@ const Index = memo(props => {
             );
           }}
           contentContainerStyle={styles.flatListContentContainer}
-          renderItem={({item}) => (
-            <View
-              style={[
-                styles.card,
-                {
-                  backgroundColor: currentBgColor,
-                  borderColor: currentTextColor,
-                },
-              ]}>
-              <View style={styles.cardContent}>
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  onPress={() => {
-                    if (item.avatar !== '') {
-                      setViewImageUrl(item.avatar);
-                      setIsImageViewerModal(true);
-                    }
-                  }}
-                  style={styles.avatarContainer}>
-                  <Image source={{uri: item.avatar}} style={styles.avatar} />
-                </TouchableOpacity>
-                <View style={styles.userInfoContainer}>
-                  <Text
-                    style={[styles.userNameText, {color: currentTextColor}]}>
-                    {item.userBio['Full name']}
-                  </Text>
-                  <Text style={styles.branchText}>
-                    Branch name : {item.branchName}
-                  </Text>
-                </View>
-                <View style={styles.menuButtonContainer}>
+          renderItem={({item, index}) => {
+            // handleMunuData(item);
+            return (
+              <View
+                style={[
+                  styles.card,
+                  {
+                    backgroundColor: currentBgColor,
+                    borderColor: currentTextColor,
+                  },
+                ]}>
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: getResHeight(1.4),
+                    right: getResWidth(2),
+                    zIndex: 9999,
+                  }}>
                   <SmallMenuComp
-                    buttonLabel={openMenu => (
-                      <ButtonIconComp
-                        onPress={() => openMenu()}
-                        icon={
-                          <VectorIcon
-                            type={'Entypo'}
-                            name={'dots-three-vertical'}
-                            size={getFontSize(2.1)}
-                            color={currentTextColor}
+                    buttonLabel={openMenu => {
+                      return (
+                        <>
+                          <ButtonIconComp
+                            onPress={() => {
+                              if (sheetRef1 && sheetRef1.current) {
+                                sheetRef1.current.close();
+                              }
+                              openMenu();
+                            }}
+                            // disabled={(index + 1) % 2 !== 0}
+                            icon={
+                              <VectorIcon
+                                type={'Entypo'}
+                                name={'dots-three-vertical'}
+                                size={getFontSize(2.1)}
+                                color={currentTextColor}
+                              />
+                            }
+                            containerStyle={{
+                              width: getResHeight(5),
+                              height: getResHeight(5),
+                              // backgroundColor:
+                              //   (index + 1) % 2 !== 0
+                              //     ? theme.color.dimGray
+                              //     : currentBgColor,
+                              borderRadius: getResHeight(100),
+                            }}
                           />
-                        }
-                        containerStyle={styles.menuButton}
-                      />
-                    )}
-                    menuItems={menuItems}
+                        </>
+                      );
+                    }}
+                    menuItems={filteredMenuItems}
                     onMenuPress={menuIndex => {
-                      if (menuIndex === 0) {
+                      if (menuIndex == 0) {
+                        // sheetRef1.current.expand();
                         const res = singleUserCardData(item);
+                        console.log('userData', res);
                         setTimeout(() => {
                           openBottomSheetWithContent(res);
                         }, 500);
                       }
-                      if (menuIndex === 2) {
+                      if (menuIndex == 2) {
                         setShowAlert(true);
                       }
                     }}
                   />
                 </View>
+                <View style={styles.cardContent}>
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    onPress={() => {
+                      if (item.avatar !== '') {
+                        setViewImageUrl(item.avatar);
+                        setIsImageViewerModal(true);
+                      }
+                    }}
+                    style={styles.avatarContainer}>
+                    <Image source={{uri: item.avatar}} style={styles.avatar} />
+                  </TouchableOpacity>
+                  <View style={styles.userInfoContainer}>
+                    <Text
+                      style={[styles.userNameText, {color: currentTextColor}]}>
+                      {item.userBio['Full name']}
+                    </Text>
+                    <Text style={styles.branchText}>
+                      Branch name : {item.branchName}
+                    </Text>
+                    {['branch_admin', 'super_admin'].includes(item.role) && (
+                      <Text style={styles.branchText}>
+                        {`Designation: ${
+                          item.role == 'branch_admin'
+                            ? 'Branch admin'
+                            : item.role == 'super_admin'
+                            ? 'Super admin'
+                            : '_'
+                        }`}
+                      </Text>
+                    )}
+                  </View>
+                  <View style={styles.menuButtonContainer}>
+                    <SmallMenuComp
+                      buttonLabel={openMenu => (
+                        <ButtonIconComp
+                          onPress={() => openMenu()}
+                          icon={
+                            <VectorIcon
+                              type={'Entypo'}
+                              name={'dots-three-vertical'}
+                              size={getFontSize(2.1)}
+                              color={currentTextColor}
+                            />
+                          }
+                          containerStyle={styles.menuButton}
+                        />
+                      )}
+                      menuItems={menuItems}
+                      onMenuPress={menuIndex => {
+                        if (menuIndex === 0) {
+                          const res = singleUserCardData(item);
+                          setTimeout(() => {
+                            openBottomSheetWithContent(res);
+                          }, 500);
+                        }
+                        if (menuIndex === 2) {
+                          setShowAlert(true);
+                        }
+                      }}
+                    />
+                  </View>
+                </View>
+                <View style={styles.userBioContainer}>
+                  <UserBioComponent userBio={item.userBio} />
+                </View>
               </View>
-              <View style={styles.userBioContainer}>
-                <UserBioComponent userBio={item.userBio} />
-              </View>
-            </View>
-          )}
+            );
+          }}
         />
       </View>
     </SafeAreaView>

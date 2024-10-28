@@ -9,8 +9,12 @@ const StorageKeys = {
   // Add more keys as needed
 };
 
+const USER_TYPES = ['super_admin'];
+const RESTICTED_PAGES = ['AdminManagment'];
 export default {
   ...StorageKeys,
 
   API_BASE_URL: API_BASE_URL,
+  USER_TYPES,
+  RESTICTED_PAGES,
 };

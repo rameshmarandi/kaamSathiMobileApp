@@ -30,6 +30,7 @@ import {adminStudyResouce} from '../../../Components/StaticDataHander';
 import {VectorIcon} from '../../../Components/VectorIcon';
 import {trimText} from '../../../Components/commonComp';
 import PDFDownload from '../../../Components/PDFDownload';
+import StorageKeys from '../../../Config/StorageKeys';
 
 // Memoized Card Component
 const Card = memo(
@@ -98,9 +99,8 @@ const Card = memo(
 );
 
 const Index = memo(({navigation}) => {
-  const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
-    state => state.user,
-  );
+  const {isDarkMode, currentBgColor, logedInuserType, currentTextColor} =
+    useSelector(state => state.user);
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [isLoginPressed, setIsLoginPressed] = useState(false);
   const [isUploadStudyModalOpen, setIsUploadStudyModalOpen] = useState(false);
@@ -315,15 +315,20 @@ const Index = memo(({navigation}) => {
           ]}
         />
       </View>
-      {!isLoginPressed && (
-        <View
-          style={{
-            position: 'absolute',
-            bottom: getResHeight(7),
-            right: getResWidth(7),
-          }}>
-          <WaveButton onPress={() => setIsUploadStudyModalOpen(true)} />
-        </View>
+
+      {StorageKeys.USER_TYPES.includes(logedInuserType) && (
+        <>
+          {!isLoginPressed && (
+            <View
+              style={{
+                position: 'absolute',
+                bottom: getResHeight(7),
+                right: getResWidth(7),
+              }}>
+              <WaveButton onPress={() => setIsUploadStudyModalOpen(true)} />
+            </View>
+          )}
+        </>
       )}
     </SafeAreaView>
   );

@@ -48,10 +48,7 @@ const App = () => {
     setIsLogedIn(isUserLoggedIn);
     checkIsAdmin().then(checkTypOfAdmin => {
       setIsAdmin(checkTypOfAdmin);
-      console.log('ChekcIsAdmin_at_aap', checkTypOfAdmin);
     });
-
-    console.log('ChekcIsAdmin_at_aap', checkTypOfAdmin);
   };
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {

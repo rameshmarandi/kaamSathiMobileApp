@@ -1,4 +1,4 @@
-import React, {useState, useRef, useCallback, memo} from 'react';
+import React, {useState, useRef, useCallback, memo, useEffect} from 'react';
 import {
   View,
   Text,
@@ -28,9 +28,12 @@ import ToastAlertComp from '../../../Components/ToastAlertComp';
 import MasterDeleteSelect from '../../../Components/MasterDeleteSelect';
 import DailyVersUploadForm from './DailyVersUploadForm';
 import {verseResourceCommonStyle} from '../../Styles/verseResourceCommonStyle';
+import StorageKeys from '../../../Config/StorageKeys';
 
 const Index = memo(({navigation}) => {
-  const {currentBgColor, currentTextColor} = useSelector(state => state.user);
+  const {currentBgColor, currentTextColor, logedInuserType} = useSelector(
+    state => state.user,
+  );
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [isUploadResModalOpen, setIsUploadResModalOpen] = useState(false);
   const [isLoginPressed, setIsLongPressed] = useState(false);
@@ -129,6 +132,19 @@ const Index = memo(({navigation}) => {
     ],
   );
 
+  const [routes, setRoutes] = useState([
+    {key: 'first', title: `Today's Verses`},
+    {key: 'second', title: 'Upcoming'},
+  ]);
+
+  useEffect(() => {
+    // Check if the user is not a super admin
+    if (!StorageKeys.USER_TYPES.includes(logedInuserType)) {
+      // Remove the route at index 1 (the 'Upcoming' route)
+      setRoutes(prevRoutes => prevRoutes.filter((_, index) => index !== 1));
+    }
+  }, [logedInuserType]);
+
   const FirstRoute = () => (
     <ScrollView>
       {['English', 'Marathi', 'Hindi'].map((item, index) => (
@@ -170,11 +186,16 @@ const Index = memo(({navigation}) => {
     </ScrollView>
   );
 
-  const routes = [
-    {key: 'first', title: `Today's Verses`},
-    {key: 'second', title: 'Upcoming'},
-  ];
+  // const routes = [
+  //   {key: 'first', title: `Today's Verses`},
+  //   {key: 'second', title: 'Upcoming'},
+  // ];
 
+  useEffect(() => {
+    if (!StorageKeys.USER_TYPES.includes(logedInuserType)) {
+      routes.slice(1, 2);
+    }
+  }, []);
   const scenes = {
     first: FirstRoute,
     second: SecondRoute,
@@ -238,15 +259,19 @@ const Index = memo(({navigation}) => {
         />
       </View>
 
-      {currentTabIndex !== 0 && !isLoginPressed && (
-        <View
-          style={{
-            position: 'absolute',
-            bottom: getResHeight(7),
-            right: getResWidth(7),
-          }}>
-          <WaveButton onPress={openBottomSheetWithContent} />
-        </View>
+      {StorageKeys.USER_TYPES.includes(logedInuserType) && (
+        <>
+          {currentTabIndex !== 0 && !isLoginPressed && (
+            <View
+              style={{
+                position: 'absolute',
+                bottom: getResHeight(7),
+                right: getResWidth(7),
+              }}>
+              <WaveButton onPress={openBottomSheetWithContent} />
+            </View>
+          )}
+        </>
       )}
     </SafeAreaView>
   );

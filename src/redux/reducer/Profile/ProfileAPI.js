@@ -3,7 +3,13 @@ import apiService from '../../../API/apiClient';
 import APIEndpoint from '../../../API/ApiEndpoints';
 import asyncStorageUtil from '../../../utility/asyncStorageUtil';
 import StorageKeys from '../../../Config/StorageKeys';
-import {setAdmin, setAllMembers, setAllPendingUser, setLoginUser} from '.';
+import {
+  setAdmin,
+  setAllAdmins,
+  setAllMembers,
+  setAllPendingUser,
+  setLoginUser,
+} from '.';
 import {store} from '../../store';
 import {checkIsAdmin, DateFormator} from '../../../Helpers/CommonHelpers';
 
@@ -24,6 +30,28 @@ const getAllMembersAPIHander = createAsyncThunk(
       return true;
     } catch (error) {
       console.log('Get_all_members_API_Faild', error.response);
+      return error.response.data;
+    }
+  },
+);
+const getAllAdminsAPIHander = createAsyncThunk(
+  APIEndpoint.admin.getAllBranchAdmins,
+  async (payload, thunkAPI) => {
+    try {
+      const response = await apiService.getProtected(
+        APIEndpoint.admin.getAllBranchAdmins,
+      );
+
+      if (response.status === 200) {
+        const responseData = response.data;
+        const afterFormatMembersData = formatUsersData(responseData.data);
+
+        thunkAPI.dispatch(setAllAdmins(afterFormatMembersData));
+      }
+      return true;
+    } catch (error) {
+      console.log('Get_all_members_API_Faild', error.response);
+      thunkAPI.dispatch(setAllAdmins([]));
       return error.response.data;
     }
   },
@@ -70,11 +98,13 @@ const updateApplicationStatusAPIHander = createAsyncThunk(
     }
   },
 );
+
 const formatUsersData = users => {
   return users.map((user, index) => ({
     id: user._id,
     avatar: user.avatar,
     branchName: user.branchName,
+    role: user.role,
     userBio: {
       'Full name': user.fullName,
       // 'Church branch': '-', // Replace hre with church name
@@ -91,4 +121,5 @@ export {
   getAllMembersAPIHander,
   getNewApplicationAPIHander,
   updateApplicationStatusAPIHander,
+  getAllAdminsAPIHander,
 };

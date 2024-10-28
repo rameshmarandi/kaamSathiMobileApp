@@ -2,7 +2,7 @@ import {useSelector} from 'react-redux';
 
 import asyncStorageUtil from '../utility/asyncStorageUtil';
 import {store} from '../redux/store';
-import {setAdmin} from '../redux/reducer/Auth';
+import {setAdmin, setLogedInUserType} from '../redux/reducer/Auth';
 import moment from 'moment';
 import StorageKeys from '../Config/StorageKeys';
 
@@ -31,7 +31,7 @@ export const checkIsAdmin = async () => {
   // Check if loginUser is defined and has a user object
   if (loginUser && loginUser.user) {
     const userRole = loginUser.user.role; // Get the user's role
-
+    store.dispatch(setLogedInUserType(userRole));
     // Check if the role matches either SUPER_ADMIN or BRANCH_ADMIN
     if (userRole === 'super_admin' || userRole === 'branch_admin') {
       store.dispatch(setAdmin(true));

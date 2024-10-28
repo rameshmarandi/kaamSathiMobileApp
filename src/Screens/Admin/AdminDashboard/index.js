@@ -35,7 +35,7 @@ import storageKeys from '../../../Config/StorageKeys.js';
 import {checkIsAdmin} from '../../../Helpers/CommonHelpers.js';
 
 const initialState = {
-  filteredData: adminDashboardCardData,
+  adminDashboardCardData: adminDashboardCardData,
   isLoading: false,
   searchText: '',
   searchModalVisible: false,
@@ -44,9 +44,13 @@ const initialState = {
 
 const Index = memo(props => {
   const {navigation} = props;
-  const {isDarkMode, loginUser, currentBgColor, currentTextColor} = useSelector(
-    state => state.user,
-  );
+  const {
+    isDarkMode,
+    loginUser,
+    logedInuserType,
+    currentBgColor,
+    currentTextColor,
+  } = useSelector(state => state.user);
 
   const [state, setState] = useState(initialState);
   const {
@@ -59,7 +63,7 @@ const Index = memo(props => {
 
   useEffect(() => {
     checkIsAdmin();
-    console.log('LoginUser_Details', loginUser);
+    console.log('LoginUser_Details', logedInuserType);
   }, []);
 
   const searchBarRef = useRef(null);

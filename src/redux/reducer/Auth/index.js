@@ -7,6 +7,7 @@ const initialState = {
   loginUser: [],
   currentTextColor: theme.color.white,
   currentBgColor: theme.color.darkTheme,
+  logedInuserType: '',
 };
 
 const authSlice = createSlice({
@@ -28,6 +29,9 @@ const authSlice = createSlice({
     setAdmin(state, action) {
       state.isAdmin = action.payload;
     },
+    setLogedInUserType(state, action) {
+      state.logedInuserType = action.payload;
+    },
   },
 });
 
@@ -36,6 +40,7 @@ export const {
   setDarkMode,
   setAdmin,
   setTextColor,
+  setLogedInUserType,
   setBackgroundColor,
 } = authSlice.actions;
 export default authSlice.reducer;
