@@ -1,9 +1,10 @@
-import React, {useState, memo} from 'react';
+import React, {useState, memo, useEffect} from 'react';
 import {
   StyleSheet,
   View,
   Text,
   Image,
+  RefreshControl,
   TouchableOpacity,
   FlatList,
 } from 'react-native';
@@ -16,6 +17,14 @@ import {useSelector} from 'react-redux';
 import theme from '../../../utility/theme';
 import CustomHeader from '../../../Components/CustomHeader';
 import ConfirmAlert from '../../../Components/ConfirmAlert';
+import {store} from '../../../redux/store';
+import {
+  getNewApplicationAPIHander,
+  updateApplicationStatusAPIHander,
+} from '../../../redux/reducer/Profile/ProfileAPI';
+import {dateFormatHander} from '../../../Components/commonHelper';
+import ImageView from 'react-native-image-viewing';
+import NoDataFound from '../../../Components/NoDataFound';
 
 const sampleData = [
   {id: '1', name: 'John Doe', image: ''},
@@ -50,7 +59,14 @@ const sampleData = [
 ];
 
 const ApprovalCard = memo(
-  ({item, onAccept, onReject, currentBgColor, currentTextColor}) => {
+  ({
+    item,
+    onAccept,
+    onReject,
+    onProfileImagePress,
+    currentBgColor,
+    currentTextColor,
+  }) => {
     return (
       <View
         style={[
@@ -61,7 +77,16 @@ const ApprovalCard = memo(
             borderColor: currentTextColor,
           },
         ]}>
-        <Image source={{uri: item.image}} style={styles.image} />
+        <TouchableOpacity
+          onPress={() => {
+            onProfileImagePress(item);
+          }}>
+          <Image
+            // defaultSource={Image}
+            source={{uri: item.avatar}}
+            style={styles.image}
+          />
+        </TouchableOpacity>
         <View style={styles.textContainer}>
           <Text
             style={[
@@ -70,7 +95,7 @@ const ApprovalCard = memo(
                 color: currentTextColor,
               },
             ]}>
-            {item.name}
+            {item.fullName}
           </Text>
           <View
             style={{
@@ -88,13 +113,13 @@ const ApprovalCard = memo(
                   styles.textStyles,
                   {color: currentTextColor},
                   {},
-                ]}>{`Gender : Male`}</Text>
+                ]}>{`Gender : ${item.gender}`}</Text>
               <Text
                 style={[
                   styles.textStyles,
                   {color: currentTextColor},
                   {},
-                ]}>{`Dob : 7 Aug 2021`}</Text>
+                ]}>{`Dob : ${dateFormatHander(item.dob, 'DD MMM YYYY')}`}</Text>
             </View>
             <View
               style={{
@@ -107,13 +132,15 @@ const ApprovalCard = memo(
                   styles.textStyles,
                   {color: currentTextColor},
                   {},
-                ]}>{`Mob : 9999999887`}</Text>
+                ]}>{`Mob : ${item.mobile}`}</Text>
               <Text
                 style={[
                   styles.textStyles,
                   {color: currentTextColor},
                   {},
-                ]}>{`DOJ : 5 Aug 2024`}</Text>
+                ]}>{`Branch : ${
+                item.branchName ? item.branchName : '_'
+              }`}</Text>
             </View>
           </View>
           <View style={styles.buttonContainer}>
@@ -126,22 +153,14 @@ const ApprovalCard = memo(
                   marginRight: getResHeight(0.5),
                 },
               ]}
-              onPress={() => onReject(item.id)}>
+              onPress={() => onReject(item._id)}>
               <Text style={[styles.buttonText, {}]}>Reject</Text>
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.8}
               style={[styles.button, styles.acceptButton]}
-              onPress={() => onAccept(item.id)}>
-              <Text
-                style={[
-                  styles.buttonText,
-                  {
-                    // color: currentTextColor,
-                  },
-                ]}>
-                Accept
-              </Text>
+              onPress={() => onAccept(item._id)}>
+              <Text style={[styles.buttonText, {}]}>Accept</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -178,16 +197,61 @@ const Approval = memo(props => {
   const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
   );
+  const {getAllPendingUser} = useSelector(state => state.profile);
+  const [isImageViewerModal, setIsImageViewerModal] = useState(false);
+  const [viewImageUrl, setViewImageUrl] = useState('');
   const [showAlert, setShowAlert] = useState(false);
   const {navigation} = props;
-  const handleAccept = id => {
-    // Handle accept logic
-    console.log(`Accepted request with ID: ${id}`);
+
+  useEffect(() => {
+    APIHandler();
+  }, []);
+
+  const APIHandler = async () => {
+    try {
+      await store.dispatch(getNewApplicationAPIHander());
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+  // Image viewer
+  const images = [
+    {
+      uri: viewImageUrl,
+    },
+  ];
+
+  const handleAccept = async id => {
+    try {
+      // 0 - Pending
+      // 1 - Accept
+      // 2 - Reject
+      // setShowAlert(true);
+      await store.dispatch(
+        updateApplicationStatusAPIHander({
+          _id: id,
+          status: 1,
+        }),
+      );
+    } catch (error) {
+      console.error('Applicaiton Accepter Error:', error);
+    }
   };
 
-  const handleReject = id => {
-    // Handle reject logic
-    console.log(`Rejected request with ID: ${id}`);
+  const handleReject = async id => {
+    try {
+      // 0 - Pending
+      // 1 - Accept
+      // 2 - Reject
+      await store.dispatch(
+        updateApplicationStatusAPIHander({
+          _id: id,
+          status: 2,
+        }),
+      );
+    } catch (error) {
+      console.error('Applicaiton rejection Error:', error);
+    }
   };
 
   const renderItem = ({item}) => (
@@ -197,9 +261,17 @@ const Approval = memo(props => {
       onReject={handleReject}
       currentTextColor={currentTextColor}
       currentBgColor={currentBgColor}
+      onProfileImagePress={item => {
+        console.log('onProfileImagePress', item);
+        if (item.avatar !== '') {
+          setViewImageUrl(item.avatar);
+          setIsImageViewerModal(true);
+        }
+      }}
     />
   );
 
+  console.log('getAllPendingUser', getAllPendingUser);
   return (
     <View
       style={[
@@ -225,17 +297,32 @@ const Approval = memo(props => {
         }}
         centerLogo={true}
       />
+      <ImageView
+        images={images}
+        imageIndex={0}
+        visible={isImageViewerModal}
+        onRequestClose={() => setIsImageViewerModal(false)}
+      />
       <View
         style={{
           paddingHorizontal: '3%',
           flex: 1,
         }}>
         <FlatList
-          data={sampleData}
+          data={getAllPendingUser}
           renderItem={renderItem}
           showsVerticalScrollIndicator={false}
           keyExtractor={item => item.id}
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={() => APIHandler(false)}
+            />
+          }
           contentContainerStyle={styles.list}
+          ListEmptyComponent={() => {
+            return <NoDataFound />;
+          }}
         />
       </View>
     </View>
@@ -270,6 +357,8 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginRight: getResHeight(1),
     backgroundColor: '#f2f2f2',
+    borderWidth: 1,
+    borderColor: theme.color.error,
   },
   textContainer: {
     flex: 1,

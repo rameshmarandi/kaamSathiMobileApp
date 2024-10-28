@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect, memo} from 'react';
+import React, {useState, useRef, useCallback, useEffect, memo} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   FlatList,
   SafeAreaView,
   Button,
+  StyleSheet,
+  TouchableOpacity,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {
@@ -33,311 +35,13 @@ import WaveButton from '../../../Components/WaveButton';
 import {store} from '../../../redux/store';
 import {getAllMembersAPIHander} from '../../../redux/reducer/Profile/ProfileAPI';
 import {RefreshControl} from 'react-native';
-
-const demoUsers = [
-  {
-    id: '1',
-    userBio: {
-      'Full name': 'Ramesh Marandi',
-      'Church branch': 'Pimple gurav',
-      'Date of birth': '1 May 2003',
-      'Date of baptism': '12 Feb 2015',
-      Mobile: '9898989898',
-      Email: 'textemail1@gmail.com',
-    },
-  },
-  {
-    id: '2',
-    userBio: {
-      'Full name': 'Suresh Gupta',
-      'Church branch': 'Baner',
-      'Date of birth': '15 Jun 2001',
-      'Date of baptism': '5 Mar 2014',
-      Mobile: '9797979797',
-      Email: 'textemail2@gmail.com',
-    },
-  },
-  {
-    id: '3',
-    userBio: {
-      'Full name': 'Anita Sharma',
-      'Church branch': 'Wakad',
-      'Date of birth': '10 Jul 2000',
-      'Date of baptism': '20 Jan 2013',
-      Mobile: '9696969696',
-      Email: 'textemail3@gmail.com',
-    },
-  },
-  {
-    id: '4',
-    userBio: {
-      'Full name': 'Ravi Kumar',
-      'Church branch': 'Kothrud',
-      'Date of birth': '23 Aug 1998',
-      'Date of baptism': '15 Apr 2012',
-      Mobile: '9595959595',
-      Email: 'textemail4@gmail.com',
-    },
-  },
-  {
-    id: '5',
-    userBio: {
-      'Full name': 'Priya Desai',
-      'Church branch': 'Viman Nagar',
-      'Date of birth': '12 Sep 1995',
-      'Date of baptism': '28 May 2010',
-      Mobile: '9494949494',
-      Email: 'textemail5@gmail.com',
-    },
-  },
-  {
-    id: '6',
-    userBio: {
-      'Full name': 'Manish Patel',
-      'Church branch': 'Hinjewadi',
-      'Date of birth': '18 Oct 2002',
-      'Date of baptism': '8 Jun 2016',
-      Mobile: '9393939393',
-      Email: 'textemail6@gmail.com',
-    },
-  },
-  {
-    id: '7',
-    userBio: {
-      'Full name': 'Nisha Reddy',
-      'Church branch': 'Kharadi',
-      'Date of birth': '5 Nov 1999',
-      'Date of baptism': '19 Jul 2014',
-      Mobile: '9292929292',
-      Email: 'textemail7@gmail.com',
-    },
-  },
-  {
-    id: '8',
-    userBio: {
-      'Full name': 'Amit Singh',
-      'Church branch': 'Aundh',
-      'Date of birth': '29 Dec 2001',
-      'Date of baptism': '11 Aug 2013',
-      Mobile: '9191919191',
-      Email: 'textemail8@gmail.com',
-    },
-  },
-  {
-    id: '9',
-    userBio: {
-      'Full name': 'Kavita Agarwal',
-      'Church branch': 'Hadapsar',
-      'Date of birth': '17 Jan 2000',
-      'Date of baptism': '30 Sep 2012',
-      Mobile: '9090909090',
-      Email: 'textemail9@gmail.com',
-    },
-  },
-  {
-    id: '10',
-    userBio: {
-      'Full name': 'Sunil Joshi',
-      'Church branch': 'Magarpatta',
-      'Date of birth': '6 Feb 2002',
-      'Date of baptism': '14 Oct 2015',
-      Mobile: '8989898989',
-      Email: 'textemail10@gmail.com',
-    },
-  },
-  {
-    id: '11',
-    userBio: {
-      'Full name': 'Shweta Verma',
-      'Church branch': 'Pimple Nilakh',
-      'Date of birth': '25 Mar 2001',
-      'Date of baptism': '22 Nov 2014',
-      Mobile: '8888888888',
-      Email: 'textemail11@gmail.com',
-    },
-  },
-  {
-    id: '12',
-    userBio: {
-      'Full name': 'Rahul Mehta',
-      'Church branch': 'Bhosari',
-      'Date of birth': '13 Apr 1997',
-      'Date of baptism': '3 Dec 2011',
-      Mobile: '8787878787',
-      Email: 'textemail12@gmail.com',
-    },
-  },
-  {
-    id: '13',
-    userBio: {
-      'Full name': 'Deepa Shetty',
-      'Church branch': 'Deccan',
-      'Date of birth': '2 May 1996',
-      'Date of baptism': '9 Jan 2010',
-      Mobile: '8686868686',
-      Email: 'textemail13@gmail.com',
-    },
-  },
-  {
-    id: '14',
-    userBio: {
-      'Full name': 'Vikram Khanna',
-      'Church branch': 'Swargate',
-      'Date of birth': '19 Jun 1998',
-      'Date of baptism': '21 Feb 2012',
-      Mobile: '8585858585',
-      Email: 'textemail14@gmail.com',
-    },
-  },
-  {
-    id: '15',
-    userBio: {
-      'Full name': 'Pooja Nair',
-      'Church branch': 'Shivaji Nagar',
-      'Date of birth': '8 Jul 1999',
-      'Date of baptism': '4 Mar 2013',
-      Mobile: '8484848484',
-      Email: 'textemail15@gmail.com',
-    },
-  },
-  {
-    id: '16',
-    userBio: {
-      'Full name': 'Ashok Rana',
-      'Church branch': 'Bibvewadi',
-      'Date of birth': '28 Aug 2001',
-      'Date of baptism': '16 Apr 2014',
-      Mobile: '8383838383',
-      Email: 'textemail16@gmail.com',
-    },
-  },
-  {
-    id: '17',
-    userBio: {
-      'Full name': 'Meera Pandey',
-      'Church branch': 'NIBM',
-      'Date of birth': '14 Sep 2002',
-      'Date of baptism': '29 May 2015',
-      Mobile: '8282828282',
-      Email: 'textemail17@gmail.com',
-    },
-  },
-  {
-    id: '18',
-    userBio: {
-      'Full name': 'Arjun Roy',
-      'Church branch': 'Camp',
-      'Date of birth': '22 Oct 2000',
-      'Date of baptism': '10 Jun 2013',
-      Mobile: '8181818181',
-      Email: 'textemail18@gmail.com',
-    },
-  },
-  {
-    id: '19',
-    userBio: {
-      'Full name': 'Ritu Singh',
-      'Church branch': 'Katraj',
-      'Date of birth': '3 Nov 1997',
-      'Date of baptism': '17 Jul 2011',
-      Mobile: '8080808080',
-      Email: 'textemail19@gmail.com',
-    },
-  },
-  {
-    id: '20',
-    userBio: {
-      'Full name': 'Sanjay Das',
-      'Church branch': 'Warje',
-      'Date of birth': '30 Dec 1998',
-      'Date of baptism': '25 Aug 2012',
-      Mobile: '7979797979',
-      Email: 'textemail20@gmail.com',
-    },
-  },
-  {
-    id: '21',
-    userBio: {
-      'Full name': 'Rina Jain',
-      'Church branch': 'Bavdhan',
-      'Date of birth': '7 Jan 2000',
-      'Date of baptism': '6 Sep 2013',
-      Mobile: '7878787878',
-      Email: 'textemail21@gmail.com',
-    },
-  },
-  {
-    id: '22',
-    userBio: {
-      'Full name': 'Rohan Thakur',
-      'Church branch': 'Kalyani Nagar',
-      'Date of birth': '26 Feb 2001',
-      'Date of baptism': '13 Oct 2014',
-      Mobile: '7777777777',
-      Email: 'textemail22@gmail.com',
-    },
-  },
-  {
-    id: '23',
-    userBio: {
-      'Full name': 'Geeta Yadav',
-      'Church branch': 'Nigdi',
-      'Date of birth': '15 Mar 1999',
-      'Date of baptism': '18 Nov 2012',
-      Mobile: '7676767676',
-      Email: 'textemail23@gmail.com',
-    },
-  },
-  {
-    id: '24',
-    userBio: {
-      'Full name': 'Karan Kapoor',
-      'Church branch': 'Dhanori',
-      'Date of birth': '4 Apr 2002',
-      'Date of baptism': '27 Dec 2015',
-      Mobile: '7575757575',
-      Email: 'textemail24@gmail.com',
-    },
-  },
-  {
-    id: '25',
-    userBio: {
-      'Full name': 'Anjali Menon',
-      'Church branch': 'Pashan',
-      'Date of birth': '23 May 2000',
-      'Date of baptism': '5 Jan 2014',
-      Mobile: '7474747474',
-      Email: 'textemail25@gmail.com',
-    },
-  },
-  {
-    id: '26',
-    userBio: {
-      'Full name': 'Vijay Chauhan',
-      'Church branch': 'Baner',
-      'Date of birth': '12 Jun 1998',
-      'Date of baptism': '15 Feb 2013',
-      Mobile: '7373737373',
-      Email: 'textemail26@gmail.com',
-    },
-  },
-  {
-    id: '27',
-    userBio: {
-      'Full name': 'Maya Rao',
-      'Church branch': 'Pimple Saudagar',
-      'Date of birth': '31 Jul 1997',
-      'Date of baptism': '30 Mar 2012',
-      Mobile: '7272727272',
-      Email: 'textemail27@gmail',
-    },
-  },
-];
+import ImageView from 'react-native-image-viewing';
+import debounce from 'lodash.debounce';
+import NoDataFound from '../../../Components/NoDataFound';
 
 const menuItems = [{title: 'Update'}, {title: 'Block'}, {title: 'Delete'}];
 
 const initialState = {
-  filteredData: demoUsers,
   isLoading: false,
   searchText: '',
 };
@@ -349,10 +53,15 @@ const Index = memo(props => {
   );
   const {allMembers} = useSelector(state => state.profile);
 
-  // console.log('GEt_All_Memmbers_page', allMembers);
-  const [state, setState] = useState(initialState);
-  const [userData, setUserData] = useState([...demoUsers]);
+  const [state, setState] = useState({
+    ...initialState,
+    filteredData: allMembers,
+  });
+  // const [userData, setUserData] = useState([...demoUsers]);
   const [showAlert, setShowAlert] = useState(false);
+  const [isImageViewerModal, setIsImageViewerModal] = useState(false);
+  const [viewImageUrl, setViewImageUrl] = useState('');
+
   const sheetRef1 = useRef(null);
 
   const updateState = newState =>
@@ -363,32 +72,56 @@ const Index = memo(props => {
     updateState({searchText: text});
   };
 
+  // Image viewer
+  const images = [
+    {
+      uri: viewImageUrl,
+    },
+  ];
+
   useEffect(() => {
     APIHandler();
   }, []);
 
   const APIHandler = async () => {
     try {
-      console.log('STATE_____');
       await store.dispatch(getAllMembersAPIHander());
-      console.log('STATE_____2');
     } catch (error) {}
   };
 
-  useEffect(() => {
-    updateState({isLoading: true});
-    const filtered = allMembers.filter(item =>
-      item.userBio['Full name']
-        .toLowerCase()
-        .includes(searchText.toLowerCase()),
-    );
+  // Debounced function for filtering
+  const filterMembers = useCallback(
+    debounce(searchText => {
+      updateState({isLoading: true});
 
-    console.log('filtered_Membes', filtered);
-    // updateState({setUserData: filtered});
-    setTimeout(() => {
-      updateState({isLoading: false});
-    }, 300);
-  }, [searchText]);
+      // Filter based on either the first name or the branch name
+      const filtered = allMembers.filter(item => {
+        const firstName = item.userBio['Full name']
+          ?.split(' ')[0]
+          .toLowerCase();
+        const branchName = item.branchName?.toLowerCase(); // Ensure branch name is in userBio
+
+        // Check if either first name or branch name contains the search text
+        return (
+          firstName?.includes(searchText.toLowerCase()) ||
+          branchName?.includes(searchText.toLowerCase())
+        );
+      });
+
+      updateState({filteredData: filtered, isLoading: false});
+      console.log('Filtered Members:', filtered);
+    }, 300),
+    [allMembers],
+  );
+
+  useEffect(() => {
+    filterMembers(searchText);
+    // Cleanup function to cancel debounce on component unmount
+    return () => {
+      filterMembers.cancel();
+    };
+  }, [searchText, filterMembers]);
+
   const UserBioComponent = ({userBio}) => {
     // Convert userBio object to an array of key-value pairs
     const userBioArray = Object.entries(userBio).map(([key, value]) => ({
@@ -398,26 +131,11 @@ const Index = memo(props => {
 
     // Render each item in the FlatList
     const renderItem = ({item}) => (
-      <View
-        style={{
-          flexDirection: 'row',
-          paddingHorizontal: getResWidth(2),
-          marginTop: getResHeight(1),
-        }}>
-        <Text
-          style={{
-            width: getResWidth(40),
-            color: currentTextColor,
-            fontFamily: theme.font.semiBold,
-          }}>
+      <View style={styles.itemContainer}>
+        <Text style={[styles.keyText, {color: currentTextColor}]}>
           {item.key}
         </Text>
-        <Text
-          style={{
-            width: getResWidth(43),
-            color: currentTextColor,
-            fontFamily: theme.font.regular,
-          }}>
+        <Text style={[styles.valueText, {color: currentTextColor}]}>
           {item.value}
         </Text>
       </View>
@@ -447,43 +165,19 @@ const Index = memo(props => {
   const singleUserCardData = item => {
     const {userBio} = item;
 
-    // console.log('sing_user', userBio);
     return (
-      <View
-        style={{
-          flex: 1,
-          // padding: '5%',
-          alignItems: 'center',
-        }}>
-        <ScrollView
-          style={{
-            width: '100%',
-          }}>
-          <View
-            style={{
-              marginTop: getResHeight(12),
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <EmptyUserProfile
-              onPress={() => {
-                alert('sdfsd');
-              }}
-            />
+      <View style={styles.userCardContainer}>
+        <ScrollView style={styles.scrollView}>
+          <View style={styles.profileContainer}>
+            <EmptyUserProfile onPress={() => alert('sdfsd')} />
           </View>
-          <View
-            style={{
-              marginTop: '5%',
-            }}>
-            <Text style={{color: 'red'}}>{userBio['Full name']}</Text>
+          <View style={styles.nameContainer}>
+            <Text style={{color: currentTextColor}}>
+              {userBio['Full name']}
+            </Text>
           </View>
-          {/* <FormikHandler /> */}
-
           <TextInput
-            style={{
-              width: '100%',
-              borderWidth: 1,
-            }}
+            style={styles.textInput}
             placeholder="Name"
             onChangeText={() => {}}
             onBlur={() => {}}
@@ -495,46 +189,43 @@ const Index = memo(props => {
   };
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: currentBgColor,
-      }}>
+    <SafeAreaView style={[styles.safeArea, {backgroundColor: currentBgColor}]}>
       <StatusBarComp />
-
-      <View style={{}}>
+      <View>
         <CustomHeader
-          backPress={() => {
-            navigation.goBack();
-          }}
+          backPress={() => navigation.goBack()}
           screenTitle={MsgConfig.allMembers}
           filterIcon={() => {}}
         />
       </View>
-      <View
-        style={{
-          position: 'absolute',
-          bottom: getResHeight(7),
-          right: getResWidth(7),
-        }}>
+      <ImageView
+        images={images}
+        imageIndex={0}
+        visible={isImageViewerModal}
+        onRequestClose={() => setIsImageViewerModal(false)}
+      />
+      <View style={styles.waveButtonContainer}>
         <WaveButton
-          onPress={() => {
-            props.navigation.navigate('AddMemberForm');
-          }}
+          onPress={() => props.navigation.navigate('AddMemberForm')}
         />
       </View>
       <ConfirmAlert
         visible={showAlert}
         onCancel={() => setShowAlert(false)}
-        onConfirm={() => {
-          setShowAlert(false);
-        }}
+        onConfirm={() => setShowAlert(false)}
       />
-      <View
+
+      <Text
         style={{
-          marginTop: '3%',
-          paddingHorizontal: '1%',
+          color: theme.color.green,
+          fontFamily: theme.font.semiBold,
+          marginLeft: getResWidth(5),
+          // paddingTop: getResHeight(3),
         }}>
+        Total members :{' '}
+        {searchText !== '' ? filteredData.length : allMembers.length}
+      </Text>
+      <View style={styles.searchBarContainer}>
         <SearchBarComp
           placeholder="Search all members..."
           isLoading={isLoading}
@@ -547,59 +238,65 @@ const Index = memo(props => {
         {bottomSheetContent}
       </CustomBottomSheet>
 
-      <View
-        style={{
-          zIndex: -9999,
-          paddingBottom: getResHeight(10),
-          paddingHorizontal: '2%',
-          paddingTop: '2%',
-        }}>
-        {/* <ExampleUsage /> */}
+      <View style={[styles.flatListContainer]}>
         <FlatList
-          data={allMembers}
-          keyExtractor={(item, index) => item.id}
+          data={searchText !== '' ? filteredData : allMembers}
+          keyExtractor={item => item.id}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
               refreshing={false}
-              onRefresh={() => {
-                APIHandler(false);
-              }}
+              onRefresh={() => APIHandler(false)}
             />
           }
-          contentContainerStyle={{paddingBottom: '20%'}}
-          renderItem={({item, index}) => {
-            console.log('single_items', item);
+          ListEmptyComponent={() => {
             return (
-              <View
-                style={[
-                  theme.styles.cardEffect,
-                  {
-                    width: getResWidth(90),
-                    backgroundColor: currentBgColor,
-                    borderWidth: 1,
-                    borderColor: currentTextColor,
-                    alignSelf: 'center',
-                    borderRadius: getResHeight(2),
-                    paddingVertical: getResHeight(2),
-                    marginBottom: '5%',
-                    flexDirection: 'row',
-                    flexWrap: 'wrap',
-                  },
-                ]}>
+              <>
                 <View
                   style={{
-                    position: 'absolute',
-                    top: getResHeight(1.4),
-                    right: getResWidth(2),
-                    zIndex: 9999,
+                    marginTop: getResHeight(-10),
                   }}>
+                  <NoDataFound />
+                </View>
+              </>
+            );
+          }}
+          contentContainerStyle={styles.flatListContentContainer}
+          renderItem={({item}) => (
+            <View
+              style={[
+                styles.card,
+                {
+                  backgroundColor: currentBgColor,
+                  borderColor: currentTextColor,
+                },
+              ]}>
+              <View style={styles.cardContent}>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => {
+                    if (item.avatar !== '') {
+                      setViewImageUrl(item.avatar);
+                      setIsImageViewerModal(true);
+                    }
+                  }}
+                  style={styles.avatarContainer}>
+                  <Image source={{uri: item.avatar}} style={styles.avatar} />
+                </TouchableOpacity>
+                <View style={styles.userInfoContainer}>
+                  <Text
+                    style={[styles.userNameText, {color: currentTextColor}]}>
+                    {item.userBio['Full name']}
+                  </Text>
+                  <Text style={styles.branchText}>
+                    Branch name : {item.branchName}
+                  </Text>
+                </View>
+                <View style={styles.menuButtonContainer}>
                   <SmallMenuComp
                     buttonLabel={openMenu => (
                       <ButtonIconComp
-                        onPress={() => {
-                          openMenu();
-                        }}
+                        onPress={() => openMenu()}
                         icon={
                           <VectorIcon
                             type={'Entypo'}
@@ -608,19 +305,13 @@ const Index = memo(props => {
                             color={currentTextColor}
                           />
                         }
-                        containerStyle={{
-                          width: getResHeight(5),
-                          height: getResHeight(5),
-                          backgroundColor: currentBgColor,
-                          borderRadius: getResHeight(100),
-                        }}
+                        containerStyle={styles.menuButton}
                       />
                     )}
                     menuItems={menuItems}
                     onMenuPress={menuIndex => {
                       if (menuIndex === 0) {
                         const res = singleUserCardData(item);
-                        console.log('userData', res);
                         setTimeout(() => {
                           openBottomSheetWithContent(res);
                         }, 500);
@@ -631,71 +322,136 @@ const Index = memo(props => {
                     }}
                   />
                 </View>
-                <View
-                  style={{
-                    width: getResWidth(26),
-                    paddingLeft: getResHeight(2),
-                  }}>
-                  <Image
-                    source={{
-                      uri: item.avatar,
-                    }}
-                    style={{
-                      height: getResHeight(10),
-                      width: getResHeight(10),
-                      borderRadius: getResHeight(100),
-                    }}
-                  />
-                </View>
-                <View
-                  style={{
-                    width: getResWidth(48),
-                    marginLeft: '5%',
-                    flexWrap: 'wrap',
-                  }}>
-                  <Text
-                    style={{
-                      maxWidth: '100%',
-                      fontSize: getFontSize(2),
-                      fontFamily: theme.font.semiBold,
-                      color: currentTextColor,
-                    }}>
-                    {item.userBio['Full name']}
-                  </Text>
-                  {/* <Text
-                    style={{
-                      width: '98%',
-                      fontFamily: theme.font.medium,
-                      fontSize: getFontSize(1.5),
-                      color: currentTextColor,
-                    }}>
-                    {item.userBio.Email}
-                  </Text> */}
-                </View>
-                <View
-                  style={{
-                    borderTopWidth: 0.5,
-                    borderColor: 'white',
-                    width: '100%',
-                    marginTop: '5%',
-                    paddingTop: '5%',
-                    flexDirection: 'row',
-                    paddingHorizontal: getResWidth(2),
-                  }}>
-                  <UserBioComponent userBio={item.userBio} />
-                  {/* {console.log(
-                    'renderUserBio(item.userBio)',
-                    renderUserBio(item.userBio)[0],
-                  )}
-                  {renderUserBio( <UserBioComponent userBio={userBio} />)[0]} */}
-                </View>
               </View>
-            );
-          }}
+              <View style={styles.userBioContainer}>
+                <UserBioComponent userBio={item.userBio} />
+              </View>
+            </View>
+          )}
         />
       </View>
     </SafeAreaView>
   );
+});
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
+  userCardContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  scrollView: {
+    width: '100%',
+  },
+  profileContainer: {
+    marginTop: getResHeight(12),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  nameContainer: {
+    marginTop: '5%',
+  },
+  textInput: {
+    width: '100%',
+    borderWidth: 1,
+  },
+  waveButtonContainer: {
+    position: 'absolute',
+    bottom: getResHeight(7),
+    right: getResWidth(7),
+  },
+  searchBarContainer: {
+    // marginTop: '3%',
+    // paddingHorizontal: '1%',
+  },
+  flatListContainer: {
+    zIndex: -9999,
+    paddingBottom: getResHeight(10),
+    paddingHorizontal: '2%',
+    paddingTop: '2%',
+  },
+  flatListContentContainer: {
+    paddingBottom: '20%',
+  },
+  card: {
+    width: getResWidth(90),
+    borderWidth: 1,
+    alignSelf: 'center',
+    borderRadius: getResHeight(2),
+    marginBottom: getResHeight(2),
+  },
+  cardContent: {
+    paddingVertical: getResHeight(2),
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+  },
+  avatarContainer: {
+    width: getResWidth(26),
+    paddingLeft: getResHeight(2),
+  },
+  avatar: {
+    height: getResHeight(10),
+    width: getResHeight(10),
+    borderRadius: getResHeight(100),
+    borderWidth: 2,
+    borderColor: theme.color.green,
+  },
+  userInfoContainer: {
+    width: getResWidth(48),
+    marginLeft: '5%',
+    flexWrap: 'wrap',
+  },
+  userNameText: {
+    maxWidth: '100%',
+    fontSize: getFontSize(2),
+    fontFamily: theme.font.semiBold,
+  },
+  branchText: {
+    width: '98%',
+    fontFamily: theme.font.semiBold,
+    fontSize: getFontSize(1.5),
+    // color: 'white',
+    color: theme.color.green,
+  },
+  menuButtonContainer: {
+    position: 'absolute',
+    top: getResHeight(1),
+    right: getResWidth(-10),
+    zIndex: 9999,
+  },
+  menuButton: {
+    width: getResHeight(5),
+    height: getResHeight(5),
+    borderRadius: getResHeight(100),
+  },
+  userBioContainer: {
+    borderTopWidth: 0.5,
+    borderColor: 'white',
+    width: '100%',
+    paddingTop: '5%',
+    flexDirection: 'row',
+    paddingHorizontal: getResWidth(2),
+    paddingVertical: getResHeight(2),
+  },
+
+  itemContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: getResWidth(2),
+    marginTop: getResHeight(1),
+  },
+  keyText: {
+    width: getResWidth(40),
+    fontFamily: theme.font.semiBold,
+    fontSize: getFontSize(1.5),
+  },
+  valueText: {
+    width: getResWidth(43),
+    fontFamily: theme.font.regular,
+    fontSize: getFontSize(1.5),
+  },
 });
 
 export default Index;

@@ -42,6 +42,7 @@ const CustomTabBar = ({
 }) => {
   const [selectedTab, setSelectedTab] = useState(selectedTabIndex);
   const animatedValue = useRef(new Animated.Value(selectedTabIndex)).current;
+  const {getAllPendingUser} = useSelector(state => state.profile);
 
   const onPress = useCallback(
     index => {
@@ -161,7 +162,7 @@ const CustomTabBar = ({
                     fontFamily: theme.font.semiBold,
                     fontSize: getFontSize(1.4),
                   }}>
-                  12
+                  {getAllPendingUser.length}
                 </Text>
               </View>
             </>

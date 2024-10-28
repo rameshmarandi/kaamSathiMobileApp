@@ -3,6 +3,7 @@ import theme from '../../../utility/theme';
 
 const initialState = {
   allMembers: [],
+  getAllPendingUser: [],
 };
 
 const profileSlice = createSlice({
@@ -12,8 +13,11 @@ const profileSlice = createSlice({
     setAllMembers(state, action) {
       state.allMembers = action.payload;
     },
+    setAllPendingUser(state, action) {
+      state.getAllPendingUser = action.payload;
+    },
   },
 });
 
-export const {setAllMembers} = profileSlice.actions;
+export const {setAllMembers, setAllPendingUser} = profileSlice.actions;
 export default profileSlice.reducer;
