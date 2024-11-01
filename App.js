@@ -19,7 +19,7 @@ import {persistor, store} from './src/redux/store';
 import theme from './src/utility/theme';
 import {setNavigator} from './src/Services/NavigationService';
 import {toastConfig} from './src/Components/StaticDataHander';
-import messaging from '@react-native-firebase/messaging';
+// import messaging from '@react-native-firebase/messaging';
 import {checkIsAdmin, checkIsUserLoggedIn} from './src/Helpers/CommonHelpers';
 
 const Stack = createNativeStackNavigator();
@@ -50,13 +50,13 @@ const App = () => {
       setIsAdmin(checkTypOfAdmin);
     });
   };
-  useEffect(() => {
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-    });
+  // useEffect(() => {
+  //   const unsubscribe = messaging().onMessage(async remoteMessage => {
+  //     Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+  //   });
 
-    return unsubscribe;
-  }, []);
+  //   return unsubscribe;
+  // }, []);
 
   return (
     <>

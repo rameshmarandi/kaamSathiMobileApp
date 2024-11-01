@@ -34,7 +34,7 @@ const SmallMenuComp = ({buttonLabel, menuItems, onMenuPress}) => {
         <React.Fragment key={index}>
           <Menu.Item
             onPress={() => {
-              onMenuPress(index);
+              onMenuPress(item);
               closeMenu();
             }}
             titleStyle={{

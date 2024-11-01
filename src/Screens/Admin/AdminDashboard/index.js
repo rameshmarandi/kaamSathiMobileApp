@@ -33,6 +33,7 @@ import axios from 'axios';
 import {LOCAL_BASE_URL} from '../../../Config/constants.js';
 import storageKeys from '../../../Config/StorageKeys.js';
 import {checkIsAdmin} from '../../../Helpers/CommonHelpers.js';
+import {handleNetworkRequests} from '../../../utility/ NetworkUtils.js';
 
 const initialState = {
   adminDashboardCardData: adminDashboardCardData,
@@ -62,9 +63,40 @@ const Index = memo(props => {
   } = state;
 
   useEffect(() => {
+    _apiCalling();
     checkIsAdmin();
     console.log('LoginUser_Details', logedInuserType);
   }, []);
+
+  const _apiCalling = async props => {
+    const emp_id = await getAsyncValue(asyncKeys.ldapId);
+
+    // Define essential requests
+    const essentialRequests = [
+      () => store.dispatch(getNewApplicationAPIHander()),
+
+      // Add other essential requests here
+    ];
+
+    // // Define non-essential requests
+    // const nonEssentialRequests = [
+    //   () => store.dispatch(getHolidayLeavesData({ state: 'some_state' })),
+    //   () => store.dispatch(JobsApi.getWhatsNewApi()),
+    //   // Add other non-essential requests here
+    // ];
+
+    // Call utility method for handling network requests
+    try {
+      await handleNetworkRequests({
+        essentialRequests,
+        // nonEssentialRequests,
+        // loadingSetter: isLoading => setState(prev => ({ ...prev, isSkeletonLoader: isLoading }))
+      });
+    } catch (err) {
+      console.log('Admin_Dashboard_Error', {err});
+      // store.dispatch({ type: 'API_CALL_ERROR', payload: { error: err.message } });
+    }
+  };
 
   const searchBarRef = useRef(null);
 

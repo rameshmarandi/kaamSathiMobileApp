@@ -50,7 +50,7 @@ const index = memo(props => {
   const [viewImageUrl, setViewImageUrl] = useState('');
   let bioData = [
     {
-      'Full Name': `${fullName || ''}`,
+      // 'Full Name': `${fullName || ''}`,
       Email: `${email || ''}`,
       Phone: `${mobile || ''}`,
       'Date of Birth': `${DateFormator(DOB, 'DD MMM YYYY') || ''}`,
@@ -63,7 +63,17 @@ const index = memo(props => {
       uri: viewImageUrl,
     },
   ];
-
+  const returnRoles = () => {
+    if (loginUser?.user?.role === 'super_admin') {
+      return 'Super Admin';
+    }
+    if (loginUser?.user?.role === 'branch_admin') {
+      return 'Branch Admin';
+    }
+    if (loginUser?.user?.role === 'member') {
+      return 'Member';
+    }
+  };
   return (
     <SafeAreaView
       style={{
@@ -96,57 +106,59 @@ const index = memo(props => {
               return (
                 <>
                   <View>
-                    <TouchableOpacity
-                      activeOpacity={0.8}
-                      onPress={() => {
-                        let viewImageURL = coverImage
-                          ? coverImage
-                          : 'https://i.ytimg.com/vi/jjWSIpXrbUs/maxresdefault.jpg';
-
-                        setViewImageUrl(viewImageURL);
-                        setIsVisible(true);
-                      }}
-                      style={{
-                        width: '100%',
-                        height: getResHeight(30),
-                        backgroundColor: theme.color.outlineColor,
-                      }}>
-                      <Image
-                        source={{
-                          uri: coverImage
+                    <View>
+                      <TouchableOpacity
+                        activeOpacity={0.8}
+                        onPress={() => {
+                          let viewImageURL = coverImage
                             ? coverImage
-                            : 'https://i.ytimg.com/vi/jjWSIpXrbUs/maxresdefault.jpg',
+                            : 'https://i.ytimg.com/vi/jjWSIpXrbUs/maxresdefault.jpg';
+
+                          setViewImageUrl(viewImageURL);
+                          setIsVisible(true);
                         }}
                         style={{
-                          height: '100%',
                           width: '100%',
-                        }}
-                      />
-                      <View
-                        style={{
-                          position: 'absolute',
-                          bottom: getResHeight(1.2),
-                          right: getResWidth(1.5),
+                          height: getResHeight(30),
+                          backgroundColor: theme.color.outlineColor,
                         }}>
-                        <ButtonIconComp
-                          onPress={() => {}}
-                          icon={
-                            <VectorIcon
-                              type={'FontAwesome'}
-                              name={'camera'}
-                              size={getFontSize(2.1)}
-                              color={currentBgColor}
-                            />
-                          }
-                          containerStyle={{
-                            width: getResHeight(5),
-                            height: getResHeight(5),
-                            backgroundColor: currentTextColor,
-                            borderRadius: getResHeight(100),
+                        <Image
+                          source={{
+                            uri: coverImage
+                              ? coverImage
+                              : 'https://i.ytimg.com/vi/jjWSIpXrbUs/maxresdefault.jpg',
+                          }}
+                          style={{
+                            height: '100%',
+                            width: '100%',
                           }}
                         />
-                      </View>
-                    </TouchableOpacity>
+                        <View
+                          style={{
+                            position: 'absolute',
+                            bottom: getResHeight(1.2),
+                            right: getResWidth(1.5),
+                          }}>
+                          <ButtonIconComp
+                            onPress={() => {}}
+                            icon={
+                              <VectorIcon
+                                type={'FontAwesome'}
+                                name={'camera'}
+                                size={getFontSize(2.1)}
+                                color={currentBgColor}
+                              />
+                            }
+                            containerStyle={{
+                              width: getResHeight(5),
+                              height: getResHeight(5),
+                              backgroundColor: currentTextColor,
+                              borderRadius: getResHeight(100),
+                            }}
+                          />
+                        </View>
+                      </TouchableOpacity>
+                    </View>
                     <EmptyUserProfile
                       avatarURL={avatar}
                       onViewProfile={() => {
@@ -159,6 +171,28 @@ const index = memo(props => {
                         // alert('sdfsd');
                       }}
                     />
+                    <View
+                      style={{
+                        paddingHorizontal: getResWidth(3),
+                        marginTop: getResHeight(2),
+                      }}>
+                      <Text
+                        style={{
+                          color: currentTextColor,
+                          marginTop: getResHeight(1),
+                          fontFamily: theme.font.bold,
+                        }}>
+                        {`Full Name : ${fullName}`}
+                      </Text>
+                      <Text
+                        style={{
+                          color: theme.color.green,
+                          marginTop: getResHeight(1),
+                          fontFamily: theme.font.bold,
+                        }}>
+                        {`Designation : ${returnRoles()}`}
+                      </Text>
+                    </View>
                   </View>
                 </>
               );
@@ -195,7 +229,7 @@ const BioCompoent = memo(props => {
             paddingLeft: '5%',
             paddingRight: getResWidth(7),
 
-            marginTop: getResHeight(6),
+            marginTop: getResHeight(2),
             width: '95%',
             alignSelf: 'center',
             borderRadius: getResHeight(1),

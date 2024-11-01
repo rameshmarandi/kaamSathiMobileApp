@@ -37,6 +37,7 @@ const MasterTextInput = forwardRef(
       mode = 'outlined',
       secureTextEntry = false,
       keyboardType = 'default',
+      autoCapitalize,
       isDate = false,
       onSubmitEditing,
       topLableName,
@@ -435,6 +436,7 @@ const MasterTextInput = forwardRef(
                 value={value}
                 onChangeText={onChangeText}
                 placeholder={placeholder}
+                autoCapitalize={autoCapitalize}
                 secureTextEntry={isSecureEntry}
                 outlineColor={borderColor}
                 placeholderTextColor={'grey'}

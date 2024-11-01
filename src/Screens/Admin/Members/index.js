@@ -9,6 +9,7 @@ import {
   Button,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {
@@ -33,16 +34,30 @@ import {
 import {TextInput} from 'react-native';
 import WaveButton from '../../../Components/WaveButton';
 import {store} from '../../../redux/store';
-import {getAllMembersAPIHander} from '../../../redux/reducer/Profile/ProfileAPI';
+import {
+  blockUserAPIHander,
+  deleteUserAPIHander,
+  getAllMembersAPIHander,
+  updateUserRolesAPIHander,
+} from '../../../redux/reducer/Profile/ProfileAPI';
 import {RefreshControl} from 'react-native';
 import ImageView from 'react-native-image-viewing';
 import debounce from 'lodash.debounce';
 import NoDataFound from '../../../Components/NoDataFound';
+import ToastAlertComp from '../../../Components/ToastAlertComp';
+import {UserBioComponent, UserCard} from '../../../Helpers/CommonCard';
 
 const initialState = {
   isLoading: false,
   searchText: '',
 };
+const menuItems = [
+  {id: 1, title: 'Super admin'},
+  {id: 2, title: 'Branch admin'},
+  {id: 3, title: 'Block'},
+  {id: 4, title: 'Update'},
+  {id: 5, title: 'Delete'},
+];
 
 const Index = memo(props => {
   const {navigation} = props;
@@ -55,85 +70,17 @@ const Index = memo(props => {
     ...initialState,
     filteredData: allMembers,
   });
-  // const [userData, setUserData] = useState([...demoUsers]);
+
   const [showAlert, setShowAlert] = useState(false);
+  const [alertMsg, setAlertMsg] = useState('');
+  const [alertIcons, setAlertIcons] = useState('');
+  const [selectedCard, setSelectedCard] = useState({});
+  const [selectedMenuID, setSelectedMenuID] = useState('');
+
   const [isImageViewerModal, setIsImageViewerModal] = useState(false);
   const [viewImageUrl, setViewImageUrl] = useState('');
 
   const sheetRef1 = useRef(null);
-
-  const [filteredMenuItems, setFilteredMenuItems] = useState([]);
-
-  const menuItems = [
-    {id: 1, title: 'Super admin'},
-    {id: 2, title: 'Branch admin'},
-    {id: 3, title: 'Block'},
-    {id: 4, title: 'Update'},
-    {id: 5, title: 'Delete'},
-  ];
-
-  // useEffect(() => {
-  //   let updatedMenuItems = []; // Initialize empty array
-
-  //   if (logedInuserType === 'branch_admin') {
-  //     // Branch Admin sees only specific items
-  //     updatedMenuItems = [
-  //       {id: 3, title: 'Block'},
-  //       {id: 4, title: 'Update'},
-  //       {id: 5, title: 'Delete'},
-  //     ];
-  //   } else if (logedInuserType === 'super_admin') {
-  //     if (!userRole) {
-  //       // If user is a regular member
-  //       updatedMenuItems = [...menuItems]; // All options available
-  //     } else {
-  //       // User already has a role (Super Admin or Branch Admin)
-  //       updatedMenuItems = [
-  //         {id: 3, title: 'Block'},
-  //         {id: 4, title: 'Update'},
-  //         {id: 5, title: 'Delete'},
-  //         {id: 6, title: 'Remove Admin'}, // Add "Remove Admin" option
-  //       ];
-  //     }
-  //   }
-
-  //   setFilteredMenuItems(updatedMenuItems);
-  // }, [logedInuserType]);
-
-  // Example function to handle removing an admin role
-  const handleRemoveRole = () => {
-    // Logic to remove role goes here...
-
-    // After removing a role, reset the menu to full options
-    if (logedInuserType === 'super_admin') {
-      setFilteredMenuItems([
-        {id: 1, title: 'Super admin'},
-        {id: 2, title: 'Branch admin'},
-        {id: 3, title: 'Block'},
-        {id: 4, title: 'Update'},
-        {id: 5, title: 'Delete'},
-      ]);
-    }
-  };
-
-  // const menuItems = [
-  //   {id: 1, title: 'Super admin'},
-  //   {
-  //     id: 2,
-  //     title: 'Branch admin',
-  //   },
-  //   {
-  //     id: 3,
-  //     title: 'Block',
-  //   },
-
-  //   {
-  //     id: 4,
-
-  //     title: 'Update',
-  //   },
-  //   {id: 5, title: 'Delete'},
-  // ];
 
   const updateState = newState =>
     setState(prevState => ({...prevState, ...newState}));
@@ -171,11 +118,13 @@ const Index = memo(props => {
           ?.split(' ')[0]
           .toLowerCase();
         const branchName = item.branchName?.toLowerCase(); // Ensure branch name is in userBio
+        const designation = item.role?.toLowerCase(); // Ensure branch name is in userBio
 
         // Check if either first name or branch name contains the search text
         return (
           firstName?.includes(searchText.toLowerCase()) ||
-          branchName?.includes(searchText.toLowerCase())
+          branchName?.includes(searchText.toLowerCase()) ||
+          designation?.includes(searchText.toLowerCase())
         );
       });
 
@@ -192,34 +141,6 @@ const Index = memo(props => {
       filterMembers.cancel();
     };
   }, [searchText, filterMembers]);
-
-  const UserBioComponent = ({userBio}) => {
-    // Convert userBio object to an array of key-value pairs
-    const userBioArray = Object.entries(userBio).map(([key, value]) => ({
-      key,
-      value,
-    }));
-
-    // Render each item in the FlatList
-    const renderItem = ({item}) => (
-      <View style={styles.itemContainer}>
-        <Text style={[styles.keyText, {color: currentTextColor}]}>
-          {item.key}
-        </Text>
-        <Text style={[styles.valueText, {color: currentTextColor}]}>
-          {item.value}
-        </Text>
-      </View>
-    );
-
-    return (
-      <FlatList
-        data={userBioArray}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
-      />
-    );
-  };
 
   const bottomSheetRef = useRef(null);
   const [bottomSheetContent, setBottomSheetContent] = useState(null);
@@ -259,35 +180,210 @@ const Index = memo(props => {
     );
   };
 
-  const handleMunuData = memo(userDetails => {
-    console.log('USer_Data', userDetails);
-    return;
+  const handleMunuData = userDetails => {
     let updatedMenuItems = []; // Initialize empty array
+    const blockText = userDetails.isBlocked ? 'Unblock' : 'Block'; // Determine text based on isBlocked status
 
     if (logedInuserType === 'branch_admin') {
       // Branch Admin sees only specific items
       updatedMenuItems = [
-        {id: 3, title: 'Block'},
+        {id: 3, title: blockText},
         {id: 4, title: 'Update'},
         {id: 5, title: 'Delete'},
       ];
     } else if (logedInuserType === 'super_admin') {
-      if (userDetails.role == 'member') {
+      if (userDetails.role == 'member' && !userDetails.isBlocked) {
         // If user is a regular member
         updatedMenuItems = [...menuItems]; // All options available
+      } else if (userDetails.role == 'member' && userDetails.isBlocked) {
+        updatedMenuItems = menuItems
+          .filter(item => item.id !== 1 && item.id !== 2)
+          .map(
+            item => (item.id === 3 ? {...item, title: blockText} : item), // Update "Block" text
+          );
       } else {
         // User already has a role (Super Admin or Branch Admin)
         updatedMenuItems = [
-          {id: 3, title: 'Block'},
+          {id: 3, title: blockText},
           {id: 4, title: 'Update'},
           {id: 5, title: 'Delete'},
           {id: 6, title: 'Remove Admin'}, // Add "Remove Admin" option
         ];
       }
     }
+    return updatedMenuItems;
+  };
 
-    setFilteredMenuItems(updatedMenuItems);
-  });
+  const MenuItemOnPressHandler = item => {
+    setSelectedMenuID(item.id);
+    switch (item.id) {
+      case 3:
+        setAlertIcons(
+          <VectorIcon
+            type={'Entypo'}
+            name={'block'}
+            size={getFontSize(4.1)}
+            color={theme.color.error}
+          />,
+        );
+        setAlertMsg('Are you sure you want to block this member?');
+        setShowAlert(true);
+
+        break;
+      case 5:
+        setAlertIcons(
+          <VectorIcon
+            type={'MaterialIcons'}
+            name={'delete-forever'}
+            size={getFontSize(5.1)}
+            color={theme.color.error}
+          />,
+        );
+        setAlertMsg('Are you sure you want to delete this member?');
+        setShowAlert(true);
+        break;
+      case 6:
+        setAlertIcons(
+          <VectorIcon
+            type={'Ionicons'}
+            name={'person-remove'}
+            size={getFontSize(5.1)}
+            color={theme.color.error}
+          />,
+        );
+        setAlertMsg('Are you sure you want to remove this admin?');
+        setShowAlert(true);
+        break;
+      case 1:
+        setAlertIcons(
+          <VectorIcon
+            type={'Ionicons'}
+            name={'person-add'}
+            size={getFontSize(5.1)}
+            color={theme.color.green}
+          />,
+        );
+        setAlertMsg('Are you sure you want to add as super admin?');
+        setShowAlert(true);
+        break;
+      case 2:
+        setAlertIcons(
+          <VectorIcon
+            type={'Ionicons'}
+            name={'person-add'}
+            size={getFontSize(5.1)}
+            color={theme.color.green}
+          />,
+        );
+        setAlertMsg('Are you sure you want to add as branch admin?');
+        setShowAlert(true);
+        break;
+      case 4:
+        const res = singleUserCardData(selectedCard);
+        console.log('userData', res);
+        setTimeout(() => {
+          openBottomSheetWithContent(res);
+        }, 500);
+    }
+  };
+
+  // API calls
+  const handleBlock = async () => {
+    // Block API call
+
+    try {
+      // blockUserAPIHander;
+      updateState({isLoading: true});
+      const payload = {
+        userID: selectedCard.id,
+      };
+      const res = await store.dispatch(blockUserAPIHander(payload));
+
+      if (res.payload.error) {
+        updateState({isLoading: false});
+        ToastAlertComp('error', res.payload.error.message);
+      } else if (res.payload) {
+        updateState({isLoading: false});
+        ToastAlertComp('success', res.payload);
+      }
+    } catch (error) {
+      console.error('User_back_api_faild:', error);
+    }
+  };
+  const handleDelete = async () => {
+    // Delete API call
+    try {
+      updateState({isLoading: true});
+      const payload = {
+        _id: selectedCard.id,
+      };
+      const res = await store.dispatch(deleteUserAPIHander(payload));
+      if (res.payload == true) {
+        updateState({isLoading: false});
+      }
+    } catch (error) {
+      console.error('User_delete_api_faild:', error);
+    }
+  };
+  const handleRemoveAdmin = async () => {
+    // Remove Admin API call
+    try {
+      updateState({isLoading: true});
+      const payload = {
+        _id: selectedCard.id,
+        role: 0,
+      };
+
+      const res = await store.dispatch(updateUserRolesAPIHander(payload));
+
+      if (res.payload == true) {
+        updateState({isLoading: false});
+      }
+    } catch (error) {
+      updateState({isLoading: false});
+    }
+  };
+  const handleAddAdmin = async selectedRole => {
+    updateState({isLoading: true});
+    // Add Admin API call
+
+    try {
+      const payload = {
+        _id: selectedCard.id,
+        role: selectedRole == 1 ? 2 : 1,
+      };
+
+      const res = await store.dispatch(updateUserRolesAPIHander(payload));
+      if (res.payload == true) {
+        updateState({isLoading: false});
+      }
+    } catch (error) {
+      updateState({isLoading: false});
+    }
+  };
+
+  const alertConfirmHandler = () => {
+    setShowAlert(false);
+    try {
+      switch (selectedMenuID) {
+        case 3:
+          handleBlock();
+          break;
+        case 5:
+          handleDelete();
+          break;
+        case 6:
+          handleRemoveAdmin();
+          break;
+        case 1:
+          handleAddAdmin(selectedMenuID);
+          break;
+        case 2:
+          handleAddAdmin(selectedMenuID);
+          break;
+      }
+    } catch (error) {}
+  };
   return (
     <SafeAreaView style={[styles.safeArea, {backgroundColor: currentBgColor}]}>
       <StatusBarComp />
@@ -311,8 +407,14 @@ const Index = memo(props => {
       </View>
       <ConfirmAlert
         visible={showAlert}
-        onCancel={() => setShowAlert(false)}
-        onConfirm={() => setShowAlert(false)}
+        alertTitle={alertMsg}
+        alertIcon={alertIcons}
+        onCancel={() => {
+          setAlertIcons('');
+          setAlertMsg('');
+          setShowAlert(false);
+        }}
+        onConfirm={alertConfirmHandler}
       />
 
       <Text
@@ -328,7 +430,6 @@ const Index = memo(props => {
       <View style={styles.searchBarContainer}>
         <SearchBarComp
           placeholder="Search all members..."
-          isLoading={isLoading}
           onChangeText={handleSearch}
           value={searchText}
         />
@@ -363,139 +464,22 @@ const Index = memo(props => {
           }}
           contentContainerStyle={styles.flatListContentContainer}
           renderItem={({item, index}) => {
-            // handleMunuData(item);
             return (
-              <View
-                style={[
-                  styles.card,
-                  {
-                    backgroundColor: currentBgColor,
-                    borderColor: currentTextColor,
-                  },
-                ]}>
-                <View
-                  style={{
-                    position: 'absolute',
-                    top: getResHeight(1.4),
-                    right: getResWidth(2),
-                    zIndex: 9999,
-                  }}>
-                  <SmallMenuComp
-                    buttonLabel={openMenu => {
-                      return (
-                        <>
-                          <ButtonIconComp
-                            onPress={() => {
-                              if (sheetRef1 && sheetRef1.current) {
-                                sheetRef1.current.close();
-                              }
-                              openMenu();
-                            }}
-                            // disabled={(index + 1) % 2 !== 0}
-                            icon={
-                              <VectorIcon
-                                type={'Entypo'}
-                                name={'dots-three-vertical'}
-                                size={getFontSize(2.1)}
-                                color={currentTextColor}
-                              />
-                            }
-                            containerStyle={{
-                              width: getResHeight(5),
-                              height: getResHeight(5),
-                              // backgroundColor:
-                              //   (index + 1) % 2 !== 0
-                              //     ? theme.color.dimGray
-                              //     : currentBgColor,
-                              borderRadius: getResHeight(100),
-                            }}
-                          />
-                        </>
-                      );
-                    }}
-                    menuItems={filteredMenuItems}
-                    onMenuPress={menuIndex => {
-                      if (menuIndex == 0) {
-                        // sheetRef1.current.expand();
-                        const res = singleUserCardData(item);
-                        console.log('userData', res);
-                        setTimeout(() => {
-                          openBottomSheetWithContent(res);
-                        }, 500);
-                      }
-                      if (menuIndex == 2) {
-                        setShowAlert(true);
-                      }
-                    }}
-                  />
-                </View>
-                <View style={styles.cardContent}>
-                  <TouchableOpacity
-                    activeOpacity={0.8}
-                    onPress={() => {
-                      if (item.avatar !== '') {
-                        setViewImageUrl(item.avatar);
-                        setIsImageViewerModal(true);
-                      }
-                    }}
-                    style={styles.avatarContainer}>
-                    <Image source={{uri: item.avatar}} style={styles.avatar} />
-                  </TouchableOpacity>
-                  <View style={styles.userInfoContainer}>
-                    <Text
-                      style={[styles.userNameText, {color: currentTextColor}]}>
-                      {item.userBio['Full name']}
-                    </Text>
-                    <Text style={styles.branchText}>
-                      Branch name : {item.branchName}
-                    </Text>
-                    {['branch_admin', 'super_admin'].includes(item.role) && (
-                      <Text style={styles.branchText}>
-                        {`Designation: ${
-                          item.role == 'branch_admin'
-                            ? 'Branch admin'
-                            : item.role == 'super_admin'
-                            ? 'Super admin'
-                            : '_'
-                        }`}
-                      </Text>
-                    )}
-                  </View>
-                  <View style={styles.menuButtonContainer}>
-                    <SmallMenuComp
-                      buttonLabel={openMenu => (
-                        <ButtonIconComp
-                          onPress={() => openMenu()}
-                          icon={
-                            <VectorIcon
-                              type={'Entypo'}
-                              name={'dots-three-vertical'}
-                              size={getFontSize(2.1)}
-                              color={currentTextColor}
-                            />
-                          }
-                          containerStyle={styles.menuButton}
-                        />
-                      )}
-                      menuItems={menuItems}
-                      onMenuPress={menuIndex => {
-                        if (menuIndex === 0) {
-                          const res = singleUserCardData(item);
-                          setTimeout(() => {
-                            openBottomSheetWithContent(res);
-                          }, 500);
-                        }
-                        if (menuIndex === 2) {
-                          setShowAlert(true);
-                        }
-                      }}
-                    />
-                  </View>
-                </View>
-                <View style={styles.userBioContainer}>
-                  <UserBioComponent userBio={item.userBio} />
-                </View>
-              </View>
+              <UserCard
+                item={item}
+                isLoading={isLoading}
+                selectedCard={selectedCard}
+                currentBgColor={currentBgColor}
+                currentTextColor={currentTextColor}
+                setSelectedCard={setSelectedCard}
+                handleMunuData={handleMunuData}
+                MenuItemOnPressHandler={MenuItemOnPressHandler}
+                setViewImageUrl={setViewImageUrl}
+                setIsImageViewerModal={setIsImageViewerModal}
+                openBottomSheetWithContent={openBottomSheetWithContent}
+                setShowAlert={setShowAlert}
+                theme={theme}
+              />
             );
           }}
         />
@@ -508,119 +492,18 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
-  userCardContainer: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  scrollView: {
-    width: '100%',
-  },
-  profileContainer: {
-    marginTop: getResHeight(12),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  nameContainer: {
-    marginTop: '5%',
-  },
-  textInput: {
-    width: '100%',
-    borderWidth: 1,
-  },
+
   waveButtonContainer: {
     position: 'absolute',
     bottom: getResHeight(7),
     right: getResWidth(7),
   },
-  searchBarContainer: {
-    // marginTop: '3%',
-    // paddingHorizontal: '1%',
-  },
+  searchBarContainer: {},
   flatListContainer: {
     zIndex: -9999,
     paddingBottom: getResHeight(10),
     paddingHorizontal: '2%',
     paddingTop: '2%',
-  },
-  flatListContentContainer: {
-    paddingBottom: '20%',
-  },
-  card: {
-    width: getResWidth(90),
-    borderWidth: 1,
-    alignSelf: 'center',
-    borderRadius: getResHeight(2),
-    marginBottom: getResHeight(2),
-  },
-  cardContent: {
-    paddingVertical: getResHeight(2),
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-  },
-  avatarContainer: {
-    width: getResWidth(26),
-    paddingLeft: getResHeight(2),
-  },
-  avatar: {
-    height: getResHeight(10),
-    width: getResHeight(10),
-    borderRadius: getResHeight(100),
-    borderWidth: 2,
-    borderColor: theme.color.green,
-  },
-  userInfoContainer: {
-    width: getResWidth(48),
-    marginLeft: '5%',
-    flexWrap: 'wrap',
-  },
-  userNameText: {
-    maxWidth: '100%',
-    fontSize: getFontSize(2),
-    fontFamily: theme.font.semiBold,
-  },
-  branchText: {
-    width: '98%',
-    fontFamily: theme.font.semiBold,
-    fontSize: getFontSize(1.5),
-    // color: 'white',
-    color: theme.color.green,
-  },
-  menuButtonContainer: {
-    position: 'absolute',
-    top: getResHeight(1),
-    right: getResWidth(-10),
-    zIndex: 9999,
-  },
-  menuButton: {
-    width: getResHeight(5),
-    height: getResHeight(5),
-    borderRadius: getResHeight(100),
-  },
-  userBioContainer: {
-    borderTopWidth: 0.5,
-    borderColor: 'white',
-    width: '100%',
-    paddingTop: '5%',
-    flexDirection: 'row',
-    paddingHorizontal: getResWidth(2),
-    paddingVertical: getResHeight(2),
-  },
-
-  itemContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: getResWidth(2),
-    marginTop: getResHeight(1),
-  },
-  keyText: {
-    width: getResWidth(40),
-    fontFamily: theme.font.semiBold,
-    fontSize: getFontSize(1.5),
-  },
-  valueText: {
-    width: getResWidth(43),
-    fontFamily: theme.font.regular,
-    fontSize: getFontSize(1.5),
   },
 });
 

@@ -105,6 +105,7 @@ const formatUsersData = users => {
     avatar: user.avatar,
     branchName: user.branchName,
     role: user.role,
+    isBlocked: user.isBlocked,
     userBio: {
       'Full name': user.fullName,
       // 'Church branch': '-', // Replace hre with church name
@@ -117,9 +118,70 @@ const formatUsersData = users => {
   }));
 };
 
+const updateUserRolesAPIHander = createAsyncThunk(
+  APIEndpoint.admin.updateUserRoles,
+  async (payload, thunkAPI) => {
+    try {
+      const response = await apiService.postProtected(
+        APIEndpoint.admin.updateUserRoles,
+        payload,
+      );
+      if (response.status === 200) {
+        thunkAPI.dispatch(getAllMembersAPIHander());
+        thunkAPI.dispatch(getAllAdminsAPIHander());
+      }
+      return true;
+    } catch (error) {
+      console.log('updateUserRolesAPIHander_API_Faild', error.response);
+      return error.response.data;
+    }
+  },
+);
+const deleteUserAPIHander = createAsyncThunk(
+  APIEndpoint.admin.deleteUser,
+  async (payload, thunkAPI) => {
+    try {
+      const response = await apiService.postProtected(
+        APIEndpoint.admin.deleteUser,
+        payload,
+      );
+      if (response.status === 200) {
+        thunkAPI.dispatch(getAllMembersAPIHander());
+        thunkAPI.dispatch(getAllAdminsAPIHander());
+      }
+      return true;
+    } catch (error) {
+      console.log('updateUserRolesAPIHander_API_Faild', error.response);
+      return error.response.data;
+    }
+  },
+);
+const blockUserAPIHander = createAsyncThunk(
+  APIEndpoint.admin.blockMember,
+  async (payload, thunkAPI) => {
+    try {
+      const response = await apiService.postProtected(
+        APIEndpoint.admin.blockMember,
+        payload,
+      );
+      console.log('User_Blocked_response', response.data.message);
+      if (response.status === 200) {
+        thunkAPI.dispatch(getAllMembersAPIHander());
+        thunkAPI.dispatch(getAllAdminsAPIHander());
+      }
+      return response.data.message;
+    } catch (error) {
+      console.log('blockMemberAPIHander_API_Faild', error.response);
+      return error.response.data;
+    }
+  },
+);
 export {
   getAllMembersAPIHander,
   getNewApplicationAPIHander,
   updateApplicationStatusAPIHander,
   getAllAdminsAPIHander,
+  updateUserRolesAPIHander,
+  deleteUserAPIHander,
+  blockUserAPIHander,
 };

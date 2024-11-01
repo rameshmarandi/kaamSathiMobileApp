@@ -23,6 +23,7 @@ const loginAPIHander = createAsyncThunk(
         payload,
       );
 
+      console.log('Login_API_res', response);
       if (response.status === 200) {
         const responseData = response.data;
 

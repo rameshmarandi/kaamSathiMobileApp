@@ -14,6 +14,9 @@ const APIEndpoint = {
     getNewApplication: '/user/get-all-new-application',
     updateApplicationStatus: '/user/update-user-status',
     getAllBranchAdmins: '/user/get-all-branch-admin',
+    updateUserRoles: '/user/update-user-role',
+    deleteUser: '/user/delete-user',
+    blockMember: 'user/toggle-block-user',
   },
   // Add more modules as needed
 };

@@ -150,6 +150,7 @@ const LoginPage = props => {
                 placeholder="Enter email address"
                 ref={inputRefs.email}
                 keyboardType="email-address"
+                autoCapitalize="none"
                 value={values.email}
                 onChangeText={text =>
                   setFieldValue('email', handleEmailChange(text))
@@ -259,40 +260,44 @@ const LoginPage = props => {
                   OR
                 </Text>
               </View>
-              <LoginWithGoogle
-                currentTextColor={currentTextColor}
-                currentBgColor={currentBgColor}
-                btnTitle={'Singin with Google'}
-                onPress={async () => {
-                  try {
-                    await GoogleSignin.hasPlayServices();
-                    // const response = await GoogleOneTapSignIn.signIn();
-                    const response = await GoogleSignin.signIn();
-                    console.log('google_API_es', response);
-                    // if (isSuccessResponse(response)) {
-                    //   // setState({userInfo: response.data});
-                    // } else {
-                    //   // sign in was cancelled by user
-                    // }
-                  } catch (error) {
-                    console.log('Failed', error.code, error.message);
-                    // if (isErrorWithCode(error)) {
-                    //   switch (error.code) {
-                    //     case statusCodes.IN_PROGRESS:
-                    //       // operation (eg. sign in) already in progress
-                    //       break;
-                    //     case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-                    //       // Android only, play services not available or outdated
-                    //       break;
-                    //     default:
-                    //     // some other error happened
-                    //   }
-                    // } else {
-                    //   // an error that's not related to google sign in occurred
-                    // }
-                  }
-                }}
-              />
+
+              {Platform.OS == 'android' && (
+                <LoginWithGoogle
+                  currentTextColor={currentTextColor}
+                  currentBgColor={currentBgColor}
+                  btnTitle={'Singin with Google'}
+                  onPress={async () => {
+                    try {
+                      await GoogleSignin.hasPlayServices();
+                      // const response = await GoogleOneTapSignIn.signIn();
+                      const response = await GoogleSignin.signIn();
+                      console.log('google_API_es', response);
+                      // if (isSuccessResponse(response)) {
+                      //   // setState({userInfo: response.data});
+                      // } else {
+                      //   // sign in was cancelled by user
+                      // }
+                    } catch (error) {
+                      console.log('Failed', error.code, error.message);
+                      // if (isErrorWithCode(error)) {
+                      //   switch (error.code) {
+                      //     case statusCodes.IN_PROGRESS:
+                      //       // operation (eg. sign in) already in progress
+                      //       break;
+                      //     case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+                      //       // Android only, play services not available or outdated
+                      //       break;
+                      //     default:
+                      //     // some other error happened
+                      //   }
+                      // } else {
+                      //   // an error that's not related to google sign in occurred
+                      // }
+                    }
+                  }}
+                />
+              )}
+
               <View
                 style={[
                   styles.registerContainer,

@@ -64,9 +64,10 @@ const ConfirmAlert = ({
             style={{
               color: currentTextColor,
               fontFamily: theme.font.medium,
-              fontSize: getFontSize(2),
+              fontSize: getFontSize(1.8),
               textAlign: 'center',
               paddingHorizontal: '5%',
+              marginVertical: getResHeight(1),
             }}>
             {alertTitle ? alertTitle : 'Are you sure?'}
           </Text>
@@ -79,13 +80,23 @@ const ConfirmAlert = ({
             ]}>
             <TouchableOpacity
               activeOpacity={0.8}
-              style={styles.cancelButton}
+              style={[
+                styles.cancelButton,
+                {
+                  backgroundColor: currentTextColor,
+                },
+              ]}
               onPress={onCancel}>
               <Text style={styles.buttonText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.8}
-              style={styles.cancelButton}
+              style={[
+                styles.cancelButton,
+                {
+                  backgroundColor: currentTextColor,
+                },
+              ]}
               onPress={onConfirm}>
               <Text style={[styles.buttonText]}>OK</Text>
             </TouchableOpacity>
@@ -114,11 +125,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: '5%',
-    marginVertical: '5%',
+    marginBottom: '5%',
   },
   cancelButton: {
     width: '46%',
-    backgroundColor: '#ccc',
+
     paddingVertical: '3%',
     borderRadius: 5,
     alignItems: 'center',
