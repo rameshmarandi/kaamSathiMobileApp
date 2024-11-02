@@ -462,7 +462,7 @@ const Index = memo(props => {
               </>
             );
           }}
-          contentContainerStyle={styles.flatListContentContainer}
+          // contentContainerStyle={styles.flatListContentContaine}
           renderItem={({item, index}) => {
             return (
               <UserCard

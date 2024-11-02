@@ -35,6 +35,7 @@ publicAxiosInstance.interceptors.request.use(
 // Add request interceptor for the authenticated instance
 authAxiosInstance.interceptors.request.use(
   async config => {
+    console.log('suth_interce', config);
     const token = await getToken(); // Get the access token
     if (token) {
       config.headers.Authorization = `Bearer ${token}`; // Attach the token to the headers
@@ -48,6 +49,7 @@ authAxiosInstance.interceptors.request.use(
 authAxiosInstance.interceptors.response.use(
   response => response,
   async error => {
+    console.log('Intercepter_error', response, error);
     const originalRequest = error.config;
 
     // Check for 401 status (Unauthorized)
@@ -61,7 +63,7 @@ authAxiosInstance.interceptors.response.use(
         return authAxiosInstance(originalRequest); // Retry the original request
       }
     }
-
+    console.error('Request error:', error);
     return Promise.reject(error); // Reject if not able to refresh the token
   },
 );

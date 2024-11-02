@@ -181,6 +181,7 @@ const CommonButtonComp = memo(props => {
     rightIcon,
     leftIcon,
     isLoading,
+    loaderColor,
     buttonStyle,
     backgroundColor,
     titleStyle,
@@ -196,14 +197,17 @@ const CommonButtonComp = memo(props => {
       title={title}
       onPress={onPress}
       icon={icon}
+      loading={isLoading}
       titleStyle={[styles.btnTitleStyle, {color: currentBgColor}, titleStyle]}
-      disabledStyle={{backgroundColor: theme.color.disabledBtn}}
+      loadingProps={{color: loaderColor || currentBgColor}}
+      disabledStyle={{backgroundColor: theme.color.dimWhite}}
       disabledTitleStyle={[styles.btnTitleStyle, {color: '#cccccc'}]}
       containerStyle={[
         styles.btnContainerStyle,
         {borderRadius: 100},
         containerStyle,
       ]}
+      disabled={isLoading || disabled}
       buttonStyle={[
         {
           width: '100%',

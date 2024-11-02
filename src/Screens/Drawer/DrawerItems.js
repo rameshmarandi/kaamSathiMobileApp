@@ -277,6 +277,14 @@ const DrawerItems = ({navigation}) => {
         visible={isCofirmAlertVisible}
         alertTitle={'Are you sure you want to log out?'}
         onCancel={() => setIsCofirmAlertVisible(false)}
+        alertIcon={
+          <VectorIcon
+            type={'Feather'}
+            name={'log-out'}
+            size={getFontSize(3)}
+            color={currentBgColor}
+          />
+        }
         onConfirm={confirmBtnHandler}
       />
       <View

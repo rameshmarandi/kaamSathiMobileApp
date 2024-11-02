@@ -10,10 +10,13 @@ import {VectorIcon} from './VectorIcon';
 import {Linking} from 'react-native';
 import {AutoScrollBtnCom} from './AutoScrollBtnCom';
 
-const GoogleUIComp = () => {
-  const {isDarkMode, currentBgColor, isAdmin, currentTextColor} = useSelector(
-    state => state.user,
-  );
+const GoogleUIComp = props => {
+  const {onCreateBranch, allBranchList} = props;
+  const {
+    currentBgColor,
+
+    currentTextColor,
+  } = useSelector(state => state.user);
 
   // Center around India's geographical location
   const initialLatitude = 20.5937; // Center of India
@@ -30,28 +33,6 @@ const GoogleUIComp = () => {
 
   const mapRef = useRef(null); // Ref for the MapView
 
-  const coordinates = [
-    {id: '1', name: 'Ambegaon', latitude: 18.59179, longitude: 73.81964},
-    {
-      id: '2',
-      name: 'Pimple Gurav',
-      latitude: 18.5890345,
-      longitude: 73.7925924,
-    },
-    {id: '3', name: 'Beed', latitude: 18.989088, longitude: 75.760078},
-    {id: '4', name: 'Pune', latitude: 18.5204, longitude: 73.8567},
-    {id: '5', name: 'Mumbai', latitude: 19.076, longitude: 72.8777},
-    {id: '6', name: 'Ahmedabad', latitude: 23.0225, longitude: 72.5714},
-    {id: '7', name: 'Bangalore', latitude: 12.9716, longitude: 77.5946},
-    {id: '8', name: 'Kolkata', latitude: 22.5726, longitude: 88.3639},
-    {id: '9', name: 'Chennai', latitude: 13.0827, longitude: 80.2707},
-    {id: '10', name: 'Jaipur', latitude: 26.9124, longitude: 75.7873},
-    {id: '11', name: 'Hyderabad', latitude: 17.385, longitude: 78.4867},
-    {id: '12', name: 'Lucknow', latitude: 26.8467, longitude: 80.9462},
-    {id: '13', name: 'Bhopal', latitude: 23.2599, longitude: 77.4126},
-    {id: '14', name: 'Surat', latitude: 21.1702, longitude: 72.8311},
-    {id: '15', name: 'Nagpur', latitude: 21.1458, longitude: 79.0882},
-  ];
   const [selectedChurch, setSelectedChurch] = useState(null);
   const handleCardPress = useCallback(
     church => {
@@ -63,11 +44,12 @@ const GoogleUIComp = () => {
 
   // Animate to the selected church when a card is pressed
   useEffect(() => {
-    if (selectedChurch && mapRef.current) {
+    const selectedBranch = selectedChurch?.churchDetails || null;
+    if (selectedBranch && mapRef.current) {
       mapRef.current.animateToRegion(
         {
-          latitude: selectedChurch.latitude,
-          longitude: selectedChurch.longitude,
+          latitude: selectedBranch.latitude,
+          longitude: selectedBranch.longitude,
           latitudeDelta: 0.01, // Zoom level for a closer look
           longitudeDelta: 0.01,
         },
@@ -124,77 +106,72 @@ const GoogleUIComp = () => {
         showsCompass
         onRegionChangeComplete={setRegion} // Update region on changes
       >
-        {coordinates.map((coordinate, index) => (
-          <Marker
-            key={index}
-            coordinate={coordinate}
-            pinColor={theme.color.error}>
-            <MarkPopup
-              title={coordinate.name}
-              coordinate={coordinate}
-              description={
-                'Welcome! Join us this Sunday for a blessed service.'
-              }
-              currentBgColor={currentBgColor}
-              imageURL={
-                'https://images.template.net/wp-content/uploads/2017/01/20120247/Catholic-Church-Logo.jpg'
-              }
-              onPress={coordinate => {
-                const {latitude, longitude} = coordinate;
+        {allBranchList.map((coordinate, index) => {
+          return (
+            <Marker
+              key={index}
+              coordinate={coordinate.churchDetails}
+              pinColor={theme.color.error}>
+              <MarkPopup
+                title={coordinate.churchDetails['Branch name']}
+                coordinate={coordinate.churchDetails}
+                description={
+                  'Welcome! Join us this Sunday for a blessed service.'
+                }
+                currentBgColor={currentBgColor}
+                imageURL={
+                  'https://images.template.net/wp-content/uploads/2017/01/20120247/Catholic-Church-Logo.jpg'
+                }
+                onPress={coordinate => {
+                  const {latitude, longitude} = coordinate;
 
-                const url =
-                  Platform.OS === 'ios'
-                    ? `http://maps.apple.com/?ll=${latitude},${longitude}`
-                    : `geo:${latitude},${longitude}`;
-                Linking.openURL(url).catch(err =>
-                  console.error('Error opening map:', err),
-                );
+                  const url =
+                    Platform.OS === 'ios'
+                      ? `http://maps.apple.com/?ll=${latitude},${longitude}`
+                      : `geo:${latitude},${longitude}`;
+                  Linking.openURL(url).catch(err =>
+                    console.error('Error opening map:', err),
+                  );
+                }}
+              />
+            </Marker>
+          );
+        })}
+      </MapView>
+
+      {allBranchList.length > 0 && (
+        <>
+          <View>
+            <View
+              style={{
+                width: '100%',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginTop: getResHeight(3),
+                paddingHorizontal: '5%',
+                marginBottom: '2%',
+              }}>
+              <Text
+                style={{
+                  color: currentTextColor,
+                  fontFamily: theme.font.bold,
+                }}>
+                All church branch list
+              </Text>
+            </View>
+
+            <AutoScrollBtnCom
+              data={allBranchList}
+              selectedTab={selectedItem}
+              onPress={(item, index) => {
+                handleCardPress(item);
+                setSelectedItem(index);
               }}
             />
-          </Marker>
-        ))}
-      </MapView>
-      <View>
-        <View
-          style={{
-            width: '100%',
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginTop: getResHeight(3),
-            paddingHorizontal: '5%',
-            marginBottom: '2%',
-          }}>
-          <Text
-            style={{
-              color: currentTextColor,
-              fontFamily: theme.font.bold,
-            }}>
-            All church branch list
-          </Text>
-          {isAdmin && (
-            <>
-              <TouchableOpacity activeOpacity={0.8}>
-                <VectorIcon
-                  type={'Entypo'}
-                  name={'squared-plus'}
-                  size={getFontSize(3.5)}
-                  color={currentTextColor}
-                />
-              </TouchableOpacity>
-            </>
-          )}
-        </View>
-
-        <AutoScrollBtnCom
-          data={coordinates}
-          selectedTab={selectedItem}
-          onPress={(item, index) => {
-            handleCardPress(item);
-            setSelectedItem(index);
-          }}
-        />
-      </View>
+          </View>
+        </>
+      )}
     </>
   );
 };

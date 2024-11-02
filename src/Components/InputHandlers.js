@@ -13,7 +13,20 @@ export const handleNumberChange = text => {
   return text.replace(/[^0-9]/g, ''); // Remove everything except digits
 };
 
+export const numberWithDecimal = text => {
+  return text
+    .replace(/[^0-9.]/g, '') // Allow only digits and a decimal point
+    .replace(/(\..*)\./g, '$1'); // Ensure only one decimal point is allowed
+};
+
 // Function to handle email input
 export const handleEmailChange = text => {
   return text.replace(/^\s+/g, ''); // Remove leading spaces only
+};
+
+export const removeSpaces = text => {
+  return text
+    .replace(/[^a-zA-Z\s]/g, '') // Remove special characters, allowing only letters and spaces
+    .replace(/\s{2,}/g, ' ') // Replace multiple spaces with a single space
+    .replace(/^\s+/g, ''); // Remove leading spaces
 };

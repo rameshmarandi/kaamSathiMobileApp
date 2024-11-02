@@ -67,7 +67,8 @@ const WaveButton = React.memo(props => {
       />
       <TouchableOpacity
         style={circleStyle ? circleStyle : [styles.button]}
-        disabled={disabled}
+        activeOpacity={0.8}
+        disabled={disabled || false}
         onPress={props.onPress}>
         {circleStyle ? null : (
           <Icon name="plus" size={getFontSize(2.5)} color="#FFF" />

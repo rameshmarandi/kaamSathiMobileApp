@@ -26,6 +26,26 @@ export const AutoScrollBtnCom = memo(props => {
       });
     }
   }, [currentIndex, selectedTab, data]);
+  const getInitials = inputString => {
+    // Ensure inputString is a string and remove any extra spaces
+    const words = String(inputString || '')
+      .trim()
+      .split(' ');
+
+    // Check if there's only one word
+    if (words.length === 1) {
+      // Return the first two letters of the single word, in uppercase
+      return words[0].slice(0, 2).toUpperCase();
+    }
+
+    // For multiple words, get the initials of the first two words
+    const initials = words
+      .slice(0, 2)
+      .map(word => word.charAt(0).toUpperCase())
+      .join('');
+
+    return initials;
+  };
 
   // Handle button press and scroll to next item
   const handlePress = useCallback(
@@ -43,7 +63,7 @@ export const AutoScrollBtnCom = memo(props => {
   // Memoized renderItem function for FlatList
   const renderItem = useCallback(
     ({item, index}) => {
-      const {coverurl, name} = item;
+      // const {coverurl, name} = item;
       const isSelected = index == selectedTab;
 
       return (
@@ -70,6 +90,7 @@ export const AutoScrollBtnCom = memo(props => {
                     : theme.color.outlineColor,
                 },
               ]}>
+              {console.log('name_at_atm', item)}
               <Text
                 numberOfLines={3}
                 style={{
@@ -77,18 +98,18 @@ export const AutoScrollBtnCom = memo(props => {
                   fontFamily: isSelected ? theme.font.bold : theme.font.medium,
                   color: isSelected ? currentTextColor : theme.color.dimWhite,
                 }}>
-                {`${name[0]}${name[1]}`}
+                {getInitials(item.churchDetails['Branch name'])}
               </Text>
             </TouchableOpacity>
             <Text
               style={{
                 fontSize: getFontSize(1.6),
-                // marginTop: '2%',
+                marginTop: '2%',
                 textAlign: 'center',
                 fontFamily: isSelected ? theme.font.bold : theme.font.medium,
                 color: isSelected ? currentTextColor : theme.color.dimWhite,
               }}>
-              {name}
+              {item.churchDetails['Branch name']}
             </Text>
           </View>
         </View>
@@ -140,12 +161,11 @@ const styles = {
     backgroundColor: 'red',
     justifyContent: 'center',
     alignItems: 'center',
-    // margin: 10,
+
     borderRadius: getResHeight(100),
   },
 
   title: {
-    // marginTop: getResHeight(7),
     ...theme.styles.homeTitle,
   },
 };
