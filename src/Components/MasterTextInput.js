@@ -25,6 +25,7 @@ import {getFontSize, getResHeight} from '../utility/responsive';
 import {useSelector} from 'react-redux';
 import {Dropdown} from 'react-native-element-dropdown';
 import {VectorIcon} from './VectorIcon';
+import {dateFormatHander} from './commonHelper';
 
 const MasterTextInput = forwardRef(
   (
@@ -78,25 +79,51 @@ const MasterTextInput = forwardRef(
     }));
 
     // Handle the date selection and format the date as 'YYYY-MM-DD HH:mm'
+    // const handleConfirm = useCallback(
+    //   params => {
+    //     const selectedDate = new Date(params.date);
+    //     // Get the year, month, and date explicitly to avoid timezone issues
+    //     const year = selectedDate.getFullYear();
+    //     const month = selectedDate.getMonth() + 1; // Months are 0-based, so we add 1
+    //     const day = selectedDate.getDate();
+
+    //     console.log('Selected_dATes', selectedDate);
+    //     // Format the date as YYYY-MM-DD without any timezone or time adjustment
+    //     const formattedDate = `${year}-${month < 10 ? '0' : ''}${month}-${
+    //       day < 10 ? '0' : ''
+    //     }${day}`;
+
+    //     console.log('Selected Date:', formattedDate);
+    //     onChangeText(formattedDate); // Send the formatted date back to the parent or handle it
+    //   },
+    //   [onChangeText],
+    // );
+
     const handleConfirm = useCallback(
       params => {
         const selectedDate = new Date(params.date);
-        // Get the year, month, and date explicitly to avoid timezone issues
-        const year = selectedDate.getFullYear();
-        const month = selectedDate.getMonth() + 1; // Months are 0-based, so we add 1
-        const day = selectedDate.getDate();
 
-        // Format the date as YYYY-MM-DD without any timezone or time adjustment
-        const formattedDate = `${year}-${month < 10 ? '0' : ''}${month}-${
-          day < 10 ? '0' : ''
-        }${day}`;
+        // Get the UTC time and adjust it to Indian Standard Time (IST)
+        const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC+5:30 in milliseconds
+        const istDate = new Date(selectedDate.getTime() + istOffset);
 
-        console.log('Selected Date:', formattedDate);
-        onChangeText(formattedDate); // Send the formatted date back to the parent or handle it
+        // Get the year, month, and day explicitly for your needs
+        const year = istDate.getFullYear();
+        const month = istDate.getMonth() + 1; // Months are 0-based, so we add 1
+        const day = istDate.getDate();
 
-        // console.log('Selected_DAtes', params);
-        // const selectedDate = moment(params.date).format('YYYY-MM-DD HH:mm');
-        // onChangeText(selectedDate);
+        console.log('Selected Dates:', istDate);
+
+        // Return the date in ISO format (YYYY-MM-DDTHH:mm:ss.sssZ)
+        const isoFormattedDate = istDate.toISOString();
+
+        console.log('ISO Formatted Date in IST:', isoFormattedDate);
+
+        // If you need just the date part in 'YYYY-MM-DD', you can also extract it
+        // const dateOnly = isoFormattedDate.split('T')[0];
+
+        // You can send the dateOnly to onChangeText if you prefer that format
+        onChangeText(isoFormattedDate); // or send isoFormattedDate based on your requirements
       },
       [onChangeText],
     );
@@ -285,10 +312,14 @@ const MasterTextInput = forwardRef(
                   styles.dateInputText,
                   {
                     color: currentTextColor,
+                    marginLeft: '4%',
                   },
                 ]}>
-                {'    '}
-                {value ? value : placeholder}
+                {value
+                  ? timePicker
+                    ? dateFormatHander(value, 'DD MMM YYYY LT')
+                    : dateFormatHander(value, 'DD MMM YYYY')
+                  : placeholder}
               </Text>
             </TouchableOpacity>
             {renderDatePicker}
@@ -363,71 +394,6 @@ const MasterTextInput = forwardRef(
             }}
           />
         ) : (
-          // <Dropdown
-          //   data={dropdownData}
-          //   labelField="label"
-          //   valueField="value"
-          //   search={dropdownSearch}
-          //   placeholder={placeholder}
-          //   value={value}
-          //   onFocus={() => setIsFocus(true)}
-          //   onBlur={() => setIsFocus(false)}
-          //   onChange={onDropdownChange}
-          //   style={[
-          //     styles.dropdown,
-          //     {
-          //       borderColor: borderColor,
-          //       backgroundColor: currentBgColor,
-          //     },
-          //   ]}
-          //   selectedTextProps={{
-          //     color: 'red',
-          //   }}
-          //   activeColor={currentBgColor}
-          //   containerStyle={{
-          //     backgroundColor: currentBgColor,
-          //     borderBottomLeftRadius: 10,
-          //     borderBottomRightRadius: 10,
-          //     borderTopLeftRadius: 5,
-          //     borderTopRightRadius: 5,
-          //     marginTop: '-2%',
-          //     borderWidth: 1,
-          //     borderColor: currentTextColor,
-          //     overflow: 'hidden',
-          //   }}
-          //   itemTextStyle={{
-          //     color: currentTextColor,
-          //     fontFamily: theme.font.regular,
-          //     fontSize: getFontSize(1.8),
-          //     margin: 0,
-          //     padding: 0,
-          //   }}
-          //   itemContainerStyle={{
-          //     margin: 0,
-          //     padding: 0,
-          //   }}
-          //   placeholderStyle={{
-          //     color: currentTextColor,
-          //     fontFamily: theme.font.regular,
-          //     fontSize: getFontSize(1.9),
-          //   }}
-          //   renderRightIcon={() => (
-          //     <VectorIcon
-          //       type={'AntDesign'}
-          //       name={isFocus ? 'upcircle' : 'downcircle'}
-          //       size={getFontSize(2.1)}
-          //       color={currentTextColor}
-          //       style={{
-          //         zIndex: 1,
-          //       }}
-          //     />
-          //   )}
-          //   selectedTextStyle={{
-          //     color: currentTextColor,
-          //     fontFamily: theme.font.regular,
-          //     fontSize: getFontSize(1.9),
-          //   }}
-          // />
           <View style={styles.textInputWrapper}>
             <Animated.View style={[animatedStyle]}>
               <PaperTextInput
@@ -515,7 +481,7 @@ const MasterTextInput = forwardRef(
 // Styles for the MasterTextInput component
 const styles = StyleSheet.create({
   container: {
-    marginVertical: getResHeight(1),
+    marginBottom: getResHeight(1),
   },
   dateInputWrapper: {
     borderRadius: 4,

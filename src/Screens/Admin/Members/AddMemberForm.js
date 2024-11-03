@@ -10,6 +10,7 @@ import {
   Text,
   Modal,
   BackHandler,
+  Alert,
 } from 'react-native';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
@@ -19,7 +20,10 @@ import {useSelector} from 'react-redux';
 import CustomHeader from '../../../Components/CustomHeader';
 import MsgConfig from '../../../Config/MsgConfig';
 import MasterTextInput from '../../../Components/MasterTextInput';
-import {CommonButtonComp} from '../../../Components/commonComp';
+import {
+  CommonButtonComp,
+  CustomAlertModal,
+} from '../../../Components/commonComp';
 import {
   getFontSize,
   getResHeight,
@@ -44,9 +48,51 @@ import {
   PasswordCheckItem,
   usePasswordValidation,
 } from '../../../utility/PasswordUtils';
+import {store} from '../../../redux/store';
+import {
+  generateOTPAPIHander,
+  registerAPIHander,
+} from '../../../redux/reducer/Auth/AuthAPI';
+import ToastAlertComp from '../../../Components/ToastAlertComp';
+import OTPInput from '../../../Components/OTPInput';
+import {dateFormatHander} from '../../../Components/commonHelper';
+import FileUploadComponent from '../../../Components/FileUploadComponent';
+import {getBranchAPIHander} from '../../../redux/reducer/ChurchBranch/churchBranchAPI';
 
 const AddMemberForm = ({visible, closeModal, navigation}) => {
   const {currentTextColor, currentBgColor} = useSelector(state => state.user);
+  const {allChurchBranch} = useSelector(state => state.churchBranch);
+  // Local component states
+  const [step, setStep] = useState(1); // To track the current step in the form
+  const [isOTPFildVisible, setIsOTPFildVisible] = useState(false); // To show/hide the OTP field
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImage1, setSelectedImage1] = useState(null);
+  const [branchDropdown, setBranchDropdown] = useState([]);
+  const [selectedBranch, setSelectedBranch] = useState(null);
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
+  const [isAcceptBtnLoading, setIsAcceptBtnLoading] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+
+  const otpInputRef = useRef(null);
+  // References to input fields
+  const inputRefs = {
+    fullName: useRef(null),
+    email: useRef(null),
+    mobile: useRef(null),
+    birthDate: useRef(null),
+    baptismDate: useRef(null),
+    password: useRef(null),
+  };
+
+  // Reference for Formik
+  const formikRef = useRef(null);
+  const bottomSheetRef = useRef(null);
+  const scrollRef = useRef(null);
+
+  useEffect(() => {
+    churchBranchDropdown();
+  }, [visible]);
 
   const getValidationSchema = () => {
     switch (step) {
@@ -61,22 +107,118 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
     }
   };
 
-  const onAcceptButtonClick = () => {
-    formikRef.current.resetForm(); // Reset the form
-    setIsOTPFildVisible(false); // Hide OTP field
-    setStep(1); // Reset to step 1
+  const onAcceptButtonClick = async () => {
+    console.log('Accept_button_clicked_before', selectedBranch);
 
-    closeModal();
+    const {
+      baptismDate,
+      birthDate,
+      churchBranch,
+      cpassword,
+      email,
+      fullName,
+      gender,
+      isMarried,
+      marriageDate,
+      mobile,
+      otp,
+      password,
+    } = formikRef.current.values;
+
+    const finalPayload = {
+      email,
+      fullName,
+      mobile,
+      DOB: birthDate,
+      baptismDate,
+      marriageDate,
+      isMarried: isMarried === 'Yes' ? true : false,
+      gender,
+      avatar: selectedImage,
+      coverImage: '',
+      churchBranchID: selectedBranch?.branchId,
+      password,
+    };
+
+    console.log(
+      'finalPayload_for_regisration_After',
+      finalPayload,
+      selectedBranch,
+    );
+    setIsAcceptBtnLoading(true);
+
+    const res = await store.dispatch(registerAPIHander(finalPayload));
+
+    console.log('Register_API_REs_fronte', res);
+    if (res.payload == true) {
+      setSelectedImage('');
+      formikRef.current.resetForm(); // Reset the form
+      navigation.navigate('ApplicationUnderReview');
+      closeModal();
+      setAlertMessage({
+        status: 'success',
+
+        alertMsg: 'Registration Successful.',
+      });
+      setIsAlertVisible(true);
+      setIsAcceptBtnLoading(false);
+
+      setIsOTPFildVisible(false); // Hide OTP field
+      setStep(1); // Reset to step 1
+    } else {
+      setSelectedImage('');
+      formikRef.current.resetForm(); // Reset the form
+      setAlertMessage({
+        status: 'error',
+
+        alertMsg:
+          'Our service is not available right now. Please try again later.',
+      });
+
+      closeModal();
+
+      setIsAlertVisible(true);
+      setIsAcceptBtnLoading(false);
+      formikRef.current.resetForm(); // Reset the form
+      setIsOTPFildVisible(false); // Hide OTP field
+      setStep(1); // Reset to step 1
+    }
   };
 
-  const handleSubmit = values => {
-    console.log(values);
-
+  const handleSubmit = async values => {
     if (step === 3) {
       openBottomSheetWithContent();
       // Final submission
     } else if (step === 1 && !isOTPFildVisible) {
-      setIsOTPFildVisible(true); // Show OTP field
+      // setIsOTPFildVisible(true); // Show OTP field
+      setIsLoading(true);
+      const genOTPPayload = {
+        fullName: values.fullName,
+        email: values.email,
+      };
+      const res = await store.dispatch(generateOTPAPIHander(genOTPPayload));
+
+      if (res.payload.message) {
+        setAlertMessage({
+          status: 'success',
+
+          alertMsg: res.payload.message,
+        });
+
+        setIsOTPFildVisible(true);
+        setIsAlertVisible(true);
+        setIsLoading(false);
+      }
+
+      if (res.payload.error.message) {
+        setAlertMessage({
+          status: 'error',
+
+          alertMsg: res.payload.error.message,
+        });
+        setIsAlertVisible(true);
+        setIsLoading(false);
+      }
     } else {
       setStep(step + 1); // Move to the next step
       scrollRef.current?.scrollTo({y: 0, animated: true});
@@ -85,6 +227,7 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
 
   // Handle back navigation
   const handleBack = () => {
+    setIsOTPFildVisible(false);
     if (step > 1) {
       if (step === 1) {
         formikRef.current.resetForm(); // Reset form when returning to step 1
@@ -111,27 +254,38 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
     }, 1000);
   }, [closeModal]);
 
-  // Local component states
-  const [step, setStep] = useState(1); // To track the current step in the form
-  const [isOTPFildVisible, setIsOTPFildVisible] = useState(false); // To show/hide the OTP field
-
-  // References to input fields
-  const inputRefs = {
-    name: useRef(null),
-    email: useRef(null),
-    mobile: useRef(null),
-    birthDate: useRef(null),
-    baptismDate: useRef(null),
-    password: useRef(null),
-  };
-
-  // Reference for Formik
-  const formikRef = useRef(null);
-  const bottomSheetRef = useRef(null);
-  const scrollRef = useRef(null);
-
   const openBottomSheetWithContent = content => {
     bottomSheetRef.current?.open();
+  };
+  const handleImageSuccess = useCallback(imageData => {
+    console.log('Image_selected', imageData);
+    setSelectedImage(imageData);
+  }, []);
+  const handleImageSuccess1 = useCallback(imageData => {
+    setSelectedImage1(imageData.uri);
+  }, []);
+
+  // Handle image error
+  const handleImageError = useCallback(
+    errorMessage => {
+      // closeBottomSheetWithContent();
+      ToastAlertComp('error', 'Failed', errorMessage);
+    },
+    [],
+    // [closeBottomSheetWithContent],
+  );
+  const churchBranchDropdown = () => {
+    if (allChurchBranch.length == 0) {
+      store.dispatch(getBranchAPIHander());
+    } else {
+      const dropdownData = allChurchBranch.map(item => ({
+        branchId: item.id,
+        label: item.churchDetails['Branch name'],
+        value: item.churchDetails['Branch name'],
+      }));
+
+      setBranchDropdown(dropdownData);
+    }
   };
   const renderStep = (
     values,
@@ -144,6 +298,8 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
     const passwordValidations = usePasswordValidation(values.password); // Hook for validation
 
     const isFieldValid = field => touched[field] && !errors[field];
+    const minDate = new Date();
+    minDate.setFullYear(minDate.getFullYear() - 100);
 
     switch (step) {
       case 1:
@@ -152,15 +308,18 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
             <MasterTextInput
               label="Full name"
               placeholder="Enter full name"
-              ref={inputRefs.name}
-              value={values.name}
+              ref={inputRefs.fullName}
+              value={values.fullName}
               onChangeText={text =>
-                formikRef.current.setFieldValue('name', handleTextChange(text))
+                formikRef.current.setFieldValue(
+                  'fullName',
+                  handleTextChange(text),
+                )
               }
-              onBlur={handleBlur('name')}
+              onBlur={handleBlur('fullName')}
               onSubmitEditing={() => inputRefs.email.current.focus()}
-              error={touched.name && errors.name}
-              isValid={isFieldValid('name')}
+              error={touched.fullName && errors.fullName}
+              isValid={isFieldValid('fullName')}
               left={
                 <TextInput.Icon
                   icon="account"
@@ -221,43 +380,62 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
             />
 
             {isOTPFildVisible && (
-              <MasterTextInput
-                label="OTP"
-                placeholder="Enter email OTP"
-                ref={inputRefs.otp}
-                keyboardType="numeric"
-                value={values.otp}
-                maxLength={4}
-                onChangeText={text =>
-                  formikRef.current.setFieldValue(
-                    'otp',
-                    handleNumberChange(text),
-                  )
-                }
-                onBlur={handleBlur('otp')}
-                onSubmitEditing={() => setStep(2)} // Move to next step on enter
-                left={
-                  <TextInput.Icon
-                    icon="lock"
-                    color={currentTextColor}
-                    size={getFontSize(3)}
-                  />
-                }
+              <OTPInput
+                ref={otpInputRef}
+                // label="Enter OTP"
+                length={5}
+                onComplete={handleOtpComplete}
+                // otpText="0"
               />
+              // <MasterTextInput
+              //   label="OTP"
+              //   placeholder="Enter email OTP"
+              //   ref={inputRefs.otp}
+              //   keyboardType="numeric"
+              //   value={values.otp}
+              //   maxLength={4}
+              //   onChangeText={text =>
+              //     formikRef.current.setFieldValue(
+              //       'otp',
+              //       handleNumberChange(text),
+              //     )
+              //   }
+              //   onBlur={handleBlur('otp')}
+              //   onSubmitEditing={() => setStep(2)} // Move to next step on enter
+              //   left={
+              //     <TextInput.Icon
+              //       icon="lock"
+              //       color={currentTextColor}
+              //       size={getFontSize(3)}
+              //     />
+              //   }
+              // />
             )}
           </>
         );
       case 2:
         return (
           <>
+            <FileUploadComponent
+              selectedImage={selectedImage?.uri || ''}
+              onImageSuccess={handleImageSuccess}
+              labelText="Upload profile photo"
+              onImageError={handleImageError}
+              customHeight={getResHeight(21)}
+            />
             <MasterTextInput
               label="Date of birth"
               placeholder="Date of birth "
+              topLableName={'Date of Birth'}
               isDate={true}
               // timePicker={true}
               ref={inputRefs.birthDate}
               value={values.birthDate}
-              onChangeText={handleChange('birthDate')}
+              maxDate={new Date()}
+              minDate={minDate}
+              onChangeText={txt => {
+                formikRef.current.setFieldValue('birthDate', txt);
+              }}
               onBlur={handleBlur('birthDate')}
               onSubmitEditing={() => inputRefs.baptismDate.current.focus()}
               error={touched.birthDate && errors.birthDate}
@@ -265,50 +443,78 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
             <MasterTextInput
               label="Date of baptism"
               placeholder="Date of baptism"
+              topLableName={'Date of Baptism'}
               isDate={true}
-              // timePicker={true}
               ref={inputRefs.baptismDate}
               value={values.baptismDate}
-              // value={dateFormatHander(values.baptismDate, 'DD/MM/YYYY') }
-              onChangeText={handleChange('baptismDate')}
+              onChangeText={txt => {
+                formikRef.current.setFieldValue('baptismDate', txt);
+              }}
               onBlur={handleBlur('baptismDate')}
               onSubmitEditing={() => setStep(3)} // Move to next step on enter
               error={touched.baptismDate && errors.baptismDate}
             />
+            <MasterTextInput
+              topLableName={'Are you married ?'}
+              isDropdown={true}
+              dropdownData={[
+                {label: 'Yes', value: 'Yes'},
+                {label: 'No', value: 'No'},
+              ]}
+              value={values.isMarried}
+              onDropdownChange={item => {
+                formikRef.current.setFieldValue('isMarried', item.value);
+              }}
+              onBlur={handleBlur('isMarried')}
+            />
 
+            {values.isMarried == 'Yes' && (
+              <MasterTextInput
+                topLableName={'Date of marraige'}
+                isDate={true}
+                // timePicker={true}
+                ref={inputRefs.marriageDate}
+                value={values.marriageDate}
+                onChangeText={txt => {
+                  formikRef.current.setFieldValue('marriageDate', txt);
+                }}
+                onBlur={handleBlur('marriageDate')}
+                onSubmitEditing={() => setStep(3)} // Move to next step on enter
+                error={touched.marriageDate && errors.marriageDate}
+              />
+            )}
             <MasterTextInput
               label="Gender"
               placeholder="Select gender"
+              topLableName={'Gender'}
               isDropdown={true}
               dropdownData={[
                 {label: 'Male', value: 'male'},
                 {label: 'Female', value: 'female'},
               ]}
-              // value={'Female'}
               value={values.gender}
-              onDropdownChange={() => {
-                setTimeout(() => {
-                  handleChange('gender');
-                }, 100);
+              // onDropdownChange={() => {
+              //   setTimeout(() => {
+              //     handleChange('gender');
+              //   }, 100);
+              // }}
+
+              onDropdownChange={item => {
+                formikRef.current.setFieldValue('gender', item.value);
               }}
               onBlur={handleBlur('gender')}
               error={touched.gender && errors.gender}
             />
+
+            {console.log('Branch_list', branchDropdown)}
             <MasterTextInput
-              label="Church branch"
-              placeholder="Select church branch"
+              topLableName={'Select church branch'}
               isDropdown={true}
-              dropdownData={[
-                {label: 'Ambegano', value: 'ambegano'},
-                {label: 'Pimple guruv', value: 'pimpleguruv'},
-                {label: 'Beed', value: 'beed'},
-              ]}
-              // value={'Female'}
+              dropdownData={branchDropdown}
               value={values.churchBranch}
-              onDropdownChange={() => {
-                setTimeout(() => {
-                  handleChange('churchBranch');
-                }, 100);
+              onDropdownChange={item => {
+                setSelectedBranch(item);
+                formikRef.current.setFieldValue('churchBranch', item.value);
               }}
               onBlur={handleBlur('churchBranch')}
               error={touched.churchBranch && errors.churchBranch}
@@ -379,13 +585,38 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
         return null;
     }
   };
+  const handleOtpComplete = ({otp, isConfirmed}) => {
+    console.log('Is_confirmed:', otp);
+    if (isConfirmed) {
+      // if (isVerifyMPINVisible) {
+      //   verifyMPINApiHandler(otp);
+      // }
+      // if (isSetMPINVisible) {
+      //   // setMPINApiHandler(otp);
+      // }
+      console.log('OTP confirmed successfully:', otp);
+      // Handle the successful OTP confirmation here
+    } else {
+      console.log('OTP does not match:', otp);
+      // Handle the failed OTP confirmation here
+    }
+  };
 
+  const handleClose = () => {
+    setIsAlertVisible(false);
+  };
   return (
     <SafeAreaView
       style={{
         flex: 1,
         backgroundColor: currentBgColor,
       }}>
+      <CustomAlertModal
+        visible={isAlertVisible}
+        message={alertMessage}
+        duration={3000} // duration in milliseconds
+        onClose={handleClose}
+      />
       <Modal
         visible={visible}
         transparent={true}
@@ -413,9 +644,11 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
           <Formik
             innerRef={formikRef}
             initialValues={{
-              name: '',
+              fullName: '',
               email: '',
               mobile: '',
+              isMarried: 'No',
+              marriageDate: '',
               birthDate: '',
               baptismDate: '',
               password: '',
@@ -442,6 +675,7 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
                   style={{
                     width: '90%',
                     alignSelf: 'center',
+                    paddingBottom: '15%',
                   }}
                   showsVerticalScrollIndicator={false}>
                   {renderStep(
@@ -456,7 +690,12 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
                 <CustomBottomSheet
                   ref={bottomSheetRef}
                   modalHeight={getResHeight(86)}>
-                  {<PrivacyPolicy onAccept={onAcceptButtonClick} />}
+                  {
+                    <PrivacyPolicy
+                      isLoading={isAcceptBtnLoading}
+                      onAccept={onAcceptButtonClick}
+                    />
+                  }
                 </CustomBottomSheet>
 
                 <View
@@ -487,6 +726,7 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
                   }}>
                   <CommonButtonComp
                     title={step === 3 ? 'Submit' : 'Next'}
+                    isLoading={isLoading}
                     onPress={handleSubmit}
                   />
                 </View>

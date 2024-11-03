@@ -61,14 +61,19 @@ const ConfirmAlert = ({
           )}
 
           <Text
-            style={{
-              color: currentTextColor,
-              fontFamily: theme.font.medium,
-              fontSize: getFontSize(1.8),
-              textAlign: 'center',
-              paddingHorizontal: '5%',
-              marginVertical: getResHeight(1),
-            }}>
+            style={[
+              {
+                color: currentTextColor,
+                fontFamily: theme.font.medium,
+                fontSize: getFontSize(1.8),
+                textAlign: 'center',
+                paddingHorizontal: '5%',
+                marginVertical: getResHeight(1),
+              },
+              // alertIcon && {
+              //   marginTop: getResHeight(-2),
+              // },
+            ]}>
             {alertTitle ? alertTitle : 'Are you sure?'}
           </Text>
           <View

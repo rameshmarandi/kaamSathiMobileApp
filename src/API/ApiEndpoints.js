@@ -7,6 +7,7 @@ const APIEndpoint = {
     forgotPassword: '/user/forgot-password',
     logout: '/user/logout',
     login: '/user/login',
+    register: '/user/register',
   },
 
   admin: {

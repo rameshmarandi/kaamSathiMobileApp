@@ -63,8 +63,8 @@ const ChurchMap = React.memo(props => {
     }, 3000);
   }, []);
 
-  const apiCalling = () => {
-    store.dispatch(getBranchAPIHander());
+  const apiCalling = async () => {
+    await store.dispatch(getBranchAPIHander());
   };
 
   const {allChurchBranch} = useSelector(state => state.churchBranch);

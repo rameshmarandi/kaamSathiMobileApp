@@ -197,7 +197,7 @@ const index = memo(props => {
             routes={routes}
             scenes={scenes}
             indicatorStyle={{
-              backgroundColor: 'red',
+              backgroundColor: currentBgColor,
             }}
             tabBarContainerStyle={{
               backgroundColor: currentBgColor,

@@ -148,6 +148,15 @@ export default function DrawerStack(props) {
           }}
         />
         <Drawer.Screen
+          name="ApplicationUnderReview"
+          component={AllScreens.ApplicationUnderReview}
+          options={{
+            headerShadowVisible: false,
+            headerShown: false,
+          }}
+        />
+
+        <Drawer.Screen
           name="ForgotPassword"
           component={AllScreens.ForgotPassword}
           options={{

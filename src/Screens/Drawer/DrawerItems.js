@@ -163,23 +163,23 @@ const DrawerItems = ({navigation}) => {
         />
       ),
     },
-    {
-      id: 8,
-      lable: MsgConfig.darkmode,
-      // route: 'HomePage',
-      from: 'darkMode',
-      route: '',
+    // {
+    //   id: 8,
+    //   lable: MsgConfig.darkmode,
+    //   // route: 'HomePage',
+    //   from: 'darkMode',
+    //   route: '',
 
-      icon: (
-        <VectorIcon
-          type={'MaterialCommunityIcons'}
-          name={isDarkMode ? 'lightbulb-on' : 'lightbulb-on-outline'}
-          // size={iconFontSize}
-          size={getFontSize(3.3)}
-          color={currentTextColor}
-        />
-      ),
-    },
+    //   icon: (
+    //     <VectorIcon
+    //       type={'MaterialCommunityIcons'}
+    //       name={isDarkMode ? 'lightbulb-on' : 'lightbulb-on-outline'}
+    //       // size={iconFontSize}
+    //       size={getFontSize(3.3)}
+    //       color={currentTextColor}
+    //     />
+    //   ),
+    // },
   ];
 
   const handleDarkMode = async () => {
@@ -258,9 +258,9 @@ const DrawerItems = ({navigation}) => {
             ]}
             letfIcon
           />
-          {item.from == 'darkMode' && (
+          {/* {item.from == 'darkMode' && (
             <CustomSwitch value={isDarkMode} onValueChange={handleDarkMode} />
-          )}
+          )} */}
         </View>
       </>
     );
@@ -275,14 +275,14 @@ const DrawerItems = ({navigation}) => {
       style={[styles.drawerContainer, {backgroundColor: currentBgColor}]}>
       <ConfirmAlert
         visible={isCofirmAlertVisible}
-        alertTitle={'Are you sure you want to log out?'}
+        alertTitle={'Are you sure you want to log out ?'}
         onCancel={() => setIsCofirmAlertVisible(false)}
         alertIcon={
           <VectorIcon
-            type={'Feather'}
+            type={'Entypo'}
             name={'log-out'}
-            size={getFontSize(3)}
-            color={currentBgColor}
+            size={getFontSize(4)}
+            color={theme.color.error}
           />
         }
         onConfirm={confirmBtnHandler}
@@ -374,14 +374,11 @@ const DrawerItems = ({navigation}) => {
             navigation.closeDrawer();
           }}
           iconLeft
-          // loading = {true}
           icon={
             <VectorIcon
-              // type={'AntDesign'}
               type={isUserValid ? 'Feather' : 'FontAwesome'}
-              // name={'logout'}
               name={isUserValid ? 'log-out' : 'lock'}
-              size={isUserValid ? getFontSize(3) : getFontSize(2)}
+              size={isUserValid ? getFontSize(3) : getFontSize(2.5)}
               color={currentBgColor}
             />
           }

@@ -1,5 +1,4 @@
 import {createSlice} from '@reduxjs/toolkit';
-import theme from '../../../utility/theme';
 
 const initialState = {
   allChurchBranch: [],

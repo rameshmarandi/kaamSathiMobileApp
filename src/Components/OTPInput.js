@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   input: {
-    width: getResHeight(7.4),
+    width: getResHeight(7.9),
     height: getResHeight(7),
     borderColor: '#ccc',
     borderWidth: 2,
@@ -272,7 +272,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 18,
     color: 'black',
-    // color:"red"
   },
   activeInput: {
     borderColor: theme.color.UOTM_primary,

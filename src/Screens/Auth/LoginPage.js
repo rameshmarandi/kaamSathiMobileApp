@@ -41,6 +41,8 @@ import ToastAlertComp from '../../Components/ToastAlertComp';
 import {checkIsAdmin} from '../../Helpers/CommonHelpers';
 import {loginValidationSchema} from '../../utility/theme/validation';
 import {useFocusEffect} from '@react-navigation/native';
+import {getBranchAPIHander} from '../../redux/reducer/ChurchBranch/churchBranchAPI';
+import {CustomAlertModal} from '../../Components/commonComp';
 
 const LoginPage = props => {
   const {navigation} = props;
@@ -48,6 +50,9 @@ const LoginPage = props => {
     state => state.user,
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+
   const [addNewMemberModalVisible, setAddNewMemberModalVisible] =
     useState(false);
   const inputRefs = {
@@ -55,6 +60,9 @@ const LoginPage = props => {
     password: useRef(null),
   };
 
+  const handleClose = () => {
+    setIsAlertVisible(false);
+  };
   return (
     <SafeAreaView style={[styles.container, {backgroundColor: currentBgColor}]}>
       <View>
@@ -65,7 +73,14 @@ const LoginPage = props => {
           }}
           navigation={navigation}
         />
+        <CustomAlertModal
+          visible={isAlertVisible}
+          message={alertMessage}
+          duration={4000} // duration in milliseconds
+          onClose={handleClose}
+        />
       </View>
+
       <View style={styles.header}>
         <Text style={[styles.greetingText, {color: currentTextColor}]}>
           Hey there,
@@ -99,21 +114,41 @@ const LoginPage = props => {
               } else {
                 navigation.navigate('Home');
               }
-              ToastAlertComp('success', `Login successfully`);
+              // ToastAlertComp('success', `Login successfully`);
+              // setAlertMessage({
+              //   status: 'success',
+
+              //   alertMsg: `Logged in successfully.`,
+              // });
+              // setIsAlertVisible(true);
+              setAlertMessage('');
               resetForm();
             }
             if (apiRes.payload.error) {
-              ToastAlertComp(
-                'error',
+              setAlertMessage({
+                status: 'error',
 
-                `${apiRes.payload.error.message}`,
-              );
+                alertMsg: `${apiRes.payload.error.message}`,
+              });
+              setIsAlertVisible(true);
+              // ToastAlertComp(
+              //   'error',
+
+              //   `${apiRes.payload.error.message}`,
+              // );
             }
           } catch (error) {
-            ToastAlertComp(
-              'error',
-              `We are facing some technical issue, please try again later`,
-            );
+            // ToastAlertComp(
+            //   'error',
+            //   `We are facing some technical issue, please try again later`,
+            // );
+
+            setAlertMessage({
+              status: 'error',
+
+              alertMsg: `We are facing some technical issue, please try again later`,
+            });
+            setIsAlertVisible(true);
             console.error('login_api_error', error);
             setIsLoading(false);
           } finally {
@@ -313,7 +348,10 @@ const LoginPage = props => {
                   }}>
                   Don’t have an account yet? {/* <TouchableOpacity> */}
                   <Text
-                    onPress={() => setAddNewMemberModalVisible(true)}
+                    onPress={async () => {
+                      setAddNewMemberModalVisible(true);
+                      await store.dispatch(getBranchAPIHander());
+                    }}
                     style={[
                       styles.registerText,
                       {

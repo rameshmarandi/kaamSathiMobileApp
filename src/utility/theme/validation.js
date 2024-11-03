@@ -2,7 +2,7 @@
 import * as Yup from 'yup';
 
 export const stepOneSchema = Yup.object().shape({
-  name: Yup.string().required('Full name is required'),
+  fullName: Yup.string().required('Full name is required'),
   email: Yup.string().email('Invalid email').required('Email is required'),
   mobile: Yup.string()
     .required('Mobile number is required')

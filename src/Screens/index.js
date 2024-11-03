@@ -24,7 +24,9 @@ import AllPrayerReq from './Admin/PrayerModule/AllPrayerReq';
 import AdminOurBelieve from './Admin/AdminOurBelieve';
 import UploadBanner from './Admin/Posts/UploadBanner';
 import LoginPage from './Auth/LoginPage';
+
 import ForgotPassword from './Auth/ForgotPassword';
+import ApplicationUnderReview from './Auth/ApplicationUnderReview';
 
 const UserAllScreens = {
   HomePage,
@@ -51,6 +53,7 @@ const AdminScreens = {
   UploadBanner,
   ForgotPassword,
   LoginPage,
+  ApplicationUnderReview,
 };
 
 export default AllScreens = {

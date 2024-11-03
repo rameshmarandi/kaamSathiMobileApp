@@ -50,12 +50,12 @@ const index = memo(props => {
   const [viewImageUrl, setViewImageUrl] = useState('');
   let bioData = [
     {
-      // 'Full Name': `${fullName || ''}`,
       Email: `${email || ''}`,
       Phone: `${mobile || ''}`,
-      'Date of Birth': `${DateFormator(DOB, 'DD MMM YYYY') || ''}`,
-      'Date of Baptism': `${DateFormator(baptismDate, 'DD MMM YYYY') || ''}`,
-      'Date of Marriage': `${DateFormator(marriageDate, 'DD MMM YYYY') || '_'}`,
+      'Date of birth': `${DateFormator(DOB, 'DD MMM YYYY') || ''}`,
+      'Date of baptism': `${DateFormator(baptismDate, 'DD MMM YYYY') || ''}`,
+      'Date of marriage': `${DateFormator(marriageDate, 'DD MMM YYYY') || '_'}`,
+      'Church branch': `${loginUser?.user?.branchName || ''}`,
     },
   ];
   const images = [

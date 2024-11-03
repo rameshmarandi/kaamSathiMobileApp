@@ -6,6 +6,7 @@ import {getFontSize, getResHeight, getResWidth} from '../utility/responsive';
 import {useSelector} from 'react-redux';
 import theme from '../utility/theme';
 import LottieView from 'lottie-react-native';
+import {requestGalleryPermission} from '../utility/PermissionContoller';
 
 // Memoized component to prevent unnecessary re-renders
 const FileUploadComponent = memo(
@@ -30,12 +31,24 @@ const FileUploadComponent = memo(
     // Handle Image Selection
     const handleImagePicker = useCallback(
       mediaType => {
-        ImagePickerComp(
-          'gallery',
-          {mediaType: 'photo', quality: 0.8},
-          onImageSuccess,
-          onImageError,
-        );
+        requestGalleryPermission().then(result => {
+          console.log('Gallary_Permisson', result);
+          if (result) {
+            ImagePickerComp(
+              'gallery',
+              {
+                mediaType: 'photo',
+                quality: 0.8,
+
+                // includeBase64: true,
+              },
+              onImageSuccess,
+              onImageError,
+            );
+          } else {
+            console.log('Permission denied');
+          }
+        });
       },
       [onImageSuccess, onImageError],
     );

@@ -501,7 +501,7 @@ const styles = StyleSheet.create({
   searchBarContainer: {},
   flatListContainer: {
     zIndex: -9999,
-    paddingBottom: getResHeight(10),
+    paddingBottom: getResHeight(20),
     paddingHorizontal: '2%',
     paddingTop: '2%',
   },

@@ -52,6 +52,7 @@ const getBranchAPIHander = createAsyncThunk(
         APIEndpoint.chruchBranch.getAllBranches,
       );
 
+      console.log('getBranch_API_RES', response.data);
       if (response.data.statusCode == 200) {
         const afterFormatMembersData = formatUsersData(response.data.data);
         store.dispatch(setAllChurchBranch(afterFormatMembersData.reverse()));

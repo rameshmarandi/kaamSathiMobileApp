@@ -360,16 +360,26 @@ const Approval = memo(props => {
             : 'Are you sure you want to accept this application?'
         }
         alertIcon={
-          <Image
-            source={
-              clickedBtn == 1 ? theme.assets.closeIcon : theme.assets.acceptIcon
+          <VectorIcon
+            type={'Ionicons'}
+            name={
+              clickedBtn == 1
+                ? 'close-circle-outline'
+                : 'checkmark-circle-outline'
             }
-            resizeMode="cover"
-            style={{
-              height: clickedBtn == 1 ? getResHeight(12) : getResHeight(8),
-              width: clickedBtn == 1 ? getResHeight(12) : getResHeight(8),
-            }}
+            size={getFontSize(7)}
+            color={clickedBtn == 1 ? theme.color.error : theme.color.green}
           />
+          // <Image
+          //   source={
+          //     clickedBtn == 1 ? theme.assets.closeIcon : theme.assets.acceptIcon
+          //   }
+          //   resizeMode="cover"
+          //   style={{
+          //     height: clickedBtn == 1 ? getResHeight(10) : getResHeight(8),
+          //     width: clickedBtn == 1 ? getResHeight(10) : getResHeight(8),
+          //   }}
+          // />
         }
         onConfirm={() => {
           setShowAlert(false);

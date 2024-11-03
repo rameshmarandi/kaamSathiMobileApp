@@ -10,8 +10,9 @@ import {
 import {useSelector} from 'react-redux';
 import theme from '../../../utility/theme';
 import {getFontSize} from '../../../utility/responsive';
+import {ActivityIndicator} from 'react-native';
 
-const PrivacyPolicy = memo(({onAccept, onSkip}) => {
+const PrivacyPolicy = memo(({onAccept, onSkip, isLoading}) => {
   // Get values from Redux state
   const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
@@ -105,21 +106,32 @@ const PrivacyPolicy = memo(({onAccept, onSkip}) => {
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             onPress={onAccept}
+            activeOpacity={0.8}
+            disabled={isLoading}
             style={[
               styles.buttonAccept,
               {
                 backgroundColor: currentTextColor,
               },
             ]}>
-            <Text
-              style={[
-                styles.buttonText,
-                {
-                  color: currentBgColor,
-                },
-              ]}>
-              Accept
-            </Text>
+            {isLoading ? (
+              <>
+                <ActivityIndicator
+                  size={getFontSize(3)}
+                  color={currentBgColor}
+                />
+              </>
+            ) : (
+              <Text
+                style={[
+                  styles.buttonText,
+                  {
+                    color: currentBgColor,
+                  },
+                ]}>
+                Accept
+              </Text>
+            )}
           </TouchableOpacity>
         </View>
       </ScrollView>

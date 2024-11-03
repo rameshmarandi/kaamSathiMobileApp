@@ -7,13 +7,46 @@ import {setAdmin, setLoginUser} from '.';
 import {store} from '../../store';
 import {checkIsAdmin} from '../../../Helpers/CommonHelpers';
 
-const registerAPIHander = createAsyncThunk('', async (payload, thunkAPI) => {
-  try {
-    // const response = await API.portfolioRepository.getportfolioPreview(payload);
-  } catch (error) {
-    console.log('Something went wrong!');
-  }
-});
+const registerAPIHander = createAsyncThunk(
+  APIEndpoint.user.register,
+  async (payload, thunkAPI) => {
+    try {
+      const formData = new FormData();
+
+      // Loop through the payload
+      for (const key in payload) {
+        if (payload[key] !== undefined) {
+          // Check if the field is an image, like avatar or coverImage
+          if ((key === 'avatar' || key === 'coverImage') && payload[key]?.uri) {
+            formData.append(key, {
+              uri: payload[key].uri.startsWith('file://')
+                ? payload[key].uri
+                : `file://${payload[key].uri}`, // Ensure URI has correct format
+              name: payload[key].fileName || 'image.jpg', // Provide default name if not set
+              type: payload[key].type || 'image/jpeg', // Default MIME type if not set
+            });
+          } else {
+            formData.append(key, payload[key]);
+          }
+        }
+      }
+
+      const response = await apiService.postPublicFormData(
+        APIEndpoint.user.register,
+        formData,
+      );
+
+      // Handle response
+      console.log('registerAPIHandler_API_res', response.data);
+      if (response.data.statusCode === 200) {
+        return true; // Successfully registered
+      }
+    } catch (error) {
+      console.log('register_API_Failed', error.response?.data || error.message);
+      return error.response.data;
+    }
+  },
+);
 const loginAPIHander = createAsyncThunk(
   APIEndpoint.user.login,
   async (payload, thunkAPI) => {
@@ -94,7 +127,26 @@ const forgotPasswordAPIHander = createAsyncThunk(
     }
   },
 );
+const generateOTPAPIHander = createAsyncThunk(
+  APIEndpoint.user.generateOtp,
+  async (payload, thunkAPI) => {
+    try {
+      console.log('LOgu_API_callined___', payload);
+      const response = await apiService.postPublic(
+        APIEndpoint.user.generateOtp,
+        payload,
+      );
+      console.log('generateOTP_API_RES', response);
 
+      if (response.data.statusCode == 200) {
+        return response.data;
+      }
+    } catch (error) {
+      console.log('OTP_gen_API_failed', error.response);
+      return error.response.data;
+    }
+  },
+);
 const removedUserData = async () => {
   try {
     store.dispatch(setAdmin(false));
@@ -106,6 +158,7 @@ const removedUserData = async () => {
   }
 };
 export {
+  generateOTPAPIHander,
   registerAPIHander,
   logoutAPIHander,
   loginAPIHander,

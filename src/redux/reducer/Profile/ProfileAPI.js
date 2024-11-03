@@ -1,8 +1,7 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import apiService from '../../../API/apiClient';
 import APIEndpoint from '../../../API/ApiEndpoints';
-import asyncStorageUtil from '../../../utility/asyncStorageUtil';
-import StorageKeys from '../../../Config/StorageKeys';
+
 import {
   setAdmin,
   setAllAdmins,
@@ -10,7 +9,6 @@ import {
   setAllPendingUser,
   setLoginUser,
 } from '.';
-import {store} from '../../store';
 import {checkIsAdmin, DateFormator} from '../../../Helpers/CommonHelpers';
 
 const getAllMembersAPIHander = createAsyncThunk(
@@ -25,7 +23,7 @@ const getAllMembersAPIHander = createAsyncThunk(
         const responseData = response.data;
         const afterFormatMembersData = formatUsersData(responseData.data);
 
-        thunkAPI.dispatch(setAllMembers(afterFormatMembersData));
+        thunkAPI.dispatch(setAllMembers(afterFormatMembersData.reverse()));
       }
       return true;
     } catch (error) {
@@ -46,7 +44,7 @@ const getAllAdminsAPIHander = createAsyncThunk(
         const responseData = response.data;
         const afterFormatMembersData = formatUsersData(responseData.data);
 
-        thunkAPI.dispatch(setAllAdmins(afterFormatMembersData));
+        thunkAPI.dispatch(setAllAdmins(afterFormatMembersData.reverse()));
       }
       return true;
     } catch (error) {
@@ -112,6 +110,7 @@ const formatUsersData = users => {
       'Date of birth': DateFormator(user.DOB, 'DD MMM YYYY'), // Format date as needed
       'Date of baptism': DateFormator(user.baptismDate, 'DD MMM YYYY'), // Format date as needed
       'Date of marriage': DateFormator(user.marriageDate, 'DD MMM YYYY'), // Format date as needed
+      // Format date as needed
       Mobile: user.mobile,
       Email: user.email,
     },

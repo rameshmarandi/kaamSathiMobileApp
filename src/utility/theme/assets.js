@@ -25,8 +25,7 @@ import add_new_user from '../../assets/admin/add_new_user.png';
 import camera from '../../assets/admin/camera.png';
 import DBible from '../../assets/admin/3DBible.png';
 import pdf from '../../assets/admin/pdf.png';
-import closeIcon from '../../assets/admin/closeIcon.png';
-import acceptIcon from '../../assets/admin/accept.png';
+
 import deleteIcon from '../../assets/admin/deleteIcon.png';
 import prayer from '../../assets/admin/prayer.png';
 import contact from '../../assets/admin/contact.png';
@@ -63,8 +62,7 @@ const homeIcons = {
   pdf,
   prayer,
   google_img,
-  closeIcon,
-  acceptIcon,
+
   deleteIcon,
   chatGPT,
   contact,

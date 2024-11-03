@@ -72,7 +72,15 @@ authAxiosInstance.interceptors.response.use(
 const apiService = {
   // Public API requests
   getPublic: (endpoint, params = {}) => publicAxiosInstance.get(endpoint),
-  postPublic: (endpoint, data) => publicAxiosInstance.post(endpoint, data),
+  postPublic: (endpoint, data, headers = {}) =>
+    publicAxiosInstance.post(endpoint, data, {headers}),
+  // Method to post public data with multipart/form-data content type
+  postPublicFormData: (endpoint, formData) =>
+    publicAxiosInstance.post(endpoint, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data', // Set Content-Type for file uploads
+      },
+    }),
 
   // Authenticated API requests
   getProtected: (endpoint, params = {}) =>
