@@ -4,7 +4,12 @@ import {StyleSheet, View, Text, Animated, TouchableOpacity} from 'react-native';
 import {VectorIcon} from '../Components/VectorIcon';
 import {getFontSize, getResHeight, getResWidth} from '../utility/responsive';
 import {useSelector} from 'react-redux';
-import {AdminHomeStack, ApprovalStack, ProfileStack} from './StackNav';
+import {
+  AdminHomeStack,
+  ApprovalStack,
+  FamilyStack,
+  ProfileStack,
+} from './StackNav';
 import theme from '../utility/theme';
 
 const Tab = createBottomTabNavigator();
@@ -24,6 +29,14 @@ const tabArrays = [
     routeNames: 'ApprovalScreen',
     component: ApprovalStack,
   },
+  {
+    title: 'Family',
+    icon: {type: 'MaterialIcons', name: 'family-restroom'},
+    activeIcon: {type: 'MaterialIcons', name: 'family-restroom'},
+    routeNames: 'MyFamily',
+    component: FamilyStack,
+  },
+
   {
     title: 'Profile',
     icon: {type: 'FontAwesome', name: 'user-o'},
@@ -145,7 +158,7 @@ const CustomTabBar = ({
                 style={{
                   position: 'absolute',
                   right:
-                    selectedTab === index ? getResWidth(9.3) : getResWidth(9.0),
+                    selectedTab === index ? getResWidth(5) : getResWidth(7),
                   top: getResHeight(0.3),
                   height: getResHeight(2.4),
                   width: getResHeight(2.4),

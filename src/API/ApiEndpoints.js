@@ -18,6 +18,14 @@ const APIEndpoint = {
     updateUserRoles: '/user/update-user-role',
     deleteUser: '/user/delete-user',
     blockMember: 'user/toggle-block-user',
+    //Profile
+    myProfile: '/user/get-profile',
+    updateProfilePic: '/user/update-profile-pic',
+    updateCoverImage: '/user/update-cover-picture',
+  },
+  family: {
+    registerFamily: '/user/add-family-members',
+    deleteFamily: '/user/delete-family-member',
   },
   chruchBranch: {
     getAllBranches: '/branch/get-all-branch',

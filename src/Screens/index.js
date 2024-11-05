@@ -27,10 +27,12 @@ import LoginPage from './Auth/LoginPage';
 
 import ForgotPassword from './Auth/ForgotPassword';
 import ApplicationUnderReview from './Auth/ApplicationUnderReview';
+import MyFamily from './User/ProfilePage/MyFamily';
 
 const UserAllScreens = {
   HomePage,
   ProfilePage,
+  MyFamily,
   Settings,
   FreeResource,
   Events,

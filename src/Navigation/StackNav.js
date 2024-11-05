@@ -61,6 +61,19 @@ export function ProfileStack() {
     </>
   );
 }
+export function FamilyStack() {
+  return (
+    <>
+      <Stack.Navigator screenOptions={{...transitionCard, ...screenOptions}}>
+        <Stack.Screen
+          name={'MyFamily'}
+          component={AllScreens.MyFamily}
+          // options={screenOptions}
+        />
+      </Stack.Navigator>
+    </>
+  );
+}
 export function ApprovalStack() {
   return (
     <>

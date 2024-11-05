@@ -4,6 +4,8 @@ const initialState = {
   allMembers: [],
   getAllPendingUser: [],
   allAdmins: [],
+  myFamilyMembers: [],
+  myProfile: null,
 };
 
 const profileSlice = createSlice({
@@ -13,15 +15,28 @@ const profileSlice = createSlice({
     setAllMembers(state, action) {
       state.allMembers = action.payload;
     },
+    setMyAllFamilyMembers(state, action) {
+      state.myFamilyMembers = action.payload;
+    },
     setAllAdmins(state, action) {
       state.allAdmins = action.payload;
     },
+    setMyProfile(state, action) {
+      state.myProfile = action.payload;
+    },
+
     setAllPendingUser(state, action) {
       state.getAllPendingUser = action.payload;
     },
   },
 });
 
-export const {setAllMembers, setAllPendingUser, setAllAdmins} =
-  profileSlice.actions;
+export const {
+  setAllMembers,
+
+  setMyAllFamilyMembers,
+  setAllPendingUser,
+  setAllAdmins,
+  setMyProfile,
+} = profileSlice.actions;
 export default profileSlice.reducer;

@@ -88,6 +88,11 @@ const apiService = {
   postProtected: (endpoint, data) => authAxiosInstance.post(endpoint, data),
   putProtected: (endpoint, data) => authAxiosInstance.put(endpoint, data),
   deleteProtected: endpoint => authAxiosInstance.delete(endpoint),
+  // Method to post protected data with multipart/form-data content type
+  postProtectedFormData: (endpoint, formData) =>
+    authAxiosInstance.post(endpoint, formData, {
+      headers: {'Content-Type': 'multipart/form-data'},
+    }),
 };
 
 export default apiService;

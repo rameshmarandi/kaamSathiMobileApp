@@ -52,7 +52,7 @@ const ApprovalCard = memo(
           styles.card,
           {
             backgroundColor: currentBgColor,
-            borderWidth: 0.5,
+            borderWidth: 1,
             borderColor: currentTextColor,
           },
         ]}>
@@ -370,16 +370,6 @@ const Approval = memo(props => {
             size={getFontSize(7)}
             color={clickedBtn == 1 ? theme.color.error : theme.color.green}
           />
-          // <Image
-          //   source={
-          //     clickedBtn == 1 ? theme.assets.closeIcon : theme.assets.acceptIcon
-          //   }
-          //   resizeMode="cover"
-          //   style={{
-          //     height: clickedBtn == 1 ? getResHeight(10) : getResHeight(8),
-          //     width: clickedBtn == 1 ? getResHeight(10) : getResHeight(8),
-          //   }}
-          // />
         }
         onConfirm={() => {
           setShowAlert(false);
@@ -391,29 +381,10 @@ const Approval = memo(props => {
           }
         }}
       />
-      {/* <ConfirmAlert
-        visible={isConfirmModalVisible}
-        onCancel={() => setIsConfirmModalVisible(false)}
-        alertTitle={alertText}
-        onConfirm={() => {
-          setIsConfirmModalVisible(false);
-          setTimeout(
-            () =>
-              ToastAlertComp(
-                'success',
-                'Success',
-                'Post deleted successfully.',
-              ),
-            1000,
-          );
-          setIsLoginPressed(false);
-          setSelectedCard([]);
-        }}
-      /> */}
+
       <CustomHeader
         Hamburger={() => {
           navigation.openDrawer();
-          // Keyboard.dismiss();
         }}
         onPressNotificaiton={() => {
           navigation.navigate('UserNotification');

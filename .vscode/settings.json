@@ -4,10 +4,10 @@
   "git.ignoreLimitWarning": true,
   "workbench.colorCustomizations": {
     "[Community Material Theme High Contrast]": {},
-    "titleBar.activeForeground": "#000000",
+    "titleBar.activeForeground": "#ffffff",
     "titleBar.inactiveForeground": "#012537",
     "titleBar.border": "#E04B12",
-    "titleBar.activeBackground": "#1ae754",
+    "titleBar.activeBackground": "#012537",
     "editorStickyScroll.background": "#00000080",
     "editorStickyScroll.border": "#E04B12",
     "editorStickyScroll.shadow": "#E04B12",

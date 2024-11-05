@@ -6,7 +6,7 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import React, {memo, useState} from 'react';
+import React, {memo, useCallback, useEffect, useState} from 'react';
 import theme from '../../../utility/theme';
 import {
   ButtonIconComp,
@@ -27,12 +27,29 @@ import {Image} from 'react-native';
 import moment from 'moment';
 import {DateFormator} from '../../../Helpers/CommonHelpers';
 import ImageView from 'react-native-image-viewing';
+import {requestGalleryPermission} from '../../../utility/PermissionContoller';
+import ImagePickerComp from '../../../Components/ImagePickerComp';
+import {
+  myProfileAPIHander,
+  updateProfilePicAPIHander,
+} from '../../../redux/reducer/Profile/ProfileAPI';
+import {store} from '../../../redux/store';
 const index = memo(props => {
   const {navigation} = props;
   const {isDarkMode, currentBgColor, loginUser, currentTextColor} = useSelector(
     state => state.user,
   );
+  useEffect(() => {
+    APIHandler();
+  }, []);
 
+  const APIHandler = async () => {
+    try {
+      await store.dispatch(myProfileAPIHander());
+    } catch (error) {}
+  };
+
+  const {myProfile} = useSelector(state => state.profile);
   const isUserValid = loginUser?.user && Object.keys(loginUser.user).length > 0;
 
   const {
@@ -44,10 +61,12 @@ const index = memo(props => {
     DOB,
     baptismDate,
     marriageDate,
-  } = loginUser?.user || {};
+  } = myProfile.data || {};
 
   const [visible, setIsVisible] = useState(false);
+  const [uploadImgBtnPressed, setUploadImgBtnPressed] = useState('');
   const [viewImageUrl, setViewImageUrl] = useState('');
+
   let bioData = [
     {
       Email: `${email || ''}`,
@@ -74,6 +93,59 @@ const index = memo(props => {
       return 'Member';
     }
   };
+
+  const handleImageSuccess = useCallback(
+    async imageData => {
+      console.log('selected_Iamge_', uploadImgBtnPressed);
+
+      if (uploadImgBtnPressed === 0) {
+        // Profile
+        const res = await store.dispatch(
+          updateProfilePicAPIHander({
+            avatar: imageData,
+          }),
+        );
+        if (res.payload == true) {
+          setUploadImgBtnPressed('');
+        }
+        // setUploadImgBtnPressed('');
+      } else if (uploadImgBtnPressed === 1) {
+        const res = await store.dispatch(
+          updateProfilePicAPIHander({
+            coverImage: imageData,
+          }),
+        );
+        if (res.payload == true) {
+          setUploadImgBtnPressed('');
+        }
+      }
+    },
+    [uploadImgBtnPressed],
+  );
+  const handleImagePicker = useCallback(
+    mediaType => {
+      requestGalleryPermission().then(result => {
+        console.log('Gallary_Permisson', result);
+        if (result) {
+          ImagePickerComp(
+            'gallery',
+            {
+              mediaType: 'photo',
+              quality: 0.8,
+
+              // includeBase64: true,
+            },
+            handleImageSuccess,
+            // onImageError,
+          );
+        } else {
+          console.log('Permission denied');
+        }
+      });
+    },
+    [handleImageSuccess, uploadImgBtnPressed],
+  );
+
   return (
     <SafeAreaView
       style={{
@@ -133,31 +205,34 @@ const index = memo(props => {
                             width: '100%',
                           }}
                         />
-                        <View
-                          style={{
-                            position: 'absolute',
-                            bottom: getResHeight(1.2),
-                            right: getResWidth(1.5),
-                          }}>
-                          <ButtonIconComp
-                            onPress={() => {}}
-                            icon={
-                              <VectorIcon
-                                type={'FontAwesome'}
-                                name={'camera'}
-                                size={getFontSize(2.1)}
-                                color={currentBgColor}
-                              />
-                            }
-                            containerStyle={{
-                              width: getResHeight(5),
-                              height: getResHeight(5),
-                              backgroundColor: currentTextColor,
-                              borderRadius: getResHeight(100),
-                            }}
-                          />
-                        </View>
                       </TouchableOpacity>
+                      <View
+                        style={{
+                          position: 'absolute',
+                          bottom: getResHeight(1.2),
+                          right: getResWidth(1.5),
+                        }}>
+                        <ButtonIconComp
+                          onPress={() => {
+                            handleImagePicker();
+                            setUploadImgBtnPressed(1);
+                          }}
+                          icon={
+                            <VectorIcon
+                              type={'FontAwesome'}
+                              name={'camera'}
+                              size={getFontSize(2.1)}
+                              color={currentBgColor}
+                            />
+                          }
+                          containerStyle={{
+                            width: getResHeight(5),
+                            height: getResHeight(5),
+                            backgroundColor: currentTextColor,
+                            borderRadius: getResHeight(100),
+                          }}
+                        />
+                      </View>
                     </View>
                     <EmptyUserProfile
                       avatarURL={avatar}
@@ -168,7 +243,8 @@ const index = memo(props => {
                         }
                       }}
                       onPress={() => {
-                        // alert('sdfsd');
+                        handleImagePicker();
+                        setUploadImgBtnPressed(0);
                       }}
                     />
                     <View

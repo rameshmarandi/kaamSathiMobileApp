@@ -53,6 +53,7 @@ const MasterTextInput = forwardRef(
       onDropdownChange,
       dropdownSearch,
       isValid,
+      isMendotary = true,
       ...rest
     },
     ref,
@@ -192,7 +193,7 @@ const MasterTextInput = forwardRef(
               timePicker={timePicker || false}
               displayFullDays={true}
               locale="en"
-              minDate={minDate || new Date('2020-01-01')}
+              minDate={minDate || new Date('1950-01-01')}
               maxDate={maxDate || new Date('2030-12-31')}
               style={styles.datePicker}
               // Styling for today and other components
@@ -276,7 +277,8 @@ const MasterTextInput = forwardRef(
               fontFamily: theme.font.medium,
               marginVertical: getResHeight(1),
             }}>
-            {topLableName} <Text style={{color: 'red'}}>{'*'}</Text>
+            {topLableName}
+            {isMendotary && <Text style={{color: 'red'}}>{' *'}</Text>}
           </Text>
         )}
         {isDate ? (
