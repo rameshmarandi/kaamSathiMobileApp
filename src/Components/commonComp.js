@@ -335,16 +335,16 @@ export const CommonImageCard = memo(
         onPress={onCardPress}
         activeOpacity={0.8}>
         <View
-          style={[
-            verseResourceCommonStyle.card,
-
-            !isFooterVisilbe && {paddingBottom: '4%'},
-            {
-              backgroundColor,
-
-              borderColor,
-            },
-          ]}>
+          style={
+            [
+              // verseResourceCommonStyle.card,
+              // !isFooterVisilbe && {paddingBottom: '4%'},
+              // {
+              //   backgroundColor,
+              //   borderColor,
+              // },
+            ]
+          }>
           {isSelected && (
             <View
               style={[
@@ -353,41 +353,7 @@ export const CommonImageCard = memo(
               ]}
             />
           )}
-          <View style={verseResourceCommonStyle.cardHeader}>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <WaveButton {...waveButtonProps} disabled />
-              <Text
-                style={[
-                  verseResourceCommonStyle.boldText,
-                  {
-                    color: textColor,
-                    marginLeft: 10,
-                  },
-                ]}>
-                {scheduleText}
-              </Text>
-            </View>
-            <Text
-              style={[
-                verseResourceCommonStyle.regularText,
-                {color: textColor},
-              ]}>
-              {date}
-            </Text>
-          </View>
-          <View style={verseResourceCommonStyle.imageContainer}>
-            <Image
-              source={
-                // imageSource
-                // imageSource !== 'undefined' && imageSource.includes('https://')
-                //   ? {uri: imageSource}
-                //   :
-                imageSource
-              }
-              resizeMode="cover"
-              style={verseResourceCommonStyle.image}
-            />
-          </View>
+
           {isFooterVisilbe && (
             <>
               <View

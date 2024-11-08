@@ -48,7 +48,7 @@ const headerTitle = {
 
   AddMemberForm: 'Member registration form',
   addFamilyForm: 'Family registration form',
-  uploadResource: 'Upload Resource',
+  uploadResource: 'Upload daily verses',
   allPrayerReq: 'All prayer requests',
   adminOurBelieve: 'Our believe',
   postsUploadBanner: 'All banners',

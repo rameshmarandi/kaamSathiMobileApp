@@ -10,7 +10,11 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useSelector} from 'react-redux';
-import {getResHeight, getResWidth} from '../../../utility/responsive';
+import {
+  getFontSize,
+  getResHeight,
+  getResWidth,
+} from '../../../utility/responsive';
 import CustomHeader from '../../../Components/CustomHeader';
 import ConfirmAlert from '../../../Components/ConfirmAlert';
 import CustomBottomSheet from '../../../Components/CustomBottomSheet';
@@ -18,6 +22,7 @@ import {VectorIcon} from '../../../Components/VectorIcon';
 import theme from '../../../utility/theme';
 import MsgConfig from '../../../Config/MsgConfig';
 import {
+  ButtonIconComp,
   CommonButtonComp,
   CommonImageCard,
   StatusBarComp,
@@ -29,6 +34,12 @@ import MasterDeleteSelect from '../../../Components/MasterDeleteSelect';
 import DailyVersUploadForm from './DailyVersUploadForm';
 import {verseResourceCommonStyle} from '../../Styles/verseResourceCommonStyle';
 import StorageKeys from '../../../Config/StorageKeys';
+import {store} from '../../../redux/store';
+import {getScheduleVersesAPIHander} from '../../../redux/reducer/DailyVerses/dailyVersesAPI';
+import {RefreshControl} from 'react-native';
+import NoDataFound from '../../../Components/NoDataFound';
+import {dateFormatHander} from '../../../Components/commonHelper';
+import SmallMenuComp from '../../../Components/SmallMenuComp';
 
 const Index = memo(({navigation}) => {
   const {currentBgColor, currentTextColor, logedInuserType} = useSelector(
@@ -40,9 +51,19 @@ const Index = memo(({navigation}) => {
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
   const [alertText, setAlertText] = useState(null);
   const [selectedCard, setSelectedCard] = useState([]);
+  const {getScheduledVerses} = useSelector(state => state.dailyVerses);
 
   const bottomSheetRef = useRef(null);
-
+  useEffect(() => {
+    APIHandler();
+  }, []);
+  const APIHandler = async () => {
+    try {
+      await store.dispatch(getScheduleVersesAPIHander());
+    } catch (error) {
+      console.error('Daily_verse_API_ERROR', error);
+    }
+  };
   const openBottomSheetWithContent = useCallback(() => {
     setIsUploadResModalOpen(true);
   }, []);
@@ -105,23 +126,140 @@ const Index = memo(({navigation}) => {
     setSelectedCard([index]);
     setIsLongPressed(true);
   }, []);
-
+  const handleMunuData = userDetails => {
+    return [
+      {id: 4, title: 'Update'},
+      {id: 5, title: 'Delete'},
+    ];
+  };
   const renderItem = useCallback(
-    ({item, index}) => (
-      <CommonImageCard
-        key={index}
-        backgroundColor={currentBgColor}
-        borderColor={currentTextColor}
-        textColor={currentTextColor}
-        waveButtonProps={waveButtonPropsSecondRoute}
-        onLongPress={() => handleLongPress(index)}
-        scheduleText={'Going live on'}
-        date={item.date}
-        isSelected={selectedCard.includes(index)}
-        imageSource={theme.assets.dailyVerbsBanner}
-        onCardPress={() => handleCardPress(index)}
-      />
-    ),
+    ({item, index}) => {
+      console.log('Schedied', item.scheduleDate);
+
+      return (
+        <>
+          <View
+            style={{
+              borderWidth: 1,
+              borderColor: currentTextColor,
+
+              borderRadius: getResHeight(2),
+              marginBottom: getResHeight(2),
+              overflow: 'hidden',
+            }}>
+            <View
+              style={[
+                verseResourceCommonStyle.cardHeader,
+                {
+                  paddingLeft: getResWidth(3.5),
+                  paddingRight: getResWidth(1.5),
+                  borderBottomWidth: 1,
+                  borderBottomColor: currentTextColor,
+                  paddingVertical: getResHeight(1.6),
+                },
+              ]}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <WaveButton {...waveButtonPropsSecondRoute} disabled />
+                <Text
+                  style={[
+                    verseResourceCommonStyle.boldText,
+                    {
+                      color: currentTextColor,
+                      marginLeft: 10,
+                    },
+                  ]}>
+                  {'Going to live on'}
+                </Text>
+              </View>
+              <Text
+                style={[
+                  verseResourceCommonStyle.regularText,
+                  {color: theme.color.green},
+                ]}>
+                {dateFormatHander(item.scheduleDate, 'DD MMM YYYY hh:mm A')}
+              </Text>
+              <View
+                style={{
+                  // position: 'absolute',
+                  // top: getResHeight(1.4),
+                  // right: getResWidth(2),
+                  zIndex: 9999,
+                }}>
+                {/* {isLoading && item.id == selectedCard?.id ? (
+                  <ActivityIndicator
+                    size={getFontSize(2.5)}
+                    color={currentTextColor}
+                  />
+                ) : ( */}
+                <SmallMenuComp
+                  buttonLabel={openMenu => (
+                    <ButtonIconComp
+                      onPress={() => {
+                        // setSelectedCard(item);
+                        // openMenu();
+                      }}
+                      icon={
+                        <VectorIcon
+                          type={'Entypo'}
+                          name={'dots-three-vertical'}
+                          size={getFontSize(2.1)}
+                          color={currentTextColor}
+                        />
+                      }
+                      containerStyle={{
+                        width: getResHeight(5),
+                        height: getResHeight(5),
+                        borderRadius: getResHeight(100),
+                      }}
+                    />
+                  )}
+                  menuItems={handleMunuData(item)}
+                  // onMenuPress={MenuItemOnPressHandler}
+                />
+                {/* )} */}
+              </View>
+            </View>
+            {item.images.map((image, index) => {
+              console.log(image, 'profilges');
+              return (
+                <>
+                  <Text
+                    style={{
+                      color: currentTextColor,
+                      marginVertical: getResHeight(1.5),
+                      paddingLeft: getResWidth(3),
+                      fontFamily: theme.font.semiBold,
+                    }}>
+                    {image.language}
+                  </Text>
+                  <View style={verseResourceCommonStyle.imageContainer}>
+                    <Image
+                      // source={{uri: 'https://dummyimage.com/600x700/000/fff'}}
+                      source={{uri: image.imageUrl}}
+                      resizeMode="cover"
+                      style={verseResourceCommonStyle.image}
+                    />
+                  </View>
+                  {/* <CommonImageCard
+                    key={index}
+                    backgroundColor={currentBgColor}
+                    borderColor={currentTextColor}
+                    textColor={currentTextColor}
+                    waveButtonProps={waveButtonPropsSecondRoute}
+                    onLongPress={() => handleLongPress(index)}
+                    scheduleText={'Going to live on'}
+                    date={item.date}
+                    isSelected={selectedCard.includes(index)}
+                    imageSource={image.imageUrl}
+                    onCardPress={() => handleCardPress(index)}
+                  /> */}
+                </>
+              );
+            })}
+          </View>
+        </>
+      );
+    },
     [
       currentBgColor,
       currentTextColor,
@@ -146,7 +284,10 @@ const Index = memo(({navigation}) => {
   }, [logedInuserType]);
 
   const FirstRoute = () => (
-    <ScrollView>
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={false} onRefresh={APIHandler} />
+      }>
       {['English', 'Marathi', 'Hindi'].map((item, index) => (
         <CommonImageCard
           key={index}
@@ -163,33 +304,42 @@ const Index = memo(({navigation}) => {
   );
 
   const SecondRoute = () => (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      {/* <CustomBottomSheet ref={bottomSheetRef} modalHeight={getResHeight(90)}> */}
-      {/* <DailyVersUploadForm
-          closeBottomSheetWithContent={closeBottomSheetWithContent}
-        /> */}
-
+    <>
       <DailyVersUploadForm
         visible={isUploadResModalOpen}
-        closeBottomSheetWithContent={() => {
+        onRequestClose={() => {
           setIsUploadResModalOpen(false);
         }}
         navigation={navigation}
       />
       {/* </CustomBottomSheet> */}
       <FlatList
-        data={scheduleData}
+        data={getScheduledVerses}
+        // data={scheduleData}
         renderItem={renderItem}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={item => item._id.toString()}
+        refreshControl={
+          <RefreshControl
+            refreshing={false}
+            onRefresh={() => APIHandler(false)}
+          />
+        }
+        ListEmptyComponent={() => {
+          return (
+            <>
+              <View
+                style={{
+                  marginTop: getResHeight(-10),
+                }}>
+                <NoDataFound />
+              </View>
+            </>
+          );
+        }}
         contentContainerStyle={verseResourceCommonStyle.flatListContainer}
       />
-    </ScrollView>
+    </>
   );
-
-  // const routes = [
-  //   {key: 'first', title: `Today's Verses`},
-  //   {key: 'second', title: 'Upcoming'},
-  // ];
 
   useEffect(() => {
     if (!StorageKeys.USER_TYPES.includes(logedInuserType)) {

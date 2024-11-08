@@ -33,6 +33,16 @@ const APIEndpoint = {
     updateBranch: '/branch/update-branch',
     deleteBranch: '/branch/delete-branch',
   },
+  dailyVerses: {
+    uploadPoster: '/admin/create-daily-verses',
+    deletePoster: '/admin/delete-daily-verses',
+    getSchdulePoster: '/admin/get-schedule-daily-verses',
+    getDailyVersePoster: '/user/get-daily-verses',
+    viewDailyVersePoster: 'user/view-daily-verses',
+    addComment: '/user/add-daily-verses-comment',
+    replayComment: 'user/replay-daily-verses-comment',
+    reactionOnPoster: 'user/reactToComment-daily-verses-comment',
+  },
   // Add more modules as needed
 };
 

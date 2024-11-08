@@ -30,7 +30,7 @@ export const verseResourceCommonStyle = StyleSheet.create({
     fontSize: getFontSize(1.6),
   },
   imageContainer: {
-    height: 220,
+    height: getResHeight(55),
     width: '100%',
     backgroundColor: '#095b76',
     borderRadius: getResHeight(1.3),

@@ -70,14 +70,16 @@ const AddFamilyForm = ({visible, closeModal, navigation}) => {
   // Local component states
   const [step, setStep] = useState(1); // To track the current step in the form
   const [isOTPFildVisible, setIsOTPFildVisible] = useState(false); // To show/hide the OTP field
-  const [isLoading, setIsLoading] = useState(false);
+
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedImage1, setSelectedImage1] = useState(null);
   const [branchDropdown, setBranchDropdown] = useState([]);
   const [selectedBranch, setSelectedBranch] = useState(null);
-  const [isAlertVisible, setIsAlertVisible] = useState(false);
+
   const [isAcceptBtnLoading, setIsAcceptBtnLoading] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const otpInputRef = useRef(null);
   // References to input fields
@@ -146,7 +148,7 @@ const AddFamilyForm = ({visible, closeModal, navigation}) => {
         });
         setIsLoading(false);
         setIsAlertVisible(true);
-        setIsAlertVisible(false);
+
         closeModal();
         setSelectedImage(null);
       } else if (

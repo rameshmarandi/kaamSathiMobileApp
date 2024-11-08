@@ -17,6 +17,7 @@ import {
   checkIsAdmin,
   DateFormator,
 } from '../../../Helpers/CommonHelpers';
+import {decryptData} from '../../../utility/CryptoUtils';
 
 const getAllMembersAPIHander = createAsyncThunk(
   APIEndpoint.admin.getAllMembers,
@@ -25,6 +26,8 @@ const getAllMembersAPIHander = createAsyncThunk(
       const response = await apiService.getProtected(
         APIEndpoint.admin.getAllMembers,
       );
+
+      // const responseData = decryptData(response.data.data); // Decrypt Data
 
       if (response.status === 200) {
         const responseData = response.data;
