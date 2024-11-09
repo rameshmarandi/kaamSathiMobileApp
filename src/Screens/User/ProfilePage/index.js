@@ -61,7 +61,7 @@ const index = memo(props => {
     DOB,
     baptismDate,
     marriageDate,
-  } = myProfile.data || {};
+  } = myProfile?.data || {};
 
   const [visible, setIsVisible] = useState(false);
   const [uploadImgBtnPressed, setUploadImgBtnPressed] = useState('');

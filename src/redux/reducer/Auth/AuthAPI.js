@@ -65,7 +65,7 @@ const loginAPIHander = createAsyncThunk(
           `${responseData.data.accessToken}`,
         );
 
-        thunkAPI.dispatch(setLoginUser(responseData.data));
+        await thunkAPI.dispatch(setLoginUser(responseData.data));
         checkIsAdmin();
       }
       return true;
@@ -79,7 +79,7 @@ const logoutAPIHander = createAsyncThunk(
   APIEndpoint.user.logout,
   async (payload, thunkAPI) => {
     try {
-      removedUserData();
+      await removedUserData();
       console.log('LOgu_API_callined___');
       const response = await apiService.getPublic(APIEndpoint.user.logout);
       console.log('Logout_API_RES', response);
@@ -149,7 +149,7 @@ const generateOTPAPIHander = createAsyncThunk(
 );
 const removedUserData = async () => {
   try {
-    store.dispatch(setAdmin(false));
+    await store.dispatch(setAdmin(false));
     await asyncStorageUtil.removeItem(StorageKeys.ACCESS_TOKEN);
     await asyncStorageUtil.removeItem(StorageKeys.REFRESH_TOKEN);
     store.dispatch(setLoginUser({}));

@@ -131,7 +131,7 @@ const DailyVersUploadForm = ({visible, onRequestClose, navigation}) => {
             fontFamily: theme.font.medium,
             fontSize: getFontSize(1.5),
           }}>
-          150 * 150 px
+          550 * 550 px
         </Text>
       </View>
     </View>

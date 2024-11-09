@@ -25,6 +25,7 @@ import {
   ButtonIconComp,
   CommonButtonComp,
   CommonImageCard,
+  CustomAlertModal,
   StatusBarComp,
 } from '../../../Components/commonComp';
 import WaveButton from '../../../Components/WaveButton';
@@ -35,28 +36,75 @@ import DailyVersUploadForm from './DailyVersUploadForm';
 import {verseResourceCommonStyle} from '../../Styles/verseResourceCommonStyle';
 import StorageKeys from '../../../Config/StorageKeys';
 import {store} from '../../../redux/store';
-import {getScheduleVersesAPIHander} from '../../../redux/reducer/DailyVerses/dailyVersesAPI';
+import {
+  deleteSchedulePostAPIHander,
+  getScheduleVersesAPIHander,
+} from '../../../redux/reducer/DailyVerses/dailyVersesAPI';
 import {RefreshControl} from 'react-native';
 import NoDataFound from '../../../Components/NoDataFound';
 import {dateFormatHander} from '../../../Components/commonHelper';
 import SmallMenuComp from '../../../Components/SmallMenuComp';
+import ImageView from 'react-native-image-viewing';
 
+let handleMunuData = [];
 const Index = memo(({navigation}) => {
   const {currentBgColor, currentTextColor, logedInuserType} = useSelector(
     state => state.user,
   );
+  const {getScheduledVerses} = useSelector(state => state.dailyVerses);
+
+  const [routes, setRoutes] = useState([
+    {key: 'first', title: `Today's Verses`},
+    {key: 'second', title: 'Upcoming'},
+  ]);
+
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [isUploadResModalOpen, setIsUploadResModalOpen] = useState(false);
   const [isLoginPressed, setIsLongPressed] = useState(false);
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
   const [alertText, setAlertText] = useState(null);
   const [selectedCard, setSelectedCard] = useState([]);
-  const {getScheduledVerses} = useSelector(state => state.dailyVerses);
 
-  const bottomSheetRef = useRef(null);
+  const [isImageViewerModal, setIsImageViewerModal] = useState(false);
+  const [viewImageUrl, setViewImageUrl] = useState('');
+  const [nextPostDate, setNextPostDate] = useState('');
+  const [selectedMenuID, setSelectedMenuID] = useState('');
+  const [alertIcons, setAlertIcons] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
+  const [alertMsg, setAlertMsg] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
+
   useEffect(() => {
     APIHandler();
   }, []);
+  useEffect(() => {
+    if (getScheduledVerses.length > 0) {
+      setNextPostDate(getScheduledVerses[0]);
+    } else {
+      setNextPostDate('');
+    }
+  }, [getScheduledVerses]);
+  useEffect(() => {
+    // Check if the user is not a super admin
+    if (!StorageKeys.USER_TYPES.includes(logedInuserType)) {
+      // Remove the route at index 1 (the 'Upcoming' route)
+      setRoutes(prevRoutes => prevRoutes.filter((_, index) => index !== 1));
+    }
+  }, [logedInuserType]);
+  useEffect(() => {
+    if (!StorageKeys.USER_TYPES.includes(logedInuserType)) {
+      routes.slice(1, 2);
+    }
+  }, []);
+
+  const handleMunuData = userDetails => {
+    return [
+      {id: 4, title: 'Update'},
+      {id: 5, title: 'Delete'},
+    ];
+  };
+
   const APIHandler = async () => {
     try {
       await store.dispatch(getScheduleVersesAPIHander());
@@ -94,19 +142,6 @@ const Index = memo(({navigation}) => {
     'rgba(255, 157, 0, 0.985)',
   );
 
-  const scheduleData = [
-    {id: 1, date: '12 October 2024 | 06 AM'},
-    {id: 2, date: '14 October 2024 | 07 PM'},
-    {id: 3, date: '16 October 2024 | 05 AM'},
-    {id: 4, date: '18 October 2024 | 08 PM'},
-    {id: 5, date: '20 October 2024 | 09 AM'},
-    {id: 6, date: '22 October 2024 | 10 PM'},
-    {id: 7, date: '24 October 2024 | 11 AM'},
-    {id: 8, date: '26 October 2024 | 12 PM'},
-    {id: 9, date: '28 October 2024 | 01 PM'},
-    {id: 10, date: '30 October 2024 | 02 PM'},
-  ];
-
   const handleCardPress = useCallback(
     index => {
       if (isLoginPressed) {
@@ -126,16 +161,62 @@ const Index = memo(({navigation}) => {
     setSelectedCard([index]);
     setIsLongPressed(true);
   }, []);
-  const handleMunuData = userDetails => {
-    return [
-      {id: 4, title: 'Update'},
-      {id: 5, title: 'Delete'},
-    ];
+
+  const MenuItemOnPressHandler = item => {
+    setSelectedMenuID(item);
+    switch (item.id) {
+      case 5:
+        setAlertIcons(
+          <VectorIcon
+            type={'MaterialIcons'}
+            name={'delete-forever'}
+            size={getFontSize(5.1)}
+            color={theme.color.error}
+          />,
+        );
+        setAlertText('Are you sure you want to\n delete this post?');
+
+        setIsConfirmModalVisible(true);
+        break;
+
+      // case 4:
+      //   const res = singleUserCardData(selectedCard);
+      //   console.log('userData', res);
+      //   setTimeout(() => {
+      //     openBottomSheetWithContent(res);
+      //   }, 500);
+    }
+  };
+
+  const submitOnConfirm = async () => {
+    console.log('selectedMenuID', selectedCard);
+
+    if (selectedMenuID.id == 5) {
+      setIsConfirmModalVisible(false);
+      const res = await store.dispatch(
+        deleteSchedulePostAPIHander({
+          scheduleID: selectedCard._id,
+        }),
+      );
+      if (res.payload === true) {
+        setAlertMessage({
+          status: 'success',
+
+          alertMsg: 'Schedule post deleted successfully',
+        });
+        setIsAlertVisible(true);
+        setSelectedMenuID('');
+        setIsConfirmModalVisible(false);
+        setNextPostDate('');
+      }
+    }
+  };
+
+  const handleClose = () => {
+    setIsAlertVisible(false);
   };
   const renderItem = useCallback(
     ({item, index}) => {
-      console.log('Schedied', item.scheduleDate);
-
       return (
         <>
           <View
@@ -146,6 +227,7 @@ const Index = memo(({navigation}) => {
               borderRadius: getResHeight(2),
               marginBottom: getResHeight(2),
               overflow: 'hidden',
+              // padding: '5%',
             }}>
             <View
               style={[
@@ -195,8 +277,8 @@ const Index = memo(({navigation}) => {
                   buttonLabel={openMenu => (
                     <ButtonIconComp
                       onPress={() => {
-                        // setSelectedCard(item);
-                        // openMenu();
+                        setSelectedCard(item);
+                        openMenu();
                       }}
                       icon={
                         <VectorIcon
@@ -214,48 +296,53 @@ const Index = memo(({navigation}) => {
                     />
                   )}
                   menuItems={handleMunuData(item)}
-                  // onMenuPress={MenuItemOnPressHandler}
+                  onMenuPress={MenuItemOnPressHandler}
                 />
                 {/* )} */}
               </View>
             </View>
-            {item.images.map((image, index) => {
-              console.log(image, 'profilges');
-              return (
-                <>
-                  <Text
-                    style={{
-                      color: currentTextColor,
-                      marginVertical: getResHeight(1.5),
-                      paddingLeft: getResWidth(3),
-                      fontFamily: theme.font.semiBold,
-                    }}>
-                    {image.language}
-                  </Text>
-                  <View style={verseResourceCommonStyle.imageContainer}>
-                    <Image
-                      // source={{uri: 'https://dummyimage.com/600x700/000/fff'}}
-                      source={{uri: image.imageUrl}}
-                      resizeMode="cover"
-                      style={verseResourceCommonStyle.image}
-                    />
-                  </View>
-                  {/* <CommonImageCard
-                    key={index}
-                    backgroundColor={currentBgColor}
-                    borderColor={currentTextColor}
-                    textColor={currentTextColor}
-                    waveButtonProps={waveButtonPropsSecondRoute}
-                    onLongPress={() => handleLongPress(index)}
-                    scheduleText={'Going to live on'}
-                    date={item.date}
-                    isSelected={selectedCard.includes(index)}
-                    imageSource={image.imageUrl}
-                    onCardPress={() => handleCardPress(index)}
-                  /> */}
-                </>
-              );
-            })}
+            <View
+              style={{
+                padding: '3%',
+              }}>
+              {item.images.map((image, index) => {
+                console.log(image, 'profilges');
+                return (
+                  <>
+                    <View
+                      style={{
+                        marginBottom: '4%',
+                      }}>
+                      <Text
+                        style={{
+                          color: currentTextColor,
+
+                          fontFamily: theme.font.semiBold,
+                          fontSize: getFontSize(1.8),
+                          marginBottom: '3%',
+                        }}>
+                        {image.language}
+                      </Text>
+                      <TouchableOpacity
+                        activeOpacity={0.8}
+                        onPress={() => {
+                          setViewImageUrl(image.imageUrl);
+                          setIsImageViewerModal(true);
+                        }}>
+                        <View style={verseResourceCommonStyle.imageContainer}>
+                          <Image
+                            // source={{uri: 'https://dummyimage.com/400x500/000/fff'}}
+                            source={{uri: image.imageUrl}}
+                            resizeMode="cover"
+                            style={verseResourceCommonStyle.image}
+                          />
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                );
+              })}
+            </View>
           </View>
         </>
       );
@@ -269,19 +356,6 @@ const Index = memo(({navigation}) => {
       waveButtonPropsSecondRoute,
     ],
   );
-
-  const [routes, setRoutes] = useState([
-    {key: 'first', title: `Today's Verses`},
-    {key: 'second', title: 'Upcoming'},
-  ]);
-
-  useEffect(() => {
-    // Check if the user is not a super admin
-    if (!StorageKeys.USER_TYPES.includes(logedInuserType)) {
-      // Remove the route at index 1 (the 'Upcoming' route)
-      setRoutes(prevRoutes => prevRoutes.filter((_, index) => index !== 1));
-    }
-  }, [logedInuserType]);
 
   const FirstRoute = () => (
     <ScrollView
@@ -312,10 +386,9 @@ const Index = memo(({navigation}) => {
         }}
         navigation={navigation}
       />
-      {/* </CustomBottomSheet> */}
       <FlatList
         data={getScheduledVerses}
-        // data={scheduleData}
+        showsVerticalScrollIndicator={false}
         renderItem={renderItem}
         keyExtractor={item => item._id.toString()}
         refreshControl={
@@ -341,16 +414,16 @@ const Index = memo(({navigation}) => {
     </>
   );
 
-  useEffect(() => {
-    if (!StorageKeys.USER_TYPES.includes(logedInuserType)) {
-      routes.slice(1, 2);
-    }
-  }, []);
   const scenes = {
     first: FirstRoute,
     second: SecondRoute,
   };
-
+  // Image viewer
+  const images = [
+    {
+      uri: viewImageUrl,
+    },
+  ];
   return (
     <SafeAreaView
       style={[
@@ -363,52 +436,71 @@ const Index = memo(({navigation}) => {
         backPress={() => navigation.goBack()}
         screenTitle={MsgConfig.dailyVerse}
       />
+      <CustomAlertModal
+        visible={isAlertVisible}
+        message={alertMessage}
+        duration={1500} // duration in milliseconds
+        onClose={handleClose}
+      />
       <ConfirmAlert
         visible={isConfirmModalVisible}
         onCancel={() => setIsConfirmModalVisible(false)}
         alertTitle={alertText}
-        onConfirm={() => {
-          setIsConfirmModalVisible(false);
-          setTimeout(() => {
-            ToastAlertComp('success', `Success`, 'Post deleted successfully.');
-          }, 1000);
-          setIsLongPressed(false);
-          setSelectedCard([]);
-        }}
+        alertIcon={alertIcons}
+        onConfirm={submitOnConfirm}
       />
-      {isLoginPressed && (
-        <MasterDeleteSelect
-          selectedItem={selectedCard}
-          onClosePress={() => {
-            setIsLongPressed(false);
-            setSelectedCard([]);
-          }}
-          onDeletePress={() => {
-            setAlertText(
-              `Are you sure you want to delete ${selectedCard.length} post?`,
-            );
-            setIsConfirmModalVisible(true);
-          }}
-        />
+
+      <ImageView
+        images={images}
+        imageIndex={0}
+        visible={isImageViewerModal}
+        onRequestClose={() => setIsImageViewerModal(false)}
+      />
+      {StorageKeys.USER_TYPES.includes(logedInuserType) && (
+        <>
+          <View style={verseResourceCommonStyle.tabViewContainer}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}>
+              <Text
+                style={{
+                  color: theme.color.green,
+                  fontFamily: theme.font.bold,
+                  fontSize: getFontSize(1.8),
+                }}>
+                Total posts : {getScheduledVerses.length}
+              </Text>
+              {nextPostDate !== '' && nextPostDate.scheduleDate !== '' && (
+                <Text
+                  style={{
+                    color: theme.color.green,
+                    fontFamily: theme.font.bold,
+                    fontSize: getFontSize(1.8),
+                  }}>
+                  Next post on :{' '}
+                  {dateFormatHander(nextPostDate.scheduleDate, 'DD MMM YYYY')}
+                </Text>
+              )}
+            </View>
+            <TabViewComp
+              routes={routes}
+              scenes={scenes}
+              indicatorStyle={verseResourceCommonStyle.indicatorStyle}
+              tabBarContainerStyle={[
+                verseResourceCommonStyle.tabBar,
+                {backgroundColor: currentBgColor},
+              ]}
+              onIndexChange={setCurrentTabIndex}
+              labelStyle={[
+                verseResourceCommonStyle.labelStyle,
+                {color: currentTextColor},
+              ]}
+            />
+          </View>
+        </>
       )}
-
-      <View style={verseResourceCommonStyle.tabViewContainer}>
-        <TabViewComp
-          routes={routes}
-          scenes={scenes}
-          indicatorStyle={verseResourceCommonStyle.indicatorStyle}
-          tabBarContainerStyle={[
-            verseResourceCommonStyle.tabBar,
-            {backgroundColor: currentBgColor},
-          ]}
-          onIndexChange={setCurrentTabIndex}
-          labelStyle={[
-            verseResourceCommonStyle.labelStyle,
-            {color: currentTextColor},
-          ]}
-        />
-      </View>
-
       {StorageKeys.USER_TYPES.includes(logedInuserType) && (
         <>
           {currentTabIndex !== 0 && !isLoginPressed && (

@@ -30,15 +30,15 @@ export const verseResourceCommonStyle = StyleSheet.create({
     fontSize: getFontSize(1.6),
   },
   imageContainer: {
-    height: getResHeight(55),
+    height: getResHeight(40),
     width: '100%',
-    backgroundColor: '#095b76',
     borderRadius: getResHeight(1.3),
     overflow: 'hidden',
   },
   image: {
     height: '100%',
     width: '100%',
+    alignSelf: 'center',
   },
   tabViewContainer: {
     flex: 1,

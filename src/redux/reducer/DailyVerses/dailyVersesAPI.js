@@ -67,5 +67,28 @@ const getScheduleVersesAPIHander = createAsyncThunk(
     }
   },
 );
+const deleteSchedulePostAPIHander = createAsyncThunk(
+  APIEndpoint.dailyVerses.deletePoster,
+  async (payload, thunkAPI) => {
+    try {
+      const response = await apiService.postProtected(
+        APIEndpoint.dailyVerses.deletePoster,
+        payload,
+      );
+      console.log('API_SES_schedues', response.data);
+      if (response.data.statusCode === 200) {
+        thunkAPI.dispatch(getScheduleVersesAPIHander());
+        return true;
+      }
+    } catch (error) {
+      console.error('register_API_Failed', error.response);
+      // return error.response.data;
+    }
+  },
+);
 
-export {uploadDailyVersesAPIHander, getScheduleVersesAPIHander};
+export {
+  uploadDailyVersesAPIHander,
+  getScheduleVersesAPIHander,
+  deleteSchedulePostAPIHander,
+};

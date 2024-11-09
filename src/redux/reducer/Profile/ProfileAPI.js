@@ -75,7 +75,7 @@ const getNewApplicationAPIHander = createAsyncThunk(
       if (response.status === 200) {
         const responseData = response.data.data;
 
-        thunkAPI.dispatch(setAllPendingUser(responseData));
+        thunkAPI.dispatch(setAllPendingUser(responseData.reverse()));
       }
       return true;
     } catch (error) {
