@@ -58,3 +58,7 @@ export const dateFormatHander = (date, format) => {
   // Return the formatted date
   return moment(date).format(format);
 };
+
+export const checkIsNotEmptyArray = (arr = []) => {
+  return Array.isArray(arr) && arr.length > 0;
+};

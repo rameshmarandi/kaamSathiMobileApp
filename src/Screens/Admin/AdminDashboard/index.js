@@ -24,7 +24,7 @@ import {
   getResHeight,
   getResWidth,
 } from '../../../utility/responsive/index.js';
-import theme from '../../../utility/theme/index.js';
+
 import AdminUpcomingEvents from '../AdminEvents/AdminUpcomingEvents.js';
 import {VectorIcon} from '../../../Components/VectorIcon.js';
 import {openInAppBrowser} from '../../../Components/InAppBrowserComp.js';
@@ -34,6 +34,12 @@ import {LOCAL_BASE_URL} from '../../../Config/constants.js';
 import storageKeys from '../../../Config/StorageKeys.js';
 import {checkIsAdmin} from '../../../Helpers/CommonHelpers.js';
 import {handleNetworkRequests} from '../../../utility/ NetworkUtils.js';
+import {store} from '../../../redux/store.js';
+import {
+  getNewApplicationAPIHander,
+  myProfileAPIHander,
+} from '../../../redux/reducer/Profile/ProfileAPI.js';
+import DailyVersesComp from '../../ScreenComp/DailyVersesComp.js';
 
 const initialState = {
   adminDashboardCardData: adminDashboardCardData,
@@ -69,11 +75,10 @@ const Index = memo(props => {
   }, []);
 
   const _apiCalling = async props => {
-    const emp_id = await getAsyncValue(asyncKeys.ldapId);
-
     // Define essential requests
     const essentialRequests = [
       () => store.dispatch(getNewApplicationAPIHander()),
+      () => store.dispatch(myProfileAPIHander()),
 
       // Add other essential requests here
     ];
@@ -194,7 +199,7 @@ const Index = memo(props => {
       </TouchableWithoutFeedback>
       <View style={{flex: 1}}>
         <Animated.FlatList
-          data={[0, 1]}
+          data={[0, 1, 2, 3, 4]}
           showsVerticalScrollIndicator={false}
           onScroll={Animated.event(
             [{nativeEvent: {contentOffset: {y: scrollY}}}],
@@ -203,30 +208,37 @@ const Index = memo(props => {
           renderItem={({item, index}) => {
             switch (index) {
               case 0:
+                return <DailyVersesComp {...props} />;
+              case 1:
                 return (
                   <View style={styles.upcomingContainer}>
                     <AdminUpcomingEvents />
                   </View>
                 );
-              case 1:
+              case 2:
                 return (
-                  <SquareCardComp
-                    filteredData={filteredData}
-                    onPress={item => {
-                      if (item.routeName.includes('https')) {
-                        openInAppBrowser(item.routeName);
-                      }
-                      if (item.routeName == 'AddMemberForm') {
-                        setState(prevState => ({
-                          ...prevState,
-                          addNewMemberModalVisible: true,
-                        }));
-                      } else {
-                        props.navigation.navigate(item.routeName);
-                      }
-                      console.log('Navigate_route', item.routeName);
-                    }}
-                  />
+                  <View
+                    style={{
+                      marginTop: getResHeight(5),
+                    }}>
+                    <SquareCardComp
+                      filteredData={filteredData}
+                      onPress={item => {
+                        if (item.routeName.includes('https')) {
+                          openInAppBrowser(item.routeName);
+                        }
+                        if (item.routeName == 'AddMemberForm') {
+                          setState(prevState => ({
+                            ...prevState,
+                            addNewMemberModalVisible: true,
+                          }));
+                        } else {
+                          props.navigation.navigate(item.routeName);
+                        }
+                        console.log('Navigate_route', item.routeName);
+                      }}
+                    />
+                  </View>
                 );
             }
           }}

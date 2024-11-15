@@ -3,6 +3,7 @@ import {createSlice} from '@reduxjs/toolkit';
 const initialState = {
   getTodayVerses: [],
   getScheduledVerses: [],
+  dailyVerses: [],
 };
 
 const dailyVersesSlice = createSlice({
@@ -15,8 +16,12 @@ const dailyVersesSlice = createSlice({
     setScheduledVerses(state, action) {
       state.getScheduledVerses = action.payload;
     },
+    setDailyVerses(state, action) {
+      state.dailyVerses = action.payload;
+    },
   },
 });
 
-export const {setTodayVerses, setScheduledVerses} = dailyVersesSlice.actions;
+export const {setTodayVerses, setScheduledVerses, setDailyVerses} =
+  dailyVersesSlice.actions;
 export default dailyVersesSlice.reducer;

@@ -41,6 +41,19 @@ const DrawerItems = ({navigation}) => {
   let {isDarkMode, currentBgColor, loginUser, isAdmin, currentTextColor} =
     useSelector(state => state.user);
   const [isCofirmAlertVisible, setIsCofirmAlertVisible] = useState(false);
+  const {myProfile} = useSelector(state => state.profile);
+
+  const {
+    fullName,
+    avatar,
+    coverImage,
+    email,
+    mobile,
+    DOB,
+    baptismDate,
+    marriageDate,
+  } = myProfile?.data || {};
+
   let iconFontSize = getFontSize(3);
   let navRoute = [
     {
@@ -268,7 +281,7 @@ const DrawerItems = ({navigation}) => {
 
   const isUserValid = loginUser?.user && Object.keys(loginUser.user).length > 0;
 
-  const {fullName, avatar} = loginUser?.user || {};
+  // const {fullName, avatar} = loginUser?.user || {};
 
   return (
     <SafeAreaView

@@ -2,7 +2,7 @@ import {createAsyncThunk} from '@reduxjs/toolkit';
 import apiService from '../../../API/apiClient';
 import APIEndpoint from '../../../API/ApiEndpoints';
 import {store} from '../../store';
-import {setScheduledVerses} from '.';
+import {setDailyVerses, setScheduledVerses} from '.';
 
 const uploadDailyVersesAPIHander = createAsyncThunk(
   APIEndpoint.dailyVerses.uploadPoster,
@@ -62,7 +62,25 @@ const getScheduleVersesAPIHander = createAsyncThunk(
         return true;
       }
     } catch (error) {
-      console.error('register_API_Failed', error.response);
+      // console.error('register_API_Failed', error.response);
+      // return error.response.data;
+    }
+  },
+);
+const getDailyVersesAPIHander = createAsyncThunk(
+  APIEndpoint.dailyVerses.getDailyVersePoster,
+  async (payload, thunkAPI) => {
+    try {
+      const response = await apiService.getProtected(
+        APIEndpoint.dailyVerses.getDailyVersePoster,
+      );
+      console.log('API_SES_schedues', response.data);
+      if (response.data.statusCode === 200) {
+        thunkAPI.dispatch(setDailyVerses(response.data.data));
+        return true;
+      }
+    } catch (error) {
+      // console.error('register_API_Failed', error.response);
       // return error.response.data;
     }
   },
@@ -91,4 +109,5 @@ export {
   uploadDailyVersesAPIHander,
   getScheduleVersesAPIHander,
   deleteSchedulePostAPIHander,
+  getDailyVersesAPIHander,
 };

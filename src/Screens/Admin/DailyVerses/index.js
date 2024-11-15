@@ -38,6 +38,7 @@ import StorageKeys from '../../../Config/StorageKeys';
 import {store} from '../../../redux/store';
 import {
   deleteSchedulePostAPIHander,
+  getDailyVersesAPIHander,
   getScheduleVersesAPIHander,
 } from '../../../redux/reducer/DailyVerses/dailyVersesAPI';
 import {RefreshControl} from 'react-native';
@@ -51,7 +52,9 @@ const Index = memo(({navigation}) => {
   const {currentBgColor, currentTextColor, logedInuserType} = useSelector(
     state => state.user,
   );
-  const {getScheduledVerses} = useSelector(state => state.dailyVerses);
+  const {getScheduledVerses, dailyVerses} = useSelector(
+    state => state.dailyVerses,
+  );
 
   const [routes, setRoutes] = useState([
     {key: 'first', title: `Today's Verses`},
@@ -92,6 +95,7 @@ const Index = memo(({navigation}) => {
       setRoutes(prevRoutes => prevRoutes.filter((_, index) => index !== 1));
     }
   }, [logedInuserType]);
+
   useEffect(() => {
     if (!StorageKeys.USER_TYPES.includes(logedInuserType)) {
       routes.slice(1, 2);
@@ -99,14 +103,20 @@ const Index = memo(({navigation}) => {
   }, []);
 
   const handleMunuData = userDetails => {
-    return [
-      {id: 4, title: 'Update'},
-      {id: 5, title: 'Delete'},
-    ];
+    if (currentTabIndex == 0) {
+      return [{id: 5, title: 'Delete'}];
+    }
+    if (currentTabIndex == 1) {
+      return [
+        {id: 4, title: 'Update'},
+        {id: 5, title: 'Delete'},
+      ];
+    }
   };
 
   const APIHandler = async () => {
     try {
+      await store.dispatch(getDailyVersesAPIHander());
       await store.dispatch(getScheduleVersesAPIHander());
     } catch (error) {
       console.error('Daily_verse_API_ERROR', error);
@@ -215,6 +225,7 @@ const Index = memo(({navigation}) => {
   const handleClose = () => {
     setIsAlertVisible(false);
   };
+
   const renderItem = useCallback(
     ({item, index}) => {
       return (
@@ -227,7 +238,6 @@ const Index = memo(({navigation}) => {
               borderRadius: getResHeight(2),
               marginBottom: getResHeight(2),
               overflow: 'hidden',
-              // padding: '5%',
             }}>
             <View
               style={[
@@ -241,7 +251,12 @@ const Index = memo(({navigation}) => {
                 },
               ]}>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <WaveButton {...waveButtonPropsSecondRoute} disabled />
+                {currentTabIndex == 0 ? (
+                  <WaveButton {...waveButtonPropsFirstRoute} disabled />
+                ) : (
+                  <WaveButton {...waveButtonPropsSecondRoute} disabled />
+                )}
+
                 <Text
                   style={[
                     verseResourceCommonStyle.boldText,
@@ -250,23 +265,23 @@ const Index = memo(({navigation}) => {
                       marginLeft: 10,
                     },
                   ]}>
-                  {'Going to live on'}
+                  {currentTabIndex == 0 ? 'Live' : 'Going to live on'}
                 </Text>
               </View>
-              <Text
-                style={[
-                  verseResourceCommonStyle.regularText,
-                  {color: theme.color.green},
-                ]}>
-                {dateFormatHander(item.scheduleDate, 'DD MMM YYYY hh:mm A')}
-              </Text>
+
               <View
                 style={{
-                  // position: 'absolute',
-                  // top: getResHeight(1.4),
-                  // right: getResWidth(2),
                   zIndex: 9999,
+                  flexDirection: 'row',
+                  alignItems: 'center',
                 }}>
+                <Text
+                  style={[
+                    verseResourceCommonStyle.regularText,
+                    {color: theme.color.green},
+                  ]}>
+                  {dateFormatHander(item.scheduleDate, 'DD MMM YYYY hh:mm A')}
+                </Text>
                 {/* {isLoading && item.id == selectedCard?.id ? (
                   <ActivityIndicator
                     size={getFontSize(2.5)}
@@ -324,20 +339,121 @@ const Index = memo(({navigation}) => {
                         {image.language}
                       </Text>
                       <TouchableOpacity
-                        activeOpacity={0.8}
+                        activeOpacity={1}
                         onPress={() => {
                           setViewImageUrl(image.imageUrl);
                           setIsImageViewerModal(true);
                         }}>
                         <View style={verseResourceCommonStyle.imageContainer}>
                           <Image
-                            // source={{uri: 'https://dummyimage.com/400x500/000/fff'}}
                             source={{uri: image.imageUrl}}
                             resizeMode="cover"
                             style={verseResourceCommonStyle.image}
                           />
                         </View>
                       </TouchableOpacity>
+                      <View
+                        style={{
+                          paddingHorizontal: getResWidth(1.9),
+                        }}>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            marginTop: getResHeight(1.2),
+                            borderBottomWidth: 0.5,
+                            borderBottomColor: currentTextColor,
+
+                            paddingBottom: getResHeight(1.4),
+                          }}>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                            }}>
+                            <VectorIcon
+                              type={'Ionicons'}
+                              name={'eye'}
+                              size={getFontSize(3.1)}
+                              color={currentTextColor}
+                            />
+                            <Text
+                              style={{
+                                color: currentTextColor,
+                                fontSize: getFontSize(1.8),
+                                fontFamily: theme.font.medium,
+                                marginLeft: getResWidth(1.9),
+                                marginTop: getResHeight(1),
+                              }}>
+                              12
+                            </Text>
+                          </View>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                            }}>
+                            <Text
+                              style={{
+                                color: currentTextColor,
+                                fontFamily: theme.font.medium,
+
+                                fontSize: getFontSize(1.8),
+                                marginRight: getResWidth(3),
+                              }}>
+                              15
+                            </Text>
+                            <VectorIcon
+                              type={'MaterialCommunityIcons'}
+                              name={'message'}
+                              size={getFontSize(3.1)}
+                              color={currentTextColor}
+                            />
+                          </View>
+                        </View>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            marginTop: getResHeight(1.4),
+                          }}>
+                          <TouchableOpacity>
+                            <Text
+                              style={{
+                                color: currentTextColor,
+                                fontFamily: theme.font.medium,
+                                fontSize: getFontSize(1.9),
+                              }}>
+                              Like
+                            </Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={() => {
+                              navigation.navigate('CommentSection');
+                            }}>
+                            <Text
+                              style={{
+                                color: currentTextColor,
+                                fontFamily: theme.font.medium,
+                                fontSize: getFontSize(1.9),
+                              }}>
+                              Comment
+                            </Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity>
+                            <Text
+                              style={{
+                                color: currentTextColor,
+                                fontFamily: theme.font.medium,
+                                fontSize: getFontSize(1.9),
+                              }}>
+                              Share
+                            </Text>
+                          </TouchableOpacity>
+                        </View>
+                      </View>
                     </View>
                   </>
                 );
@@ -362,18 +478,31 @@ const Index = memo(({navigation}) => {
       refreshControl={
         <RefreshControl refreshing={false} onRefresh={APIHandler} />
       }>
-      {['English', 'Marathi', 'Hindi'].map((item, index) => (
-        <CommonImageCard
-          key={index}
-          backgroundColor={currentBgColor}
-          borderColor={currentTextColor}
-          textColor={currentTextColor}
-          scheduleText={'Live'}
-          waveButtonProps={waveButtonPropsFirstRoute}
-          date={item}
-          imageSource={theme.assets.dailyVerbsBanner}
-        />
-      ))}
+      <FlatList
+        data={dailyVerses}
+        showsVerticalScrollIndicator={false}
+        renderItem={renderItem}
+        keyExtractor={item => item._id.toString()}
+        refreshControl={
+          <RefreshControl
+            refreshing={false}
+            onRefresh={() => APIHandler(false)}
+          />
+        }
+        ListEmptyComponent={() => {
+          return (
+            <>
+              <View
+                style={{
+                  marginTop: getResHeight(-10),
+                }}>
+                <NoDataFound />
+              </View>
+            </>
+          );
+        }}
+        contentContainerStyle={verseResourceCommonStyle.flatListContainer}
+      />
     </ScrollView>
   );
 
