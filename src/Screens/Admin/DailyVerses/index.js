@@ -7,6 +7,7 @@ import {
   FlatList,
   SafeAreaView,
   StyleSheet,
+  ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
 import {useSelector} from 'react-redux';
@@ -40,6 +41,7 @@ import {
   deleteSchedulePostAPIHander,
   getDailyVersesAPIHander,
   getScheduleVersesAPIHander,
+  publishNowPostAPIHander,
 } from '../../../redux/reducer/DailyVerses/dailyVersesAPI';
 import {RefreshControl} from 'react-native';
 import NoDataFound from '../../../Components/NoDataFound';
@@ -75,8 +77,7 @@ const Index = memo(({navigation}) => {
   const [alertIcons, setAlertIcons] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
   const [isAlertVisible, setIsAlertVisible] = useState(false);
-  const [alertMsg, setAlertMsg] = useState('');
-  const [showAlert, setShowAlert] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     APIHandler();
@@ -108,7 +109,8 @@ const Index = memo(({navigation}) => {
     }
     if (currentTabIndex == 1) {
       return [
-        {id: 4, title: 'Update'},
+        // {id: 4, title: 'Update'},
+        {id: 7, title: 'Publish now'},
         {id: 5, title: 'Delete'},
       ];
     }
@@ -189,17 +191,26 @@ const Index = memo(({navigation}) => {
         setIsConfirmModalVisible(true);
         break;
 
-      // case 4:
-      //   const res = singleUserCardData(selectedCard);
-      //   console.log('userData', res);
-      //   setTimeout(() => {
-      //     openBottomSheetWithContent(res);
-      //   }, 500);
+      case 7:
+        setAlertIcons(
+          <VectorIcon
+            type={'Ionicons'}
+            name={'checkmark-circle'}
+            size={getFontSize(5.1)}
+            color={theme.color.green}
+          />,
+        );
+        setAlertText('Are you sure you want to\n publish this post now?');
+
+        setIsConfirmModalVisible(true);
+        break;
     }
   };
 
   const submitOnConfirm = async () => {
     console.log('selectedMenuID', selectedCard);
+
+    setIsLoading(true);
 
     if (selectedMenuID.id == 5) {
       setIsConfirmModalVisible(false);
@@ -219,7 +230,26 @@ const Index = memo(({navigation}) => {
         setIsConfirmModalVisible(false);
         setNextPostDate('');
       }
+    } else if (selectedMenuID.id == 7) {
+      setIsConfirmModalVisible(false);
+      const res = await store.dispatch(
+        publishNowPostAPIHander({
+          id: selectedCard._id,
+        }),
+      );
+      if (res.payload === true) {
+        setAlertMessage({
+          status: 'success',
+
+          alertMsg: 'Daily verse published successfully',
+        });
+        setIsAlertVisible(true);
+        setSelectedMenuID('');
+        setIsConfirmModalVisible(false);
+        setNextPostDate('');
+      }
     }
+    setIsLoading(false);
   };
 
   const handleClose = () => {
@@ -274,46 +304,56 @@ const Index = memo(({navigation}) => {
                   zIndex: 9999,
                   flexDirection: 'row',
                   alignItems: 'center',
+                  height: getResHeight(3.5),
                 }}>
                 <Text
                   style={[
                     verseResourceCommonStyle.regularText,
                     {color: theme.color.green},
+
+                    (isLoading || currentTabIndex == 0) && {
+                      marginRight: '5%',
+                    },
                   ]}>
                   {dateFormatHander(item.scheduleDate, 'DD MMM YYYY hh:mm A')}
                 </Text>
-                {/* {isLoading && item.id == selectedCard?.id ? (
-                  <ActivityIndicator
-                    size={getFontSize(2.5)}
-                    color={currentTextColor}
-                  />
-                ) : ( */}
-                <SmallMenuComp
-                  buttonLabel={openMenu => (
-                    <ButtonIconComp
-                      onPress={() => {
-                        setSelectedCard(item);
-                        openMenu();
-                      }}
-                      icon={
-                        <VectorIcon
-                          type={'Entypo'}
-                          name={'dots-three-vertical'}
-                          size={getFontSize(2.1)}
-                          color={currentTextColor}
-                        />
-                      }
-                      containerStyle={{
-                        width: getResHeight(5),
-                        height: getResHeight(5),
-                        borderRadius: getResHeight(100),
-                      }}
-                    />
-                  )}
-                  menuItems={handleMunuData(item)}
-                  onMenuPress={MenuItemOnPressHandler}
-                />
-                {/* )} */}
+
+                {currentTabIndex !== 0 && (
+                  <>
+                    {isLoading && item.id == selectedCard?.id ? (
+                      <ActivityIndicator
+                        size={getFontSize(2.5)}
+                        color={currentTextColor}
+                      />
+                    ) : (
+                      <SmallMenuComp
+                        buttonLabel={openMenu => (
+                          <ButtonIconComp
+                            onPress={() => {
+                              setSelectedCard(item);
+                              openMenu();
+                            }}
+                            icon={
+                              <VectorIcon
+                                type={'Entypo'}
+                                name={'dots-three-vertical'}
+                                size={getFontSize(2.1)}
+                                color={currentTextColor}
+                              />
+                            }
+                            containerStyle={{
+                              width: getResHeight(5),
+                              height: getResHeight(5),
+                              borderRadius: getResHeight(100),
+                            }}
+                          />
+                        )}
+                        menuItems={handleMunuData(item)}
+                        onMenuPress={MenuItemOnPressHandler}
+                      />
+                    )}
+                  </>
+                )}
               </View>
             </View>
             <View
@@ -553,6 +593,8 @@ const Index = memo(({navigation}) => {
       uri: viewImageUrl,
     },
   ];
+
+  console.log('dailyVerses_Atap', dailyVerses);
   return (
     <SafeAreaView
       style={[

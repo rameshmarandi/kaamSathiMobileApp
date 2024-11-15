@@ -4,6 +4,7 @@ const initialState = {
   getTodayVerses: [],
   getScheduledVerses: [],
   dailyVerses: [],
+  selectedDailyVerse: null,
 };
 
 const dailyVersesSlice = createSlice({
@@ -19,9 +20,16 @@ const dailyVersesSlice = createSlice({
     setDailyVerses(state, action) {
       state.dailyVerses = action.payload;
     },
+    setSelectedDailyVerse(state, action) {
+      state.selectedDailyVerse = action.payload;
+    },
   },
 });
 
-export const {setTodayVerses, setScheduledVerses, setDailyVerses} =
-  dailyVersesSlice.actions;
+export const {
+  setTodayVerses,
+  setSelectedDailyVerse,
+  setScheduledVerses,
+  setDailyVerses,
+} = dailyVersesSlice.actions;
 export default dailyVersesSlice.reducer;

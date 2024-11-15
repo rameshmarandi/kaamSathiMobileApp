@@ -25,6 +25,7 @@ import {store} from '../../../redux/store';
 import {uploadDailyVersesAPIHander} from '../../../redux/reducer/DailyVerses/dailyVersesAPI';
 import {Text} from 'react-native';
 import theme from '../../../utility/theme';
+import moment from 'moment';
 
 const DailyVersUploadForm = ({visible, onRequestClose, navigation}) => {
   const {currentTextColor, currentBgColor} = useSelector(state => state.user);
@@ -59,6 +60,7 @@ const DailyVersUploadForm = ({visible, onRequestClose, navigation}) => {
         scheduleDate: values.scheduleDate,
       };
       const res = await store.dispatch(uploadDailyVersesAPIHander(paylord));
+
       if (res.payload === true) {
         onRequestClose();
         setAlertMessage({
@@ -210,6 +212,7 @@ const DailyVersUploadForm = ({visible, onRequestClose, navigation}) => {
                       value={values.scheduleDate}
                       isDate={true}
                       // timePicker={true}
+                      minDate={moment().subtract(1, 'days').toDate()}
                       onChangeText={handleChange('scheduleDate')}
                       onBlur={handleBlur('scheduleDate')}
                       error={touched.scheduleDate && errors.scheduleDate}

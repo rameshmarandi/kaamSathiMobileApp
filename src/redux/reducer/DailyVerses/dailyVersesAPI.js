@@ -38,13 +38,13 @@ const uploadDailyVersesAPIHander = createAsyncThunk(
 
         formData,
       );
-      console.log('API_SES', response, response.data);
+      console.log('UploadDailyVersesAPIHander', response.data);
       if (response.data.statusCode === 200) {
         thunkAPI.dispatch(getScheduleVersesAPIHander());
         return true;
       }
     } catch (error) {
-      console.error('register_API_Failed', error.response);
+      console.error('UploadDailyVersesAPI_Failed', error.response);
       // return error.response.data;
     }
   },
@@ -71,11 +71,12 @@ const getDailyVersesAPIHander = createAsyncThunk(
   APIEndpoint.dailyVerses.getDailyVersePoster,
   async (payload, thunkAPI) => {
     try {
-      const response = await apiService.getProtected(
+      const response = await apiService.getPublic(
         APIEndpoint.dailyVerses.getDailyVersePoster,
       );
-      console.log('API_SES_schedues', response.data);
+      console.log('daily_API_SES_schedues', response.data);
       if (response.data.statusCode === 200) {
+        console.log('response.data.data', response.data);
         thunkAPI.dispatch(setDailyVerses(response.data.data));
         return true;
       }
@@ -104,10 +105,52 @@ const deleteSchedulePostAPIHander = createAsyncThunk(
     }
   },
 );
+const publishNowPostAPIHander = createAsyncThunk(
+  APIEndpoint.dailyVerses.publishNow,
+  async (payload, thunkAPI) => {
+    try {
+      const response = await apiService.postProtected(
+        APIEndpoint.dailyVerses.publishNow,
+        payload,
+      );
+      console.log('API_SES_schedues', response.data);
+      if (response.data.statusCode === 200) {
+        thunkAPI.dispatch(getScheduleVersesAPIHander());
+        thunkAPI.dispatch(getDailyVersesAPIHander());
+        return true;
+      }
+    } catch (error) {
+      console.error('register_API_Failed', error.response);
+      // return error.response.data;
+    }
+  },
+);
+const viewPostAPIHander = createAsyncThunk(
+  APIEndpoint.dailyVerses.viewDailyVersePoster,
+  async (payload, thunkAPI) => {
+    try {
+      const response = await apiService.postPublic(
+        APIEndpoint.dailyVerses.viewDailyVersePoster,
+        payload,
+      );
+      console.log('API_SES_schedues', response.data);
+      if (response.data.statusCode === 200) {
+        thunkAPI.dispatch(getScheduleVersesAPIHander());
+        thunkAPI.dispatch(getDailyVersesAPIHander());
+        return true;
+      }
+    } catch (error) {
+      console.error('View_post_API_Failed', error.response.data);
+      // return error.response.data;
+    }
+  },
+);
 
 export {
   uploadDailyVersesAPIHander,
   getScheduleVersesAPIHander,
   deleteSchedulePostAPIHander,
   getDailyVersesAPIHander,
+  publishNowPostAPIHander,
+  viewPostAPIHander,
 };

@@ -28,6 +28,7 @@ import LoginPage from './Auth/LoginPage';
 import ForgotPassword from './Auth/ForgotPassword';
 import ApplicationUnderReview from './Auth/ApplicationUnderReview';
 import MyFamily from './User/ProfilePage/MyFamily';
+import DailyVerseDetails from './ScreenComp/DailyVerseDetails';
 
 const UserAllScreens = {
   HomePage,
@@ -39,6 +40,7 @@ const UserAllScreens = {
   ContactWithUs,
   Feedback,
   UserNotification,
+  DailyVerseDetails,
 };
 
 const AdminScreens = {

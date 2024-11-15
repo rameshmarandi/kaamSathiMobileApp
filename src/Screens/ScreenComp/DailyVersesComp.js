@@ -1,15 +1,20 @@
 import React, {useState, useEffect, memo} from 'react';
-import {View, Text, Image, StyleSheet} from 'react-native';
+import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import {getDailyVersesAPIHander} from '../../redux/reducer/DailyVerses/dailyVersesAPI';
+import {
+  getDailyVersesAPIHander,
+  viewPostAPIHander,
+} from '../../redux/reducer/DailyVerses/dailyVersesAPI';
 import {checkIsNotEmptyArray} from '../../Components/commonHelper';
 import TabViewComp from '../../Components/TabViewComp';
 import SectionHeader from '../../Components/SectionHeader';
 import MsgConfig from '../../Config/MsgConfig';
 import {getResHeight, getResWidth} from '../../utility/responsive';
 import theme from '../../utility/theme';
+import {store} from '../../redux/store';
+import {setSelectedDailyVerse} from '../../redux/reducer/DailyVerses';
 
-const DailyVersesComp = props => {
+const DailyVersesComp = memo(props => {
   const {navigation} = props;
   const dispatch = useDispatch();
 
@@ -21,7 +26,9 @@ const DailyVersesComp = props => {
   const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
   );
-  const {dailyVerses} = useSelector(state => state.dailyVerses);
+  const {dailyVerses, selectedDailyVerse} = useSelector(
+    state => state.dailyVerses,
+  );
 
   // Fetch data on mount
   useEffect(() => {
@@ -50,8 +57,17 @@ const DailyVersesComp = props => {
     if (matchedImage) {
       setSelectedLng(matchedImage);
     }
+
+    // postViewAPIHandler(); // View API handler
   }, [currentTabIndex, dailyVerses]);
 
+  const postViewAPIHandler = async () => {
+    await store.dispatch(
+      viewPostAPIHander({
+        id: selectedLng._id,
+      }),
+    );
+  };
   const routes = [
     {key: 'third', title: 'Marathi'},
     {key: 'first', title: 'Hindi'},
@@ -59,9 +75,33 @@ const DailyVersesComp = props => {
   ];
 
   const scenes = {
-    first: () => <DailyVerbs dailyVerseData={selectedLng} />,
-    second: () => <DailyVerbs dailyVerseData={selectedLng} />,
-    third: () => <DailyVerbs dailyVerseData={selectedLng} />,
+    first: () => (
+      <DailyVerbs
+        dailyVerseData={selectedLng}
+        onPress={() => {
+          store.dispatch(setSelectedDailyVerse(selectedLng));
+          navigation.navigate('VerseDetails');
+        }}
+      />
+    ),
+    second: () => (
+      <DailyVerbs
+        dailyVerseData={selectedLng}
+        onPress={() => {
+          store.dispatch(setSelectedDailyVerse(selectedLng));
+          navigation.navigate('VerseDetails');
+        }}
+      />
+    ),
+    third: () => (
+      <DailyVerbs
+        dailyVerseData={selectedLng}
+        onPress={() => {
+          store.dispatch(setSelectedDailyVerse(selectedLng));
+          navigation.navigate('VerseDetails');
+        }}
+      />
+    ),
   };
   console.log('dailyVerses_at', selectedLng);
   return (
@@ -97,11 +137,14 @@ const DailyVersesComp = props => {
       )}
     </>
   );
-};
+});
 
-const DailyVerbs = memo(({dailyVerseData}) => {
+const DailyVerbs = memo(({dailyVerseData, onPress}) => {
   return (
-    <View style={styles.verseContainer}>
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={1}
+      style={styles.verseContainer}>
       <Image
         source={
           dailyVerseData?.imageUrl
@@ -111,7 +154,7 @@ const DailyVerbs = memo(({dailyVerseData}) => {
         resizeMode="cover"
         style={styles.image}
       />
-    </View>
+    </TouchableOpacity>
   );
 });
 

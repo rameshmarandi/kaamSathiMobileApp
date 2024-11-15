@@ -140,6 +140,14 @@ export default function DrawerStack(props) {
           }}
         />
         <Drawer.Screen
+          name="VerseDetails"
+          component={AllScreens.DailyVerseDetails}
+          options={{
+            headerShadowVisible: false,
+            headerShown: false,
+          }}
+        />
+        <Drawer.Screen
           name="LoginPage"
           component={AllScreens.LoginPage}
           options={{

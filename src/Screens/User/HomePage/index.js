@@ -31,6 +31,7 @@ import TabViewComp from '../../../Components/TabViewComp';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import {Platform} from 'react-native';
 import {requestUserPermission} from '../../../utility/PermissionContoller';
+import DailyVersesComp from '../../ScreenComp/DailyVersesComp';
 
 const {width} = Dimensions.get('window');
 const itemWidth = width - 40; // Adjust this according to your layout
@@ -219,10 +220,10 @@ const index = memo(props => {
         renderItem={({item, index}) => {
           switch (index) {
             case 0:
-              <BannerCardComp />;
+              return <BannerCardComp />;
 
             case 1:
-              return <></>;
+              return <DailyVersesComp />;
           }
         }}
       />
