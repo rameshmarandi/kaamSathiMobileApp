@@ -231,22 +231,23 @@ const Index = ({navigation}) => {
             setSelectedCard([]);
           }}
         />
-        {isLoginPressed && (
-          <MasterDeleteSelect
-            selectedItem={selectedCard}
-            onClosePress={() => {
-              setIsLoginPressed(false);
-              setSelectedCard([]);
-            }}
-            onDeletePress={() => {
-              setAlertText(
-                `Are you sure you want to delete ${selectedCard.length} PDF?`,
-              );
-              setIsConfirmModalVisible(true);
-            }}
-          />
-        )}
       </View>
+      {isLoginPressed && (
+        <MasterDeleteSelect
+          selectedItem={selectedCard}
+          onClosePress={() => {
+            setIsLoginPressed(false);
+            setSelectedCard([]);
+          }}
+          onDeletePress={() => {
+            setAlertText(
+              `Are you sure you want to delete ${selectedCard.length} PDF?`,
+            );
+            setIsConfirmModalVisible(true);
+          }}
+        />
+      )}
+
       {combinedRoutes.length === 0 ? (
         <NoDataFound />
       ) : (

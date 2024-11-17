@@ -506,7 +506,6 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
               error={touched.gender && errors.gender}
             />
 
-            {console.log('Branch_list', branchDropdown)}
             <MasterTextInput
               topLableName={'Select church branch'}
               isDropdown={true}

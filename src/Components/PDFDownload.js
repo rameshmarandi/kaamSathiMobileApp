@@ -1,4 +1,4 @@
-import React, {useState, useCallback, memo} from 'react';
+import React, {useState, useCallback, memo, useRef} from 'react';
 import {
   SafeAreaView,
   Text,
@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   StyleSheet,
+  Animated,
 } from 'react-native';
 import Pdf from 'react-native-pdf';
 import {useSelector} from 'react-redux';
@@ -30,10 +31,12 @@ const PDFDownload = memo(
     const [downloadProgress, setDownloadProgress] = useState(false);
     const [percent, setPercentage] = useState(0);
     const [isDarkThemeEnabled, setIsDarkThemeEnabled] = useState(false);
-
     const [onLoading, setOnLoading] = useState(false);
     const [downloadOnComplete, setDownloadOnComplete] = useState(false);
     const [downlaodSuccess, setDownlaodSuccess] = useState(false);
+
+    // Animated value for header visibility
+    const headerOpacity = useRef(new Animated.Value(1)).current;
 
     const handleDownload = useCallback(async () => {
       if (await CheckFilePermissions()) {
@@ -51,6 +54,25 @@ const PDFDownload = memo(
       }
     }, [pdfLink]);
 
+    const handleScroll = event => {
+      const contentOffsetY = event.nativeEvent.contentOffset.y;
+
+      // If scrolled down, hide header, else show header
+      if (contentOffsetY > 50) {
+        Animated.timing(headerOpacity, {
+          toValue: 0, // Hide header
+          duration: 300, // Smooth transition
+          useNativeDriver: true,
+        }).start();
+      } else {
+        Animated.timing(headerOpacity, {
+          toValue: 1, // Show header
+          duration: 300, // Smooth transition
+          useNativeDriver: true,
+        }).start();
+      }
+    };
+
     return (
       <Modal
         transparent
@@ -59,12 +81,10 @@ const PDFDownload = memo(
         animationType="slide">
         <SafeAreaView
           style={[styles.safeArea, {backgroundColor: currentBgColor}]}>
-          <View
+          <Animated.View
             style={[
               styles.header,
-              {
-                borderBottomColor: currentTextColor,
-              },
+              {opacity: headerOpacity, borderBottomColor: currentTextColor},
             ]}>
             <TouchableOpacity
               onPress={() => {
@@ -124,7 +144,7 @@ const PDFDownload = memo(
                 </View>
               </>
             )}
-          </View>
+          </Animated.View>
 
           <View style={styles.pdfContainer}>
             <Pdf
@@ -132,7 +152,8 @@ const PDFDownload = memo(
               source={{uri: pdfLink}}
               scale={1}
               onLoadProgress={percent => {
-                setPercentage(percent * 100), setOnLoading(true);
+                setPercentage(percent * 100);
+                setOnLoading(true);
               }}
               onLoadComplete={() => {
                 setPercentage(0);
@@ -142,13 +163,13 @@ const PDFDownload = memo(
               renderActivityIndicator={() => (
                 <View style={styles.activityIndicator}>
                   <ActivityIndicator size="large" color={currentTextColor} />
-
                   <Text style={[styles.percentText, {color: currentTextColor}]}>
                     {`Please wait...${Math.round(percent)}%`}
                   </Text>
                 </View>
               )}
               style={styles.pdf}
+              onScroll={handleScroll} // Add onScroll handler
             />
 
             {isDarkThemeEnabled && (

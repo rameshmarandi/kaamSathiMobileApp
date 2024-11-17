@@ -1,12 +1,5 @@
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
-/**
- * Master method to handle image picking or capturing.
- * @param {('camera'|'gallery')} mode - Specify whether to use the camera or image library.
- * @param {object} options - Options for customizing the picker behavior.
- * @param {function} onSuccess - Callback for a successful image/video pick.
- * @param {function} onError - Callback for errors during the picking process.
- */
 const ImagePickerComp = (mode, options = {}, onSuccess, onError) => {
   // Default options
   const defaultOptions = {
@@ -60,4 +53,11 @@ const ImagePickerComp = (mode, options = {}, onSuccess, onError) => {
   }
 };
 
+// const DocumentPicker = ()=>{
+//   // Pick document (common for both iOS and Android)
+//   const response = await DocumentPicke.pick({
+//     type: fileTypes,
+//     includeBase64: Platform.OS === 'android', // base64 is only needed on Android
+//   });
+// }
 export default ImagePickerComp;

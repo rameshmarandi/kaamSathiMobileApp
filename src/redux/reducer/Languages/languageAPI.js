@@ -16,15 +16,13 @@ const getLanguageAPIHander = createAsyncThunk(
   APIEndpoint.language.getLanguage,
   async (payload, thunkAPI) => {
     try {
-      console.log('Chsetp_1');
       const response = await apiService.getPublic(
         APIEndpoint.language.getLanguage,
       );
 
-      console.log('aPI_RES_languge', response.data.statusCode === 200);
       if (response.data.statusCode === 200) {
         const resData = response.data.data;
-        console.log('aPI_RES_languge_2', resData);
+
         thunkAPI.dispatch(setLangues(resData));
       }
       return response.data.message;

@@ -20,6 +20,7 @@ const SquareCardComp = ({filteredData, onPress}) => {
   const renderSquareCardItem = useCallback(
     ({item, itemsLength}) => (
       <TouchableOpacity
+        activeOpacity={0.8}
         onPress={() => {
           if (
             !StorageKeys.USER_TYPES.includes(logedInuserType) &&

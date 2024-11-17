@@ -1,4 +1,4 @@
-import React, {useRef, useState, useCallback, memo} from 'react';
+import React, {useRef, useState, useCallback, memo, useEffect} from 'react';
 import {
   View,
   ScrollView,
@@ -18,6 +18,8 @@ import MasterTextInput from '../../../Components/MasterTextInput';
 import FileUploadComponent from '../../../Components/FileUploadComponent';
 import CustomHeader from '../../../Components/CustomHeader';
 import MsgConfig from '../../../Config/MsgConfig';
+import {store} from '../../../redux/store';
+import {getLanguageAPIHander} from '../../../redux/reducer/Languages/languageAPI';
 
 const UploadStudyResource = ({
   visible,
@@ -27,7 +29,29 @@ const UploadStudyResource = ({
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedImage1, setSelectedImage1] = useState(null);
   const {currentTextColor, currentBgColor} = useSelector(state => state.user);
+  const [languageDropdown, setLanguageDropdown] = useState([]);
+  const [selectedBranch, setSelectedBranch] = useState(null);
+  const {getLanguage} = useSelector(state => state.languges);
+  useEffect(() => {
+    APIHandler();
+  }, [visible]);
 
+  const APIHandler = async () => {
+    await store.dispatch(getLanguageAPIHander());
+    extractLanguage();
+  };
+
+  const extractLanguage = () => {
+    const capitalize = str => str.replace(/\b\w/g, char => char.toUpperCase());
+
+    const dropdownData = getLanguage.map(item => ({
+      languageId: item._id,
+      label: capitalize(item.language),
+      value: item.language,
+    }));
+
+    setLanguageDropdown(dropdownData);
+  };
   // Handle image success
   const handleImageSuccess = useCallback(imageData => {
     setSelectedImage(imageData.uri);
@@ -35,6 +59,8 @@ const UploadStudyResource = ({
   const handleImageSuccess1 = useCallback(imageData => {
     setSelectedImage1(imageData.uri);
   }, []);
+
+  console.log('GeT_LNG_AT_SDF', languageDropdown);
 
   // Handle image error
   const handleImageError = useCallback(
@@ -53,12 +79,16 @@ const UploadStudyResource = ({
   );
 
   // Handle form submission
-  const handleSubmitForm = useCallback(() => {
-    closeBottomSheetWithContent();
-    setTimeout(() => {
-      ToastAlertComp('success', 'Success', 'Post scheduled successfully.');
-    }, 1000);
-  }, [closeBottomSheetWithContent]);
+  const handleSubmitForm = useCallback(
+    values => {
+      console.log('');
+      // closeBottomSheetWithContent();
+      // setTimeout(() => {
+      //   ToastAlertComp('success', 'Success', 'Post scheduled successfully.');
+      // }, 1000);
+    },
+    [closeBottomSheetWithContent],
+  );
 
   return (
     <SafeAreaView
@@ -95,9 +125,9 @@ const UploadStudyResource = ({
             }}>
             <Formik
               initialValues={{
-                pdfThubnail: '',
-                pdfImage: '',
-                pdfName: '',
+                thumbnil: '',
+                document: '',
+                language: '',
               }}
               onSubmit={handleSubmitForm}>
               {({
@@ -106,6 +136,7 @@ const UploadStudyResource = ({
                 handleSubmit,
                 values,
                 errors,
+                setFieldValue,
                 touched,
               }) => (
                 <View style={{}}>
@@ -114,24 +145,18 @@ const UploadStudyResource = ({
                     keyboardShouldPersistTaps="handled"
                     showsVerticalScrollIndicator={false}>
                     <MasterTextInput
-                      label="Language"
-                      placeholder="Select language"
-                      topLableName={'Select language'}
+                      topLableName={'Select church branch'}
                       isDropdown={true}
-                      dropdownData={[
-                        {label: 'English', value: 'english'},
-                        {label: 'Marathi', value: 'marathi'},
-                        {label: 'Hindi', value: 'hindi'},
-                      ]}
-                      value={values.lang}
-                      onDropdownChange={() => {
-                        setTimeout(() => {
-                          handleChange('lang');
-                        }, 100);
+                      dropdownData={languageDropdown}
+                      value={values.language}
+                      onDropdownChange={item => {
+                        setSelectedBranch(item);
+                        setFieldValue('language', item.value);
                       }}
-                      onBlur={handleBlur('lang')}
-                      error={touched.lang && errors.lang}
+                      onBlur={handleBlur('language')}
+                      error={touched.language && errors.language}
                     />
+
                     <FileUploadComponent
                       selectedImage={selectedImage}
                       onImageSuccess={handleImageSuccess}

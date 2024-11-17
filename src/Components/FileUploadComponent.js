@@ -37,7 +37,7 @@ const FileUploadComponent = memo(
             ImagePickerComp(
               'gallery',
               {
-                mediaType: 'photo',
+                mediaType: 'pdf',
                 quality: 0.8,
 
                 // includeBase64: true,

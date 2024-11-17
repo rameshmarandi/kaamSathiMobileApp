@@ -53,6 +53,7 @@ const APIEndpoint = {
   resource: {
     getResource: '/user/get-resource',
     deleteResouce: '/user/delete-resource',
+    createResource: '/user/create-resource',
   },
   // Add more modules as needed
 };

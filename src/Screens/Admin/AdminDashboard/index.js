@@ -40,7 +40,6 @@ import {
   myProfileAPIHander,
 } from '../../../redux/reducer/Profile/ProfileAPI.js';
 import DailyVersesComp from '../../ScreenComp/DailyVersesComp.js';
-import {getLanguageAPIHander} from '../../../redux/reducer/Languages/languageAPI.js';
 
 const initialState = {
   adminDashboardCardData: adminDashboardCardData,
@@ -79,7 +78,7 @@ const Index = memo(props => {
     // Define essential requests
     const essentialRequests = [
       () => store.dispatch(getNewApplicationAPIHander()),
-      () => store.dispatch(getLanguageAPIHander()),
+
       () => store.dispatch(myProfileAPIHander()),
 
       // Add other essential requests here
