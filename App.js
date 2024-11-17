@@ -7,7 +7,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import RootNavigation from './src/Navigation';
 import {PaperProvider} from 'react-native-paper';
-
+import {ReactionProvider} from 'react-native-reactions';
 import Toast, {BaseToast, ErrorToast} from 'react-native-toast-message';
 
 // import AllScreens from './src/Screens/index';
@@ -151,9 +151,11 @@ const AllNavContainer = props => {
         <PaperProvider>
           <PersistGate persistor={persistor}>
             {/* <MenuProvider> */}
-            <NavigationContainer onReady={onNavigationReady}>
-              <RootNavigation isLogedIn={isLogedIn} />
-            </NavigationContainer>
+            <ReactionProvider>
+              <NavigationContainer onReady={onNavigationReady}>
+                <RootNavigation isLogedIn={isLogedIn} />
+              </NavigationContainer>
+            </ReactionProvider>
             {/* </MenuProvider> */}
           </PersistGate>
         </PaperProvider>

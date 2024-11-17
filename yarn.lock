@@ -6890,14 +6890,15 @@ react-native-flipper@^0.164.0:
   resolved "https://registry.npmjs.org/react-native-flipper/-/react-native-flipper-0.164.0.tgz"
   integrity sha512-iJhIe3rqx6okuzBp4AJsTa2b8VRAOGzoLRFx/4HGbaGvu8AurZjz8TTQkhJsRma8dsHN2b6KKZPvGGW3wdWzvA==
 
-react-native-gesture-handler@^2.16.0, "react-native-gesture-handler@>= 1.0.0", react-native-gesture-handler@>=1.10.1:
-  version "2.20.2"
-  resolved "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-2.20.2.tgz"
-  integrity sha512-HqzFpFczV4qCnwKlvSAvpzEXisL+Z9fsR08YV5LfJDkzuArMhBu2sOoSPUF/K62PCoAb+ObGlTC83TKHfUd0vg==
+react-native-gesture-handler@^2.16.0, "react-native-gesture-handler@>= 1.0.0", react-native-gesture-handler@>=1.10.1, react-native-gesture-handler@2.16.2:
+  version "2.16.2"
+  resolved "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-2.16.2.tgz"
+  integrity sha512-vGFlrDKlmyI+BT+FemqVxmvO7nqxU33cgXVsn6IKAFishvlG3oV2Ds67D5nPkHMea8T+s1IcuMm0bF8ntZtAyg==
   dependencies:
     "@egjs/hammerjs" "^2.0.17"
     hoist-non-react-statics "^3.3.0"
     invariant "^2.2.4"
+    lodash "^4.17.21"
     prop-types "^15.7.2"
 
 react-native-image-picker@^7.1.2:
@@ -7014,7 +7015,12 @@ react-native-raw-bottom-sheet@^3.0.0:
   resolved "https://registry.npmjs.org/react-native-raw-bottom-sheet/-/react-native-raw-bottom-sheet-3.0.0.tgz"
   integrity sha512-kHR7j2ExCLqf/AO3MECozMJXi48O1+YxUYSRgRo/5Ftm7mEcrxJEzvjqMmqUbVhhKlfk5hLCGFnEQ5Z9OHCUtg==
 
-react-native-reanimated@^3.13.0, "react-native-reanimated@>= 1.0.0", react-native-reanimated@>=2.2.0:
+react-native-reactions@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmjs.org/react-native-reactions/-/react-native-reactions-1.0.0.tgz"
+  integrity sha512-ajdYyAdW+AFDm0YdPT9ZuNQ4VBGCYg+nMb4LWzND9DrDB5EbmTqpmVcZaWRHnAp9A9Hfl7S9sR5QeJgY/8HMNw==
+
+react-native-reanimated@^3.13.0, "react-native-reanimated@>= 1.0.0", react-native-reanimated@>=2.2.0, react-native-reanimated@3.8.1:
   version "3.16.1"
   resolved "https://registry.npmjs.org/react-native-reanimated/-/react-native-reanimated-3.16.1.tgz"
   integrity sha512-Wnbo7toHZ6kPLAD8JWKoKCTfNoqYOMW5vUEP76Rr4RBmJCrdXj6oauYP0aZnZq8NCbiP5bwwu7+RECcWtoetnQ==

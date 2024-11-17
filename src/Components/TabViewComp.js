@@ -40,7 +40,8 @@ const TabViewComp = memo(props => {
       renderTabBar={renderTabBar}
       onIndexChange={handleIndexChange}
       // onIndexChange={setIndex}
-      sceneContainerStyle={sceneContainerStyle}
+
+      sceneContainerStyle={[sceneContainerStyle, {}]}
       initialLayout={initialLayout}
     />
   );

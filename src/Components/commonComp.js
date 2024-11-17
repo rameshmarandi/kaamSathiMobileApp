@@ -19,7 +19,7 @@ import RNFetchBlob from 'react-native-blob-util';
 import {verseResourceCommonStyle} from '../Screens/Styles/verseResourceCommonStyle';
 import WaveButton from './WaveButton';
 const trimText = (text, maxLength = 10) => {
-  return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+  return text?.length > maxLength ? text.substring(0, maxLength) + '...' : text;
 };
 
 // StatusBarComp Component

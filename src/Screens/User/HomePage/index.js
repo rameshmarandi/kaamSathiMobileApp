@@ -180,50 +180,22 @@ const index = memo(props => {
         centerLogo={true}
       />
       <MarqueeComp textRender={`Welcome to Light of Life Ministries , Pune`} />
-      <View style={{}}>
-        <View
-          style={{
-            paddingHorizontal: '7%',
-            marginTop: '5%',
-          }}>
-          <SectionHeader sectionTitle={`${MsgConfig.firstHeaderText}`} />
-        </View>
-        <View
-          style={{
-            marginTop: getResHeight(1),
-            height: getResHeight(35),
-            width: '100%',
-          }}>
-          <TabViewComp
-            routes={routes}
-            scenes={scenes}
-            indicatorStyle={{
-              backgroundColor: currentBgColor,
-            }}
-            tabBarContainerStyle={{
-              backgroundColor: currentBgColor,
-              marginBottom: '4%',
-            }}
-            labelStyle={{
-              color: currentTextColor,
-              fontFamily: theme.font.semiBold,
-            }}
-            sceneContainerStyle={{}}
-          />
-        </View>
-      </View>
+
       <FlatList
         data={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
-        contentContainerStyle={{
-          paddingHorizontal: '5%',
-        }}
+        contentContainerStyle={
+          {
+            // paddingHorizontal: '5%',
+          }
+        }
+        s
         renderItem={({item, index}) => {
           switch (index) {
-            case 0:
-              return <BannerCardComp />;
+            // case 0:
+            //   return <BannerCardComp />;
 
             case 1:
-              return <DailyVersesComp />;
+              return <DailyVersesComp {...props} />;
           }
         }}
       />

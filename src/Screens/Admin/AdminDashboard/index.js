@@ -40,6 +40,7 @@ import {
   myProfileAPIHander,
 } from '../../../redux/reducer/Profile/ProfileAPI.js';
 import DailyVersesComp from '../../ScreenComp/DailyVersesComp.js';
+import {getLanguageAPIHander} from '../../../redux/reducer/Languages/languageAPI.js';
 
 const initialState = {
   adminDashboardCardData: adminDashboardCardData,
@@ -78,6 +79,7 @@ const Index = memo(props => {
     // Define essential requests
     const essentialRequests = [
       () => store.dispatch(getNewApplicationAPIHander()),
+      () => store.dispatch(getLanguageAPIHander()),
       () => store.dispatch(myProfileAPIHander()),
 
       // Add other essential requests here
@@ -208,7 +210,16 @@ const Index = memo(props => {
           renderItem={({item, index}) => {
             switch (index) {
               case 0:
-                return <DailyVersesComp {...props} />;
+                return (
+                  <View
+                    style={
+                      {
+                        // paddingHorizontal: '5%',
+                      }
+                    }>
+                    <DailyVersesComp {...props} />
+                  </View>
+                );
               case 1:
                 return (
                   <View style={styles.upcomingContainer}>

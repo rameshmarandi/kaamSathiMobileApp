@@ -139,7 +139,8 @@ const DailyVersesComp = memo(props => {
   );
 });
 
-const DailyVerbs = memo(({dailyVerseData, onPress}) => {
+export const DailyVerbs = memo(props => {
+  const {dailyVerseData, onPress, imageResize} = props;
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -151,7 +152,7 @@ const DailyVerbs = memo(({dailyVerseData, onPress}) => {
             ? {uri: dailyVerseData.imageUrl}
             : theme.assets.dailyVerbsBanner
         }
-        resizeMode="cover"
+        resizeMode={imageResize ? imageResize : 'cover'}
         style={styles.image}
       />
     </TouchableOpacity>
@@ -164,21 +165,26 @@ const styles = StyleSheet.create({
   },
   tabContainer: {
     marginTop: getResHeight(1),
-    height: getResHeight(52),
+    height: getResHeight(48),
+    overflow: 'hidden',
     width: '100%',
+    marginBottom: '5%',
   },
   verseContainer: {
     height: '100%',
-    width: '95%',
+    width: '98%',
     borderRadius: getResHeight(1.3),
     overflow: 'hidden',
     marginBottom: getResHeight(5),
+    paddingHorizontal: getResWidth(3),
     alignSelf: 'center',
   },
   image: {
     height: '100%',
     width: '100%',
     alignSelf: 'center',
+    overflow: 'hidden',
+    borderRadius: getResHeight(1.3),
   },
 });
 

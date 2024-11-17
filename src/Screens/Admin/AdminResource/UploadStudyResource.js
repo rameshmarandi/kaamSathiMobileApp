@@ -83,7 +83,7 @@ const UploadStudyResource = ({
         >
           <CustomHeader
             backPress={closeBottomSheetWithContent}
-            screenTitle={MsgConfig.uploadResource}
+            screenTitle={MsgConfig.uploadStudyResource}
           />
 
           <View
@@ -113,6 +113,25 @@ const UploadStudyResource = ({
                     contentContainerStyle={{flexGrow: 1, paddingBottom: 20}}
                     keyboardShouldPersistTaps="handled"
                     showsVerticalScrollIndicator={false}>
+                    <MasterTextInput
+                      label="Language"
+                      placeholder="Select language"
+                      topLableName={'Select language'}
+                      isDropdown={true}
+                      dropdownData={[
+                        {label: 'English', value: 'english'},
+                        {label: 'Marathi', value: 'marathi'},
+                        {label: 'Hindi', value: 'hindi'},
+                      ]}
+                      value={values.lang}
+                      onDropdownChange={() => {
+                        setTimeout(() => {
+                          handleChange('lang');
+                        }, 100);
+                      }}
+                      onBlur={handleBlur('lang')}
+                      error={touched.lang && errors.lang}
+                    />
                     <FileUploadComponent
                       selectedImage={selectedImage}
                       onImageSuccess={handleImageSuccess}
@@ -126,35 +145,6 @@ const UploadStudyResource = ({
                       labelText="Please select PDF"
                       onImageError={handleImageError1}
                       customHeight={getResHeight(21)}
-                    />
-                    <MasterTextInput
-                      label="Language"
-                      placeholder="Select language"
-                      topLableName={'Select language'}
-                      isDropdown={true}
-                      dropdownData={[
-                        {label: 'English', value: 'english'},
-                        {label: 'Marathi', value: 'marathi'},
-                        {label: 'Hindi', value: 'hindi'},
-                      ]}
-                      // value={'Female'}
-                      value={values.lang}
-                      onDropdownChange={() => {
-                        setTimeout(() => {
-                          handleChange('lang');
-                        }, 100);
-                      }}
-                      onBlur={handleBlur('lang')}
-                      error={touched.lang && errors.lang}
-                    />
-                    <MasterTextInput
-                      label="Click to select date"
-                      placeholder="Click to select date"
-                      topLableName="Select data and time"
-                      value={values.pdfName}
-                      onChangeText={handleChange('pdfName')}
-                      onBlur={handleBlur('pdfName')}
-                      error={touched.pdfName && errors.pdfName}
                     />
                   </ScrollView>
 

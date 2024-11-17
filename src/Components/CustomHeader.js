@@ -28,6 +28,7 @@ const CustomHeader = props => {
     screenTitle,
     centerLogo,
     filterIcon,
+    rightNumber,
     isDelete,
   } = props;
 
@@ -136,7 +137,6 @@ const CustomHeader = props => {
               </Text>
             </View>
           )}
-
           {(filterIcon || isDelete) && (
             <View
               style={{
@@ -176,7 +176,6 @@ const CustomHeader = props => {
               />
             </View>
           )}
-
           {centerLogo && typeof centerLogo == 'boolean' && (
             <Image
               source={theme.assets.church_logo_origianl}
@@ -251,6 +250,9 @@ const CustomHeader = props => {
               </TouchableOpacity>
             </>
           )}
+          {rightNumber && (
+            <Text style={{color: currentTextColor}}>{rightNumber}</Text>
+          )}
         </View>
       </SafeAreaView>
     </>
@@ -262,5 +264,6 @@ CustomHeader.propTypes = {
   filterIcon: PropTypes.func,
   centerLogo: PropTypes.bool,
   Hamburger: PropTypes.func,
+  rightNumber: PropTypes.string,
 };
 export default React.memo(CustomHeader);

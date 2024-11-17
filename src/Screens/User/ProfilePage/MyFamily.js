@@ -180,7 +180,7 @@ const MyFamily = memo(props => {
 
   const handleMunuData = userDetails => {
     return [
-      {id: 4, title: 'Update'},
+      // {id: 4, title: 'Update'},
       {id: 5, title: 'Delete'},
     ];
   };

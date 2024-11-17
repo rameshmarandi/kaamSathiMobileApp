@@ -44,6 +44,16 @@ const APIEndpoint = {
     reactionOnPoster: '/user/reactToComment-daily-verses-comment',
     publishNow: '/user/publish-daily-verses-now',
   },
+  language: {
+    getLanguage: '/user/get-language',
+    createLanguage: '/user/create-language',
+    updateLanguage: '/user/update-language',
+    deleteLanguage: '/user/delete-language',
+  },
+  resource: {
+    getResource: '/user/get-resource',
+    deleteResouce: '/user/delete-resource',
+  },
   // Add more modules as needed
 };
 

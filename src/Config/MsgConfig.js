@@ -52,6 +52,8 @@ const headerTitle = {
   allPrayerReq: 'All prayer requests',
   adminOurBelieve: 'Our believe',
   postsUploadBanner: 'All banners',
+  dailyVerseDetails: 'daily verse',
+  uploadStudyResource: 'Upload study resource',
 };
 
 export default message = {

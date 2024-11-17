@@ -1,7 +1,7 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import apiService from '../../../API/apiClient';
 import APIEndpoint from '../../../API/ApiEndpoints';
-import {store} from '../../store';
+
 import {setDailyVerses, setScheduledVerses} from '.';
 
 const uploadDailyVersesAPIHander = createAsyncThunk(
