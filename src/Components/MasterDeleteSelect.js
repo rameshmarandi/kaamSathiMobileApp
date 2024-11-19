@@ -10,6 +10,7 @@ const MasterDeleteSelect = ({
   selectedItem = [], // Array of items to be deleted
   onClosePress, // Callback to delete selected items
   onDeletePress,
+  isBtnLoading = false,
 }) => {
   const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,

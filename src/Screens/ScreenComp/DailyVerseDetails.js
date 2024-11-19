@@ -31,19 +31,36 @@ const DailyVerseDetails = props => {
   const {navigation} = props;
   const [isImageViewerModal, setIsImageViewerModal] = useState(false);
   const [viewImageUrl, setViewImageUrl] = useState('');
-
+  const [currentIndex, setCurrentIndex] = useState(0);
   const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
   );
   const {dailyVerses, selectedDailyVerse} = useSelector(
     state => state.dailyVerses,
   );
+  console.log('selectedDailyVerse', selectedDailyVerse, dailyVerses[0].images);
   // Image viewer
   const images = [
     {
-      uri: viewImageUrl,
+      uri: dailyVerses[0].images[0].imageUrl,
+    },
+    {
+      uri: dailyVerses[0].images[1].imageUrl,
+    },
+    {
+      uri: dailyVerses[0].images[2].imageUrl,
     },
   ];
+
+  // useEffect(() => {
+  //   // console.log('IMAGES_URL_map', dailyVerses);
+  //   // .map((item, index) => {
+  //   //   console.log('IMAGES_URL_map', item);
+  //   //   // item.images.map((e, i) => {
+  //   //   //   console.log('IMAGES_URL_map', e);
+  //   //   // });
+  //   // });
+  // }, [selectedDailyVerse]);
   const ReactionItems = [
     {
       id: 0,
@@ -116,9 +133,17 @@ const DailyVerseDetails = props => {
       />
       <ImageView
         images={images}
-        imageIndex={0}
+        imageIndex={1}
         visible={isImageViewerModal}
         onRequestClose={() => setIsImageViewerModal(false)}
+        onImageIndexChange={index => setCurrentIndex(index)}
+        FooterComponent={() => (
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>
+              {currentIndex + 1}/{images.length}
+            </Text>
+          </View>
+        )}
       />
       <View
         style={{
@@ -138,7 +163,6 @@ const DailyVerseDetails = props => {
               }
             }}
           />
-          <View></View>
         </View>
       </View>
     </SafeAreaView>
@@ -146,6 +170,21 @@ const DailyVerseDetails = props => {
 };
 
 const styles = StyleSheet.create({
+  footer: {
+    position: 'absolute',
+    bottom: 20,
+    width: '100%',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 8,
+  },
+  footerText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+
   container: {
     flex: 1,
     justifyContent: 'center',

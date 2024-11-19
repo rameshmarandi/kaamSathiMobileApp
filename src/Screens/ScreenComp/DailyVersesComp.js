@@ -103,7 +103,7 @@ const DailyVersesComp = memo(props => {
       />
     ),
   };
-  console.log('dailyVerses_at', selectedLng);
+
   return (
     <>
       {selectedLng.length == 0 ? null : (

@@ -34,6 +34,7 @@ import {
 } from '../../../redux/reducer/Resources/resourcesAPI';
 import NoDataFound from '../../../Components/NoDataFound';
 import UploadStudyResource from './UploadStudyResource';
+import {CustomAlertModal} from '../../../Components/commonComp';
 
 const Index = ({navigation}) => {
   const {isDarkMode, currentBgColor, logedInuserType, currentTextColor} =
@@ -46,6 +47,10 @@ const Index = ({navigation}) => {
   const [selectedCard, setSelectedCard] = useState([]);
   const [documentDetials, setDocumentDetails] = useState('');
   const [isUploadModalVisislbe, setIsUploadModalVisislbe] = useState(false);
+  const [alertIcons, setAlertIcons] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
+  const [isBtnLoading, setIsBtnLoading] = useState(false);
 
   useEffect(() => {
     APIHandler();
@@ -109,7 +114,7 @@ const Index = ({navigation}) => {
                 type={'AntDesign'}
                 name={'pdffile1'}
                 size={getFontSize(8)}
-                color={'red'}
+                color={theme.color.error}
               />
             ) : (
               <Image
@@ -165,7 +170,8 @@ const Index = ({navigation}) => {
           refreshControl={
             <RefreshControl refreshing={false} onRefresh={() => APIHandler()} />
           }
-          contentContainerStyle={styles.flatListContainer}
+          numColumns={2}
+          columnWrapperStyle={styles.columnWrapperStyle}
         />
       );
     },
@@ -195,6 +201,9 @@ const Index = ({navigation}) => {
   const closeUploadModal = () => {
     setIsUploadModalVisislbe(false);
   };
+  const handleClose = () => {
+    setIsAlertVisible(false);
+  };
   return (
     <SafeAreaView style={[styles.safeArea, {backgroundColor: currentBgColor}]}>
       <CustomHeader
@@ -217,18 +226,50 @@ const Index = ({navigation}) => {
           visible={isUploadModalVisislbe}
           closeBottomSheetWithContent={closeUploadModal}
         />
+        <CustomAlertModal
+          visible={isAlertVisible}
+          message={alertMessage}
+          duration={1500} // duration in milliseconds
+          onClose={handleClose}
+        />
+
         <ConfirmAlert
           visible={isConfirmModalVisible}
           onCancel={() => setIsConfirmModalVisible(false)}
-          alertTitle={alertText}
+          // alertTitle={alertText}
+          alertTitle={alertMessage}
+          isBtnLoading={isBtnLoading}
+          alertIcon={alertIcons}
           onConfirm={async () => {
-            await store.dispatch(
-              deleteResourceAPIHander({resourceId: selectedCard}),
-            );
-            setIsConfirmModalVisible(false);
-            ToastAlertComp('success', 'Success', 'Post deleted successfully.');
-            setIsLoginPressed(false);
-            setSelectedCard([]);
+            try {
+              setIsBtnLoading(true);
+
+              const res = await store.dispatch(
+                deleteResourceAPIHander({resourceId: selectedCard}),
+              );
+
+              if (res.payload === true) {
+                setIsConfirmModalVisible(false);
+
+                setAlertMessage({
+                  status: 'success',
+
+                  alertMsg: 'PDF deleted successfully',
+                });
+
+                setIsAlertVisible(true);
+                setIsBtnLoading(false);
+                setIsLoginPressed(false);
+                setSelectedCard([]);
+              }
+            } catch (error) {
+              setIsAlertVisible(false);
+              setIsBtnLoading(false);
+              setIsLoginPressed(false);
+              setSelectedCard([]);
+              setIsConfirmModalVisible(false);
+              setIsBtnLoading(false);
+            }
           }}
         />
       </View>
@@ -240,14 +281,22 @@ const Index = ({navigation}) => {
             setSelectedCard([]);
           }}
           onDeletePress={() => {
-            setAlertText(
+            setAlertIcons(
+              <VectorIcon
+                type={'MaterialIcons'}
+                name={'delete-forever'}
+                size={getFontSize(5.1)}
+                color={theme.color.error}
+              />,
+            );
+            setAlertMessage(
               `Are you sure you want to delete ${selectedCard.length} PDF?`,
             );
+
             setIsConfirmModalVisible(true);
           }}
         />
       )}
-
       {combinedRoutes.length === 0 ? (
         <NoDataFound />
       ) : (
@@ -280,22 +329,25 @@ const Index = ({navigation}) => {
 const styles = StyleSheet.create({
   safeArea: {flex: 1},
   card: {
-    width: getResWidth(45),
+    width: getResWidth(43),
     height: getResHeight(27),
-    marginBottom: getResHeight(1.8),
+
     borderRadius: getResWidth(3),
     borderWidth: 1,
     overflow: 'hidden',
+    marginHorizontal: 8,
   },
+
+  columnWrapperStyle: {
+    justifyContent: 'space-between', // Ensures proper spacing between columns
+    marginBottom: getResHeight(2), // Spacing between rows
+  },
+
   imgStyle: {
     borderBottomRightRadius: 0,
     borderBottomLeftRadius: 0,
   },
-  flatListContainer: {
-    flexWrap: 'wrap',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
+
   floatingButton: {
     position: 'absolute',
     bottom: getResHeight(7),

@@ -11,6 +11,7 @@ import {
 import {useSelector} from 'react-redux';
 import {getFontSize, getResHeight, getResWidth} from '../utility/responsive';
 import theme from '../utility/theme';
+import {ActivityIndicator} from 'react-native';
 
 const ConfirmAlert = ({
   visible,
@@ -18,6 +19,7 @@ const ConfirmAlert = ({
   alertIcon,
   alertTitle,
   onConfirm,
+  isBtnLoading = false,
 }) => {
   const [opacity] = useState(new Animated.Value(0));
   let {isDarkMode, currentBgColor, currentTextColor} = useSelector(
@@ -70,9 +72,6 @@ const ConfirmAlert = ({
                 paddingHorizontal: '5%',
                 marginVertical: getResHeight(1),
               },
-              // alertIcon && {
-              //   marginTop: getResHeight(-2),
-              // },
             ]}>
             {alertTitle ? alertTitle : 'Are you sure?'}
           </Text>
@@ -103,7 +102,18 @@ const ConfirmAlert = ({
                 },
               ]}
               onPress={onConfirm}>
-              <Text style={[styles.buttonText]}>OK</Text>
+              {isBtnLoading ? (
+                <>
+                  <ActivityIndicator
+                    size={getFontSize(3)}
+                    color={currentBgColor}
+                  />
+                </>
+              ) : (
+                <>
+                  <Text style={[styles.buttonText]}>OK</Text>
+                </>
+              )}
             </TouchableOpacity>
           </View>
         </View>

@@ -48,6 +48,7 @@ import {UserBioComponent} from '../../../Helpers/CommonCard';
 import ConfirmAlert from '../../../Components/ConfirmAlert';
 import {RefreshControl} from 'react-native';
 import NoDataFound from '../../../Components/NoDataFound';
+import {generateMeaningfulAbbreviation} from '../../../Components/commonHelper';
 
 const ChurchMap = React.memo(props => {
   const {navigation} = props;
@@ -174,11 +175,12 @@ const ChurchMap = React.memo(props => {
                   <Text
                     style={{
                       color: currentTextColor,
-
                       fontFamily: theme.font.semiBold,
                       fontSize: getFontSize(1.6),
                     }}>
-                    PN
+                    {generateMeaningfulAbbreviation(
+                      item?.churchDetails['Branch name'],
+                    )}
                   </Text>
                 </View>
               </View>

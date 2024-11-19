@@ -22,12 +22,12 @@ export const documentPickeComp = async ({
   } catch (err) {
     if (DocumentPicker.isCancel(err)) {
       // If the user cancels, you can handle it or simply show a message
-      Alert.alert('Operation Cancelled');
+      // Alert.alert('Operation Cancelled');
     } else {
       // Handle any other errors, such as permission issues or unsupported file types
       console.error('Document Picker Error:', err);
       onError(err); // Trigger the error callback with the error message
-      Alert.alert('Error picking document', err.message || err);
+      // Alert.alert('Error picking document', err.message || err);
     }
   }
 };

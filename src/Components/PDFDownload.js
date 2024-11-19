@@ -87,6 +87,7 @@ const PDFDownload = memo(
               {opacity: headerOpacity, borderBottomColor: currentTextColor},
             ]}>
             <TouchableOpacity
+              activeOpacity={0.8}
               onPress={() => {
                 onClose();
                 setIsDarkThemeEnabled();
@@ -107,6 +108,7 @@ const PDFDownload = memo(
                     width: downloadProgress ? '40%' : '20%',
                   }}>
                   <TouchableOpacity
+                    activeOpacity={0.8}
                     onPress={() => {
                       setIsDarkThemeEnabled(!isDarkThemeEnabled);
                     }}
@@ -123,7 +125,9 @@ const PDFDownload = memo(
                     />
                   </TouchableOpacity>
 
-                  <TouchableOpacity onPress={handleDownload}>
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    onPress={handleDownload}>
                     {downloadProgress ? (
                       <Text
                         style={[

@@ -183,12 +183,7 @@ const index = memo(props => {
 
       <FlatList
         data={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
-        contentContainerStyle={
-          {
-            // paddingHorizontal: '5%',
-          }
-        }
-        s
+        contentContainerStyle={{}}
         renderItem={({item, index}) => {
           switch (index) {
             // case 0:

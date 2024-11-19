@@ -62,3 +62,23 @@ export const dateFormatHander = (date, format) => {
 export const checkIsNotEmptyArray = (arr = []) => {
   return Array.isArray(arr) && arr.length > 0;
 };
+
+export const generateMeaningfulAbbreviation = phrase => {
+  const words = phrase.split(' ').filter(word => word.length > 0);
+
+  if (words.length === 0) return '';
+
+  if (words.length === 1) {
+    const word = words[0];
+    return word.slice(0, 2).toUpperCase(); // First two letters
+  }
+
+  // Generate abbreviation using the first two letters of each important word
+  let abbreviation = words.map(word => word.slice(0, 2).toUpperCase()).join('');
+
+  if (abbreviation.length < 4) {
+    abbreviation += words[words.length - 1].charAt(1).toUpperCase(); // Add second letter of the last word
+  }
+
+  return abbreviation;
+};

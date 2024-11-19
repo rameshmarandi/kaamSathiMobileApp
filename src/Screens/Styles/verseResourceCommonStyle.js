@@ -55,6 +55,6 @@ export const verseResourceCommonStyle = StyleSheet.create({
     marginBottom: '4%',
   },
   labelStyle: {
-    fontFamily: theme.font.bold,
+    fontFamily: theme.font.medium,
   },
 });

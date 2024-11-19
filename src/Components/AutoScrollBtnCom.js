@@ -3,6 +3,7 @@ import {FlatList, View, TouchableOpacity, Text} from 'react-native';
 import {getFontSize, getResHeight, getResWidth} from '../utility/responsive';
 import theme from '../utility/theme';
 import {useSelector} from 'react-redux';
+import {generateMeaningfulAbbreviation} from './commonHelper';
 
 // Main component wrapped in memo for performance optimization
 export const AutoScrollBtnCom = memo(props => {
@@ -26,26 +27,6 @@ export const AutoScrollBtnCom = memo(props => {
       });
     }
   }, [currentIndex, selectedTab, data]);
-  const getInitials = inputString => {
-    // Ensure inputString is a string and remove any extra spaces
-    const words = String(inputString || '')
-      .trim()
-      .split(' ');
-
-    // Check if there's only one word
-    if (words.length === 1) {
-      // Return the first two letters of the single word, in uppercase
-      return words[0].slice(0, 2).toUpperCase();
-    }
-
-    // For multiple words, get the initials of the first two words
-    const initials = words
-      .slice(0, 2)
-      .map(word => word.charAt(0).toUpperCase())
-      .join('');
-
-    return initials;
-  };
 
   // Handle button press and scroll to next item
   const handlePress = useCallback(
@@ -90,7 +71,6 @@ export const AutoScrollBtnCom = memo(props => {
                     : theme.color.outlineColor,
                 },
               ]}>
-              {console.log('name_at_atm', item)}
               <Text
                 numberOfLines={3}
                 style={{
@@ -98,7 +78,9 @@ export const AutoScrollBtnCom = memo(props => {
                   fontFamily: isSelected ? theme.font.bold : theme.font.medium,
                   color: isSelected ? currentTextColor : theme.color.dimWhite,
                 }}>
-                {getInitials(item.churchDetails['Branch name'])}
+                {generateMeaningfulAbbreviation(
+                  item?.churchDetails['Branch name'],
+                )}
               </Text>
             </TouchableOpacity>
             <Text

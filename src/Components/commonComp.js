@@ -205,7 +205,7 @@ const CommonButtonComp = memo(props => {
       disabledTitleStyle={[
         styles.btnTitleStyle,
         {
-          color: '#cccccc',
+          color: '#2f2b2b',
         },
       ]}
       containerStyle={[

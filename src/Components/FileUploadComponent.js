@@ -7,6 +7,7 @@ import {useSelector} from 'react-redux';
 import theme from '../utility/theme';
 import LottieView from 'lottie-react-native';
 import {requestGalleryPermission} from '../utility/PermissionContoller';
+import {documentPickeComp} from './DocumentPickerComp';
 
 // Memoized component to prevent unnecessary re-renders
 const FileUploadComponent = memo(
@@ -14,6 +15,8 @@ const FileUploadComponent = memo(
     selectedImage,
     onImageSuccess,
     onImageError,
+    isDocumentPicker = false,
+    allowedTypes = ['image/jpeg'],
     customHeight,
     customWidth,
     labelText,
@@ -32,19 +35,27 @@ const FileUploadComponent = memo(
     const handleImagePicker = useCallback(
       mediaType => {
         requestGalleryPermission().then(result => {
-          console.log('Gallary_Permisson', result);
           if (result) {
-            ImagePickerComp(
-              'gallery',
-              {
-                mediaType: 'pdf',
-                quality: 0.8,
+            if (isDocumentPicker) {
+              documentPickeComp({
+                allowedTypes: allowedTypes, // Define file types
+                multiple: true, // Enable multiple file selection
+                onSuccess: onImageSuccess, // Pass the success callback
+                onError: onImageError, // Pass the error callback
+              });
+            } else {
+              ImagePickerComp(
+                'gallery',
+                {
+                  mediaType: 'pdf',
+                  quality: 0.8,
 
-                // includeBase64: true,
-              },
-              onImageSuccess,
-              onImageError,
-            );
+                  // includeBase64: true,
+                },
+                onImageSuccess,
+                onImageError,
+              );
+            }
           } else {
             console.log('Permission denied');
           }
@@ -67,7 +78,22 @@ const FileUploadComponent = memo(
           {
             <View
               style={[styles.uploadContainer, {borderColor: currentTextColor}]}>
-              {selectedImage ? (
+              {selectedImage[0]?.type == 'application/pdf' ? (
+                <>
+                  <VectorIcon
+                    type={'AntDesign'}
+                    name={'pdffile1'}
+                    size={getFontSize(10)}
+                    color={theme.color.error}
+                  />
+                  <Text
+                    style={{
+                      color: currentTextColor,
+                    }}>
+                    {selectedImage[0]?.name}
+                  </Text>
+                </>
+              ) : selectedImage ? (
                 <Image
                   source={{uri: selectedImage}}
                   resizeMode="cover"
