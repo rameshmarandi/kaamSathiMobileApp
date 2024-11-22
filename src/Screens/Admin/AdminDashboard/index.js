@@ -219,12 +219,12 @@ const Index = memo(props => {
                     <DailyVersesComp {...props} />
                   </View>
                 );
-              case 1:
-                return (
-                  <View style={styles.upcomingContainer}>
-                    <AdminUpcomingEvents />
-                  </View>
-                );
+              // case 1:
+              //   return (
+              //     <View style={styles.upcomingContainer}>
+              //       <AdminUpcomingEvents />
+              //     </View>
+              //   );
               case 2:
                 return (
                   <View

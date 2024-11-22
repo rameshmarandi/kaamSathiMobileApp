@@ -1,5 +1,5 @@
 import messaging from '@react-native-firebase/messaging';
-import {Platform} from 'react-native';
+import {Platform, PermissionsAndroid} from 'react-native';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 // Request notification permission (for iOS)
 const requestUserPermission = async () => {
@@ -13,6 +13,74 @@ const requestUserPermission = async () => {
   } else {
     console.log('Notification permission denied.');
   }
+};
+
+const requestAndroidPermission = async permission => {
+  try {
+    const result = await PermissionsAndroid.request(permission);
+    return result === PermissionsAndroid.RESULTS.GRANTED;
+  } catch (error) {
+    console.error('Error requesting Android permission:', error);
+    return false;
+  }
+};
+
+const requestIOSPermission = async permission => {
+  try {
+    const result = await request(permission);
+    return result === RESULTS.GRANTED;
+  } catch (error) {
+    console.error('Error requesting iOS permission:', error);
+    return false;
+  }
+};
+
+const checkPermission = async permission => {
+  try {
+    const result = await check(permission);
+    return result === RESULTS.GRANTED;
+  } catch (error) {
+    console.error('Error checking permission:', error);
+    return false;
+  }
+};
+
+const requestNotificationPermission = async () => {
+  if (Platform.OS === 'android') {
+    // For Android 13+ POST_NOTIFICATIONS
+    if (Platform.Version >= 33) {
+      return await requestAndroidPermission(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+      );
+    }
+    return true; // Notifications don't require explicit permission on Android < 13
+  } else if (Platform.OS === 'ios') {
+    // Request iOS notification permissions
+    return await requestIOSPermission(PERMISSIONS.IOS.NOTIFICATIONS);
+  }
+  return false;
+};
+
+const requestLocationPermission = async () => {
+  if (Platform.OS === 'android') {
+    return await requestAndroidPermission(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    );
+  } else if (Platform.OS === 'ios') {
+    return await requestIOSPermission(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+  }
+  return false;
+};
+
+const requestCameraPermission = async () => {
+  if (Platform.OS === 'android') {
+    return await requestAndroidPermission(
+      PermissionsAndroid.PERMISSIONS.CAMERA,
+    );
+  } else if (Platform.OS === 'ios') {
+    return await requestIOSPermission(PERMISSIONS.IOS.CAMERA);
+  }
+  return false;
 };
 
 export const requestGalleryPermission = async () => {
@@ -63,4 +131,10 @@ export const requestGalleryPermission = async () => {
   }
 };
 
-export {requestUserPermission};
+export {
+  requestUserPermission,
+  checkPermission,
+  requestNotificationPermission,
+  requestLocationPermission,
+  requestCameraPermission,
+};

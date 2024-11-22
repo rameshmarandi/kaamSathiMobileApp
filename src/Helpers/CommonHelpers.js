@@ -4,9 +4,54 @@ import asyncStorageUtil from '../utility/asyncStorageUtil';
 import {store} from '../redux/store';
 import {setAdmin, setLogedInUserType} from '../redux/reducer/Auth';
 import moment from 'moment';
+import Share from 'react-native-share';
+import RNFS from 'react-native-fs';
 
 import StorageKeys from '../Config/StorageKeys';
 
+export const convertImageToBase64 = async (url, filePath) => {
+  try {
+    // Download the image to the app's Document directory
+    await RNFS.downloadFile({
+      fromUrl: url,
+      toFile: filePath,
+    }).promise;
+
+    // Read the image file as base64
+    const base64String = await RNFS.readFile(filePath, 'base64');
+
+    // Optionally, delete the temporary file after reading it
+    await RNFS.unlink(filePath);
+
+    return base64String;
+  } catch (error) {
+    console.error('Error converting image to base64:', error);
+    return null;
+  }
+};
+
+export const onShareClick = async (message, url, title) => {
+  try {
+    const shareOptions = {};
+
+    // Include message only if it's provided
+    if (message !== '') {
+      shareOptions.message = message;
+    }
+    // Include URL only if it's provided
+    if (url !== '') {
+      shareOptions.url = url;
+    }
+    // Include title only if it's provided
+    if (title !== '') {
+      shareOptions.title = title;
+    }
+
+    const result = await Share.share(shareOptions);
+  } catch (error) {
+    Alert.alert('Error', error.message);
+  }
+};
 export const updateState = newState =>
   setState(prevState => ({...prevState, ...newState}));
 export const capitalizeFirstLetter = fullName => {

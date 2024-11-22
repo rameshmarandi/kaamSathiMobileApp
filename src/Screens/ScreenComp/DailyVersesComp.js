@@ -9,10 +9,13 @@ import {checkIsNotEmptyArray} from '../../Components/commonHelper';
 import TabViewComp from '../../Components/TabViewComp';
 import SectionHeader from '../../Components/SectionHeader';
 import MsgConfig from '../../Config/MsgConfig';
-import {getResHeight, getResWidth} from '../../utility/responsive';
+import {getFontSize, getResHeight, getResWidth} from '../../utility/responsive';
 import theme from '../../utility/theme';
 import {store} from '../../redux/store';
 import {setSelectedDailyVerse} from '../../redux/reducer/DailyVerses';
+import {VectorIcon} from '../../Components/VectorIcon';
+
+import {convertImageToBase64, onShareClick} from '../../Helpers/CommonHelpers';
 
 const DailyVersesComp = memo(props => {
   const {navigation} = props;
@@ -68,6 +71,7 @@ const DailyVersesComp = memo(props => {
       }),
     );
   };
+
   const routes = [
     {key: 'third', title: 'Marathi'},
     {key: 'first', title: 'Hindi'},
@@ -78,28 +82,49 @@ const DailyVersesComp = memo(props => {
     first: () => (
       <DailyVerbs
         dailyVerseData={selectedLng}
+        currentTextColor={currentTextColor}
         onPress={() => {
-          store.dispatch(setSelectedDailyVerse(selectedLng));
+          store.dispatch(
+            setSelectedDailyVerse({
+              selectedLng,
+              selectedIndex: currentTabIndex,
+            }),
+          );
           navigation.navigate('VerseDetails');
         }}
+        // onSharePress={ShareBtnHander}
       />
     ),
     second: () => (
       <DailyVerbs
         dailyVerseData={selectedLng}
+        currentTextColor={currentTextColor}
         onPress={() => {
-          store.dispatch(setSelectedDailyVerse(selectedLng));
+          store.dispatch(
+            setSelectedDailyVerse({
+              selectedLng,
+              selectedIndex: currentTabIndex,
+            }),
+          );
           navigation.navigate('VerseDetails');
         }}
+        // onSharePress={ShareBtnHander}
       />
     ),
     third: () => (
       <DailyVerbs
         dailyVerseData={selectedLng}
+        currentTextColor={currentTextColor}
         onPress={() => {
-          store.dispatch(setSelectedDailyVerse(selectedLng));
+          store.dispatch(
+            setSelectedDailyVerse({
+              selectedLng,
+              selectedIndex: currentTabIndex,
+            }),
+          );
           navigation.navigate('VerseDetails');
         }}
+        // onSharePress={ShareBtnHander}
       />
     ),
   };
@@ -140,28 +165,43 @@ const DailyVersesComp = memo(props => {
 });
 
 export const DailyVerbs = memo(props => {
-  const {dailyVerseData, onPress, imageResize} = props;
+  const {dailyVerseData, onSharePress, currentTextColor, onPress, imageResize} =
+    props;
+
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      activeOpacity={1}
-      style={styles.verseContainer}>
-      <Image
-        source={
-          dailyVerseData?.imageUrl
-            ? {uri: dailyVerseData.imageUrl}
-            : theme.assets.dailyVerbsBanner
-        }
-        resizeMode={imageResize ? imageResize : 'cover'}
-        style={styles.image}
-      />
-    </TouchableOpacity>
+    <>
+      <TouchableOpacity
+        onPress={onPress}
+        activeOpacity={1}
+        style={styles.verseContainer}>
+        <Image
+          source={
+            dailyVerseData?.imageUrl
+              ? {uri: dailyVerseData.imageUrl}
+              : theme.assets.dailyVerbsBanner
+          }
+          resizeMode={imageResize ? imageResize : 'cover'}
+          style={styles.image}
+        />
+      </TouchableOpacity>
+    </>
   );
 });
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  likeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  likeText: {
+    color: 'white',
+    fontFamily: theme.font.medium,
+    marginLeft: '9%',
+    paddingTop: '2%',
   },
   tabContainer: {
     marginTop: getResHeight(1),
@@ -175,7 +215,7 @@ const styles = StyleSheet.create({
     width: '98%',
     borderRadius: getResHeight(1.3),
     overflow: 'hidden',
-    marginBottom: getResHeight(5),
+    marginBottom: getResHeight(2),
     paddingHorizontal: getResWidth(3),
     alignSelf: 'center',
   },

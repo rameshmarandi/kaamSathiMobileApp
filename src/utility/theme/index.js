@@ -19,6 +19,7 @@ const color = {
   whiteDisabled: '#D3E7F3',
   //  '#FFFFFF',
   iceWhite: '#f9f9f9',
+  chatBox: '#ffffffff',
   dimWhite: '#f1f1f1',
   outlineColor: '#999999',
   placeholder: '#C0C0C0',
@@ -72,9 +73,7 @@ const styles = StyleSheet.create({
 
 const theme = {
   color,
-  font:
-    // hindiFont,
-    englishFont,
+  font: englishFont,
   styles,
 
   assets,

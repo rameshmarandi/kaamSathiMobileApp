@@ -19,8 +19,9 @@ import {persistor, store} from './src/redux/store';
 import theme from './src/utility/theme';
 import {setNavigator} from './src/Services/NavigationService';
 import {toastConfig} from './src/Components/StaticDataHander';
-// import messaging from '@react-native-firebase/messaging';
+import messaging from '@react-native-firebase/messaging';
 import {checkIsAdmin, checkIsUserLoggedIn} from './src/Helpers/CommonHelpers';
+import {requestNotificationPermission} from './src/utility/PermissionContoller';
 
 const Stack = createNativeStackNavigator();
 LogBox.ignoreAllLogs(true);
@@ -36,27 +37,41 @@ const App = () => {
   // const []
   useEffect(() => {
     checkIsAuthUser();
-
+    InitRender();
     setTimeout(() => {
       setIsLoading(false);
     }, 2000);
   }, []);
 
-  const checkIsAuthUser = async () => {
-    const isUserLoggedIn = await checkIsUserLoggedIn();
+  const InitRender = async () => {
+    requestNotificationPermission();
+    await messaging().registerDeviceForRemoteMessages();
+    const token = await messaging().getToken();
 
-    setIsLogedIn(isUserLoggedIn);
-    checkIsAdmin().then(checkTypOfAdmin => {
-      setIsAdmin(checkTypOfAdmin);
-    });
+    console.log('Firebase_OTkem : ', token);
   };
-  // useEffect(() => {
-  //   const unsubscribe = messaging().onMessage(async remoteMessage => {
-  //     Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-  //   });
 
-  //   return unsubscribe;
-  // }, []);
+  /*************  ✨ Codeium Command ⭐  *************/
+  /**
+   * This function checks if a user is logged in and if the user is an admin.
+   * If the user is logged in, it sets the isLogedIn state to true.
+   * If the user is an admin, it sets the isAdmin state to true.
+/******  556be213-7252-441e-a922-7412f7229fd0  *******/ const checkIsAuthUser =
+    async () => {
+      const isUserLoggedIn = await checkIsUserLoggedIn();
+
+      setIsLogedIn(isUserLoggedIn);
+      checkIsAdmin().then(checkTypOfAdmin => {
+        setIsAdmin(checkTypOfAdmin);
+      });
+    };
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    });
+
+    return unsubscribe;
+  }, []);
 
   return (
     <>

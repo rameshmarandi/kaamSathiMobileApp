@@ -392,108 +392,108 @@ const Index = memo(({navigation}) => {
                           />
                         </View>
                       </TouchableOpacity>
-                      <View
-                        style={{
-                          paddingHorizontal: getResWidth(1.9),
-                        }}>
+
+                      {currentTabIndex == 0 && (
                         <View
                           style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            marginTop: getResHeight(1.2),
-                            borderBottomWidth: 0.5,
-                            borderBottomColor: currentTextColor,
-
-                            paddingBottom: getResHeight(1.4),
+                            paddingHorizontal: getResWidth(1.9),
                           }}>
                           <View
                             style={{
                               flexDirection: 'row',
                               alignItems: 'center',
+                              justifyContent: 'space-between',
+                              marginTop: getResHeight(1.2),
+                              borderBottomWidth: 0.5,
+                              borderBottomColor: currentTextColor,
+
+                              paddingBottom: getResHeight(1.4),
                             }}>
-                            <VectorIcon
-                              type={'Ionicons'}
-                              name={'eye'}
-                              size={getFontSize(3.1)}
-                              color={currentTextColor}
-                            />
-                            <Text
+                            <View
                               style={{
-                                color: currentTextColor,
-                                fontSize: getFontSize(1.8),
-                                fontFamily: theme.font.medium,
-                                marginLeft: getResWidth(1.9),
-                                marginTop: getResHeight(1),
+                                flexDirection: 'row',
+                                alignItems: 'center',
                               }}>
-                              12
-                            </Text>
+                              <VectorIcon
+                                type={'Ionicons'}
+                                name={'eye'}
+                                size={getFontSize(3.1)}
+                                color={currentTextColor}
+                              />
+                              <Text
+                                style={{
+                                  color: currentTextColor,
+                                  fontSize: getFontSize(1.8),
+                                  fontFamily: theme.font.medium,
+                                  marginLeft: getResWidth(1.9),
+                                  marginTop: getResHeight(1),
+                                }}>
+                                {image.viewCount}
+                              </Text>
+                            </View>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                              }}>
+                              <Text
+                                style={{
+                                  color: currentTextColor,
+                                  fontFamily: theme.font.medium,
+
+                                  fontSize: getFontSize(1.8),
+                                  marginRight: getResWidth(3),
+                                }}>
+                                {image.comments.length}
+                              </Text>
+                              <VectorIcon
+                                type={'MaterialCommunityIcons'}
+                                name={'message'}
+                                size={getFontSize(3.1)}
+                                color={currentTextColor}
+                              />
+                            </View>
                           </View>
                           <View
                             style={{
                               flexDirection: 'row',
                               alignItems: 'center',
+                              justifyContent: 'space-between',
+                              marginTop: getResHeight(1.4),
                             }}>
-                            <Text
-                              style={{
-                                color: currentTextColor,
-                                fontFamily: theme.font.medium,
-
-                                fontSize: getFontSize(1.8),
-                                marginRight: getResWidth(3),
+                            <TouchableOpacity
+                              activeOpacity={0.8}
+                              style={styles.likeContainer}>
+                              <VectorIcon
+                                type={'AntDesign'}
+                                name={'like1'}
+                                size={getFontSize(2)}
+                                color={'#ffffff'}
+                              />
+                              <Text style={styles.likeText}>Like</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              activeOpacity={0.8}
+                              style={styles.likeContainer}
+                              onPress={() => {
+                                navigation.navigate('CommentSection');
                               }}>
-                              15
-                            </Text>
-                            <VectorIcon
-                              type={'MaterialCommunityIcons'}
-                              name={'message'}
-                              size={getFontSize(3.1)}
-                              color={currentTextColor}
-                            />
+                              <Text style={styles.likeText}>Comment</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              activeOpacity={0.8}
+                              style={styles.likeContainer}>
+                              <VectorIcon
+                                type={'MaterialCommunityIcons'}
+                                name={'share'}
+                                size={getFontSize(3)}
+                                color={'white'}
+                              />
+                              <Text style={styles.likeText}>Share</Text>
+                            </TouchableOpacity>
                           </View>
                         </View>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            marginTop: getResHeight(1.4),
-                          }}>
-                          <TouchableOpacity>
-                            <Text
-                              style={{
-                                color: currentTextColor,
-                                fontFamily: theme.font.medium,
-                                fontSize: getFontSize(1.9),
-                              }}>
-                              Like
-                            </Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            onPress={() => {
-                              navigation.navigate('CommentSection');
-                            }}>
-                            <Text
-                              style={{
-                                color: currentTextColor,
-                                fontFamily: theme.font.medium,
-                                fontSize: getFontSize(1.9),
-                              }}>
-                              Comment
-                            </Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity>
-                            <Text
-                              style={{
-                                color: currentTextColor,
-                                fontFamily: theme.font.medium,
-                                fontSize: getFontSize(1.9),
-                              }}>
-                              Share
-                            </Text>
-                          </TouchableOpacity>
-                        </View>
-                      </View>
+                      )}
                     </View>
                   </>
                 );
@@ -690,4 +690,17 @@ const Index = memo(({navigation}) => {
   );
 });
 
+const styles = StyleSheet.create({
+  likeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  likeText: {
+    color: 'white',
+    fontFamily: theme.font.medium,
+    marginLeft: '7%',
+    marginTop: '4%',
+  },
+});
 export default Index;
