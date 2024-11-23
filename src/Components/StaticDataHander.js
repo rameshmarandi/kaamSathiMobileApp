@@ -180,6 +180,24 @@ const adminDashboardCardData = [
     ],
   },
   {
+    category: 'Support the Mission',
+    items: [
+      {
+        id: 0,
+        title: 'Donate Securely',
+        image: theme.assets.members,
+
+        routeName: 'razorpay',
+      },
+      {
+        id: 1,
+        title: 'Payment History',
+        image: theme.assets.adminManag,
+        routeName: 'AdminManagment',
+      },
+    ],
+  },
+  {
     category: 'Spiritual Resources',
     items: [
       {

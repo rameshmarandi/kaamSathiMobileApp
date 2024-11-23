@@ -40,6 +40,8 @@ import {
   myProfileAPIHander,
 } from '../../../redux/reducer/Profile/ProfileAPI.js';
 import DailyVersesComp from '../../ScreenComp/DailyVersesComp.js';
+import RazorpayCheckout from '../../../../node_modules/react-native-razorpay/RazorpayCheckout';
+import {initiatePayment} from '../../../Components/PaymentHandler.js';
 
 const initialState = {
   adminDashboardCardData: adminDashboardCardData,
@@ -234,6 +236,36 @@ const Index = memo(props => {
                     <SquareCardComp
                       filteredData={filteredData}
                       onPress={item => {
+                        if (item.routeName == 'razorpay') {
+                          // Dynamic or predefined amount
+                          const dynamicAmount = 500; // This could be calculated or fetched from an API
+
+                          // User info (you can also dynamically fetch this)
+                          const userInfo = {
+                            name: 'John Doe',
+                            email: 'john.doe@example.com',
+                            contact: '1234567890',
+                          };
+
+                          // const handlePayment = () => {
+                          // Description can be dynamic or predefined as needed
+                          const description = 'Donation for Church';
+                          const imageUrl =
+                            'https://your-website-logo-url.com/logo.png'; // Optional image
+
+                          // Call the payment handler with the required parameters
+                          initiatePayment(
+                            dynamicAmount,
+                            userInfo.name,
+                            userInfo.email,
+                            userInfo.contact,
+                            description,
+                            imageUrl,
+                          );
+                          // };
+
+                          // initiatePayment
+                        }
                         if (item.routeName.includes('https')) {
                           openInAppBrowser(item.routeName);
                         }

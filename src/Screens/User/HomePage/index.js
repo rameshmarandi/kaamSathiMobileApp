@@ -33,7 +33,7 @@ import {Platform} from 'react-native';
 import {requestUserPermission} from '../../../utility/PermissionContoller';
 import DailyVersesComp from '../../ScreenComp/DailyVersesComp';
 
-
+import RazorpayCheckout from 'react-native-razorpay';
 const {width} = Dimensions.get('window');
 const itemWidth = width - 40; // Adjust this according to your layout
 
@@ -72,6 +72,36 @@ const index = memo(props => {
     const token = await messaging().getToken();
 
     console.log('Firebase_OTkem', token);
+  };
+
+  const handlePayment = () => {
+    const options = {
+      description: 'Donation for Church',
+      image: 'https://your-website-logo-url.com/logo.png', // Replace with your logo URL
+      currency: 'INR',
+      key: 'rzp_test_3PV0eletGZfpvr', // Replace with your Razorpay API Key
+      amount: 100 * 100, // Amount in paise (e.g., 100 INR = 10000 paise)
+      name: 'Your Church Name',
+      prefill: {
+        email: 'user@example.com',
+        contact: '1234567890',
+        name: 'John Doe',
+      },
+      theme: {color: '#F37254'}, // Customize color
+    };
+
+    RazorpayCheckout.open(options)
+      .then(data => {
+        // Handle payment success
+        Alert.alert(
+          'Payment Successful',
+          `Payment ID: ${data.razorpay_payment_id}`,
+        );
+      })
+      .catch(error => {
+        // Handle payment error
+        Alert.alert('Payment Failed', `Error: ${error.description}`);
+      });
   };
   const [activeSlide, setActiveSlide] = useState(0);
   _renderItem = ({item}) => {
@@ -183,15 +213,6 @@ const index = memo(props => {
       />
       <MarqueeComp textRender={`Welcome to Light of Life Ministries , Pune`} />
 
-      <TouchableOpacity>
-        <Text
-          style={{
-            fontSize: 40,
-            color: 'green',
-          }}>
-          Pay Now
-        </Text>
-      </TouchableOpacity>
       <FlatList
         data={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
         contentContainerStyle={{}}

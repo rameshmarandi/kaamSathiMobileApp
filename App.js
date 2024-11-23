@@ -163,12 +163,7 @@ const App = () => {
 
     return backgroundMessageHandler;
   };
-  //   <DefaultPopup
-  //   ref={popupRef}
-  //   renderPopupContent={renderCustomPopup}
-  //   shouldChildHandleResponderStart={true}
-  //   shouldChildHandleResponderMove={true}
-  // />
+
   return (
     <>
       {isLoading ? (
@@ -176,6 +171,12 @@ const App = () => {
       ) : (
         <>
           <AllNavContainer isLogedIn={isLogedIn} isAdmin={isAdmin} />
+          {/* <DefaultPopup
+    ref={popupRef}
+    renderPopupContent={renderCustomPopup}
+    shouldChildHandleResponderStart={true}
+    shouldChildHandleResponderMove={true}
+  /> */}
         </>
       )}
     </>
