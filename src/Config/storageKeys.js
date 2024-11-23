@@ -5,6 +5,7 @@ import {API_BASE_URL} from '@env';
 const StorageKeys = {
   ACCESS_TOKEN: 'APP_STORAGE_ACCESS_TOKEN',
   REFRESH_TOKEN: 'APP_STORAGE_REFRESH_TOKEN',
+  FCM_TOKEN: 'APP_STORAGE_FCM_TOKEN',
 
   // Add more keys as needed
 };

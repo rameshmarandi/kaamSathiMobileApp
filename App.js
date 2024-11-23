@@ -1,5 +1,13 @@
-import {View, Text, Image, SafeAreaView, StatusBar, LogBox} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  Image,
+  SafeAreaView,
+  StatusBar,
+  Linking,
+  LogBox,
+} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
 import LottieView from 'lottie-react-native';
 import {Provider, useSelector} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
@@ -20,15 +28,24 @@ import theme from './src/utility/theme';
 import {setNavigator} from './src/Services/NavigationService';
 import {toastConfig} from './src/Components/StaticDataHander';
 import messaging from '@react-native-firebase/messaging';
-import {checkIsAdmin, checkIsUserLoggedIn} from './src/Helpers/CommonHelpers';
+import {
+  checkIsAdmin,
+  checkIsUserLoggedIn,
+  generateFCMToken,
+} from './src/Helpers/CommonHelpers';
 import {requestNotificationPermission} from './src/utility/PermissionContoller';
-
+import DefaultPopup, {
+  renderCustomPopup,
+} from './src/Components/DefaultNotificationPopup';
+import Sound from 'react-native-sound';
 const Stack = createNativeStackNavigator();
 LogBox.ignoreAllLogs(true);
 
 const App = () => {
   StatusBar.setBarStyle('light-content');
   StatusBar.setBackgroundColor(theme.color.darkTheme); // Set your desired background color
+  const popupRef = useRef();
+  const rootDetRef = useRef();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isLogedIn, setIsLogedIn] = useState(false);
@@ -45,40 +62,122 @@ const App = () => {
 
   const InitRender = async () => {
     requestNotificationPermission();
-    await messaging().registerDeviceForRemoteMessages();
-    const token = await messaging().getToken();
-
-    console.log('Firebase_OTkem : ', token);
+    generateFCMToken();
   };
 
-  /*************  ✨ Codeium Command ⭐  *************/
-  /**
-   * This function checks if a user is logged in and if the user is an admin.
-   * If the user is logged in, it sets the isLogedIn state to true.
-   * If the user is an admin, it sets the isAdmin state to true.
-/******  556be213-7252-441e-a922-7412f7229fd0  *******/ const checkIsAuthUser =
-    async () => {
-      const isUserLoggedIn = await checkIsUserLoggedIn();
+  const checkIsAuthUser = async () => {
+    const isUserLoggedIn = await checkIsUserLoggedIn();
 
-      setIsLogedIn(isUserLoggedIn);
-      checkIsAdmin().then(checkTypOfAdmin => {
-        setIsAdmin(checkTypOfAdmin);
-      });
-    };
+    setIsLogedIn(isUserLoggedIn);
+    checkIsAdmin().then(checkTypOfAdmin => {
+      setIsAdmin(checkTypOfAdmin);
+    });
+  };
   useEffect(() => {
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    // Subscribe to foreground messages
+    const unsubscribeForeground = messaging().onMessage(remoteMessage => {
+      handleForegroundMessage(remoteMessage); // Handling foreground message outside useEffect
     });
 
-    return unsubscribe;
+    // Handle background and notification opening
+    handleNotificationOpen();
+
+    return () => {
+      unsubscribeForeground();
+      Linking.removeAllListeners();
+    };
   }, []);
+
+  // Function to handle foreground messages
+  const handleForegroundMessage = remoteMessage => {
+    console.log('Message received in foreground:', remoteMessage);
+
+    // Play the sound
+    playSound();
+
+    // Show popup
+    _showPopup(remoteMessage);
+  };
+
+  // Function to play the sound
+  const playSound = () => {
+    const sound = new Sound('church_bell.wav', Sound.MAIN_BUNDLE, error => {
+      if (error) {
+        console.log('Failed to load the sound', error);
+        return;
+      }
+      sound.play(success => {
+        if (!success) {
+          console.log('Sound playback failed');
+        }
+      });
+    });
+  };
+
+  // Function to show the popup
+  const _showPopup = remoteMessage => {
+    try {
+      const {data, notification} = remoteMessage;
+
+      console.log('INSIDE_showPopup', remoteMessage);
+      let img = '';
+
+      if (Platform.OS === 'ios' && data.fcm_options?.image) {
+        img = data.fcm_options.image;
+      } else if (Platform.OS === 'android' && notification.android?.imageUrl) {
+        img = notification.android.imageUrl;
+      }
+
+      popupRef.current.show({
+        title: notification.title,
+        body: notification.body,
+        appIconSource: img ? {uri: img} : theme.assets.SplashLogo,
+        slideOutTime: 3900,
+        onPress: () => onPressMessage(remoteMessage),
+      });
+    } catch (err) {
+      console.error('popup error', err);
+    }
+  };
+
+  // Function to handle notification press
+  const onPressMessage = remoteMessage => {
+    console.log('Popup pressed, handle action', remoteMessage);
+  };
+
+  // Function to handle background notifications and app open
+  const handleNotificationOpen = () => {
+    const backgroundMessageHandler = messaging().setBackgroundMessageHandler(
+      remoteMessage => {
+        console.log('Message handled in the background!', remoteMessage);
+      },
+    );
+
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      console.log(
+        'Notification caused app to open from background state:',
+        remoteMessage.notification,
+      );
+      onPressMessage(remoteMessage);
+    });
+
+    return backgroundMessageHandler;
+  };
 
   return (
     <>
       {isLoading ? (
         <InitialRender />
       ) : (
-        <AllNavContainer isLogedIn={isLogedIn} isAdmin={isAdmin} />
+        <>
+          <AllNavContainer isLogedIn={isLogedIn} isAdmin={isAdmin} />
+          <DefaultPopup
+            ref={popupRef}
+            renderPopupContent={renderCustomPopup}
+            shouldChildHandleResponderStart={true}
+            shouldChildHandleResponderMove={true}
+          />
+        </>
       )}
     </>
   );

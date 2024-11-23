@@ -43,6 +43,8 @@ import {loginValidationSchema} from '../../utility/theme/validation';
 import {useFocusEffect} from '@react-navigation/native';
 import {getBranchAPIHander} from '../../redux/reducer/ChurchBranch/churchBranchAPI';
 import {CustomAlertModal} from '../../Components/commonComp';
+import asyncStorageUtil from '../../utility/asyncStorageUtil';
+import StorageKeys from '../../Config/StorageKeys';
 
 const LoginPage = props => {
   const {navigation} = props;
@@ -99,10 +101,14 @@ const LoginPage = props => {
         onSubmit={async (values, {resetForm}) => {
           try {
             setIsLoading(true);
+            const fcmToken = await asyncStorageUtil.getItem(
+              StorageKeys.FCM_TOKEN,
+            );
+            console.log('FCM_tone_logi', fcmToken);
             const payload = {
               email: values.email,
               password: values.password,
-              fcmToken: '',
+              fcmToken: fcmToken,
             };
             const apiRes = await store.dispatch(loginAPIHander(payload));
 

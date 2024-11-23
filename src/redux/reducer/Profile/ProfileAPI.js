@@ -115,6 +115,7 @@ const formatUsersData = users => {
       'Full name': user.fullName,
 
       Gender: capitalizeFirstLetter(user.gender),
+      'Preferred Language': `${capitalizeFirstLetter(user.preferredLanguage)}`,
       // 'Church branch': '-', // Replace hre with church name
       'Date of birth': `${DateFormator(
         user.DOB,
@@ -133,6 +134,9 @@ const formatUsersData = users => {
         ...UserBio,
         'Added by': capitalizeFirstLetter(user.familyMemberAddedBy),
         Relationship: capitalizeFirstLetter(user.relationToUser),
+        'Preferred Language': `${capitalizeFirstLetter(
+          user.preferredLanguage,
+        )}`,
       };
     }
     return {
@@ -158,8 +162,10 @@ const formatFamilyMemberData = users => {
         'Full name': capitalizeFirstLetter(user.fullName),
         'Added by': capitalizeFirstLetter(user.familyMemberAddedBy),
         Relationship: capitalizeFirstLetter(user.relationToUser),
+
         // 'Church branch': '-', // Replace hre with church name
         Gender: capitalizeFirstLetter(user.gender),
+
         'Date of birth': `${DateFormator(
           user.DOB,
           'DD MMM YYYY',

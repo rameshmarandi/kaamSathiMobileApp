@@ -33,6 +33,7 @@ import {Platform} from 'react-native';
 import {requestUserPermission} from '../../../utility/PermissionContoller';
 import DailyVersesComp from '../../ScreenComp/DailyVersesComp';
 
+import RazorpayCheckout from 'react-native-razorpay';
 const {width} = Dimensions.get('window');
 const itemWidth = width - 40; // Adjust this according to your layout
 
@@ -162,6 +163,7 @@ const index = memo(props => {
       </>
     );
   });
+
   return (
     <SafeAreaView
       style={{
@@ -181,6 +183,15 @@ const index = memo(props => {
       />
       <MarqueeComp textRender={`Welcome to Light of Life Ministries , Pune`} />
 
+      <TouchableOpacity>
+        <Text
+          style={{
+            fontSize: 40,
+            color: 'green',
+          }}>
+          Pay Now
+        </Text>
+      </TouchableOpacity>
       <FlatList
         data={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
         contentContainerStyle={{}}

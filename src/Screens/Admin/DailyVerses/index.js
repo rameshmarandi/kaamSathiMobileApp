@@ -238,6 +238,7 @@ const Index = memo(({navigation}) => {
         }),
       );
       if (res.payload === true) {
+        APIHandler(false);
         setAlertMessage({
           status: 'success',
 

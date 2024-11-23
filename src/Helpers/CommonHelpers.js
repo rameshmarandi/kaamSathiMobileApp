@@ -6,7 +6,7 @@ import {setAdmin, setLogedInUserType} from '../redux/reducer/Auth';
 import moment from 'moment';
 import Share from 'react-native-share';
 import RNFS from 'react-native-fs';
-
+import messaging from '@react-native-firebase/messaging';
 import StorageKeys from '../Config/StorageKeys';
 
 export const convertImageToBase64 = async (url, filePath) => {
@@ -91,6 +91,19 @@ export const checkIsUserLoggedIn = async () => {
     }
   } catch (error) {
     console.error('Error checking user login status:', error);
+  }
+};
+
+export const generateFCMToken = async () => {
+  try {
+    await messaging().registerDeviceForRemoteMessages();
+    const token = await messaging().getToken();
+
+    await asyncStorageUtil.setItem(StorageKeys.FCM_TOKEN, `${token}`);
+
+    console.log('Firebase_OTkem : ', token);
+  } catch (error) {
+    console.error('Generate_fcm_token_faild', error);
   }
 };
 export const checkIsAdmin = async () => {
