@@ -33,7 +33,7 @@ import {Platform} from 'react-native';
 import {requestUserPermission} from '../../../utility/PermissionContoller';
 import DailyVersesComp from '../../ScreenComp/DailyVersesComp';
 
-import RazorpayCheckout from 'react-native-razorpay';
+
 const {width} = Dimensions.get('window');
 const itemWidth = width - 40; // Adjust this according to your layout
 
