@@ -184,16 +184,17 @@ const adminDashboardCardData = [
     items: [
       {
         id: 0,
-        title: 'Donate Securely',
-        image: theme.assets.members,
+        title: 'Donate Now',
+        image: theme.assets.payment_history,
 
         routeName: 'razorpay',
       },
       {
         id: 1,
         title: 'Payment History',
-        image: theme.assets.adminManag,
-        routeName: 'AdminManagment',
+        image: theme.assets.payment_history,
+        routeName: 'PaymentHistory',
+        type: 'payment_history',
       },
     ],
   },

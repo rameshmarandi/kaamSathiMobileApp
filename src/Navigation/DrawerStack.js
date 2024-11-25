@@ -148,6 +148,14 @@ export default function DrawerStack(props) {
           }}
         />
         <Drawer.Screen
+          name="PaymentHistory"
+          component={AllScreens.PaymentHistory}
+          options={{
+            headerShadowVisible: false,
+            headerShown: false,
+          }}
+        />
+        <Drawer.Screen
           name="LoginPage"
           component={AllScreens.LoginPage}
           options={{

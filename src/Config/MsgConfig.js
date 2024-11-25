@@ -54,6 +54,7 @@ const headerTitle = {
   postsUploadBanner: 'All banners',
   dailyVerseDetails: 'daily verse',
   uploadStudyResource: 'Upload study resource',
+  paymentHistory: 'Payment History',
 };
 
 export default message = {

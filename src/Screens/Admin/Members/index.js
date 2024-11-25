@@ -438,7 +438,7 @@ const Index = memo(props => {
       <CustomBottomSheet ref={bottomSheetRef} modalHeight={500}>
         {bottomSheetContent}
       </CustomBottomSheet>
-
+      {console.log('Profile_API', allMembers)}
       <View style={[styles.flatListContainer]}>
         <FlatList
           data={searchText !== '' ? filteredData : allMembers}

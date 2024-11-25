@@ -325,7 +325,7 @@ const BioCompoent = memo(props => {
               fontSize: getFontSize(1.9),
               marginTop: getResHeight(1.5),
             }}>
-            Perosnal Informaton
+            Personal Informaton
           </Text>
           <View
             style={{

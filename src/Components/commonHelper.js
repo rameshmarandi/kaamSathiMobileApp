@@ -63,6 +63,22 @@ export const checkIsNotEmptyArray = (arr = []) => {
   return Array.isArray(arr) && arr.length > 0;
 };
 
+export const formatCurrency = amount => {
+  if (isNaN(amount)) return 'Invalid amount';
+
+  // Convert to string and ensure it's a valid number
+  const amountStr = parseFloat(amount).toFixed(2).toString();
+
+  // Split integer and decimal parts
+  const [integerPart, decimalPart] = amountStr.split('.');
+
+  // Use regex to format the integer part with commas as per Indian numbering
+  const formattedInteger = integerPart.replace(/(\d)(?=(\d\d)+\d$)/g, '$1,');
+
+  return `${formattedInteger}`;
+  // return `${formattedInteger}.${decimalPart}`;
+};
+
 export const generateMeaningfulAbbreviation = phrase => {
   const words = phrase.split(' ').filter(word => word.length > 0);
 

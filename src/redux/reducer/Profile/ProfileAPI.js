@@ -31,6 +31,7 @@ const getAllMembersAPIHander = createAsyncThunk(
 
       if (response.status === 200) {
         const responseData = response.data;
+        console.log('Get_All_members', responseData);
         const afterFormatMembersData = formatUsersData(responseData.data);
 
         thunkAPI.dispatch(setAllMembers(afterFormatMembersData.reverse()));
@@ -109,13 +110,13 @@ const updateApplicationStatusAPIHander = createAsyncThunk(
 
 const formatUsersData = users => {
   return users.map((user, index) => {
-    console.log('Fall_Members_list', user.isFamilyMember);
-
     let UserBio = {
       'Full name': user.fullName,
 
       Gender: capitalizeFirstLetter(user.gender),
-      'Preferred Language': `${capitalizeFirstLetter(user.preferredLanguage)}`,
+      'Preferred Language': user.preferredLanguage
+        ? `${capitalizeFirstLetter(user.preferredLanguage)}`
+        : 'N/A',
       // 'Church branch': '-', // Replace hre with church name
       'Date of birth': `${DateFormator(
         user.DOB,
@@ -134,9 +135,9 @@ const formatUsersData = users => {
         ...UserBio,
         'Added by': capitalizeFirstLetter(user.familyMemberAddedBy),
         Relationship: capitalizeFirstLetter(user.relationToUser),
-        'Preferred Language': `${capitalizeFirstLetter(
-          user.preferredLanguage,
-        )}`,
+        'Preferred Language': user.preferredLanguage
+          ? `${capitalizeFirstLetter(user.preferredLanguage)}`
+          : 'N/A',
       };
     }
     return {

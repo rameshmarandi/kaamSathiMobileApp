@@ -1,4 +1,4 @@
-import {API_BASE_URL} from '@env';
+import {API_BASE_URL, RAZORPAY_KEY} from '@env';
 
 // Centralized key management for AsyncStorage
 
@@ -18,4 +18,5 @@ export default {
   API_BASE_URL: API_BASE_URL,
   USER_TYPES,
   RESTICTED_PAGES,
+  RAZORPAY_KEY,
 };

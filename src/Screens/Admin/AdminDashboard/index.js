@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  TextInput,
+  Text,
   StyleSheet,
 } from 'react-native';
 import {useSelector} from 'react-redux';
@@ -42,6 +44,11 @@ import {
 import DailyVersesComp from '../../ScreenComp/DailyVersesComp.js';
 import RazorpayCheckout from '../../../../node_modules/react-native-razorpay/RazorpayCheckout';
 import {initiatePayment} from '../../../Components/PaymentHandler.js';
+import CustomBottomSheet from '../../../Components/CustomBottomSheet.js';
+import {formatCurrency} from '../../../Components/commonHelper.js';
+import theme from '../../../utility/theme/index.js';
+import {Formik} from 'formik';
+import {ActivityIndicator} from 'react-native';
 
 const initialState = {
   adminDashboardCardData: adminDashboardCardData,
@@ -60,8 +67,9 @@ const Index = memo(props => {
     currentBgColor,
     currentTextColor,
   } = useSelector(state => state.user);
-
+  const {myProfile} = useSelector(state => state.profile);
   const [state, setState] = useState(initialState);
+  const [isPayBtnLoading, setIsPayBtnLoading] = useState(false);
   const {
     filteredData,
     addNewMemberModalVisible,
@@ -69,6 +77,7 @@ const Index = memo(props => {
     searchText,
     searchModalVisible,
   } = state;
+  let maxAmount = 30000;
 
   useEffect(() => {
     _apiCalling();
@@ -86,19 +95,10 @@ const Index = memo(props => {
       // Add other essential requests here
     ];
 
-    // // Define non-essential requests
-    // const nonEssentialRequests = [
-    //   () => store.dispatch(getHolidayLeavesData({ state: 'some_state' })),
-    //   () => store.dispatch(JobsApi.getWhatsNewApi()),
-    //   // Add other non-essential requests here
-    // ];
-
     // Call utility method for handling network requests
     try {
       await handleNetworkRequests({
         essentialRequests,
-        // nonEssentialRequests,
-        // loadingSetter: isLoading => setState(prev => ({ ...prev, isSkeletonLoader: isLoading }))
       });
     } catch (err) {
       console.log('Admin_Dashboard_Error', {err});
@@ -107,7 +107,7 @@ const Index = memo(props => {
   };
 
   const searchBarRef = useRef(null);
-
+  const bottomSheetRef = useRef(null);
   const updateState = newState =>
     setState(prevState => ({...prevState, ...newState}));
 
@@ -143,6 +143,36 @@ const Index = memo(props => {
       }, 100); // Adjust timeout as necessary
     }
   }, [searchModalVisible]);
+
+  const openBottomSheetWithContent = content => {
+    bottomSheetRef.current?.open();
+  };
+  const [inputWidth] = React.useState(new Animated.Value(250)); // Starting width
+
+  const initialValues = {
+    amount: '',
+  };
+
+  const handleSubmit = values => {
+    try {
+      setIsPayBtnLoading(true);
+      setTimeout(() => {
+        bottomSheetRef.current?.close();
+        initiatePayment(values.amount, myProfile);
+        setIsPayBtnLoading(false);
+      }, 300);
+    } catch (error) {
+      console.error('Initialite_payment_error', error);
+    }
+  };
+
+  const formatCurrency = value => {
+    let val = value.replace(/[^0-9]/g, ''); // Remove any non-numeric characters
+    if (val.length === 0) return ''; // Return ₹0 if no value
+
+    val = Number(val).toLocaleString('en-IN'); // Format the number to currency (Indian format)
+    return val;
+  };
 
   return (
     <SafeAreaView
@@ -192,6 +222,101 @@ const Index = memo(props => {
       <MarqueeComp
         textRender={`I can do all things through Christ who strengthens me. [Philippians 4:13] जो मुझे सामर्थ देता है उस में मैं सब कुछ कर सकता हूं। [फिलिप्पियों 4:13]`}
       />
+
+      <CustomBottomSheet ref={bottomSheetRef} modalHeight={getResHeight(30)}>
+        <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            setFieldValue,
+            errors,
+            touched,
+            setFieldError,
+            values,
+          }) => (
+            <View style={styles.container}>
+              <View style={styles.inputWrapper}>
+                {/* Currency symbol on the left of input */}
+                <Text
+                  style={[
+                    styles.currencySymbol,
+                    {
+                      color: currentTextColor,
+                    },
+                  ]}>
+                  ₹
+                </Text>
+                <TextInput
+                  style={[
+                    styles.input,
+                    {color: currentTextColor},
+                    {width: inputWidth},
+                  ]}
+                  autoFocus={true}
+                  selectionColor={currentTextColor}
+                  cursorColor={currentTextColor}
+                  placeholderTextColor="grey"
+                  value={formatCurrency(values.amount)}
+                  onChangeText={text => {
+                    const numericText = text.replace(/[^0-9]/g, '');
+
+                    const numericValue = parseInt(numericText, 10) || '';
+                    if (numericValue <= maxAmount) {
+                      setFieldError('amount', '');
+
+                      setFieldValue('amount', numericValue.toString());
+                    } else {
+                      setFieldError(
+                        'amount',
+                        `Amount cannot exceed ₹${maxAmount}`,
+                      );
+                    }
+                  }}
+                  onBlur={handleBlur('amount')}
+                  keyboardType="numeric"
+                  placeholder="0"
+                  returnKeyType="done"
+                />
+              </View>
+              {errors.amount && (
+                <Text
+                  style={{
+                    color: 'red',
+                  }}>
+                  {errors.amount}
+                </Text>
+              )}
+
+              {isPayBtnLoading ? (
+                <>
+                  <ActivityIndicator
+                    size={getFontSize(3)}
+                    color={currentTextColor}
+                  />
+                </>
+              ) : (
+                <>
+                  <TouchableOpacity
+                    activeOpacity={0.9}
+                    style={[
+                      styles.buttonContainer,
+                      {
+                        backgroundColor: currentBgColor,
+                        borderWidth: 1,
+                        borderColor: currentTextColor,
+                      },
+                    ]}
+                    onPress={handleSubmit}>
+                    <Text style={styles.buttonText}>Pay Now</Text>
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
+          )}
+        </Formik>
+      </CustomBottomSheet>
+
       <TouchableWithoutFeedback
         onPress={() => {
           updateState({searchModalVisible: true});
@@ -212,12 +337,7 @@ const Index = memo(props => {
             switch (index) {
               case 0:
                 return (
-                  <View
-                    style={
-                      {
-                        // paddingHorizontal: '5%',
-                      }
-                    }>
+                  <View style={{}}>
                     <DailyVersesComp {...props} />
                   </View>
                 );
@@ -236,48 +356,25 @@ const Index = memo(props => {
                     <SquareCardComp
                       filteredData={filteredData}
                       onPress={item => {
-                        if (item.routeName == 'razorpay') {
-                          // Dynamic or predefined amount
-                          const dynamicAmount = 500; // This could be calculated or fetched from an API
-
-                          // User info (you can also dynamically fetch this)
-                          const userInfo = {
-                            name: 'John Doe',
-                            email: 'john.doe@example.com',
-                            contact: '1234567890',
-                          };
-
-                          // const handlePayment = () => {
-                          // Description can be dynamic or predefined as needed
-                          const description = 'Donation for Church';
-                          const imageUrl =
-                            'https://your-website-logo-url.com/logo.png'; // Optional image
-
-                          // Call the payment handler with the required parameters
-                          initiatePayment(
-                            dynamicAmount,
-                            userInfo.name,
-                            userInfo.email,
-                            userInfo.contact,
-                            description,
-                            imageUrl,
-                          );
-                          // };
-
-                          // initiatePayment
+                        try {
+                          if (item.routeName == 'razorpay') {
+                            openBottomSheetWithContent();
+                          }
+                          if (item.routeName.includes('https')) {
+                            openInAppBrowser(item.routeName);
+                          }
+                          if (item.routeName == 'AddMemberForm') {
+                            setState(prevState => ({
+                              ...prevState,
+                              addNewMemberModalVisible: true,
+                            }));
+                          } else {
+                            props.navigation.navigate(item.routeName);
+                          }
+                          console.log('Navigate_route', item.routeName);
+                        } catch (error) {
+                          console.log('Admin_dashboard_error', error);
                         }
-                        if (item.routeName.includes('https')) {
-                          openInAppBrowser(item.routeName);
-                        }
-                        if (item.routeName == 'AddMemberForm') {
-                          setState(prevState => ({
-                            ...prevState,
-                            addNewMemberModalVisible: true,
-                          }));
-                        } else {
-                          props.navigation.navigate(item.routeName);
-                        }
-                        console.log('Navigate_route', item.routeName);
                       }}
                     />
                   </View>
@@ -365,8 +462,44 @@ const ControlPanelSearchModal = ({
 };
 
 const styles = StyleSheet.create({
-  upcomingContainer: {
-    marginHorizontal: getResWidth(5),
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 20,
+    // borderBottomWidth: 1,
+    // borderBottomColor: '#ccc',
+    paddingBottom: 5,
+  },
+  currencySymbol: {
+    fontSize: getFontSize(5),
+    fontFamily: theme.font.borderBottomColor,
+    marginRight: 5,
+  },
+  input: {
+    fontSize: getFontSize(5),
+    fontFamily: theme.font.borderBottomColor,
+    // paddingHorizontal: 10,
+    // minWidth: 25, // Set a minimum width to avoid shrinking too much
+    textAlign: 'left', // Ensure the number aligns properly to the left after ₹ symbol
+  },
+  buttonContainer: {
+    marginTop: 20,
+    paddingVertical: 12,
+    // backgroundColor: '#4CAF50', // Button color, GPay-like green
+    width: '100%',
+    alignItems: 'center',
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 

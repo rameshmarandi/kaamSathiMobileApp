@@ -13,6 +13,7 @@ import {getFontSize, getResHeight, getResWidth} from '../utility/responsive';
 import theme from '../utility/theme';
 import StorageKeys from '../Config/StorageKeys';
 import ToastAlertComp from './ToastAlertComp';
+import LottieView from 'lottie-react-native';
 
 const SquareCardComp = ({filteredData, onPress}) => {
   const {currentTextColor, logedInuserType} = useSelector(state => state.user);
@@ -42,12 +43,27 @@ const SquareCardComp = ({filteredData, onPress}) => {
           },
         ]}
         key={item.id.toString()}>
-        <Image
-          source={item.image}
-          resizeMode="cover"
-          style={styles.cardImage}
-        />
-        {console.log('sdfsdfsdfsdfsdf', item.title)}
+        {item.routeName == 'razorpay' ? (
+          <>
+            <LottieView
+              source={require('../assets/animationLoader/amount_transfer.json')}
+              autoPlay
+              loop
+              style={{
+                height: getResHeight(10),
+                width: getResHeight(10),
+              }}
+            />
+          </>
+        ) : (
+          <>
+            <Image
+              source={item.image}
+              resizeMode="cover"
+              style={styles.cardImage}
+            />
+          </>
+        )}
 
         {item.title == 'Prayer Request' && (
           <>
@@ -81,6 +97,16 @@ const SquareCardComp = ({filteredData, onPress}) => {
             {
               color: currentTextColor,
               fontFamily: theme.font.semiBold,
+              marginTop:
+                item.routeName == 'razorpay'
+                  ? getResHeight(-1)
+                  : item.type == 'payment_history'
+                  ? 10
+                  : 0,
+            },
+
+            item.routeName == 'razorpay' && {
+              marginBottom: '5%',
             },
           ]}>
           {item.title}

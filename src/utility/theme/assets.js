@@ -21,6 +21,7 @@ import ebook from '../../assets/resources/ebook.png';
 
 //Admin
 import members from '../../assets/admin/members.png';
+import payment_history from '../../assets/admin/payment_history.png';
 import add_new_user from '../../assets/admin/add_new_user.png';
 import camera from '../../assets/admin/camera.png';
 import DBible from '../../assets/admin/3DBible.png';
@@ -56,6 +57,7 @@ const homeIcons = {
   dailyVerbsBanner,
   birthday,
   members,
+  payment_history,
   camera,
   add_new_user,
   DBible,

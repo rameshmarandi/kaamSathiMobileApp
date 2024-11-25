@@ -73,72 +73,72 @@ const App = () => {
       setIsAdmin(checkTypOfAdmin);
     });
   };
-  useEffect(() => {
-    // Subscribe to foreground messages
-    const unsubscribeForeground = messaging().onMessage(remoteMessage => {
-      handleForegroundMessage(remoteMessage); // Handling foreground message outside useEffect
-    });
+  // useEffect(() => {
+  //   // Subscribe to foreground messages
+  //   const unsubscribeForeground = messaging().onMessage(remoteMessage => {
+  //     handleForegroundMessage(remoteMessage); // Handling foreground message outside useEffect
+  //   });
 
-    // Handle background and notification opening
-    // handleNotificationOpen();
+  //   // Handle background and notification opening
+  //   // handleNotificationOpen();
 
-    return () => {
-      unsubscribeForeground();
-      Linking.removeAllListeners();
-    };
-  }, []);
+  //   return () => {
+  //     unsubscribeForeground();
+  //     Linking.removeAllListeners();
+  //   };
+  // }, []);
 
   // Function to handle foreground messages
-  const handleForegroundMessage = remoteMessage => {
-    console.log('Message received in foreground:', remoteMessage);
+  // const handleForegroundMessage = remoteMessage => {
+  //   console.log('Message received in foreground:', remoteMessage);
 
-    // Play the sound
-    playSound();
+  //   // Play the sound
+  //   playSound();
 
-    // Show popup
-    _showPopup(remoteMessage);
-  };
+  //   // Show popup
+  //   _showPopup(remoteMessage);
+  // };
 
   // Function to play the sound
-  const playSound = () => {
-    const sound = new Sound('church_bell.wav', Sound.MAIN_BUNDLE, error => {
-      if (error) {
-        console.log('Failed to load the sound', error);
-        return;
-      }
-      sound.play(success => {
-        if (!success) {
-          console.log('Sound playback failed');
-        }
-      });
-    });
-  };
+  // const playSound = () => {
+  //   const sound = new Sound('church_bell.wav', Sound.MAIN_BUNDLE, error => {
+  //     if (error) {
+  //       console.log('Failed to load the sound', error);
+  //       return;
+  //     }
+  //     sound.play(success => {
+  //       if (!success) {
+  //         console.log('Sound playback failed');
+  //       }
+  //     });
+  //   });
+  // };
 
-  // Function to show the popup
-  const _showPopup = remoteMessage => {
-    try {
-      const {data, notification} = remoteMessage;
+  // // Function to show the popup
+  // const _showPopup = remoteMessage => {
+  //   try {
+  //     const {data, notification} = remoteMessage;
 
-      console.log('INSIDE_showPopup', remoteMessage);
-      let img = '';
+  //     console.log('INSIDE_showPopup', remoteMessage);
+  //     let img = '';
 
-      if (Platform.OS === 'ios' && data.fcm_options?.image) {
-        img = data.fcm_options.image;
-      } else if (Platform.OS === 'android' && notification.android?.imageUrl) {
-        img = notification.android.imageUrl;
-      }
+  //     if (Platform.OS === 'ios' && data.fcm_options?.image) {
+  //       img = data.fcm_options.image;
+  //     } else if (Platform.OS === 'android' && notification.android?.imageUrl) {
+  //       img = notification.android.imageUrl;
+  //     }
 
-      popupRef.current.show({
-        title: notification.title,
-        body: notification.body,
-        appIconSource: img ? {uri: img} : theme.assets.SplashLogo,
-        slideOutTime: 3900,
-        onPress: () => onPressMessage(remoteMessage),
-      });
-    } catch (err) {
-      console.error('popup error', err);
-    }
-  };
+  //     popupRef.current.show({
+  //       title: notification.title,
+  //       body: notification.body,
+  //       appIconSource: img ? {uri: img} : theme.assets.SplashLogo,
+  //       slideOutTime: 3900,
+  //       onPress: () => onPressMessage(remoteMessage),
+  //     });
+  //   } catch (err) {
+  //     console.error('popup error', err);
+  //   }
+  // };
 
   // Function to handle notification press
   const onPressMessage = remoteMessage => {
