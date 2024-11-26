@@ -2,6 +2,129 @@ import theme from '../utility/theme';
 
 import {useSelector, useDispatch} from 'react-redux';
 import moment from 'moment';
+import RNFS from 'react-native-fs';
+import {PermissionsAndroid} from 'react-native';
+
+export const base64FileStore = (
+  base64String,
+  fileName,
+  mimeType,
+  setModalVisibilityCallback,
+) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      // Validate the base64 string
+      if (!base64String || base64String.trim() === '') {
+        console.error('Invalid base64 string');
+        Alert.alert('Error', 'Invalid base64 string provided.');
+        reject(new Error('Invalid base64 string'));
+        return;
+      }
+
+      // Request permissions for storage access
+      const hasPermission = await CheckFilePermissions();
+      console.log('Filepath_Permission', hasPermission);
+
+      if (hasPermission) {
+        console.log('File permissions granted');
+
+        // Define the directory for Android
+        const downloadDir =
+          Platform.OS === 'android'
+            ? RNFS.DownloadDirectoryPath // Public Downloads directory for Android
+            : RNFS.DocumentDirectoryPath; // iOS internal Document directory
+
+        const filePath = `${downloadDir}/${fileName}`;
+
+        console.log('File will be saved to:', filePath);
+
+        // Write the file using the base64 string
+        RNFS.writeFile(filePath, base64String, 'base64')
+          .then(() => {
+            // Optionally, use a notification or callback based on platform
+            if (Platform.OS === 'android') {
+              // showNotification(
+              //   `${fileName}`,
+              //   'File downloaded successfully.',
+              //   filePath,
+              //   base64String,
+              //   setModalVisibilityCallback,
+              //   fileName,
+              //   mimeType
+              // );
+            } else {
+              setTimeout(async () => {
+                try {
+                  await onShare('', filePath, fileName);
+                } catch (error) {
+                  console.error('Error opening file:', error);
+                }
+              }, 1200);
+            }
+
+            resolve(filePath);
+          })
+          .catch(error => {
+            console.error('Error writing file:', error);
+            Alert.alert('Error', 'Could not save the file.');
+            reject(error);
+            setModalVisibilityCallback();
+          });
+      } else {
+        console.error('File permissions denied');
+        Alert.alert('Permission Denied', 'Storage permissions are required.');
+        reject(new Error('File permissions denied'));
+      }
+    } catch (e) {
+      console.error('Error in base64FileStore:', e);
+      Alert.alert('Error', 'An unexpected error occurred.');
+      reject(e);
+    }
+  });
+};
+
+export const CheckFilePermissions = async () => {
+  if (Platform.OS === 'android') {
+    try {
+      const granted = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      ]);
+      console.log(
+        'ggggggggggggg',
+        granted,
+        granted['android.permission.POST_NOTIFICATIONS'],
+        granted['android.permission.READ_EXTERNAL_STORAGE'],
+        granted['android.permission.WRITE_EXTERNAL_STORAGE'],
+      );
+
+      if (
+        granted['android.permission.POST_NOTIFICATIONS'] &&
+        granted['android.permission.READ_EXTERNAL_STORAGE'] &&
+        granted['android.permission.WRITE_EXTERNAL_STORAGE']
+      ) {
+        // user granted permissions
+        console.log('aaaaaaaa');
+
+        return true;
+      } else {
+        console.log('bbbbbbbbbbb');
+        // user didn't grant permission... handle with toastr, popup, something...
+        return false;
+      }
+    } catch (err) {
+      console.log('ccccccccccc');
+
+      console.log('err', err);
+      // unexpected error
+      return false;
+    }
+  } else {
+    // platform is iOS
+    return true;
+  }
+};
 
 export const backgroundColorHandler = () => {
   let {isDarkMode} = useSelector(state => state.user);
