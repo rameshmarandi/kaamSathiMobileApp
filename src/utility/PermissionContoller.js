@@ -131,8 +131,47 @@ export const requestGalleryPermission = async () => {
   }
 };
 
+const requestStoragePermission = async () => {
+  if (Platform.OS === 'android') {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        {
+          title: 'Storage Permission Required',
+          message: 'This app needs access to your storage to save files.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('Storage Permission Granted');
+        return true;
+      } else if (granted === PermissionsAndroid.RESULTS.DENIED) {
+        Alert.alert(
+          'Permission Denied',
+          'Storage permission is required to save files. Please enable it in the app settings.',
+        );
+        return false;
+      } else if (granted === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+        Alert.alert(
+          'Permission Permanently Denied',
+          'You have permanently denied storage permission. Enable it in the app settings.',
+        );
+        return false;
+      }
+    } catch (err) {
+      console.warn('Permission Request Error', err);
+    }
+  } else {
+    return true; // No permissions needed for iOS
+  }
+};
+
 export {
   requestUserPermission,
+  requestStoragePermission,
   checkPermission,
   requestNotificationPermission,
   requestLocationPermission,

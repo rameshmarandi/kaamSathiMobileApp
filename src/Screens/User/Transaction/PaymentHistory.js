@@ -1,11 +1,13 @@
 import React, {memo, useState} from 'react';
 import {
   FlatList,
+  PermissionsAndroid,
   SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  Alert,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import CustomHeader from '../../../Components/CustomHeader';
@@ -19,6 +21,9 @@ import theme from '../../../utility/theme';
 import {formatCurrency} from '../../../Components/commonHelper';
 import {VectorIcon} from '../../../Components/VectorIcon';
 import ConfirmAlert from '../../../Components/ConfirmAlert';
+import RNFS from 'react-native-fs';
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import {requestStoragePermission} from '../../../utility/PermissionContoller';
 
 const PaymentCard = ({item, currentTextColor, onDownloadPress}) => (
   <View style={[styles.transactionContainer, {borderColor: currentTextColor}]}>
@@ -99,8 +104,72 @@ const PaymentHistory = memo(props => {
 
   const alertConfirmHandler = () => {
     setShowAlert(false);
+    generatePDF();
     try {
     } catch (error) {}
+  };
+
+  const generatePDF = async () => {
+    try {
+      console.log('requestStoragePermission', await requestStoragePermission());
+      // Request permission for storage access on Android
+      // if (Platform.OS === 'android') {
+      //   const granted = await PermissionsAndroid.request(
+      //     PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      //     {
+      //       title: 'Storage Permission Required',
+      //       message: 'App needs access to your storage to save the PDF file.',
+      //     },
+      //   );
+
+      //   if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+      //     Alert.alert(
+      //       'Permission Denied',
+      //       'Storage permission is required to save files.',
+      //     );
+      //     return;
+      //   }
+      // }
+
+      // Define HTML content
+      const htmlContent = `
+        <html>
+          <head>
+            <style>
+              body { font-family: Arial, sans-serif; padding: 10px; }
+              h1 { color: #007BFF; }
+              p { margin: 5px 0; }
+            </style>
+          </head>
+          <body>
+            <h1>Donation Invoice</h1>
+            <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+            <p><strong>Transaction ID:</strong> 1234567890</p>
+            <p><strong>Amount:</strong> $100.00</p>
+            <hr />
+            <p>Thank you for your generous donation to our church!</p>
+          </body>
+        </html>
+      `;
+      const downloadDir =
+        Platform.OS === 'android'
+          ? `${RNFS.DownloadDirectoryPath}/Donation_Invoice_${Date.now()}.pdf`
+          : `${RNFS.DocumentDirectoryPath}/Donation_Invoice_${Date.now()}.pdf`;
+
+      // Generate PDF
+      const options = {
+        html: htmlContent,
+        fileName: `Donation_Invoice_${Date.now()}`,
+        directory: downloadDir,
+      };
+
+      const file = await RNHTMLtoPDF.convert(options);
+
+      Alert.alert('Success', `PDF saved at: ${file.filePath}`);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      Alert.alert('Error', 'An error occurred while generating the PDF.');
+    }
   };
 
   return (
