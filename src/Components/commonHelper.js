@@ -4,6 +4,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import moment from 'moment';
 import RNFS from 'react-native-fs';
 import {PermissionsAndroid} from 'react-native';
+import {onShareClick} from '../Helpers/CommonHelpers';
 
 export const base64FileStore = (
   base64String,
@@ -26,16 +27,18 @@ export const base64FileStore = (
       console.log('Filepath_Permission', hasPermission);
 
       if (hasPermission) {
-        console.log('File permissions granted');
-
         // Define the directory for Android
         const downloadDir =
           Platform.OS === 'android'
             ? RNFS.DownloadDirectoryPath // Public Downloads directory for Android
             : RNFS.DocumentDirectoryPath; // iOS internal Document directory
 
-        const filePath = `${downloadDir}/${fileName}`;
+        // Ensure the file name includes .pdf extension
+        const pdfFileName = fileName.endsWith('.pdf')
+          ? fileName
+          : `${fileName}.pdf`;
 
+        const filePath = `${downloadDir}/${pdfFileName}`;
         console.log('File will be saved to:', filePath);
 
         // Write the file using the base64 string
@@ -43,19 +46,11 @@ export const base64FileStore = (
           .then(() => {
             // Optionally, use a notification or callback based on platform
             if (Platform.OS === 'android') {
-              // showNotification(
-              //   `${fileName}`,
-              //   'File downloaded successfully.',
-              //   filePath,
-              //   base64String,
-              //   setModalVisibilityCallback,
-              //   fileName,
-              //   mimeType
-              // );
+              setModalVisibilityCallback('success');
             } else {
               setTimeout(async () => {
                 try {
-                  await onShare('', filePath, fileName);
+                  await onShareClick('', filePath, fileName);
                 } catch (error) {
                   console.error('Error opening file:', error);
                 }
@@ -68,7 +63,7 @@ export const base64FileStore = (
             console.error('Error writing file:', error);
             Alert.alert('Error', 'Could not save the file.');
             reject(error);
-            setModalVisibilityCallback();
+            setModalVisibilityCallback('error');
           });
       } else {
         console.error('File permissions denied');

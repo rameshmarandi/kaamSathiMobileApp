@@ -1,4 +1,4 @@
-import React, {memo, useState} from 'react';
+import React, {memo, useEffect, useState} from 'react';
 import {
   FlatList,
   PermissionsAndroid,
@@ -18,25 +18,53 @@ import {
   getResWidth,
 } from '../../../utility/responsive';
 import theme from '../../../utility/theme';
-import {formatCurrency} from '../../../Components/commonHelper';
+import {
+  base64FileStore,
+  CheckFilePermissions,
+  formatCurrency,
+} from '../../../Components/commonHelper';
 import {VectorIcon} from '../../../Components/VectorIcon';
 import ConfirmAlert from '../../../Components/ConfirmAlert';
 import RNFS from 'react-native-fs';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
-import {requestStoragePermission} from '../../../utility/PermissionContoller';
 
-const PaymentCard = ({item, currentTextColor, onDownloadPress}) => (
+import {store} from '../../../redux/store';
+import {
+  generateInvoiceAPIHandler,
+  getTranscHistoryAPIHandler,
+} from '../../../redux/reducer/Transactions/transactionAPI';
+import {DateFormator} from '../../../Helpers/CommonHelpers';
+import {RefreshControl} from 'react-native';
+import {ActivityIndicator} from 'react-native';
+import {CustomAlertModal} from '../../../Components/commonComp';
+import NoDataFound from '../../../Components/NoDataFound';
+
+const PaymentCard = ({
+  item,
+  isLoading,
+  selectedCard,
+  currentTextColor,
+  onDownloadPress,
+}) => (
   <View style={[styles.transactionContainer, {borderColor: currentTextColor}]}>
     <TouchableOpacity
-      onPress={onDownloadPress}
+      onPress={() => onDownloadPress(item)}
       activeOpacity={0.8}
       style={styles.downloadButton}>
-      <VectorIcon
-        type="MaterialIcons"
-        name="download-for-offline"
-        size={getFontSize(4)}
-        color={currentTextColor}
-      />
+      {selectedCard._id === item._id && isLoading ? (
+        <>
+          <ActivityIndicator size={getFontSize(3)} color={'white'} />
+        </>
+      ) : (
+        <>
+          <VectorIcon
+            type="MaterialIcons"
+            name="download-for-offline"
+            size={getFontSize(4)}
+            color={currentTextColor}
+          />
+        </>
+      )}
     </TouchableOpacity>
     <View style={styles.detailsContainer}>
       <View style={styles.detailsHeader}>
@@ -56,7 +84,7 @@ const PaymentCard = ({item, currentTextColor, onDownloadPress}) => (
             Transaction ID
           </Text>
           <Text style={[styles.detailValue, {color: currentTextColor}]}>
-            {item.transactionId}
+            {item.transactionID}
           </Text>
         </View>
         <View style={styles.statusContainer}>
@@ -66,7 +94,7 @@ const PaymentCard = ({item, currentTextColor, onDownloadPress}) => (
             </Text>
           </View>
           <Text style={[styles.statusDate, {color: currentTextColor}]}>
-            {item.date}
+            {DateFormator(item.donationDate, 'DD MMM YYYY HH:mm A')}
           </Text>
         </View>
       </View>
@@ -79,28 +107,24 @@ const PaymentHistory = memo(props => {
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [alertIcons, setAlertIcons] = useState('');
+  const [selectedCard, setSelectedCard] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
 
-  // Sample data for demonstration
-  const paymentHistory = [
-    {
-      id: '1',
-      recipient: 'Light of Life Ministries',
-      amount: 100,
-      transactionId: '98798799898798',
-      status: 'Confirmed',
-      date: '12 Dec 2024 11:34 PM',
-    },
-    {
-      id: '2',
-      recipient: 'Global Charity Trust',
-      amount: 250,
-      transactionId: '12345678901234',
-      status: 'Confirmed',
-      date: '10 Dec 2024 10:00 AM',
-    },
-    // Add more payment entries here
-  ];
+  const {getTransactionHistory} = useSelector(state => state.transaction);
+  useEffect(() => {
+    InitialAPICall();
+  }, []);
+
+  const InitialAPICall = async () => {
+    try {
+      await store.dispatch(getTranscHistoryAPIHandler());
+    } catch (error) {
+      console.error('InitialAPICall', error);
+    }
+  };
 
   const alertConfirmHandler = () => {
     setShowAlert(false);
@@ -111,65 +135,80 @@ const PaymentHistory = memo(props => {
 
   const generatePDF = async () => {
     try {
-      console.log('requestStoragePermission', await requestStoragePermission());
-      // Request permission for storage access on Android
-      // if (Platform.OS === 'android') {
-      //   const granted = await PermissionsAndroid.request(
-      //     PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-      //     {
-      //       title: 'Storage Permission Required',
-      //       message: 'App needs access to your storage to save the PDF file.',
-      //     },
-      //   );
+      setIsLoading(true);
+      const apiRes = await store.dispatch(
+        generateInvoiceAPIHandler({
+          transactionID: selectedCard._id,
+        }),
+      );
 
-      //   if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-      //     Alert.alert(
-      //       'Permission Denied',
-      //       'Storage permission is required to save files.',
-      //     );
-      //     return;
-      //   }
-      // }
+      if (apiRes.payload.statusCode == 200) {
+        const downloadDir =
+          Platform.OS === 'android'
+            ? RNFS.DownloadDirectoryPath // Android public Downloads directory
+            : RNFS.DocumentDirectoryPath; // iOS internal Documents directory
 
-      // Define HTML content
-      const htmlContent = `
-        <html>
-          <head>
-            <style>
-              body { font-family: Arial, sans-serif; padding: 10px; }
-              h1 { color: #007BFF; }
-              p { margin: 5px 0; }
-            </style>
-          </head>
-          <body>
-            <h1>Donation Invoice</h1>
-            <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
-            <p><strong>Transaction ID:</strong> 1234567890</p>
-            <p><strong>Amount:</strong> $100.00</p>
-            <hr />
-            <p>Thank you for your generous donation to our church!</p>
-          </body>
-        </html>
-      `;
-      const downloadDir =
-        Platform.OS === 'android'
-          ? `${RNFS.DownloadDirectoryPath}/Donation_Invoice_${Date.now()}.pdf`
-          : `${RNFS.DocumentDirectoryPath}/Donation_Invoice_${Date.now()}.pdf`;
+        // Options for generating the PDF
+        const options = {
+          html: apiRes.payload.htmlContent,
+          fileName: `Donation_Invoice_${Date.now()}`,
+          directory: downloadDir,
+        };
 
-      // Generate PDF
-      const options = {
-        html: htmlContent,
-        fileName: `Donation_Invoice_${Date.now()}`,
-        directory: downloadDir,
-      };
+        // Generate PDF
+        const file = await RNHTMLtoPDF.convert(options);
 
-      const file = await RNHTMLtoPDF.convert(options);
+        // Log the generated file path
 
-      Alert.alert('Success', `PDF saved at: ${file.filePath}`);
+        const pdfFilePath = `${file.filePath}`;
+
+        const base64PDF = await RNFS.readFile(pdfFilePath, 'base64');
+        console.log('Base64 PDF:', base64PDF);
+        base64FileStore(
+          base64PDF,
+          options.fileName,
+          'application/pdf',
+          item => {
+            if (item == 'success') {
+              setIsLoading(false);
+              setAlertMessage({
+                status: 'success',
+
+                alertMsg: 'Invoice download successfully',
+              });
+
+              setIsAlertVisible(true);
+            } else {
+              setIsLoading(false);
+              setIsAlertVisible(true);
+              setAlertMessage({
+                status: 'error',
+                alertMsg:
+                  'We are facing some technical issues, please try again later',
+              });
+            }
+          },
+        );
+      } else {
+        setIsLoading(false);
+        setIsAlertVisible(true);
+        setAlertMessage({
+          status: 'error',
+          alertMsg:
+            'We are facing some technical issues, please try again later',
+        });
+      }
     } catch (error) {
-      console.error('Error generating PDF:', error);
-      Alert.alert('Error', 'An error occurred while generating the PDF.');
+      setIsLoading(false);
+      console.error('Error generating PDF or converting to Base64:', error);
+      Alert.alert(
+        'Error',
+        'An error occurred while generating the PDF or converting it to Base64.',
+      );
     }
+  };
+  const handleClose = () => {
+    setIsAlertVisible(false);
   };
 
   return (
@@ -180,7 +219,12 @@ const PaymentHistory = memo(props => {
         }}
         screenTitle={MsgConfig.paymentHistory}
       />
-
+      <CustomAlertModal
+        visible={isAlertVisible}
+        message={alertMessage}
+        duration={3000} // duration in milliseconds
+        onClose={handleClose}
+      />
       <ConfirmAlert
         visible={showAlert}
         alertTitle={alertMsg}
@@ -194,18 +238,32 @@ const PaymentHistory = memo(props => {
       />
 
       <FlatList
-        data={paymentHistory}
+        // data={[]}
+        data={getTransactionHistory?.transactions}
         keyExtractor={item => item.id}
+        refreshControl={
+          <RefreshControl
+            refreshing={false}
+            onRefresh={() => InitialAPICall(false)}
+          />
+        }
+        ListEmptyComponent={() => {
+          return <NoDataFound />;
+        }}
         renderItem={({item}) => (
           <PaymentCard
             item={item}
+            isLoading={isLoading}
+            selectedCard={selectedCard}
             currentTextColor={currentTextColor}
-            onDownloadPress={() => {
+            onDownloadPress={item => {
+              setSelectedCard(item);
+
               setAlertIcons(
                 <VectorIcon
                   type="MaterialIcons"
                   name="download-for-offline"
-                  size={getFontSize(10)}
+                  size={getFontSize(8)}
                   color={currentTextColor}
                 />,
               );

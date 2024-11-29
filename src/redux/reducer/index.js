@@ -5,6 +5,7 @@ import churchBranchSlice from './ChurchBranch/index';
 import dailyVersesSlice from './DailyVerses/index';
 import languageSlice from './Languages/index';
 import resourceSlice from './Resources/index';
+import transactionSlice from './Transactions/index';
 const rootReducer = combineReducers({
   user: authSlice,
   profile: profileSlice,
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   dailyVerses: dailyVersesSlice,
   languges: languageSlice,
   resource: resourceSlice,
+  transaction: transactionSlice,
   // Add other reducers here
 });
 

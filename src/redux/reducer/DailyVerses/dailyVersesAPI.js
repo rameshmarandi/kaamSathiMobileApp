@@ -3,6 +3,7 @@ import apiService from '../../../API/apiClient';
 import APIEndpoint from '../../../API/ApiEndpoints';
 
 import {setDailyVerses, setScheduledVerses} from '.';
+import {decryptData} from '../../../utility/CryptoUtils';
 
 const uploadDailyVersesAPIHander = createAsyncThunk(
   APIEndpoint.dailyVerses.uploadPoster,
@@ -74,10 +75,13 @@ const getDailyVersesAPIHander = createAsyncThunk(
       const response = await apiService.getPublic(
         APIEndpoint.dailyVerses.getDailyVersePoster,
       );
-      console.log('daily_API_SES_schedues', response.data);
+
       if (response.data.statusCode === 200) {
-        console.log('response.data.data', response.data);
-        thunkAPI.dispatch(setDailyVerses(response.data.data));
+        const responseData = response.data.data;
+
+        const decruptedPayload = await decryptData(responseData.data);
+
+        thunkAPI.dispatch(setDailyVerses(decruptedPayload));
         return true;
       }
     } catch (error) {

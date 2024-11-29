@@ -3,17 +3,17 @@ import apiService from '../../../API/apiClient';
 import APIEndpoint from '../../../API/ApiEndpoints';
 import {store} from '../../store';
 import {setAllChurchBranch} from '.';
+import {decryptData, encryptData} from '../../../utility/CryptoUtils';
 
 const createBranchAPIHander = createAsyncThunk(
   APIEndpoint.chruchBranch.createBranch,
   async (payload, thunkAPI) => {
     try {
+      const encryptedPayload = await encryptData(payload);
       const response = await apiService.postProtected(
         APIEndpoint.chruchBranch.createBranch,
-        payload,
+        encryptedPayload,
       );
-
-      console.log('API_CREATE_RES', response.status, response.data);
 
       if (response.data.statusCode === 200) {
         thunkAPI.dispatch(getBranchAPIHander());
@@ -29,9 +29,11 @@ const updateBranchAPIHander = createAsyncThunk(
   APIEndpoint.chruchBranch.updateBranch,
   async (payload, thunkAPI) => {
     try {
+      const encryptedPayload = await encryptData(payload);
+
       const response = await apiService.postProtected(
         APIEndpoint.chruchBranch.updateBranch,
-        payload,
+        encryptedPayload,
       );
 
       if (response.data.statusCode === 200) {
@@ -52,9 +54,12 @@ const getBranchAPIHander = createAsyncThunk(
         APIEndpoint.chruchBranch.getAllBranches,
       );
 
-      console.log('getBranch_API_RES', response.data);
       if (response.data.statusCode == 200) {
-        const afterFormatMembersData = formatUsersData(response.data.data);
+        const responseData = response.data.data;
+
+        const decryptedPayload = await decryptData(responseData.data);
+
+        const afterFormatMembersData = formatUsersData(decryptedPayload);
         store.dispatch(setAllChurchBranch(afterFormatMembersData.reverse()));
       }
     } catch (error) {
@@ -67,19 +72,18 @@ const deletBranchAPIHander = createAsyncThunk(
   APIEndpoint.chruchBranch.deleteBranch,
   async (payload, thunkAPI) => {
     try {
+      const encryptedPayload = await encryptData(payload);
       const response = await apiService.postProtected(
         APIEndpoint.chruchBranch.deleteBranch,
-        payload,
+        encryptedPayload,
       );
 
-      console.log(
-        'response.data.statusCode_at_dete',
-        response.data.statusCode,
-        response.data.data,
-        response.data.data.length,
-      );
       if (response.data.statusCode == 200) {
-        const afterFormatMembersData = formatUsersData(response.data.data);
+        const responseData = response.data.data;
+
+        const decryptedPayload = await decryptData(responseData.data);
+
+        const afterFormatMembersData = formatUsersData(decryptedPayload);
 
         store.dispatch(setAllChurchBranch(afterFormatMembersData));
         return true;

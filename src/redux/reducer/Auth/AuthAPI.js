@@ -6,6 +6,7 @@ import StorageKeys from '../../../Config/StorageKeys';
 import {setAdmin, setLoginUser} from '.';
 import {store} from '../../store';
 import {checkIsAdmin} from '../../../Helpers/CommonHelpers';
+import {decryptData, encryptData} from '../../../utility/CryptoUtils';
 
 const registerAPIHander = createAsyncThunk(
   APIEndpoint.user.register,
@@ -30,10 +31,12 @@ const registerAPIHander = createAsyncThunk(
           }
         }
       }
+      const encryptedPayload = await encryptData(formData);
 
+      console.log('register_payload_ecry', encryptedPayload);
       const response = await apiService.postPublicFormData(
         APIEndpoint.user.register,
-        formData,
+        encryptedPayload,
       );
 
       // Handle response
@@ -51,21 +54,28 @@ const loginAPIHander = createAsyncThunk(
   APIEndpoint.user.login,
   async (payload, thunkAPI) => {
     try {
+      const encryptedPayload = await encryptData(payload);
+      console.log('Login_payload', encryptedPayload);
+
       const response = await apiService.postPublic(
         APIEndpoint.user.login,
-        payload,
+        // 'updateReccomandedBranchBookmark',
+        // payload,
+        // {data: 'W+YLEoOC+L54CPRnwrTY3kSP3Q7YAERRktdAjPfgGF8=PiEbViwTgTY4WzU9'},
+        encryptedPayload,
       );
+      console.log('login_API_RES_fontend', response);
+      if (response.data?.statusCode === 200) {
+        const responseData = response.data.data;
 
-      console.log('Login_API_res', response);
-      if (response.status === 200) {
-        const responseData = response.data;
+        const decruptedPayload = await decryptData(responseData.data);
 
         await asyncStorageUtil.setItem(
           StorageKeys.ACCESS_TOKEN,
-          `${responseData.data.accessToken}`,
+          `${decruptedPayload.accessToken}`,
         );
 
-        await thunkAPI.dispatch(setLoginUser(responseData.data));
+        await thunkAPI.dispatch(setLoginUser(decruptedPayload));
         checkIsAdmin();
       }
       return true;

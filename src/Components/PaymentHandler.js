@@ -5,8 +5,15 @@ import {Alert} from 'react-native';
 import theme from '../utility/theme';
 
 import StorageKeys from '../Config/StorageKeys';
+import {store} from '../redux/store';
+import {createTransactionAPIHandler} from '../redux/reducer/Transactions/transactionAPI';
 
-const initiatePayment = (amount, myProfile) => {
+const initiatePayment = (
+  amount,
+  myProfile,
+  onPaymentSuccess,
+  onPaymentFailure,
+) => {
   if (amount <= 0) {
     Alert.alert('Invalid Amount', 'Please check the amount before proceeding.');
     return;
@@ -56,17 +63,6 @@ const initiatePayment = (amount, myProfile) => {
       // Handle payment error
       onPaymentFailure(error);
     });
-};
-
-const onPaymentSuccess = data => {
-  Alert.alert('Payment Successful', `Payment ID: ${data.razorpay_payment_id}`);
-  // You can send the payment details to your backend or log the payment for tracking purposes
-  console.log('Payment Details:', data);
-};
-
-const onPaymentFailure = error => {
-  // Alert.alert('Payment Failed', `Error: ${error.description}`);
-  console.error('Payment Error:', error);
 };
 
 export {initiatePayment};

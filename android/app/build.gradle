@@ -98,6 +98,8 @@ android {
 dependencies {
     implementation("com.facebook.react:react-android")
     implementation project(':react-native-vector-icons')
+    implementation project(':react-native-ssl-pinning')
+
 implementation project(':react-native-permissions')
     if (project.hasProperty("hermesEnabled") && hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")

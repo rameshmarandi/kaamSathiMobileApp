@@ -49,6 +49,7 @@ import {formatCurrency} from '../../../Components/commonHelper.js';
 import theme from '../../../utility/theme/index.js';
 import {Formik} from 'formik';
 import {ActivityIndicator} from 'react-native';
+import {createTransactionAPIHandler} from '../../../redux/reducer/Transactions/transactionAPI.js';
 
 const initialState = {
   adminDashboardCardData: adminDashboardCardData,
@@ -158,7 +159,26 @@ const Index = memo(props => {
       setIsPayBtnLoading(true);
       setTimeout(() => {
         bottomSheetRef.current?.close();
-        initiatePayment(values.amount, myProfile);
+        initiatePayment(
+          values.amount,
+          myProfile,
+          async data => {
+            // console.log('Payment_Success_front', data);
+            if (data?.razorpay_payment_id) {
+              const res = await store.dispatch(
+                createTransactionAPIHandler({
+                  amount: values.amount,
+                  transactionID: data?.razorpay_payment_id,
+                  donationMessage: 'Church offering',
+                  paymentStatus: 'success',
+                }),
+              );
+            }
+          },
+          async data => {
+            console.error('API_FES', data);
+          },
+        );
         setIsPayBtnLoading(false);
       }, 300);
     } catch (error) {

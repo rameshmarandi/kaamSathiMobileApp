@@ -11,7 +11,7 @@ export const stepOneSchema = Yup.object().shape({
 
 export const stepTwoSchema = Yup.object().shape({
   birthDate: Yup.string().required('Date of birth is required'),
-  baptismDate: Yup.string().required('Date of baptism is required'),
+  // baptismDate: Yup.string().required('Date of baptism is required'),
 });
 
 export const passConfirmPassValidation = Yup.object().shape({

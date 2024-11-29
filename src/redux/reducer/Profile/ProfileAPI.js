@@ -27,12 +27,12 @@ const getAllMembersAPIHander = createAsyncThunk(
         APIEndpoint.admin.getAllMembers,
       );
 
-      // const responseData = decryptData(response.data.data); // Decrypt Data
+      if (response.data?.statusCode === 200) {
+        const responseData = response.data.data;
 
-      if (response.status === 200) {
-        const responseData = response.data;
-        console.log('Get_All_members', responseData);
-        const afterFormatMembersData = formatUsersData(responseData.data);
+        const responseDeData = decryptData(responseData.data);
+
+        const afterFormatMembersData = formatUsersData(responseDeData);
 
         thunkAPI.dispatch(setAllMembers(afterFormatMembersData.reverse()));
       }
@@ -333,7 +333,12 @@ const addFamilyAPIHander = createAsyncThunk(
               type: payload[key].type || 'image/jpeg', // Default MIME type if not set
             });
           } else {
-            formData.append(key, payload[key]);
+            // Handle boolean values explicitly by converting them to strings
+            if (typeof payload[key] === 'boolean') {
+              formData.append(key, payload[key].toString()); // Convert boolean to string ('true' or 'false')
+            } else {
+              formData.append(key, payload[key]);
+            }
           }
         }
       }
@@ -359,6 +364,52 @@ const addFamilyAPIHander = createAsyncThunk(
     }
   },
 );
+
+// const addFamilyAPIHander = createAsyncThunk(
+//   APIEndpoint.family.registerFamily,
+//   async (payload, thunkAPI) => {
+//     try {
+//       const formData = new FormData();
+
+//       // Loop through the payload
+//       for (const key in payload) {
+//         if (payload[key] !== undefined) {
+//           // Check if the field is an image, like avatar or coverImage
+//           if ((key === 'avatar' || key === 'coverImage') && payload[key]?.uri) {
+//             formData.append(key, {
+//               uri: payload[key].uri.startsWith('file://')
+//                 ? payload[key].uri
+//                 : `file://${payload[key].uri}`, // Ensure URI has correct format
+//               name: payload[key].fileName || 'image.jpg', // Provide default name if not set
+//               type: payload[key].type || 'image/jpeg', // Default MIME type if not set
+//             });
+//           } else {
+//             formData.append(key, payload[key]);
+//           }
+//         }
+//       }
+
+//       const response = await apiService.postProtectedFormData(
+//         APIEndpoint.family.registerFamily,
+//         formData,
+//       );
+
+//       // Handle response
+//       console.log(
+//         'add_family_API_SES',
+//         response.data,
+//         response.data.statusCode,
+//       );
+//       if (response.data.statusCode === 200) {
+//         await thunkAPI.dispatch(myProfileAPIHander());
+//         return true; // Successfully registered
+//       }
+//     } catch (error) {
+//       console.log('register_API_Failed', error.response);
+//       return error.response.data;
+//     }
+//   },
+// );
 const deleteFamilyAPIHander = createAsyncThunk(
   APIEndpoint.family.deleteFamily,
   async (payload, thunkAPI) => {

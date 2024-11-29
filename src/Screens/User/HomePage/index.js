@@ -32,8 +32,9 @@ import YoutubePlayer from 'react-native-youtube-iframe';
 import {Platform} from 'react-native';
 import {requestUserPermission} from '../../../utility/PermissionContoller';
 import DailyVersesComp from '../../ScreenComp/DailyVersesComp';
-
+import {fetch} from 'react-native-ssl-pinning';
 import RazorpayCheckout from 'react-native-razorpay';
+import axios from 'axios';
 const {width} = Dimensions.get('window');
 const itemWidth = width - 40; // Adjust this according to your layout
 
@@ -64,14 +65,49 @@ const index = memo(props => {
 
   useEffect(() => {
     InitRender();
+    callApiWithSslPinning();
   }, []);
 
   const InitRender = async () => {
     requestUserPermission();
+
     await messaging().registerDeviceForRemoteMessages();
     const token = await messaging().getToken();
 
     console.log('Firebase_OTkem', token);
+  };
+
+  const callApiWithSslPinning = async () => {
+    fetch('https://10.0.2.2:8000/api/v1/user/get-daily-verses', {
+      // fetch('https://10.0.2.2:8000/api/v1/user/ssl', {
+      method: 'GET',
+      sslPinning: {
+        certs: ['cert'], // Use the name of your certificate without the extension
+      },
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('SSL_API_Response:', data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+
+    // Call the API with SSL pinning
+    // axiosInstance
+    //   .get('/api/v1/user/ssl')
+    //   .then(response => {
+    //     console.log('AAL_API_Response:', response.data);
+    //   })
+    //   .catch(error => {
+    //     console.error('API Error:', error);
+    //     if (error.code === 'SSL_PINNING_ERROR') {
+    //       console.error('SSL Pinning Failed! The certificate did not match.');
+    //     }
+    //   });
   };
 
   const handlePayment = () => {

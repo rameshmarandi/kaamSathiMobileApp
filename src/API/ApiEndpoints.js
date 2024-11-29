@@ -55,6 +55,11 @@ const APIEndpoint = {
     deleteResouce: '/user/delete-resource',
     createResource: '/user/create-resource',
   },
+  transaction: {
+    getTransactionHistory: '/transaction/get-transaction-history',
+    generateInvoice: '/transaction/get-invoice',
+    createTransaction: '/transaction/create-transaction-history',
+  },
   // Add more modules as needed
 };
 

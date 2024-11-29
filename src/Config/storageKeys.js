@@ -1,4 +1,4 @@
-import {API_BASE_URL, RAZORPAY_KEY} from '@env';
+import {API_BASE_URL, IS_ENCRYPT, RAZORPAY_KEY} from '@env';
 
 // Centralized key management for AsyncStorage
 
@@ -15,8 +15,10 @@ const RESTICTED_PAGES = ['AdminManagment'];
 export default {
   ...StorageKeys,
 
-  API_BASE_URL: API_BASE_URL,
+  API_BASE_URL: 'https://10.0.2.2:8000/api/v1',
+  // API_BASE_URL,
   USER_TYPES,
   RESTICTED_PAGES,
   RAZORPAY_KEY,
+  IS_ENCRYPT: true,
 };

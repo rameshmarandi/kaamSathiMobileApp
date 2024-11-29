@@ -166,6 +166,10 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
       setIsOTPFildVisible(false); // Hide OTP field
       setStep(1); // Reset to step 1
     } else {
+      setStep(1); // Reset to step 1
+      formikRef.current.resetForm(); // Reset the form
+      setIsOTPFildVisible(false); // Hide OTP field
+
       setSelectedImage('');
       formikRef.current.resetForm(); // Reset the form
       setAlertMessage({
@@ -179,9 +183,6 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
 
       setIsAlertVisible(true);
       setIsAcceptBtnLoading(false);
-      formikRef.current.resetForm(); // Reset the form
-      setIsOTPFildVisible(false); // Hide OTP field
-      setStep(1); // Reset to step 1
     }
   };
 
@@ -424,35 +425,32 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
               customHeight={getResHeight(21)}
             />
             <MasterTextInput
-              label="Date of birth"
-              placeholder="Date of birth "
-              topLableName={'Date of Birth'}
-              isDate={true}
-              // timePicker={true}
-              ref={inputRefs.birthDate}
-              value={values.birthDate}
-              maxDate={new Date()}
-              minDate={minDate}
-              onChangeText={txt => {
-                formikRef.current.setFieldValue('birthDate', txt);
+              topLableName={'Select church branch'}
+              isDropdown={true}
+              dropdownData={branchDropdown}
+              value={values.churchBranch}
+              onDropdownChange={item => {
+                setSelectedBranch(item);
+                formikRef.current.setFieldValue('churchBranch', item.value);
               }}
-              onBlur={handleBlur('birthDate')}
-              onSubmitEditing={() => inputRefs.baptismDate.current.focus()}
-              error={touched.birthDate && errors.birthDate}
+              onBlur={handleBlur('churchBranch')}
+              error={touched.churchBranch && errors.churchBranch}
             />
             <MasterTextInput
-              label="Date of baptism"
-              placeholder="Date of baptism"
-              topLableName={'Date of Baptism'}
-              isDate={true}
-              ref={inputRefs.baptismDate}
-              value={values.baptismDate}
-              onChangeText={txt => {
-                formikRef.current.setFieldValue('baptismDate', txt);
+              label="Gender"
+              placeholder="Select gender"
+              topLableName={'Gender'}
+              isDropdown={true}
+              dropdownData={[
+                {label: 'Male', value: 'male'},
+                {label: 'Female', value: 'female'},
+              ]}
+              value={values.gender}
+              onDropdownChange={item => {
+                formikRef.current.setFieldValue('gender', item.value);
               }}
-              onBlur={handleBlur('baptismDate')}
-              onSubmitEditing={() => setStep(3)} // Move to next step on enter
-              error={touched.baptismDate && errors.baptismDate}
+              onBlur={handleBlur('gender')}
+              error={touched.gender && errors.gender}
             />
             <MasterTextInput
               topLableName={'Are you married ?'}
@@ -484,39 +482,36 @@ const AddMemberForm = ({visible, closeModal, navigation}) => {
               />
             )}
             <MasterTextInput
-              label="Gender"
-              placeholder="Select gender"
-              topLableName={'Gender'}
-              isDropdown={true}
-              dropdownData={[
-                {label: 'Male', value: 'male'},
-                {label: 'Female', value: 'female'},
-              ]}
-              value={values.gender}
-              // onDropdownChange={() => {
-              //   setTimeout(() => {
-              //     handleChange('gender');
-              //   }, 100);
-              // }}
-
-              onDropdownChange={item => {
-                formikRef.current.setFieldValue('gender', item.value);
+              label="Date of birth"
+              placeholder="Date of birth "
+              topLableName={'Date of Birth'}
+              isDate={true}
+              // timePicker={true}
+              ref={inputRefs.birthDate}
+              value={values.birthDate}
+              maxDate={new Date()}
+              minDate={minDate}
+              onChangeText={txt => {
+                formikRef.current.setFieldValue('birthDate', txt);
               }}
-              onBlur={handleBlur('gender')}
-              error={touched.gender && errors.gender}
+              onBlur={handleBlur('birthDate')}
+              onSubmitEditing={() => inputRefs.baptismDate.current.focus()}
+              error={touched.birthDate && errors.birthDate}
             />
-
             <MasterTextInput
-              topLableName={'Select church branch'}
-              isDropdown={true}
-              dropdownData={branchDropdown}
-              value={values.churchBranch}
-              onDropdownChange={item => {
-                setSelectedBranch(item);
-                formikRef.current.setFieldValue('churchBranch', item.value);
+              label="Date of baptism"
+              placeholder="Date of baptism"
+              topLableName={'Date of Baptism'}
+              isDate={true}
+              isMendotary ={false}
+              ref={inputRefs.baptismDate}
+              value={values.baptismDate}
+              onChangeText={txt => {
+                formikRef.current.setFieldValue('baptismDate', txt);
               }}
-              onBlur={handleBlur('churchBranch')}
-              error={touched.churchBranch && errors.churchBranch}
+              onBlur={handleBlur('baptismDate')}
+              onSubmitEditing={() => setStep(3)} // Move to next step on enter
+              error={touched.baptismDate && errors.baptismDate}
             />
           </>
         );
