@@ -1,280 +1,302 @@
-import React, {useState} from 'react';
-import {View, Text, SafeAreaView, Image, FlatList} from 'react-native';
+import React, {useState, useCallback, useEffect} from 'react';
+import {
+  View,
+  Text,
+  SafeAreaView,
+  Image,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
 import {useSelector} from 'react-redux';
-import {backgroundColorHandler} from '../../../Components/commonHelper';
 import {getFontSize, getResHeight} from '../../../utility/responsive';
 import theme from '../../../utility/theme';
-import {StatusBarComp} from '../../../Components/commonComp';
+import {StatusBarComp, trimText} from '../../../Components/commonComp';
 import CustomHeader from '../../../Components/CustomHeader';
 import MsgConfig from '../../../Config/MsgConfig';
 import TabViewComp from '../../../Components/TabViewComp';
+import NoDataFound from '../../../Components/NoDataFound';
+import {store} from '../../../redux/store';
+import {
+  deleteNotificationAPIHander,
+  getNotificationAPIHander,
+  readNotificationAPIHander,
+} from '../../../redux/reducer/Notification/NotificationAPI';
+import {RefreshControl} from 'react-native';
+import MasterDeleteSelect from '../../../Components/MasterDeleteSelect';
+import {getShortTimeAgo} from '../../../Components/commonHelper';
+import moment from 'moment';
+import {DateFormator} from '../../../Helpers/CommonHelpers';
 
-const UserNotification = props => {
-  const {navigation} = props;
+const UserNotification = ({navigation}) => {
   const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
   );
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
-
-  const FirstRoute = () => (
-    <NotificaitonCard
-      currentBgColor={currentBgColor}
-      currentTextColor={currentTextColor}
-      currentTabIndex={currentTabIndex}
-    />
+  const [isLongPressed, setIsLongPressed] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]); // Track selected notification IDs
+  const {groupedNotifications} = useSelector(
+    state => state.notification.getNotification,
   );
 
-  const SecondRoute = () => (
-    <NotificaitonCard
-      currentBgColor={currentBgColor}
-      currentTextColor={currentTextColor}
-      currentTabIndex={currentTabIndex}
-    />
-  );
+  useEffect(() => {
+    APICalling();
+  }, []);
 
-  const ThirdRoute = () => (
-    <NotificaitonCard
-      currentBgColor={currentBgColor}
-      currentTextColor={currentTextColor}
-      currentTabIndex={currentTabIndex}
-    />
-  );
+  const APICalling = async () => {
+    try {
+      await store.dispatch(getNotificationAPIHander());
+    } catch (error) {}
+  };
 
-  const routes = [
-    {key: 'first', title: 'All'},
-    {key: 'second', title: 'Daily verbs'},
-    {key: 'third', title: 'Birthday'},
+  const notificationTabs = [
+    {key: 'first', title: 'All', data: groupedNotifications?.All},
+    {
+      key: 'second',
+      title: 'Daily Verse',
+      data: groupedNotifications?.DailyVerse,
+    },
+    {key: 'third', title: 'Birthday', data: groupedNotifications?.Birthday},
+    {
+      key: 'fourth',
+      title: 'Anniversary',
+      data: groupedNotifications?.Anniversary,
+    },
+    {
+      key: 'fifth',
+      title: 'Transactions',
+      data: groupedNotifications?.TransactionSuccess,
+    },
+    {key: 'sixth', title: 'Others', data: groupedNotifications?.Others},
   ];
 
-  const scenes = {
-    first: FirstRoute,
-    second: SecondRoute,
-    third: ThirdRoute,
+  const handleTabIndexChange = useCallback(index => {
+    console.log('get_curet', index);
+    setCurrentTabIndex(index);
+    setIsLongPressed(false);
+    setSelectedIds([]);
+  }, []);
+
+  const toggleCardSelection = id => {
+    setSelectedIds(prevState => {
+      if (prevState.includes(id)) {
+        // Deselect if already selected
+        return prevState.filter(item => item !== id);
+      } else {
+        // Select the card
+        return [...prevState, id];
+      }
+    });
+  };
+
+  const isReadNotification = async id => {
+    try {
+      const payload = {
+        notificationID: id,
+      };
+
+      await store.dispatch(readNotificationAPIHander(payload));
+    } catch (error) {}
+  };
+  const getNotificationImage = eventType => {
+    const images = {
+      DailyVerse:
+        'https://cdn3d.iconscout.com/3d/premium/thumb/bible-3d-illustration-download-in-png-blend-fbx-gltf-file-formats--christian-holy-book-miscellaneous-pack-illustrations-4122966.png',
+      Birthday:
+        'https://www.shutterstock.com/shutterstock/photos/2290920757/display_1500/stock-vector-vector-d-icon-party-popper-cartoon-emoji-of-birthday-confetti-explosion-simple-minimal-2290920757.jpg',
+      Anniversary:
+        'https://cdn3d.iconscout.com/3d/premium/thumb/anniversary-date-3d-icon-download-in-png-blend-fbx-gltf-file-formats--calendar-event-valentine-valentines-day-pack-festival-days-icons-6210503.png',
+      TransactionSuccess:
+        'https://media.istockphoto.com/id/639735440/vector/rupee-currency-icon-3d-rendering-illustration.jpg?s=612x612&w=0&k=20&c=fmu01_RFom-7N2ezxLPNi18z6lGyTLcqTUYtyb8iqmw=',
+      Default:
+        'https://cdn3d.iconscout.com/3d/premium/thumb/notifications-3d-icon-download-in-png-blend-fbx-gltf-file-formats--notification-bell-alarm-user-interface-pack-icons-5034125.png',
+    };
+    return images[eventType] || images.Default;
+  };
+
+  const renderNotificationCard = useCallback(
+    ({item}) => {
+      const notificationImage = getNotificationImage(item.eventType);
+      const isSelected = selectedIds.includes(item._id); // Check if this card is selected
+      return (
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onLongPress={() => {
+            setIsLongPressed(true);
+            toggleCardSelection(item._id);
+          }} // Toggle selection on long press
+          onPress={() => {
+            if (isLongPressed) {
+              toggleCardSelection(item._id);
+            } else {
+              isReadNotification(item._id);
+            }
+          }} // Toggle selection on normal press
+          style={{
+            paddingVertical: '4%',
+            marginBottom: '2%',
+            paddingHorizontal: '5%',
+            marginHorizontal: '2%',
+            flexDirection: 'row',
+            borderBottomWidth: 0.3,
+            borderColor: 'grey',
+            borderRadius: getResHeight(2),
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            backgroundColor: isSelected
+              ? 'rgba(255, 255, 255, 0.5)'
+              : !item.isRead
+              ? 'rgba(150, 149, 149, 0.199)'
+              : 'transparent', // Apply overlay on selection
+          }}>
+          <View>
+            <Image
+              source={{uri: notificationImage}}
+              style={{
+                height: getResHeight(6),
+                width: getResHeight(6),
+                backgroundColor: 'white',
+                borderRadius: getResHeight(100),
+                borderWidth: 0.2,
+                borderColor: currentTextColor,
+              }}
+            />
+          </View>
+          <View style={{marginLeft: '4%', flex: 1}}>
+            <Text
+              style={{
+                fontSize: getFontSize(1.5),
+                color: currentTextColor,
+                fontFamily: theme.font.medium,
+              }}>
+              {/* {trimText(item.message)} */}
+              {item.message}
+            </Text>
+            {/* <Text
+              style={{
+                fontSize: getFontSize(1.4),
+                color: currentTextColor,
+                fontFamily: theme.font.regular,
+              }}
+            /> */}
+            {/* <View>
+              <Text
+                style={{
+                  textDecorationLine: 'underline',
+                  color: currentTextColor,
+                }}>
+                Read more..
+              </Text>
+            </View> */}
+
+            <Text
+              style={{
+                color: currentTextColor,
+                fontFamily: theme.font.bold,
+                fontSize: getFontSize(1.5),
+                justifyContent: 'flex-end',
+                marginTop: '5%',
+              }}>
+              {`${DateFormator(
+                item.createdAt,
+                'DD-MMM-YYYY',
+              )}   (${getShortTimeAgo(moment(item.createdAt))})`}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      );
+    },
+    [selectedIds, currentTextColor], // Re-render when selectedIds or currentTextColor change
+  );
+
+  const handleDeleteNotifications = async () => {
+    try {
+      const payload = {
+        notificationID: selectedIds,
+      };
+      await store.dispatch(deleteNotificationAPIHander(payload));
+      setIsLongPressed(false);
+      setSelectedIds([]);
+    } catch (error) {}
   };
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: currentBgColor,
-      }}>
+    <SafeAreaView style={{flex: 1, backgroundColor: currentBgColor}}>
       <StatusBarComp />
-
       <CustomHeader
         backPress={() => {
           navigation.goBack();
         }}
         screenTitle={MsgConfig.notification}
+        onPressNotificaiton={() => {
+          // navigation.navigate('UserNotification');
+        }}
       />
+
+      {selectedIds.length > 0 && (
+        <MasterDeleteSelect
+          selectedItem={selectedIds}
+          onClosePress={() => {
+            setIsLongPressed(false);
+            setSelectedIds([]);
+          }} // Reset selection when closing
+          onDeletePress={handleDeleteNotifications}
+        />
+      )}
 
       <View style={{flex: 1, marginTop: '3%'}}>
         <TabViewComp
-          routes={routes}
-          scenes={scenes}
-          indicatorStyle={{
-            backgroundColor: 'red',
-          }}
+          routes={notificationTabs.map(({key, title}) => ({
+            key,
+            title,
+          }))}
+          scenes={notificationTabs.reduce((acc, {key, data}) => {
+            acc[key] = () => (
+              <FlatList
+                data={data}
+                contentContainerStyle={{
+                  flexGrow: 1,
+                  // marginTop: '5%',
+                  // paddingHorizontal: '5%',
+                }}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={false}
+                    onRefresh={() => APICalling()}
+                  />
+                }
+                keyExtractor={(item, index) => item._id} // Use unique ID for keyExtractor
+                renderItem={renderNotificationCard}
+                ListEmptyComponent={() => (
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginTop: getResHeight(-20),
+                    }}>
+                    <NoDataFound />
+                  </View>
+                )}
+              />
+            );
+            return acc;
+          }, {})}
+          indicatorStyle={{backgroundColor: 'red'}}
           tabBarContainerStyle={{
             backgroundColor: currentBgColor,
             marginBottom: '4%',
           }}
-          onIndexChange={tabIndex => {
-            setCurrentTabIndex(tabIndex);
-            // console.log('Current_tab_index: ' + currentTabIndex);
-          }}
+          onIndexChange={handleTabIndexChange}
           labelStyle={{
             color: currentTextColor,
-
-            fontFamily: theme.font.bold,
+            fontSize: getFontSize(1.5),
+            fontFamily: theme.font.medium,
           }}
-          sceneContainerStyle={{}}
         />
       </View>
     </SafeAreaView>
   );
 };
 
-const NotificaitonCard = props => {
-  const {currentBgColor, currentTextColor, currentTabIndex} = props;
-  let today_Verbs_Image_URL =
-    'https://versefortheday.com/wp-content/uploads/2021/05/cropped-bible-verse-for-the-day-logo.png';
-
-  // Define the original array containing all types of notifications
-  // Original array containing all types of notifications
-  const tempArray = [
-    {type: 1, title: 'Happy Birthday', message: 'Dear , Ramesh Marandi'},
-    {type: 2, title: 'Daily Verbs', message: 'Another daily message here'},
-    {
-      type: 1,
-      title: 'Birthday Celebration',
-      message: 'Wishing you a fantastic birthday!',
-    },
-    {
-      type: 1,
-      title: 'Birthday Greetings',
-      message: 'May your day be filled with joy and laughter!',
-    },
-    {
-      type: 2,
-      title: 'Daily Inspiration',
-      message: 'Stay positive and keep moving forward!',
-    },
-    {
-      type: 1,
-      title: 'Birthday Wishes',
-      message: 'Sending you warm wishes on your special day!',
-    },
-    {
-      type: 2,
-      title: 'Daily Reflection',
-      message: 'Take a moment to reflect on your journey and achievements.',
-    },
-    {
-      type: 1,
-      title: 'Birthday Joy',
-      message: 'Celebrate life and cherish every moment!',
-    },
-    {
-      type: 2,
-      title: 'Daily Motivation',
-      message: 'Set goals and work hard to achieve them.',
-    },
-    {
-      type: 1,
-      title: 'Birthday Blessings',
-      message: 'May this year bring you happiness and success!',
-    },
-    {
-      type: 2,
-      title: 'Daily Affirmation',
-      message: 'You are capable of achieving great things.',
-    },
-    {
-      type: 1,
-      title: 'Birthday Greetings',
-      message: 'May your year be as wonderful as you are!',
-    },
-    {
-      type: 2,
-      title: 'Daily Insight',
-      message: 'Seek wisdom and understanding in all that you do.',
-    },
-    {type: 1, title: 'Birthday Fun', message: 'Let the celebrations begin!'},
-    {
-      type: 2,
-      title: 'Daily Focus',
-      message: 'Focus on what truly matters in life.',
-    },
-    {
-      type: 1,
-      title: 'Birthday Happiness',
-      message: 'Wishing you a day filled with laughter and love!',
-    },
-    {
-      type: 2,
-      title: 'Daily Strength',
-      message: 'Draw strength from Him in times of weakness.',
-    },
-    {
-      type: 1,
-      title: 'Birthday Cheers',
-      message: 'Here’s to another amazing year ahead!',
-    },
-    {type: 2, title: 'Daily Wisdom', message: 'Seek wisdom from above.'},
-    {
-      type: 1,
-      title: 'Birthday Wishes',
-      message: 'May all your dreams come true on this special day!',
-    },
-  ];
-
-  // Filtered arrays based on currentTabIndex
-  let filteredData = [];
-  if (currentTabIndex === 0) {
-    filteredData = tempArray; // Show all
-  } else if (currentTabIndex === 1) {
-    filteredData = tempArray.filter(item => item.type === 1); // Filter birthday
-  } else if (currentTabIndex === 2) {
-    filteredData = tempArray.filter(item => item.type === 2); // Filter daily verbs
-  }
-  const _renderComp = ({item, index}) => {
-    console.log('item', item);
-
-    return (
-      <View
-        style={{
-          paddingVertical: '3%',
-          marginBottom: '5%',
-          paddingHorizontal: '3%',
-          flexDirection: 'row',
-          borderRadius: getResHeight(1),
-          borderWidth: 0.5,
-          borderColor: currentTextColor,
-          flexWrap: 'wrap',
-        }}>
-        <View>
-          <Image
-            source={
-              tempArray.includes(index)
-                ? theme.assets.birthday
-                : {uri: today_Verbs_Image_URL}
-            }
-            style={{
-              height: getResHeight(7),
-              width: getResHeight(7),
-              backgroundColor: 'white',
-              borderRadius: getResHeight(100),
-              borderWidth: 0.2,
-              borderColor: currentTextColor,
-            }}
-          />
-        </View>
-        <View style={{marginLeft: '4%', flex: 1}}>
-          <Text
-            style={{
-              fontSize: getFontSize(2),
-              color: currentTextColor,
-              fontFamily: theme.font.bold,
-            }}>
-            {item.title}
-            {/* {tempArray.includes(index) ? 'Happy Birthday' : `Today's Verse`} */}
-          </Text>
-          <Text
-            style={{
-              fontSize: getFontSize(1.4),
-              color: currentTextColor,
-              fontFamily: theme.font.regular,
-            }}>
-            {tempArray.includes(index)
-              ? 'Dear , Ramesh Marandi'
-              : 'For God so loved the world that ..'}
-          </Text>
-          <View>
-            <Text
-              style={{
-                textDecorationColor: 'underline',
-                color: currentTextColor,
-              }}>
-              Read more..
-            </Text>
-          </View>
-        </View>
-      </View>
-    );
-  };
-  return (
-    <>
-      <FlatList
-        data={filteredData} // Adjusted to generate an array of 16 items
-        contentContainerStyle={{
-          flexGrow: 1, // Ensure the FlatList takes full height
-          marginTop: '5%',
-          paddingHorizontal: '5%',
-        }}
-        keyExtractor={(item, index) => index.toString()} // Fixed keyExtractor usage
-        renderItem={_renderComp}
-      />
-    </>
-  );
-};
-export default UserNotification;
+export default React.memo(UserNotification);

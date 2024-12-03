@@ -114,7 +114,7 @@ const App = () => {
   //   });
   // };
 
-  // // Function to show the popup
+  // Function to show the popup
   // const _showPopup = remoteMessage => {
   //   try {
   //     const {data, notification} = remoteMessage;
@@ -141,28 +141,28 @@ const App = () => {
   // };
 
   // Function to handle notification press
-  const onPressMessage = remoteMessage => {
-    console.log('Popup pressed, handle action', remoteMessage);
-  };
+  // const onPressMessage = remoteMessage => {
+  //   console.log('Popup pressed, handle action', remoteMessage);
+  // };
 
   // Function to handle background notifications and app open
-  const handleNotificationOpen = () => {
-    const backgroundMessageHandler = messaging().setBackgroundMessageHandler(
-      remoteMessage => {
-        console.log('Message handled in the background!', remoteMessage);
-      },
-    );
+  // const handleNotificationOpen = () => {
+  //   const backgroundMessageHandler = messaging().setBackgroundMessageHandler(
+  //     remoteMessage => {
+  //       console.log('Message handled in the background!', remoteMessage);
+  //     },
+  //   );
 
-    messaging().onNotificationOpenedApp(remoteMessage => {
-      console.log(
-        'Notification caused app to open from background state:',
-        remoteMessage.notification,
-      );
-      onPressMessage(remoteMessage);
-    });
+  //   messaging().onNotificationOpenedApp(remoteMessage => {
+  //     console.log(
+  //       'Notification caused app to open from background state:',
+  //       remoteMessage.notification,
+  //     );
+  //     onPressMessage(remoteMessage);
+  //   });
 
-    return backgroundMessageHandler;
-  };
+  //   return backgroundMessageHandler;
+  // };
 
   return (
     <>
@@ -172,11 +172,11 @@ const App = () => {
         <>
           <AllNavContainer isLogedIn={isLogedIn} isAdmin={isAdmin} />
           {/* <DefaultPopup
-    ref={popupRef}
-    renderPopupContent={renderCustomPopup}
-    shouldChildHandleResponderStart={true}
-    shouldChildHandleResponderMove={true}
-  /> */}
+            ref={popupRef}
+            renderPopupContent={renderCustomPopup}
+            shouldChildHandleResponderStart={true}
+            shouldChildHandleResponderMove={true}
+          /> */}
         </>
       )}
     </>

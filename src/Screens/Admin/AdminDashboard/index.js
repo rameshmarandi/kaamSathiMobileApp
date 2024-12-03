@@ -50,6 +50,7 @@ import theme from '../../../utility/theme/index.js';
 import {Formik} from 'formik';
 import {ActivityIndicator} from 'react-native';
 import {createTransactionAPIHandler} from '../../../redux/reducer/Transactions/transactionAPI.js';
+import {getNotificationAPIHander} from '../../../redux/reducer/Notification/NotificationAPI.js';
 
 const initialState = {
   adminDashboardCardData: adminDashboardCardData,
@@ -89,6 +90,7 @@ const Index = memo(props => {
   const _apiCalling = async props => {
     // Define essential requests
     const essentialRequests = [
+      () => store.dispatch(getNotificationAPIHander()),
       () => store.dispatch(getNewApplicationAPIHander()),
 
       () => store.dispatch(myProfileAPIHander()),

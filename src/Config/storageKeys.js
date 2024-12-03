@@ -20,5 +20,5 @@ export default {
   USER_TYPES,
   RESTICTED_PAGES,
   RAZORPAY_KEY,
-  IS_ENCRYPT: true,
+  IS_ENCRYPT: false,
 };

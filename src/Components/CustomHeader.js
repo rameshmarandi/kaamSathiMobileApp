@@ -36,6 +36,10 @@ const CustomHeader = props => {
     state => state.user,
   );
 
+  const {unreadCount} = useSelector(
+    state => state.notification.getNotification,
+  );
+
   return (
     <>
       <SafeAreaView style={{}}>
@@ -189,7 +193,9 @@ const CustomHeader = props => {
           )}
           {onPressNotificaiton && (
             <>
-              <TouchableOpacity onPress={onPressNotificaiton}>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={onPressNotificaiton}>
                 <Button
                   type={'clear'}
                   onPress={onPressNotificaiton}
@@ -209,7 +215,7 @@ const CustomHeader = props => {
                       width: getResHeight(5),
                       height: getResHeight(5),
                       justifyContent: 'center',
-                      //  backgroundColor: `${backgroundColorHandler()}`,
+
                       borderRadius: getResHeight(100),
                     },
                   ]}
@@ -228,9 +234,9 @@ const CustomHeader = props => {
                     borderRadius: getResHeight(100),
                     borderWidth: 0.8,
                     borderColor: 'white',
-                    // currentTextColor,
+
                     backgroundColor: 'red',
-                    // currentBgColor,
+
                     position: 'absolute',
                     right: '2%',
                     top: '5%',
@@ -240,11 +246,11 @@ const CustomHeader = props => {
                   <Text
                     style={{
                       color: 'white',
-                      //  currentTextColor,
+
                       fontFamily: theme.font.medium,
                       fontSize: getFontSize(1.5),
                     }}>
-                    13
+                    {unreadCount ? unreadCount : 0}
                   </Text>
                 </View>
               </TouchableOpacity>

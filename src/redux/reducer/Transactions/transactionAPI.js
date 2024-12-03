@@ -3,14 +3,14 @@ import apiService from '../../../API/apiClient';
 import APIEndpoint from '../../../API/ApiEndpoints';
 import {setTransactionHistory} from '.';
 import {decryptData, encryptData} from '../../../utility/CryptoUtils';
+import {getNotificationAPIHander} from '../Notification/NotificationAPI';
 
 const createTransactionAPIHandler = createAsyncThunk(
   APIEndpoint.transaction.createTransaction,
   async (payload, thunkAPI) => {
     try {
-      console.log('Ceate_transation_hist', payload);
       const encryptedPayload = await encryptData(payload);
-      console.log('Ceate_transation_hist_after', encryptedPayload);
+
       const response = await apiService.postProtected(
         APIEndpoint.transaction.createTransaction,
         encryptedPayload,
@@ -18,6 +18,7 @@ const createTransactionAPIHandler = createAsyncThunk(
 
       if (response.data.statusCode === 200) {
         thunkAPI.dispatch(getTranscHistoryAPIHandler());
+        await thunkAPI.dispatch(getNotificationAPIHander());
       }
       return response.data.message;
     } catch (error) {

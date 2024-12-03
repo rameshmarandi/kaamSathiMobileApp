@@ -47,25 +47,6 @@ const PaymentCard = ({
   onDownloadPress,
 }) => (
   <View style={[styles.transactionContainer, {borderColor: currentTextColor}]}>
-    <TouchableOpacity
-      onPress={() => onDownloadPress(item)}
-      activeOpacity={0.8}
-      style={styles.downloadButton}>
-      {selectedCard._id === item._id && isLoading ? (
-        <>
-          <ActivityIndicator size={getFontSize(3)} color={'white'} />
-        </>
-      ) : (
-        <>
-          <VectorIcon
-            type="MaterialIcons"
-            name="download-for-offline"
-            size={getFontSize(4)}
-            color={currentTextColor}
-          />
-        </>
-      )}
-    </TouchableOpacity>
     <View style={styles.detailsContainer}>
       <View style={styles.detailsHeader}>
         <Text style={[styles.recipientText, {color: currentTextColor}]}>
@@ -99,6 +80,25 @@ const PaymentCard = ({
         </View>
       </View>
     </View>
+    <TouchableOpacity
+      onPress={() => onDownloadPress(item)}
+      activeOpacity={0.8}
+      style={styles.downloadButton}>
+      {selectedCard._id === item._id && isLoading ? (
+        <>
+          <ActivityIndicator size={getFontSize(3)} color={'white'} />
+        </>
+      ) : (
+        <>
+          <VectorIcon
+            type="MaterialIcons"
+            name="download-for-offline"
+            size={getFontSize(4)}
+            color={currentTextColor}
+          />
+        </>
+      )}
+    </TouchableOpacity>
   </View>
 );
 
@@ -291,6 +291,7 @@ const styles = StyleSheet.create({
     padding: getResHeight(1),
     borderRadius: getResHeight(2),
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: getResHeight(2),
   },
@@ -305,7 +306,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   detailsContainer: {
-    width: getResWidth(70),
+    width: getResWidth(65),
     marginLeft: getResWidth(3),
   },
   detailsHeader: {

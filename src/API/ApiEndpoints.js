@@ -17,7 +17,7 @@ const APIEndpoint = {
     getAllBranchAdmins: '/user/get-all-branch-admin',
     updateUserRoles: '/user/update-user-role',
     deleteUser: '/user/delete-user',
-    blockMember: 'user/toggle-block-user',
+    blockMember: '/user/toggle-block-user',
     //Profile
     myProfile: '/user/get-profile',
     updateProfilePic: '/user/update-profile-pic',
@@ -60,6 +60,12 @@ const APIEndpoint = {
     generateInvoice: '/transaction/get-invoice',
     createTransaction: '/transaction/create-transaction-history',
   },
+  inAppNotifications: {
+    getInAppNotifications: '/notify/get-notification',
+    markNotificationRead: '/notify/read-notification',
+    deleteNotification: '/notify/delete-notification',
+  },
+
   // Add more modules as needed
 };
 

@@ -65,9 +65,10 @@ const Index = ({navigation}) => {
   const {getResource} = useSelector(state => state.resource);
 
   const handleCardPress = useCallback(index => {
+    console.log('OnPress_card', index);
     setSelectedCard(prevSelectedCard =>
       prevSelectedCard.includes(index)
-        ? prevSelectedCard.filter(item => item !== index)
+        ? prevSelectedCard.filter(item => item._id !== index)
         : [...prevSelectedCard, index],
     );
   }, []);
@@ -144,8 +145,8 @@ const Index = ({navigation}) => {
           if (isLoginPressed) {
             handleCardPress(item._id);
           } else {
-            setisVisisblePDFModal(true);
-            setDocumentDetails(item);
+            // setisVisisblePDFModal(true);
+            // setDocumentDetails(item);
           }
         }}
       />
