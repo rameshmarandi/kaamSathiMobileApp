@@ -51,6 +51,7 @@ import {Formik} from 'formik';
 import {ActivityIndicator} from 'react-native';
 import {createTransactionAPIHandler} from '../../../redux/reducer/Transactions/transactionAPI.js';
 import {getNotificationAPIHander} from '../../../redux/reducer/Notification/NotificationAPI.js';
+import BannerComponent from '../../../Components/BannerComponent.js';
 
 const initialState = {
   adminDashboardCardData: adminDashboardCardData,
@@ -108,6 +109,28 @@ const Index = memo(props => {
       // store.dispatch({ type: 'API_CALL_ERROR', payload: { error: err.message } });
     }
   };
+  const [scrollY] = useState(new Animated.Value(0)); // Initialize scrollY as an Animated.Value
+
+  // Interpolating translateY for both marquee and search bar
+  const marqueeTranslateY = scrollY.interpolate({
+    inputRange: [0, 150], // Start hiding when the user scrolls more than 150 units
+    outputRange: [0, -120], // Move the header off-screen (adjust this value)
+    extrapolate: 'clamp', // Ensure it doesn't translate beyond the defined range
+  });
+
+  const searchBarTranslateY = scrollY.interpolate({
+    inputRange: [0, 150],
+    outputRange: [0, -80], // Move the search bar off-screen (adjust this value too)
+    extrapolate: 'clamp',
+  });
+
+  // Hide the marquee and search bar after scroll exceeds 150 units
+  const hideHeaderThreshold = 150;
+  const isHeaderVisible = scrollY.interpolate({
+    inputRange: [0, hideHeaderThreshold],
+    outputRange: [1, 0], // 1 means visible, 0 means hidden
+    extrapolate: 'clamp',
+  });
 
   const searchBarRef = useRef(null);
   const bottomSheetRef = useRef(null);
@@ -131,12 +154,10 @@ const Index = memo(props => {
     updateState({filteredData: filtered});
   }, [searchText]);
 
-  const {scrollY, scrollDirection} = useScrollDirection();
-
-  const transform =
-    scrollDirection === 'up'
-      ? {transform: [{translateY: -100}, {scale: 0.9}]}
-      : {transform: [{translateY: 0}, {scale: 1}]};
+  // const transform =
+  //   scrollDirection === 'up'
+  //     ? {transform: [{translateY: -100}, {scale: 0.9}]}
+  //     : {transform: [{translateY: 0}, {scale: 1}]};
 
   useEffect(() => {
     if (searchModalVisible) {
@@ -219,16 +240,18 @@ const Index = memo(props => {
         currentTextColor={currentTextColor}
         searchBarRef={searchBarRef}
       />
-      <CustomHeader
-        Hamburger={() => {
-          navigation.openDrawer();
-          Keyboard.dismiss();
-        }}
-        onPressNotificaiton={() => {
-          navigation.navigate('UserNotification');
-        }}
-        centerLogo={true}
-      />
+      <Animated.View style={{transform: [{translateY: marqueeTranslateY}]}}>
+        <CustomHeader
+          Hamburger={() => {
+            navigation.openDrawer();
+            Keyboard.dismiss();
+          }}
+          onPressNotificaiton={() => {
+            navigation.navigate('UserNotification');
+          }}
+          centerLogo={true}
+        />
+      </Animated.View>
       <View>
         <AddMemberForm
           visible={addNewMemberModalVisible}
@@ -241,9 +264,6 @@ const Index = memo(props => {
           navigation={navigation}
         />
       </View>
-      <MarqueeComp
-        textRender={`I can do all things through Christ who strengthens me. [Philippians 4:13] जो मुझे सामर्थ देता है उस में मैं सब कुछ कर सकता हूं। [फिलिप्पियों 4:13]`}
-      />
 
       <CustomBottomSheet ref={bottomSheetRef} modalHeight={getResHeight(30)}>
         <Formik initialValues={initialValues} onSubmit={handleSubmit}>
@@ -339,6 +359,9 @@ const Index = memo(props => {
         </Formik>
       </CustomBottomSheet>
 
+      {/* <MarqueeComp
+        textRender={`I can do all things through Christ who strengthens me. [Philippians 4:13] जो मुझे सामर्थ देता है उस में मैं सब कुछ कर सकता हूं। [फिलिप्पियों 4:13]`}
+      />
       <TouchableWithoutFeedback
         onPress={() => {
           updateState({searchModalVisible: true});
@@ -346,8 +369,45 @@ const Index = memo(props => {
         <View style={{marginTop: '3%', paddingHorizontal: '1%'}}>
           <SearchBarComp placeholder="Search menus.." disabled={true} />
         </View>
-      </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback> */}
       <View style={{flex: 1}}>
+        {/* Conditionally render Marquee and SearchBar */}
+        <Animated.View
+          style={{
+            // If header is not visible, move it off the screen and remove it from layout
+            transform: [{translateY: marqueeTranslateY}],
+            height: scrollY.interpolate({
+              inputRange: [0, hideHeaderThreshold],
+              outputRange: [getResHeight(3), 0], // Adjust height to ensure space is freed
+              extrapolate: 'clamp',
+            }),
+          }}>
+          <MarqueeComp
+            textRender={`I can do all things through Christ who strengthens me. [Philippians 4:13] जो मुझे सामर्थ देता है उस में मैं सब कुछ कर सकता हूं। [फिलिप्पियों 4:13]`}
+          />
+        </Animated.View>
+
+        <Animated.View
+          style={{
+            marginTop: '5%',
+            paddingHorizontal: '1%',
+            // Move search bar out of the layout when it's not visible
+            transform: [{translateY: searchBarTranslateY}],
+            height: scrollY.interpolate({
+              inputRange: [0, hideHeaderThreshold],
+              outputRange: [getResHeight(10), 0], // Adjust height to ensure space is freed
+              extrapolate: 'clamp',
+            }),
+          }}>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              setState({searchModalVisible: true});
+            }}>
+            <SearchBarComp placeholder="Search menus.." disabled={true} />
+          </TouchableWithoutFeedback>
+        </Animated.View>
+
+        {/* Animated FlatList */}
         <Animated.FlatList
           data={[0, 1, 2, 3, 4]}
           showsVerticalScrollIndicator={false}
@@ -360,21 +420,19 @@ const Index = memo(props => {
               case 0:
                 return (
                   <View style={{}}>
+                    <BannerComponent />
                     <DailyVersesComp {...props} />
                   </View>
                 );
-              // case 1:
-              //   return (
-              //     <View style={styles.upcomingContainer}>
-              //       <AdminUpcomingEvents />
-              //     </View>
-              //   );
+              case 3:
+                return (
+                  <View style={{}}>
+                    <AdminUpcomingEvents />
+                  </View>
+                );
               case 2:
                 return (
-                  <View
-                    style={{
-                      marginTop: getResHeight(5),
-                    }}>
+                  <View style={{marginTop: getResHeight(5)}}>
                     <SquareCardComp
                       filteredData={filteredData}
                       onPress={item => {

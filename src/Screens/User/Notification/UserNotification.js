@@ -43,6 +43,7 @@ const UserNotification = ({navigation}) => {
 
   useEffect(() => {
     APICalling();
+    setCurrentTabIndex(0);
   }, []);
 
   const APICalling = async () => {
@@ -191,18 +192,20 @@ const UserNotification = ({navigation}) => {
   const renderSectionHeader = ({section: {title}}) => (
     <View
       style={{
-        backgroundColor: isDarkMode
-          ? 'rgba(255, 255, 255, 0.1)'
-          : 'rgba(0, 0, 0, 0.05)', // Subtle background based on mode
-        paddingVertical: getResHeight(1.5),
+        // backgroundColor:
+        //   //  isDarkMode
+        //   //   ? 'rgba(255, 255, 255, 0.1)'
+        //   //   :
+        //   'rgba(0, 0, 0, 0.05)', // Subtle background based on mode
+        paddingTop: getResHeight(1.5),
         paddingHorizontal: '5%',
         marginVertical: getResHeight(1),
         borderRadius: getResHeight(1),
-        elevation: 1, // Light shadow for modern look
-        shadowColor: isDarkMode ? '#000' : '#ccc',
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
+        // elevation: 1, // Light shadow for modern look
+        // shadowColor: isDarkMode ? '#000' : '#ccc',
+        // shadowOffset: {width: 0, height: 2},
+        // shadowOpacity: 0.3,
+        // shadowRadius: 4,
       }}>
       <Text
         style={{

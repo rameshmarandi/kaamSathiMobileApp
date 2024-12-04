@@ -24,9 +24,11 @@ const SearchBarComp = ({
 
   return (
     <View
-      style={{
-        marginBottom: '14%',
-      }}>
+      style={
+        {
+          // marginBottom: '14%',
+        }
+      }>
       <SearchBar
         placeholder={placeholder}
         placeholderTextColor={placeholderTextColor || theme.color.dimGray}

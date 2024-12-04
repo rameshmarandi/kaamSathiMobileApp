@@ -55,6 +55,7 @@ const headerTitle = {
   dailyVerseDetails: 'daily verse',
   uploadStudyResource: 'Upload study resource',
   paymentHistory: 'Payment History',
+  bannerComp: 'Momentious Occasion',
 };
 
 export default message = {

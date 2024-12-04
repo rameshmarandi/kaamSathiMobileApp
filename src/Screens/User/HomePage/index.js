@@ -35,6 +35,7 @@ import DailyVersesComp from '../../ScreenComp/DailyVersesComp';
 import {fetch} from 'react-native-ssl-pinning';
 import RazorpayCheckout from 'react-native-razorpay';
 import axios from 'axios';
+import BannerComponent from '../../../Components/BannerComponent';
 const {width} = Dimensions.get('window');
 const itemWidth = width - 40; // Adjust this according to your layout
 
@@ -229,6 +230,45 @@ const index = memo(props => {
       </>
     );
   });
+  const data = [
+    {
+      title: 'Beautiful Mountain',
+      image:
+        'https://i.ytimg.com/vi/CnefZWMWhiI/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLCW0MXmRO8rKbU427-zJeOJuBpWjg',
+    },
+    {
+      title: 'Sunny Beach',
+      image:
+        'https://madhuedits.com/wp-content/uploads/2024/03/Birthday-Flex-Design-1024x683.jpg',
+    },
+    {
+      title: 'Lush Forest',
+      image:
+        'https://d1csarkz8obe9u.cloudfront.net/posterpreviews/anniversary-wishes-design-template-77af685489e36388b7fbb71150a950a1_screen.jpg?ts=1691182808',
+    },
+    {
+      title: 'Lush Forest',
+      image:
+        'https://d1csarkz8obe9u.cloudfront.net/posterpreviews/happy-anniversary-greeting-card-template-design-c6a8f53d14bd693cbb85c241972e425d_screen.jpg?ts=1637015305',
+    },
+    {
+      title: 'Lush Forest',
+      image:
+        'https://d1csarkz8obe9u.cloudfront.net/posterpreviews/wedding-anniversary-design-template-581d885ccff3403b6006f1c97f7783c8_screen.jpg?ts=1706256093',
+    },
+    // {
+    //   title: 'Lush Forest',
+    //   image:""
+    //        },
+    // {
+    //   title: 'Lush Forest',
+    //   image:""
+    //        },
+    // {
+    //   title: 'Lush Forest',
+    //   image:""
+    //        },
+  ];
 
   return (
     <SafeAreaView
@@ -237,7 +277,6 @@ const index = memo(props => {
         backgroundColor: currentBgColor,
       }}>
       <StatusBarComp />
-
       <CustomHeader
         Hamburger={() => {
           navigation.openDrawer();
@@ -256,8 +295,9 @@ const index = memo(props => {
           switch (index) {
             // case 0:
             //   return <BannerCardComp />;
-
             case 1:
+              return <BannerComponent data={data} />;
+            case 2:
               return <DailyVersesComp {...props} />;
           }
         }}
