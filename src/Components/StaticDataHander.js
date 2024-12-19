@@ -177,6 +177,12 @@ const adminDashboardCardData = [
         image: theme.assets.add_new_user,
         routeName: 'AddMemberForm',
       },
+      {
+        id: 1,
+        title: 'Subscription Details',
+        image: theme.assets.subscription,
+        routeName: 'ChurchProfile',
+      },
     ],
   },
   {

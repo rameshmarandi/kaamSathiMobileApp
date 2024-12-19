@@ -88,6 +88,7 @@ const TabViewComp = memo(props => {
       navigationState={{index, routes}}
       renderScene={renderScene}
       renderTabBar={renderTabBar}
+      animationEnabled
       onIndexChange={handleIndexChange}
       sceneContainerStyle={[sceneContainerStyle]}
       initialLayout={initialLayout}

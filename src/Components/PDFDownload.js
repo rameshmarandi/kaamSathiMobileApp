@@ -78,7 +78,7 @@ const PDFDownload = memo(
         transparent
         visible={isVisisble}
         onRequestClose={onRequestClose}
-        animationType="slide">
+        animationType="fade">
         <SafeAreaView
           style={[styles.safeArea, {backgroundColor: currentBgColor}]}>
           <Animated.View

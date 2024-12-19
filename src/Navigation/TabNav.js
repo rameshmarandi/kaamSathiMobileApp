@@ -44,6 +44,13 @@ const tabArrays = [
     routeNames: 'Profile',
     component: ProfileStack,
   },
+  // {
+  //   title: 'Church',
+  //   icon: {type: 'MaterialIcons', name: 'church'},
+  //   activeIcon: {type: 'MaterialIcons', name: 'church'},
+  //   routeNames: 'ChurchProfile',
+  //   component: ChurchStack,
+  // },
 ];
 
 const CustomTabBar = ({

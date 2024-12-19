@@ -145,8 +145,8 @@ const Index = ({navigation}) => {
           if (isLoginPressed) {
             handleCardPress(item._id);
           } else {
-            // setisVisisblePDFModal(true);
-            // setDocumentDetails(item);
+            setisVisisblePDFModal(true);
+            setDocumentDetails(item);
           }
         }}
       />

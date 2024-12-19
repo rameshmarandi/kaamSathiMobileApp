@@ -1,53 +1,28 @@
 import React from 'react';
-import {View, Text, StyleSheet, Image, Dimensions} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 import LinearGradient from 'react-native-linear-gradient';
 import {getResHeight} from '../utility/responsive';
 import SectionHeader from './SectionHeader';
 import MsgConfig from '../Config/MsgConfig';
+import {store} from '../redux/store';
+import {setSelectedDailyVerse} from '../redux/reducer/DailyVerses';
 
 const {width} = Dimensions.get('window');
-const data = [
-  {
-    title: 'Beautiful Mountain',
-    image:
-      'https://img.freepik.com/free-vector/happy-easter-day-wishes-background-with-colorful-3d-eggs_1017-37937.jpg',
-  },
-  {
-    title: 'Sunny Beach',
-    image:
-      'https://madhuedits.com/wp-content/uploads/2024/03/Birthday-Flex-Design-1024x683.jpg',
-  },
-  {
-    title: 'Lush Forest',
-    image:
-      'https://d1csarkz8obe9u.cloudfront.net/posterpreviews/anniversary-wishes-design-template-77af685489e36388b7fbb71150a950a1_screen.jpg?ts=1691182808',
-  },
-  {
-    title: 'Lush Forest',
-    image:
-      'https://d1csarkz8obe9u.cloudfront.net/posterpreviews/happy-anniversary-greeting-card-template-design-c6a8f53d14bd693cbb85c241972e425d_screen.jpg?ts=1637015305',
-  },
-  {
-    title: 'Lush Forest',
-    image:
-      'https://d1csarkz8obe9u.cloudfront.net/posterpreviews/wedding-anniversary-design-template-581d885ccff3403b6006f1c97f7783c8_screen.jpg?ts=1706256093',
-  },
-  // {
-  //   title: 'Lush Forest',
-  //   image:""
-  //        },
-  // {
-  //   title: 'Lush Forest',
-  //   image:""
-  //        },
-  // {
-  //   title: 'Lush Forest',
-  //   image:""
-  //        },
-];
 
-const BannerComponent = () => {
+const BannerComponent = props => {
+  const {getBanner} = store.getState().banner;
+  const {navigation} = props;
+  if (getBanner.length == 0) {
+    return null;
+  }
   return (
     <>
       <View
@@ -58,7 +33,7 @@ const BannerComponent = () => {
       </View>
       <View style={styles.container}>
         <Carousel
-          data={data}
+          data={getBanner}
           width={width} // Full-width banners with padding
           height={getResHeight(45)}
           autoPlay
@@ -70,9 +45,19 @@ const BannerComponent = () => {
             parallaxScrollingScale: 0.9,
           }}
           renderItem={({item}) => (
-            <View style={styles.slide}>
+            <TouchableOpacity
+              onPress={() => {
+                store.dispatch(
+                  setSelectedDailyVerse({
+                    selectedLng: item,
+                    headerTitle: 'Momentious Occasion',
+                  }),
+                );
+                navigation.navigate('VerseDetails');
+              }}
+              style={styles.slide}>
               <Image
-                source={{uri: item.image}}
+                source={{uri: item.imageUrl}}
                 style={styles.bannerImage}
                 resizeMode="cover"
               />
@@ -81,7 +66,7 @@ const BannerComponent = () => {
                 style={styles.overlay}
               />
               <Text style={styles.bannerTitle}>{item.title}</Text>
-            </View>
+            </TouchableOpacity>
           )}
         />
       </View>

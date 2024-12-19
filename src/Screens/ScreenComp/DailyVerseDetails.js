@@ -82,7 +82,7 @@ const DailyVerseDetails = props => {
     state => state.dailyVerses,
   );
 
-  const {selectedLng, selectedIndex} = selectedDailyVerse;
+  const {selectedLng, selectedIndex, headerTitle} = selectedDailyVerse;
 
   // Reordering the data based on the desired sequence
   const orderedLanguages = ['Marathi', 'Hindi', 'English'];
@@ -296,7 +296,11 @@ const DailyVerseDetails = props => {
         backPress={() => {
           navigation.goBack();
         }}
-        screenTitle={`${selectedLng.language} ${MsgConfig.dailyVerseDetails}`}
+        screenTitle={
+          headerTitle
+            ? headerTitle
+            : `${selectedLng.language} ${MsgConfig.dailyVerseDetails}`
+        }
       />
       <ImageView
         images={images}
@@ -311,11 +315,15 @@ const DailyVerseDetails = props => {
         animationType="fade"
         onImageIndexChange={index => setCurrentIndex(index)}
         HeaderComponent={() => {
-          let currentLanguage = images[currentIndex].language;
+          let currentIndexInArray = '';
+          let currentLanguage = ' ';
+          if (currentIndex) {
+            currentLanguage = images[currentIndex].language;
 
-          const currentIndexInArray = images.findIndex(
-            img => img.language === currentLanguage,
-          );
+            currentIndexInArray = images.findIndex(
+              img => img.language === currentLanguage,
+            );
+          }
 
           return (
             <View

@@ -71,6 +71,15 @@ export default function DrawerStack(props) {
                 headerShown: false,
               }}
             />
+
+            <Drawer.Screen
+              name={'ChurchProfile'}
+              component={AllScreens.ChurchProfile}
+              options={{
+                headerShadowVisible: false,
+                headerShown: false,
+              }}
+            />
             <Drawer.Screen
               name="AdminContact"
               component={AllScreens.AdminContact}

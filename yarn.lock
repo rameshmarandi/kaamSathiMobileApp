@@ -7119,6 +7119,12 @@ react-native-youtube-iframe@^2.3.0:
   dependencies:
     events "^3.2.0"
 
+"react-native-zss-rich-text-editor@file:../../../.nvm/versions/node/v21.2.0/lib/node_modules/react-native-zss-rich-text-editor":
+  version "1.1.0"
+  resolved "file:../../../.nvm/versions/node/v21.2.0/lib/node_modules/react-native-zss-rich-text-editor"
+  dependencies:
+    react-native-webview-bridge-updated "^1.0.0"
+
 react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", "react-native@>= 0.61.5", "react-native@>= 0.64.3", react-native@>=0.40.0, react-native@>=0.42.0, react-native@>=0.44.1, react-native@>=0.46, react-native@>=0.48.4, react-native@>=0.56, react-native@>=0.6.0, react-native@>=0.60, react-native@>=0.61.3, react-native@>=0.63, react-native@>=0.65.0, react-native@>=0.66.0, react-native@>=0.70.0, react-native@>=0.8.0, react-native@0.74.2:
   version "0.74.2"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.74.2.tgz"

@@ -24,6 +24,7 @@ import members from '../../assets/admin/members.png';
 import payment_history from '../../assets/admin/payment_history.png';
 import add_new_user from '../../assets/admin/add_new_user.png';
 import camera from '../../assets/admin/camera.png';
+import subscription from '../../assets/admin/subscription.png';
 import DBible from '../../assets/admin/3DBible.png';
 import pdf from '../../assets/admin/pdf.png';
 
@@ -59,6 +60,7 @@ const homeIcons = {
   members,
   payment_history,
   camera,
+  subscription,
   add_new_user,
   DBible,
   pdf,

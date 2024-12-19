@@ -66,6 +66,18 @@ const APIEndpoint = {
     deleteNotification: '/notify/delete-notification',
   },
 
+  bannerModule: {
+    getBanner: '/banner/get-banner',
+    getAdminBanner: '/banner//get-all-banner',
+    deleteBanner: '/banner/delete-banner',
+    createBanner: '/banner/create-banner',
+    updateBanner: '/banner/update-banner',
+    likeBanner: '/banner/like-banner',
+    addComment: '/banner/add-comment-banner',
+    replayOnComment: '/banner/replay-comment-banner',
+    deleteReplayComment: '/banner/delete-reply-comment-banner',
+    deleteComment: '/banner/delete-comment-banner',
+  },
   // Add more modules as needed
 };
 

@@ -207,8 +207,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cardImage: {
-    height: getResHeight(5.5),
-    width: getResHeight(5.5),
+    height: getResHeight(5.8),
+    width: getResHeight(5.8),
   },
   cardTitle: {
     textAlign: 'center',

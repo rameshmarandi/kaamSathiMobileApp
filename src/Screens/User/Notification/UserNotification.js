@@ -157,14 +157,31 @@ const UserNotification = ({navigation}) => {
           marginBottom: '2%',
           paddingHorizontal: '5%',
           flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
           borderBottomWidth: 0.3,
           borderColor: 'grey',
           backgroundColor: isSelected
             ? 'rgba(255, 255, 255, 0.5)'
-            : !item.isRead
-            ? 'rgba(150, 149, 149, 0.199)'
-            : 'transparent',
+            : // :
+              // !item.isRead
+              // ? 'rgba(150, 149, 149, 0.199)'
+              'transparent',
         }}>
+        {!item.isRead && (
+          <View
+            style={{
+              height: 5,
+              width: 5,
+              backgroundColor: 'white',
+              position: 'absolute',
+              left: 5,
+              borderRadius: getResHeight(100),
+              // marginRight: '3%',
+            }}
+          />
+        )}
+
         <Image
           source={{uri: notificationImage}}
           style={{
@@ -192,20 +209,10 @@ const UserNotification = ({navigation}) => {
   const renderSectionHeader = ({section: {title}}) => (
     <View
       style={{
-        // backgroundColor:
-        //   //  isDarkMode
-        //   //   ? 'rgba(255, 255, 255, 0.1)'
-        //   //   :
-        //   'rgba(0, 0, 0, 0.05)', // Subtle background based on mode
         paddingTop: getResHeight(1.5),
         paddingHorizontal: '5%',
         marginVertical: getResHeight(1),
         borderRadius: getResHeight(1),
-        // elevation: 1, // Light shadow for modern look
-        // shadowColor: isDarkMode ? '#000' : '#ccc',
-        // shadowOffset: {width: 0, height: 2},
-        // shadowOpacity: 0.3,
-        // shadowRadius: 4,
       }}>
       <Text
         style={{

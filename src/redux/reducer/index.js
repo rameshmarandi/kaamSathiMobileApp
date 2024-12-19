@@ -7,6 +7,7 @@ import languageSlice from './Languages/index';
 import resourceSlice from './Resources/index';
 import transactionSlice from './Transactions/index';
 import notificationSlice from './Notification/index';
+import bannerSlice from './Banner/index';
 const rootReducer = combineReducers({
   user: authSlice,
   profile: profileSlice,
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   resource: resourceSlice,
   transaction: transactionSlice,
   notification: notificationSlice,
+  banner: bannerSlice,
   // Add other reducers here
 });
 

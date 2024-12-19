@@ -25,7 +25,6 @@ import MsgConfig from '../../../Config/MsgConfig';
 import {
   ButtonIconComp,
   CommonButtonComp,
-  CommonImageCard,
   CustomAlertModal,
   StatusBarComp,
 } from '../../../Components/commonComp';

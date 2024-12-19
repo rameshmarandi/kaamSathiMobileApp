@@ -52,6 +52,7 @@ import {ActivityIndicator} from 'react-native';
 import {createTransactionAPIHandler} from '../../../redux/reducer/Transactions/transactionAPI.js';
 import {getNotificationAPIHander} from '../../../redux/reducer/Notification/NotificationAPI.js';
 import BannerComponent from '../../../Components/BannerComponent.js';
+import {getBannerAPIHander} from '../../../redux/reducer/Banner/BannerAPI.js';
 
 const initialState = {
   adminDashboardCardData: adminDashboardCardData,
@@ -91,6 +92,7 @@ const Index = memo(props => {
   const _apiCalling = async props => {
     // Define essential requests
     const essentialRequests = [
+      () => store.dispatch(getBannerAPIHander()),
       () => store.dispatch(getNotificationAPIHander()),
       () => store.dispatch(getNewApplicationAPIHander()),
 
@@ -420,7 +422,7 @@ const Index = memo(props => {
               case 0:
                 return (
                   <View style={{}}>
-                    <BannerComponent />
+                    <BannerComponent {...props} />
                     <DailyVersesComp {...props} />
                   </View>
                 );

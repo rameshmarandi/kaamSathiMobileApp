@@ -10,6 +10,7 @@ import Feedback from './User/Support/Feedback';
 import UserNotification from './User/Notification/UserNotification';
 
 // Admin Dashboard
+import ChurchProfile from './Admin/ChurchProfile/index';
 
 import AdminDashboard from './Admin/AdminDashboard/index';
 import AdminManagment from './Admin/AdminManagment/index';
@@ -34,6 +35,7 @@ import PaymentHistory from './User/Transaction/PaymentHistory';
 const UserAllScreens = {
   HomePage,
   ProfilePage,
+
   MyFamily,
   Settings,
   FreeResource,
@@ -49,6 +51,7 @@ const AdminScreens = {
   AdminDashboard,
   AdminManagment,
   Members,
+  ChurchProfile,
   AdminContact,
   ChurchMap,
   Approval,

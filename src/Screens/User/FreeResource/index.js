@@ -17,7 +17,11 @@ import {freeResourceData} from '../../../Components/StaticDataHander';
 
 const FreeResource = ({navigation}) => {
   const handleOpenBrowser = url => {
-    openInAppBrowser(url);
+    try {
+      openInAppBrowser(url);
+    } catch (error) {
+      console.error('Failed to open browser study links', error);
+    }
   };
 
   return (
@@ -49,6 +53,7 @@ const FreeResource = ({navigation}) => {
           }}>
           <SquareCardComp
             onPress={item => {
+              console.log('Press', item.routeName);
               handleOpenBrowser(item.routeName);
             }}
             filteredData={freeResourceData}
