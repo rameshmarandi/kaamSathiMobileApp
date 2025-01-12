@@ -43,7 +43,7 @@ LogBox.ignoreAllLogs(true);
 
 const App = () => {
   StatusBar.setBarStyle('light-content');
-  StatusBar.setBackgroundColor(theme.color.darkTheme); // Set your desired background color
+  StatusBar.setBackgroundColor(theme.color.dardkModeOnBGColor); // Set your desired background color
   const popupRef = useRef();
   const rootDetRef = useRef();
 
@@ -170,7 +170,7 @@ const App = () => {
         <InitialRender />
       ) : (
         <>
-          <AllNavContainer isLogedIn={isLogedIn} isAdmin={isAdmin} />
+          <AllNavContainer isLogedIn={isLogedIn} isAdmin={true} />
           {/* <DefaultPopup
             ref={popupRef}
             renderPopupContent={renderCustomPopup}
@@ -191,7 +191,7 @@ function AnimatedSlash() {
           width: '100%',
           justifyContent: 'center',
           alignItems: 'center',
-          backgroundColor: theme.color.darkTheme,
+          backgroundColor: theme.color.dardkModeOnBGColor,
         }}>
         <Image
           source={theme.assets.church_logo_origianl}
@@ -214,15 +214,6 @@ function AnimatedSlash() {
   );
 }
 
-/*************  ✨ Codeium Command ⭐  *************/
-/**
- * InitialRender is a functional component that displays a centered view with
- * a white background. It serves as a loading or initial screen, containing
- * an animated slash component. The component is styled to occupy the full
- * screen, centering its children both vertically and horizontally.
- */
-
-/******  f025f1e5-792d-40f1-a94b-6a27637c594e  *******/
 const InitialRender = () => {
   return (
     <>
@@ -233,21 +224,6 @@ const InitialRender = () => {
           justifyContent: 'center',
           backgroundColor: 'white',
         }}>
-        {/* <Text
-          style={{
-            width: '100%',
-            alignSelf: 'center',
-            fontSize: getFontSize(1.5),
-            fontFamily: theme.font.semiBold,
-            color: 'white',
-            justifyContent: 'center',
-            textAlign: 'center',
-            position: 'absolute',
-            bottom: '5%',
-            zIndex: 9999,
-          }}>
-          Light Of Life Ministries
-        </Text> */}
         <AnimatedSlash />
       </View>
     </>

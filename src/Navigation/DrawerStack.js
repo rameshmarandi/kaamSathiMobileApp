@@ -9,6 +9,8 @@ const Drawer = createDrawerNavigator();
 
 export default function DrawerStack(props) {
   const {isAdmin} = props;
+
+  // let isAdmin = true;
   let {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
   );
@@ -16,17 +18,13 @@ export default function DrawerStack(props) {
   return (
     <>
       <Drawer.Navigator
-        // initialRouteName={'Home'}
         drawerContent={props => <DrawerItems {...props} />}
         swipeable={false}
-        // drawerType="permanent"
         screenOptions={{
-          // headerShown: false,
           drawerStyle: {
             backgroundColor: currentBgColor,
             width: '70%',
-            // borderBottomRightRadius: 20,
-            // borderTopRightRadius:20,
+
             overflow: 'hidden',
           },
           cardStyleInterpolator: ({current, layouts}) => {
@@ -55,79 +53,6 @@ export default function DrawerStack(props) {
                 headerShown: false,
               }}
             />
-            <Drawer.Screen
-              name="AdminManagment"
-              component={AllScreens.AdminManagment}
-              options={{
-                headerShadowVisible: false,
-                headerShown: false,
-              }}
-            />
-            <Drawer.Screen
-              name="Members"
-              component={AllScreens.Members}
-              options={{
-                headerShadowVisible: false,
-                headerShown: false,
-              }}
-            />
-
-            <Drawer.Screen
-              name={'ChurchProfile'}
-              component={AllScreens.ChurchProfile}
-              options={{
-                headerShadowVisible: false,
-                headerShown: false,
-              }}
-            />
-            <Drawer.Screen
-              name="AdminContact"
-              component={AllScreens.AdminContact}
-              options={{
-                headerShadowVisible: false,
-                headerShown: false,
-              }}
-            />
-            <Drawer.Screen
-              name="ChurchMap"
-              component={AllScreens.ChurchMap}
-              options={{
-                headerShadowVisible: false,
-                headerShown: false,
-              }}
-            />
-            <Drawer.Screen
-              name="DailyVerse"
-              component={AllScreens.DailyVerse}
-              options={{
-                headerShadowVisible: false,
-                headerShown: false,
-              }}
-            />
-            <Drawer.Screen
-              name="AdminResource"
-              component={AllScreens.AdminResource}
-              options={{
-                headerShadowVisible: false,
-                headerShown: false,
-              }}
-            />
-            <Drawer.Screen
-              name="AdminOurBelieve"
-              component={AllScreens.AdminOurBelieve}
-              options={{
-                headerShadowVisible: false,
-                headerShown: false,
-              }}
-            />
-            <Drawer.Screen
-              name="UploadBanner"
-              component={AllScreens.UploadBanner}
-              options={{
-                headerShadowVisible: false,
-                headerShown: false,
-              }}
-            />
           </>
         ) : (
           <Drawer.Screen
@@ -139,104 +64,6 @@ export default function DrawerStack(props) {
             component={HomeStack}
           />
         )}
-
-        <Drawer.Screen
-          name="Settings"
-          component={SettingsStack}
-          options={{
-            headerShadowVisible: false,
-            headerShown: false,
-          }}
-        />
-        <Drawer.Screen
-          name="VerseDetails"
-          component={AllScreens.DailyVerseDetails}
-          options={{
-            headerShadowVisible: false,
-            headerShown: false,
-          }}
-        />
-        <Drawer.Screen
-          name="PaymentHistory"
-          component={AllScreens.PaymentHistory}
-          options={{
-            headerShadowVisible: false,
-            headerShown: false,
-          }}
-        />
-        <Drawer.Screen
-          name="LoginPage"
-          component={AllScreens.LoginPage}
-          options={{
-            headerShadowVisible: false,
-            headerShown: false,
-          }}
-        />
-        <Drawer.Screen
-          name="ApplicationUnderReview"
-          component={AllScreens.ApplicationUnderReview}
-          options={{
-            headerShadowVisible: false,
-            headerShown: false,
-          }}
-        />
-
-        <Drawer.Screen
-          name="ForgotPassword"
-          component={AllScreens.ForgotPassword}
-          options={{
-            headerShadowVisible: false,
-            headerShown: false,
-          }}
-        />
-        <Drawer.Screen
-          name="AllPrayerReq"
-          component={AllScreens.AllPrayerReq}
-          options={{
-            headerShadowVisible: false,
-            headerShown: false,
-          }}
-        />
-        <Drawer.Screen
-          name="FreeResource"
-          component={AllScreens.FreeResource}
-          options={{
-            headerShadowVisible: false,
-            headerShown: false,
-          }}
-        />
-        <Drawer.Screen
-          name="Events"
-          component={AllScreens.Events}
-          options={{
-            headerShadowVisible: false,
-            headerShown: false,
-          }}
-        />
-        <Drawer.Screen
-          name="ContactWithUs"
-          component={AllScreens.ContactWithUs}
-          options={{
-            headerShadowVisible: false,
-            headerShown: false,
-          }}
-        />
-        <Drawer.Screen
-          name="Feedback"
-          component={AllScreens.Feedback}
-          options={{
-            headerShadowVisible: false,
-            headerShown: false,
-          }}
-        />
-        <Drawer.Screen
-          name="UserNotification"
-          component={AllScreens.UserNotification}
-          options={{
-            headerShadowVisible: false,
-            headerShown: false,
-          }}
-        />
       </Drawer.Navigator>
     </>
   );

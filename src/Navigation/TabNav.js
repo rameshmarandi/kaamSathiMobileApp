@@ -29,27 +29,20 @@ const tabArrays = [
     routeNames: 'ApprovalScreen',
     component: ApprovalStack,
   },
-  {
-    title: 'Family',
-    icon: {type: 'MaterialIcons', name: 'family-restroom'},
-    activeIcon: {type: 'MaterialIcons', name: 'family-restroom'},
-    routeNames: 'MyFamily',
-    component: FamilyStack,
-  },
-
-  {
-    title: 'Profile',
-    icon: {type: 'FontAwesome', name: 'user-o'},
-    activeIcon: {type: 'FontAwesome', name: 'user'},
-    routeNames: 'Profile',
-    component: ProfileStack,
-  },
   // {
-  //   title: 'Church',
-  //   icon: {type: 'MaterialIcons', name: 'church'},
-  //   activeIcon: {type: 'MaterialIcons', name: 'church'},
-  //   routeNames: 'ChurchProfile',
-  //   component: ChurchStack,
+  //   title: 'Family',
+  //   icon: {type: 'MaterialIcons', name: 'family-restroom'},
+  //   activeIcon: {type: 'MaterialIcons', name: 'family-restroom'},
+  //   routeNames: 'MyFamily',
+  //   component: FamilyStack,
+  // },
+
+  // {
+  //   title: 'Profile',
+  //   icon: {type: 'FontAwesome', name: 'user-o'},
+  //   activeIcon: {type: 'FontAwesome', name: 'user'},
+  //   routeNames: 'Profile',
+  //   component: ProfileStack,
   // },
 ];
 

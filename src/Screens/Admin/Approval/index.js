@@ -4,7 +4,7 @@ import React from 'react';
 const index = () => {
   return (
     <View>
-      <Text>Church profile</Text>
+      <Text>Approval</Text>
     </View>
   );
 };

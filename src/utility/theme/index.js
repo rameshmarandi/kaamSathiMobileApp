@@ -4,28 +4,19 @@ import assets from './assets';
 import {getResHeight} from '../responsive';
 
 const color = {
-  primary: '#2F3B75',
-  darkTheme: '#012537',
-  // "#000f0b",
-  iconCircleBg: '#011621',
-
-  // Textinput end
-  seletedBtn: '#303254',
-  disabledBtn: '#434e82',
-  dimBlack: '#353535',
-  dimGray: '#828282',
-  lableColor: '#666666',
-  white: '#F0F8FF',
-  whiteDisabled: '#D3E7F3',
-  //  '#FFFFFF',
-  iceWhite: '#f9f9f9',
-  chatBox: '#ffffffff',
-  dimWhite: '#f1f1f1',
-  outlineColor: '#999999',
-  placeholder: '#C0C0C0',
-  error: '#FF0000',
-  green: '#25D366',
+  primary: '#4CAF50',
+  secondary2: '#FF9800',
+  secondary: '#FFC107',
+  naviBlue: '#263238',
+  textColor: '#333333',
   black: '#000000',
+  dimGrey: '#ECEFF1',
+  charcolBlack: '#212121',
+  whiteText: '#FFFFFF',
+  offWhite: '#FAFAFA',
+
+  dardkModeOnBGColor: '#012537',
+  darkModeOffBGColor: '#FFFFFF',
 };
 
 const englishFont = {

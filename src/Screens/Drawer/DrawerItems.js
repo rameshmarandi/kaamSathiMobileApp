@@ -203,7 +203,7 @@ const DrawerItems = ({navigation}) => {
       dispatch(setBackgroundColor(theme.color.white));
     } else {
       dispatch(setTextColor(theme.color.white));
-      dispatch(setBackgroundColor(theme.color.darkTheme));
+      dispatch(setBackgroundColor(theme.color.background));
     }
 
     // navigation.closeDrawer();
