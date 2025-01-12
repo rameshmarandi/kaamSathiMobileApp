@@ -48,9 +48,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.lolm"
+    namespace "com.kaamsathi"
     defaultConfig {
-        applicationId "com.lolm"
+        applicationId "com.kaamsathi"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -87,7 +87,7 @@ android {
      }
     applicationVariants.all { variant ->
         variant.outputs.each { output ->
-            project.ext { appName = 'LOLM' }
+            project.ext { appName = 'KaamSathi' }
             def formattedDate = new Date().format('dd.MM HH.mm').replace(" ", " B")
             def newName = output.outputFile.name.replace("app-", "$project.ext.appName-").replace("-release", " V" + formattedDate)
             output.outputFileName = newName

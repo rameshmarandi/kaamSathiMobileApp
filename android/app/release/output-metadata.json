@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.lolm",
+  "applicationId": "com.kaamsathi",
   "variantName": "release",
   "elements": [
     {
@@ -18,33 +18,7 @@
       "attributes": [],
       "versionCode": 1,
       "versionName": "1.0",
-      "outputFile": "LOLM-armeabi-v7a V21.10 B22.49.apk"
-    },
-    {
-      "type": "ONE_OF_MANY",
-      "filters": [
-        {
-          "filterType": "ABI",
-          "value": "arm64-v8a"
-        }
-      ],
-      "attributes": [],
-      "versionCode": 1,
-      "versionName": "1.0",
-      "outputFile": "LOLM-arm64-v8a V21.10 B22.49.apk"
-    },
-    {
-      "type": "ONE_OF_MANY",
-      "filters": [
-        {
-          "filterType": "ABI",
-          "value": "x86"
-        }
-      ],
-      "attributes": [],
-      "versionCode": 1,
-      "versionName": "1.0",
-      "outputFile": "LOLM-x86 V21.10 B22.49.apk"
+      "outputFile": "KaamSathi-armeabi-v7a V12.01 B10.35.apk"
     },
     {
       "type": "ONE_OF_MANY",
@@ -57,7 +31,33 @@
       "attributes": [],
       "versionCode": 1,
       "versionName": "1.0",
-      "outputFile": "LOLM-x86_64 V21.10 B22.49.apk"
+      "outputFile": "KaamSathi-x86_64 V12.01 B10.35.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "x86"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 1,
+      "versionName": "1.0",
+      "outputFile": "KaamSathi-x86 V12.01 B10.35.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "arm64-v8a"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 1,
+      "versionName": "1.0",
+      "outputFile": "KaamSathi-arm64-v8a V12.01 B10.35.apk"
     }
   ],
   "elementType": "File"

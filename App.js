@@ -193,16 +193,6 @@ function AnimatedSlash() {
           alignItems: 'center',
           backgroundColor: theme.color.darkTheme,
         }}>
-        <LottieView
-          source={require('./src/assets/animationLoader/wave-animation.json')}
-          autoPlay
-          loop
-          style={{
-            height: '100%',
-            width: '100%',
-          }}
-        />
-
         <Image
           source={theme.assets.church_logo_origianl}
           resizeMode="center"
@@ -212,11 +202,27 @@ function AnimatedSlash() {
             position: 'absolute',
           }}
         />
+        <Text
+          style={{
+            color: 'white',
+            paddingTop: '30%',
+          }}>
+          Loading..
+        </Text>
       </View>
     </>
   );
 }
 
+/*************  ✨ Codeium Command ⭐  *************/
+/**
+ * InitialRender is a functional component that displays a centered view with
+ * a white background. It serves as a loading or initial screen, containing
+ * an animated slash component. The component is styled to occupy the full
+ * screen, centering its children both vertically and horizontally.
+ */
+
+/******  f025f1e5-792d-40f1-a94b-6a27637c594e  *******/
 const InitialRender = () => {
   return (
     <>
@@ -227,7 +233,7 @@ const InitialRender = () => {
           justifyContent: 'center',
           backgroundColor: 'white',
         }}>
-        <Text
+        {/* <Text
           style={{
             width: '100%',
             alignSelf: 'center',
@@ -241,7 +247,7 @@ const InitialRender = () => {
             zIndex: 9999,
           }}>
           Light Of Life Ministries
-        </Text>
+        </Text> */}
         <AnimatedSlash />
       </View>
     </>

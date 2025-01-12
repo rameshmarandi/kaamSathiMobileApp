@@ -42,8 +42,8 @@ import {
   myProfileAPIHander,
 } from '../../../redux/reducer/Profile/ProfileAPI.js';
 import DailyVersesComp from '../../ScreenComp/DailyVersesComp.js';
-import RazorpayCheckout from '../../../../node_modules/react-native-razorpay/RazorpayCheckout';
-import {initiatePayment} from '../../../Components/PaymentHandler.js';
+
+// import {initiatePayment} from '../../../Components/PaymentHandler.js';
 import CustomBottomSheet from '../../../Components/CustomBottomSheet.js';
 import {formatCurrency} from '../../../Components/commonHelper.js';
 import theme from '../../../utility/theme/index.js';
@@ -182,30 +182,30 @@ const Index = memo(props => {
   const handleSubmit = values => {
     try {
       setIsPayBtnLoading(true);
-      setTimeout(() => {
-        bottomSheetRef.current?.close();
-        initiatePayment(
-          values.amount,
-          myProfile,
-          async data => {
-            // console.log('Payment_Success_front', data);
-            if (data?.razorpay_payment_id) {
-              const res = await store.dispatch(
-                createTransactionAPIHandler({
-                  amount: values.amount,
-                  transactionID: data?.razorpay_payment_id,
-                  donationMessage: 'Church offering',
-                  paymentStatus: 'success',
-                }),
-              );
-            }
-          },
-          async data => {
-            console.error('API_FES', data);
-          },
-        );
-        setIsPayBtnLoading(false);
-      }, 300);
+      // setTimeout(() => {
+      //   bottomSheetRef.current?.close();
+      //   initiatePayment(
+      //     values.amount,
+      //     myProfile,
+      //     async data => {
+      //       // console.log('Payment_Success_front', data);
+      //       if (data?.razorpay_payment_id) {
+      //         const res = await store.dispatch(
+      //           createTransactionAPIHandler({
+      //             amount: values.amount,
+      //             transactionID: data?.razorpay_payment_id,
+      //             donationMessage: 'Church offering',
+      //             paymentStatus: 'success',
+      //           }),
+      //         );
+      //       }
+      //     },
+      //     async data => {
+      //       console.error('API_FES', data);
+      //     },
+      //   );
+      //   setIsPayBtnLoading(false);
+      // }, 300);
     } catch (error) {
       console.error('Initialite_payment_error', error);
     }

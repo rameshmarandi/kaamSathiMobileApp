@@ -1,4 +1,4 @@
-package com.lolm
+package com.kaamsathi
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

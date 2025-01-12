@@ -33,7 +33,7 @@ import {Platform} from 'react-native';
 import {requestUserPermission} from '../../../utility/PermissionContoller';
 import DailyVersesComp from '../../ScreenComp/DailyVersesComp';
 import {fetch} from 'react-native-ssl-pinning';
-import RazorpayCheckout from 'react-native-razorpay';
+// import RazorpayCheckout from 'react-native-razorpay';
 import axios from 'axios';
 import BannerComponent from '../../../Components/BannerComponent';
 const {width} = Dimensions.get('window');
@@ -66,7 +66,6 @@ const index = memo(props => {
 
   useEffect(() => {
     InitRender();
-    callApiWithSslPinning();
   }, []);
 
   const InitRender = async () => {
@@ -78,69 +77,6 @@ const index = memo(props => {
     console.log('Firebase_OTkem', token);
   };
 
-  const callApiWithSslPinning = async () => {
-    fetch('https://10.0.2.2:8000/api/v1/user/get-daily-verses', {
-      // fetch('https://10.0.2.2:8000/api/v1/user/ssl', {
-      method: 'GET',
-      sslPinning: {
-        certs: ['cert'], // Use the name of your certificate without the extension
-      },
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log('SSL_API_Response:', data);
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-
-    // Call the API with SSL pinning
-    // axiosInstance
-    //   .get('/api/v1/user/ssl')
-    //   .then(response => {
-    //     console.log('AAL_API_Response:', response.data);
-    //   })
-    //   .catch(error => {
-    //     console.error('API Error:', error);
-    //     if (error.code === 'SSL_PINNING_ERROR') {
-    //       console.error('SSL Pinning Failed! The certificate did not match.');
-    //     }
-    //   });
-  };
-
-  const handlePayment = () => {
-    const options = {
-      description: 'Donation for Church',
-      image: 'https://your-website-logo-url.com/logo.png', // Replace with your logo URL
-      currency: 'INR',
-      key: 'rzp_test_3PV0eletGZfpvr', // Replace with your Razorpay API Key
-      amount: 100 * 100, // Amount in paise (e.g., 100 INR = 10000 paise)
-      name: 'Your Church Name',
-      prefill: {
-        email: 'user@example.com',
-        contact: '1234567890',
-        name: 'John Doe',
-      },
-      theme: {color: '#F37254'}, // Customize color
-    };
-
-    RazorpayCheckout.open(options)
-      .then(data => {
-        // Handle payment success
-        Alert.alert(
-          'Payment Successful',
-          `Payment ID: ${data.razorpay_payment_id}`,
-        );
-      })
-      .catch(error => {
-        // Handle payment error
-        Alert.alert('Payment Failed', `Error: ${error.description}`);
-      });
-  };
-  const [activeSlide, setActiveSlide] = useState(0);
   _renderItem = ({item}) => {
     return (
       <View
@@ -275,8 +211,10 @@ const index = memo(props => {
       style={{
         flex: 1,
         backgroundColor: currentBgColor,
+        justifyContent: 'center',
+        alignItems: 'center',
       }}>
-      <StatusBarComp />
+      {/* <StatusBarComp />
       <CustomHeader
         Hamburger={() => {
           navigation.openDrawer();
@@ -285,23 +223,27 @@ const index = memo(props => {
           navigation.navigate('UserNotification');
         }}
         centerLogo={true}
-      />
-      <MarqueeComp textRender={`Welcome to Light of Life Ministries , Pune`} />
+      /> */}
 
-      <FlatList
-        data={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
-        contentContainerStyle={{}}
-        renderItem={({item, index}) => {
-          switch (index) {
-            // case 0:
-            //   return <BannerCardComp />;
-            case 1:
-              return <BannerComponent data={data} />;
-            case 2:
-              return <DailyVersesComp {...props} />;
-          }
-        }}
-      />
+      <Text
+        style={{
+          color: 'white',
+          fontSize: 20,
+          fontFamily: theme.font.extraBold,
+          textAlign: 'center',
+        }}>
+        Welcome to KaamSathi{'\n'}
+      </Text>
+      <Text
+        style={{
+          color: 'red',
+          fontSize: 13,
+          fontFamily: theme.font.regular,
+          textAlign: 'center',
+          textDecorationLine: 'underline',
+        }}>
+        www.kaamsathi.in
+      </Text>
     </SafeAreaView>
   );
 });

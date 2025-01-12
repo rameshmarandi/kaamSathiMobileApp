@@ -1,4 +1,4 @@
-package com.lolm
+package com.kaamsathi
 
 import android.app.Application
 import com.facebook.react.PackageList

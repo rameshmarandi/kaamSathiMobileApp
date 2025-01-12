@@ -2,7 +2,7 @@ import Rectanglee from '../../assets/Rectanglee.png';
 import googleicon from '../../assets/googleicon.png';
 import cross from '../../assets/cross.png';
 import church_logo from '../../assets/church_logo.png';
-import church_logo_origianl from '../../assets/church_logo_origianl.png';
+import church_logo_origianl from '../../assets/labour.png';
 import birthday from '../../assets/birthday.png';
 import dailyVerbsBanner from '../../assets/dailyVerbsBanner.jpg';
 import SignIn from '../../assets/signIn.png';
