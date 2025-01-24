@@ -5,8 +5,18 @@ import {getResHeight} from '../responsive';
 
 const color = {
   primary: '#4CAF50',
+  greenBRGA: 'rgba(17, 255, 0, 0.985)',
+  dimGreen: '#a8dcab',
+  redBRGA: 'rgba(255, 0, 0, 1)',
+  // secondary2: '#001F3F',
   secondary2: '#FF9800',
   secondary: '#FFC107',
+  // #FFC107
+  // accent: '#FFC107',
+  // #FFB300
+  lighYellow: '#FFF8E1',
+  // #424242
+  iceWhite: '#F1F1F1',
   naviBlue: '#263238',
   textColor: '#333333',
   black: '#000000',
@@ -15,7 +25,8 @@ const color = {
   whiteText: '#FFFFFF',
   offWhite: '#FAFAFA',
 
-  dardkModeOnBGColor: '#012537',
+  dardkModeOnBGColor: '#FFC107',
+  // '#012537',
   darkModeOffBGColor: '#FFFFFF',
 };
 

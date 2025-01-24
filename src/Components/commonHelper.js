@@ -5,6 +5,11 @@ import moment from 'moment';
 import RNFS from 'react-native-fs';
 import {PermissionsAndroid} from 'react-native';
 import {onShareClick} from '../Helpers/CommonHelpers';
+import {
+  setBackgroundColor,
+  setDarkMode,
+  setTextColor,
+} from '../redux/reducer/Auth';
 
 export const base64FileStore = (
   base64String,
@@ -124,9 +129,9 @@ export const CheckFilePermissions = async () => {
 export const backgroundColorHandler = () => {
   let {isDarkMode} = useSelector(state => state.user);
   if (isDarkMode) {
-    return theme.color.darkTheme;
+    return theme.color.dardkModeOnBGColor;
   } else {
-    return theme.color.white;
+    return theme.color.darkModeOffBGColor;
   }
 };
 export const checkIsDarkMode = () => {
@@ -157,13 +162,31 @@ export const getShortTimeAgo = date => {
     return `${Math.floor(duration.asYears())} y ago`; // e.g., 1y
   }
 };
+export const handleDarkMode = async () => {
+  // console.log('isDarkMode', 'hecing');
+  // return;
+  // let {isDarkMode} = useSelector(state => state.user);
+  // console.log('isDarkMode__', isDarkMode);
+  // const dispatch = useDispatch();
+  // dispatch(setDarkMode(!isDarkMode));
+  // console.log('isDarkMode', isDarkMode);
+  // if (isDarkMode) {
+  // dispatch(setTextColor(theme.color.primary));
+  // dispatch(setBackgroundColor(theme.color.dardkModeOnBGColor));
+  // } else {
+  dispatch(setTextColor(theme.color.white));
+  dispatch(setBackgroundColor(theme.color.darkModeOffBGColor));
+  // }
 
+  // navigation.closeDrawer();
+};
 export const textColorHandler = () => {
   let {isDarkMode} = useSelector(state => state.user);
+  console.log('isdevloepr', isDarkMode);
   if (isDarkMode) {
     return theme.color.white;
   } else {
-    return theme.color.primary;
+    return theme.color.white;
   }
 };
 

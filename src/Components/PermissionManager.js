@@ -1,6 +1,7 @@
 import {Platform} from 'react-native';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {PermissionsAndroid} from 'react-native';
 
 // Define permission keys
 const PERMISSIONS_KEYS = {

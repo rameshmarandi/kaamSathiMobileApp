@@ -200,10 +200,10 @@ const DrawerItems = ({navigation}) => {
     console.log('isDarkMode', isDarkMode);
     if (isDarkMode) {
       dispatch(setTextColor(theme.color.primary));
-      dispatch(setBackgroundColor(theme.color.white));
+      dispatch(setBackgroundColor(theme.color.dardkModeOnBGColor));
     } else {
       dispatch(setTextColor(theme.color.white));
-      dispatch(setBackgroundColor(theme.color.background));
+      dispatch(setBackgroundColor(theme.color.darkModeOffBGColor));
     }
 
     // navigation.closeDrawer();

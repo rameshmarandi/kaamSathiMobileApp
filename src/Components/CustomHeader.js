@@ -1,4 +1,10 @@
-import React, {components, createRef, useRef, useState} from 'react';
+import React, {
+  components,
+  createRef,
+  useCallback,
+  useRef,
+  useState,
+} from 'react';
 import {
   TextInput as RNInput,
   Platform,
@@ -18,6 +24,7 @@ import {getFontSize, getResHeight, getResWidth} from '../utility/responsive';
 import {backgroundColorHandler, textColorHandler} from './commonHelper';
 import {useSelector} from 'react-redux';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import WaveButton from './WaveButton';
 
 const CustomHeader = props => {
   const {
@@ -32,62 +39,147 @@ const CustomHeader = props => {
     isDelete,
   } = props;
 
-  let {isDarkMode, currentBgColor, currentTextColor} = useSelector(
-    state => state.user,
-  );
+  let {isDarkMode, userLocation, currentBgColor, currentTextColor} =
+    useSelector(state => state.user);
 
   const {unreadCount} = useSelector(
     state => state.notification.getNotification,
   );
 
+  const waveButtonProps = useCallback(
+    color => ({
+      onPress: () => {
+        /* Navigation action */
+      },
+      circleContainer: {
+        width: getResHeight(2),
+        height: getResHeight(2),
+        borderRadius: getResHeight(2) / 2,
+        backgroundColor: color,
+      },
+      circleStyle: {
+        width: getResHeight(2),
+        height: getResHeight(2),
+        borderRadius: getResHeight(2) / 2,
+        backgroundColor: color,
+      },
+    }),
+    [],
+  );
+
+  let isOnline = true;
+
+  const waveButtonPropsFirstRoute = waveButtonProps(theme.color.greenBRGA);
   return (
     <>
       <SafeAreaView style={{}}>
         <View
           style={{
-            marginTop: getResHeight(1),
+            paddingVertical: getResHeight(0.5),
+
             width: '100%',
             paddingHorizontal: '4%',
+            paddingVertical: '3%',
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginBottom: '3%',
-            borderBottomWidth: Hamburger ? 0.5 : 0,
+            // marginBottom: '3%',
+            // borderBottomWidth: Hamburger ? 0.5 : 0,
             borderBottomColor: currentBgColor,
+            backgroundColor: isDarkMode
+              ? theme.color.dardkModeOnBGColor
+              : theme.color.darkModeOffBGColor,
           }}>
           {Hamburger && (
-            <Button
-              type={'clear'}
-              onPress={Hamburger}
-              iconPosition="right"
-              icon={
-                <VectorIcon
-                  type={'Ionicons'}
-                  name={'menu'}
-                  size={getFontSize(4)}
-                  color={currentTextColor}
-                  style={{}}
-                />
-              }
-              iconContainerStyle={{}}
-              containerStyle={[
-                {
-                  width: getResHeight(5),
-                  height: getResHeight(5),
-                  justifyContent: 'center',
-                  backgroundColor: currentBgColor,
-                  borderRadius: getResHeight(100),
-                },
-              ]}
-              buttonStyle={[
-                {
-                  width: '100%',
-                  height: '100%',
-                  borderRadius: 100,
-                },
-              ]}
-            />
+            <>
+              <TouchableOpacity activeOpacity={0.8} onPress={Hamburger}>
+                <View
+                  style={{
+                    height: getResHeight(6),
+                    width: getResHeight(6),
+                    backgroundColor: currentBgColor,
+                    borderRadius: getResHeight(8),
+                    overflow: 'hidden',
+                    borderWidth: 2,
+                    borderColor: isOnline
+                      ? theme.color.greenBRGA
+                      : theme.color.redBRGA,
+
+                    zIndex: -99999,
+                  }}>
+                  <Image
+                    source={{
+                      uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQn9zilY2Yu2hc19pDZFxgWDTUDy5DId7ITqA&s',
+                      height: '100%',
+                      width: '100%',
+                    }}
+                  />
+                </View>
+
+                <View
+                  style={[
+                    {
+                      position: 'absolute',
+                      bottom: 0,
+                      right: 0,
+                      borderRadius: 100,
+                      zIndex: 99999,
+                    },
+                    !isOnline && {
+                      backgroundColor: 'red',
+                      height: getResHeight(2),
+                      width: getResHeight(2),
+                    },
+                  ]}>
+                  {isOnline && (
+                    <WaveButton {...waveButtonPropsFirstRoute} disabled />
+                  )}
+                </View>
+              </TouchableOpacity>
+              {userLocation.address !== 'error' && (
+                <>
+                  <View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                      }}>
+                      <VectorIcon
+                        type={'Ionicons'}
+                        name={'location'}
+                        size={getFontSize(2.9)}
+                        color={theme.color.redBRGA}
+                      />
+                      <Text
+                        style={{
+                          color: theme.color.charcolBlack,
+                          paddingTop: getResHeight(0.3),
+                          fontSize: getFontSize(1.8),
+                          textAlign: 'center',
+                          fontFamily: theme.font.medium,
+                        }}>
+                        Address
+                      </Text>
+                    </View>
+                    <Text
+                      style={{
+                        color: theme.color.charcolBlack,
+
+                        marginTop: getResHeight(0.3),
+                        textAlign: 'center',
+                        fontFamily: theme.font.medium,
+                        fontSize: getFontSize(1.3),
+                      }}>
+                      {userLocation.address.length > 20
+                        ? `${userLocation.address.slice(0, 20)}...`
+                        : userLocation.address}
+                    </Text>
+                  </View>
+                </>
+              )}
+            </>
           )}
+
           {backPress && (
             <View
               style={{
@@ -98,6 +190,7 @@ const CustomHeader = props => {
                 type={'clear'}
                 onPress={backPress}
                 iconPosition="right"
+                activeOpacity={0.8}
                 icon={
                   <VectorIcon
                     type={'Ionicons'}
@@ -205,7 +298,7 @@ const CustomHeader = props => {
                       type={'MaterialIcons'}
                       name={'notifications'}
                       size={getFontSize(3.5)}
-                      color={currentTextColor}
+                      color={theme.color.offWhite}
                       style={{}}
                     />
                   }

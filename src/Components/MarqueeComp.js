@@ -10,13 +10,14 @@ const MarqueeComp = props => {
       <MarqueeView
         // speed={0.2}
         style={{
-          backgroundColor: theme.color.iceWhite,
+          backgroundColor: theme.color.whiteText,
         }}>
         <Text
           style={{
             fontSize: getFontSize(1.7),
             fontFamily: theme.font.semiBold,
-            color: theme.color.error,
+            color: theme.color.charcolBlack,
+            textTransform: 'capitalize',
           }}>
           {textRender}
         </Text>

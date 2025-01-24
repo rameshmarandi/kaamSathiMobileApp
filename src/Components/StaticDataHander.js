@@ -155,260 +155,6 @@ const DrawerData = () => {
   return {drawerStaticData};
 };
 
-const adminDashboardCardData = [
-  {
-    category: 'User Management',
-    items: [
-      {
-        id: 0,
-        title: 'All Members',
-        image: theme.assets.members,
-        routeName: 'Members',
-      },
-      {
-        id: 1,
-        title: 'Admin Management',
-        image: theme.assets.adminManag,
-        routeName: 'AdminManagment',
-      },
-      {
-        id: 1,
-        title: 'Add New User',
-        image: theme.assets.add_new_user,
-        routeName: 'AddMemberForm',
-      },
-      {
-        id: 1,
-        title: 'Subscription Details',
-        image: theme.assets.subscription,
-        routeName: 'ChurchProfile',
-      },
-    ],
-  },
-  {
-    category: 'Support the Mission',
-    items: [
-      {
-        id: 0,
-        title: 'Donate Now',
-        image: theme.assets.payment_history,
-
-        routeName: 'razorpay',
-      },
-      {
-        id: 1,
-        title: 'Payment History',
-        image: theme.assets.payment_history,
-        routeName: 'PaymentHistory',
-        type: 'payment_history',
-      },
-    ],
-  },
-  {
-    category: 'Spiritual Resources',
-    items: [
-      {
-        id: 3,
-        title: 'Daily Verses',
-        image: theme.assets.DBible,
-        routeName: 'DailyVerse', // Add the route name
-      },
-      {
-        id: 5,
-        title: 'Free Resources',
-        image: theme.assets.pdf,
-        routeName: 'AdminResource', // Add the route name
-      },
-      {
-        id: 6,
-        title: 'Prayer Request',
-        image: theme.assets.prayer,
-        routeName: 'AllPrayerReq', // Add the route name
-      },
-      {
-        id: 9,
-        title: 'What We Believe',
-        image: theme.assets.contact,
-        routeName: 'AdminOurBelieve', // Add the route name
-      },
-    ],
-  },
-  {
-    category: 'Community Engagement',
-    items: [
-      {
-        id: 2,
-        title: 'Momentous Posts',
-        image: theme.assets.camera,
-        routeName: 'UploadBanner', // Add the route name
-      },
-      {
-        id: 8,
-        title: 'Testimonial Wall',
-        image: theme.assets.contact,
-        routeName: '', // Add the route name
-      },
-      {
-        id: 4,
-        title: 'Notification Controls',
-        image: theme.assets.alert,
-        routeName: '', // Add the route name
-      },
-      {
-        id: 4,
-        title: 'ChatGPT AI',
-        image: theme.assets.chatGPT,
-        routeName: 'https://chatgpt.com/', // Add the route name
-      },
-    ],
-  },
-  {
-    category: 'Support and Contact',
-    items: [
-      {
-        id: 7,
-        title: 'Contact Us',
-        image: theme.assets.contact,
-        routeName: 'AdminContact',
-      },
-      {
-        id: 10,
-        title: 'Church Locations',
-        image: theme.assets.churchLocation,
-        routeName: 'ChurchMap',
-      },
-    ],
-  },
-  // {
-  //   category: 'Location and Navigation',
-  //   items: [
-
-  //   ],
-  // },
-];
-
-const freeResourceData = [
-  {
-    category: 'Spiritual Resources',
-    items: [
-      {
-        id: 6,
-        title: 'E-Books (Free)',
-        image: theme.assets.ebook,
-        routeName: ALL_LINKS.E_BOOKS,
-      },
-      {
-        id: 1,
-        title: 'Theology & More',
-        image: theme.assets.theology,
-        routeName: 'theology',
-      },
-      {
-        id: 2,
-        title: 'GotQuestion (English)',
-        image: theme.assets.gotquestion,
-        routeName: ALL_LINKS.GOTQUESTION_ENGLISH,
-      },
-      {
-        id: 3,
-        title: 'GotQuestion (Hindi)',
-        image: theme.assets.gotquestion,
-        routeName: ALL_LINKS.GOTQUESTION_HINDI,
-      },
-      {
-        id: 0,
-        title: 'Missionary Biography',
-        image: theme.assets.missionary,
-        routeName: ALL_LINKS.MISSIONARY_BIOGRAPHY,
-      },
-      {
-        id: 4,
-        title: 'Christian Rights',
-        image: theme.assets.unity,
-        routeName: ALL_LINKS.CHRISTIAN_RIGHTS,
-      },
-    ],
-  },
-];
-
-const beliefsData = [
-  {
-    id: 1,
-    text: 'That the Bible (66 books) is the inspired and infallible Word of God, the sole and sufficient guide for our life on earth.',
-  },
-  {
-    id: 2,
-    text: 'That there is one God eternally existent in three Persons: Father, Son and Holy Spirit.',
-  },
-  {
-    id: 3,
-    text: 'In the Deity of our Lord Jesus Christ, His virgin birth, His humanity, His perfectly sinless life, His substitutionary death as an atonement for our sins, His bodily resurrection, His ascension to the Father, and His personal return to the earth for His saints.',
-  },
-  {
-    id: 4,
-    text: 'That all human beings are dead in sin and utterly lost and that the only way their sins can be forgiven is through repentance and through faith in the death and resurrection of our Lord Jesus Christ.',
-  },
-  {
-    id: 5,
-    text: 'In the regenerating work of the Holy Spirit, whereby a person is born again to be a child of God.',
-  },
-  {
-    id: 6,
-    text: 'That justification is by faith in Christ alone, the evidence of this being good works that glorify God.',
-  },
-  {
-    id: 7,
-    text: 'In baptism in water, by immersion, after regeneration, in the Name of the Father, the Son and the Holy Spirit.',
-  },
-  {
-    id: 8,
-    text: 'In the necessity of being filled with the Holy Spirit continually in order to have power to be witnesses for Christ - by life and by word.',
-  },
-  {
-    id: 9,
-    text: 'In the resurrection of the righteous to eternal life and the resurrection of the unrighteous to eternal damnation.',
-  },
-];
-
-const HindiBeliefsData = [
-  {
-    id: 1,
-    text: 'कि बाइबल (66 पुस्तकें) परमेश्वर का प्रेरित और अचूक वचन है, जो पृथ्वी पर हमारे जीवन के लिए एकमात्र और पर्याप्त मार्गदर्शक है।',
-  },
-  {
-    id: 2,
-    text: 'कि एक ही परमेश्वर है जो तीन व्यक्तियों में अनन्तकाल से विद्यमान है: पिता, पुत्र और पवित्र आत्मा।',
-  },
-  {
-    id: 3,
-    text: 'हमारे प्रभु यीशु मसीह की दिव्यता, उनका कुँवारी से जन्म, उनकी मानवता, उनका पापरहित जीवन, हमारे पापों का प्रायश्चित करने के लिए उनका स्थानापन्न बलिदान, उनका शारीरिक पुनरुत्थान, पिता के पास उनका आरोहण और उनके संतों के लिए पृथ्वी पर उनका व्यक्तिगत आगमन।',
-  },
-  {
-    id: 4,
-    text: 'सभी मनुष्य पाप में मृत और पूरी तरह से खोए हुए हैं, और उनके पापों की क्षमा केवल हमारे प्रभु यीशु मसीह की मृत्यु और पुनरुत्थान में विश्वास और पश्चाताप के द्वारा ही संभव है।',
-  },
-  {
-    id: 5,
-    text: 'पवित्र आत्मा के पुनर्जनन कार्य में विश्वास, जिसके द्वारा एक व्यक्ति परमेश्वर का पुत्र बनकर नया जन्म पाता है।',
-  },
-  {
-    id: 6,
-    text: 'कि धार्मिकता केवल मसीह में विश्वास के द्वारा है, और इसका प्रमाण अच्छे कार्य हैं जो परमेश्वर की महिमा के लिए होते हैं।',
-  },
-  {
-    id: 7,
-    text: 'पुनर्जनन के बाद, पिता, पुत्र और पवित्र आत्मा के नाम से जल में पूर्ण रूप से बपतिस्मा लेने में विश्वास।',
-  },
-  {
-    id: 8,
-    text: 'यह आवश्यक है कि हमें लगातार पवित्र आत्मा से भरना चाहिए, ताकि हमारे जीवन और शब्दों के द्वारा मसीह के साक्षी बनने की शक्ति प्राप्त हो।',
-  },
-  {
-    id: 9,
-    text: 'धार्मिकों का अनंत जीवन के लिए और अधार्मिकों का अनंत दंड के लिए पुनरुत्थान में विश्वास।',
-  },
-];
-
 const toastConfig = {
   success: props => (
     <BaseToast
@@ -452,185 +198,373 @@ const toastConfig = {
   ),
 };
 
-// Study resouces samples data
-
-const adminStudyResouce = [
+const skilledWorkers = [
   {
     id: 1,
-    title: 'The Power of Prayer',
-    tag: 'Hindi',
-    posterUrl:
-      'https://familyradio316.com/wp-content/uploads/2022/03/power-of-prayer.jpg',
-    pdfUrl: 'https://example.com/pdfs/the-power-of-prayer.pdf',
-    pdfName: 'The Power of Prayer.pdf',
+    name: 'Amit Kumar',
+    skill: 'Electrician',
+    location: 'Delhi',
+    experience: 5,
   },
   {
     id: 2,
-    title: 'Understanding Faith',
-    tag: 'English',
-    posterUrl:
-      'https://d1zx0zj5kmre28.cloudfront.net/images/covers/understanding_faith.jpg',
-    pdfUrl: '',
-    pdfName: 'Understanding Faith.pdf',
+    name: 'Suresh Verma',
+    skill: 'Plumber',
+    location: 'Mumbai',
+    experience: 3,
   },
   {
     id: 3,
-    title: 'Journey Through Psalms',
-    tag: 'Marathi',
-    posterUrl:
-      'https://m.media-amazon.com/images/I/71onirxyEkS._AC_UF1000,1000_QL80_.jpg',
-    pdfUrl: 'https://example.com/pdfs/journey-through-psalms.pdf',
-    pdfName: 'Journey Through Psalms.pdf',
+    name: 'Rajesh Singh',
+    skill: 'Carpenter',
+    location: 'Bangalore',
+    experience: 7,
   },
   {
     id: 4,
-    title: 'The Ten Commandments',
-    tag: 'Marathi',
-    posterUrl:
-      'https://spaces.filmstories.co.uk/uploads/2021/02/the-ten-commandments.jpg',
-    pdfUrl: '',
-    pdfName: 'The Ten Commandments.pdf',
+    name: 'Pooja Sharma',
+    skill: 'Painter',
+    location: 'Pune',
+    experience: 4,
   },
   {
     id: 5,
-    title: 'Living in Grace',
-    tag: 'English',
-    posterUrl:
-      'https://cdn.msia.org/shop/wp-content/uploads/sites/9/2008/06/3903-CD-artwork.jpg',
-    pdfUrl: 'https://example.com/pdfs/living-in-grace.pdf',
-    pdfName: 'Living in Grace.pdf',
+    name: 'Deepak Mehta',
+    skill: 'Mechanic',
+    location: 'Chennai',
+    experience: 6,
   },
   {
     id: 6,
-    title: 'Biblical Wisdom',
-    tag: 'Hindi',
-    posterUrl:
-      'https://m.media-amazon.com/images/I/91I8Om24MDL._AC_UF1000,1000_QL80_.jpg',
-    pdfUrl: 'https://example.com/pdfs/biblical-wisdom.pdf',
-    pdfName: 'Biblical Wisdom.pdf',
+    name: 'Anjali Chauhan',
+    skill: 'Gardener',
+    location: 'Kolkata',
+    experience: 2,
   },
   {
     id: 7,
-    title: 'Hope for All',
-    tag: 'English',
-    posterUrl: 'https://pictures.abebooks.com/isbn/9780977279357-us.jpg',
-    pdfUrl: 'https://example.com/pdfs/faith-and-hope.pdf',
-    pdfName: 'Faith and Hope.pdf',
+    name: 'Ramesh Gupta',
+    skill: 'Welder',
+    location: 'Hyderabad',
+    experience: 8,
   },
   {
     id: 8,
-    title: 'Spiritual Growth',
-    tag: 'Marathi',
-    posterUrl:
-      'https://joemarino.org/wp-content/uploads/2018/05/SpiritualGrowth-1-608x405.jpg',
-    pdfUrl: 'https://example.com/pdfs/spiritual-growth.pdf',
-    pdfName: 'Spiritual Growth.pdf',
+    name: 'Meena Kapoor',
+    skill: 'Tailor',
+    location: 'Lucknow',
+    experience: 5,
   },
   {
     id: 9,
-    title: 'God’s Love Revealed',
-    tag: 'Hindi',
-    posterUrl: 'https://i.ytimg.com/vi/BXy2QkBuZwY/sddefault.jpg?v=64f54773',
-    pdfUrl: 'https://example.com/pdfs/gods-love-revealed.pdf',
-    pdfName: 'God’s Love Revealed.pdf',
+    name: 'Vikas Yadav',
+    skill: 'Mason',
+    location: 'Jaipur',
+    experience: 9,
   },
   {
     id: 10,
-    title: 'Foundation of faith',
-    tag: 'English',
-    posterUrl:
-      'https://marvel-b1-cdn.bc0a.com/f00000000039764/cmsedit.cbn.com/sites/default/files/styles/image_xl_640x480/public/foundations-of-the-faith_si_0.jpg?itok=hxi_GJ-P',
-    pdfUrl: 'https://example.com/pdfs/the-role-of-faith.pdf',
-    pdfName: 'The Role of Faith.pdf',
+    name: 'Rita Sharma',
+    skill: 'Housekeeper',
+    location: 'Ahmedabad',
+    experience: 4,
   },
   {
     id: 11,
-    title: 'The Wisdom of Proverbs',
-    tag: 'Marathi',
-    posterUrl: '',
-    pdfUrl: 'https://example.com/pdfs/the-wisdom-of-proverbs.pdf',
-    pdfName: 'The Wisdom of Proverbs.pdf',
+    name: 'Kiran Singh',
+    skill: 'Beautician',
+    location: 'Chandigarh',
+    experience: 6,
   },
   {
     id: 12,
-    title: 'Grace and Forgiveness',
-    tag: 'Hindi',
-    posterUrl: '',
-    pdfUrl: 'https://example.com/pdfs/grace-and-forgiveness.pdf',
-    pdfName: 'Grace and Forgiveness.pdf',
+    name: 'Ajay Pandey',
+    skill: 'Chef',
+    location: 'Surat',
+    experience: 10,
   },
   {
     id: 13,
-    title: 'Prayer for Strength',
-    tag: 'English',
-    posterUrl: '',
-    pdfUrl: 'https://example.com/pdfs/prayer-for-strength.pdf',
-    pdfName: 'Prayer for Strength.pdf',
+    name: 'Manoj Patel',
+    skill: 'Driver',
+    location: 'Indore',
+    experience: 3,
   },
   {
     id: 14,
-    title: 'Understanding Salvation',
-    tag: 'Marathi',
-    posterUrl: '',
-    pdfUrl: 'https://example.com/pdfs/understanding-salvation.pdf',
-    pdfName: 'Understanding Salvation.pdf',
+    name: 'Sunita Joshi',
+    skill: 'Babysitter',
+    location: 'Bhopal',
+    experience: 2,
   },
   {
     id: 15,
-    title: 'The Gift of Grace',
-    tag: 'Hindi',
-    posterUrl: '',
-    pdfUrl: 'https://example.com/pdfs/the-gift-of-grace.pdf',
-    pdfName: 'The Gift of Grace.pdf',
+    name: 'Santosh Das',
+    skill: 'Barber',
+    location: 'Nagpur',
+    experience: 4,
   },
   {
     id: 16,
-    title: 'Living in Faith',
-    tag: 'English',
-    posterUrl: '',
-    pdfUrl: 'https://example.com/pdfs/living-in-faith.pdf',
-    pdfName: 'Living in Faith.pdf',
+    name: 'Nisha Gupta',
+    skill: 'Teacher',
+    location: 'Patna',
+    experience: 7,
   },
   {
     id: 17,
-    title: 'The Fruit of the Spirit',
-    tag: 'Marathi',
-    posterUrl: '',
-    pdfUrl: 'https://example.com/pdfs/the-fruit-of-the-spirit.pdf',
-    pdfName: 'The Fruit of the Spirit.pdf',
+    name: 'Arjun Reddy',
+    skill: 'Delivery Person',
+    location: 'Vijayawada',
+    experience: 2,
   },
   {
     id: 18,
-    title: 'The Essence of Worship',
-    tag: 'Hindi',
-    posterUrl: '',
-    pdfUrl: 'https://example.com/pdfs/the-essence-of-worship.pdf',
-    pdfName: 'The Essence of Worship.pdf',
+    name: 'Geeta Rao',
+    skill: 'Photographer',
+    location: 'Visakhapatnam',
+    experience: 5,
   },
   {
     id: 19,
-    title: 'Overcoming Doubt',
-    tag: 'English',
-    posterUrl: '',
-    pdfUrl: 'https://example.com/pdfs/overcoming-doubt.pdf',
-    pdfName: 'Overcoming Doubt.pdf',
+    name: 'Kartik Iyer',
+    skill: 'Personal Trainer',
+    location: 'Coimbatore',
+    experience: 6,
   },
   {
     id: 20,
-    title: 'The Path of Righteousness',
-    tag: 'Marathi',
-    posterUrl: '',
-    pdfUrl: 'https://example.com/pdfs/the-path-of-righteousness.pdf',
-    pdfName: 'The Path of Righteousness.pdf',
+    name: 'Priya Nair',
+    skill: 'Yoga Instructor',
+    location: 'Thiruvananthapuram',
+    experience: 4,
+  },
+  {
+    id: 21,
+    name: 'Rohit Sharma',
+    skill: 'Security Guard',
+    location: 'Gurgaon',
+    experience: 8,
+  },
+  {
+    id: 22,
+    name: 'Jyoti Singh',
+    skill: 'Receptionist',
+    location: 'Noida',
+    experience: 3,
+  },
+  {
+    id: 23,
+    name: 'Aman Tiwari',
+    skill: 'Auto Mechanic',
+    location: 'Ghaziabad',
+    experience: 6,
+  },
+  {
+    id: 24,
+    name: 'Sneha Mishra',
+    skill: 'Cobbler',
+    location: 'Faridabad',
+    experience: 4,
+  },
+  {
+    id: 25,
+    name: 'Harish Kumar',
+    skill: 'Painter',
+    location: 'Delhi',
+    experience: 7,
+  },
+  {
+    id: 26,
+    name: 'Alok Mehta',
+    skill: 'Electrician',
+    location: 'Mumbai',
+    experience: 5,
+  },
+  {
+    id: 27,
+    name: 'Seema Verma',
+    skill: 'Seamstress',
+    location: 'Jaipur',
+    experience: 4,
+  },
+  {
+    id: 28,
+    name: 'Ravi Sharma',
+    skill: 'AC Technician',
+    location: 'Lucknow',
+    experience: 6,
+  },
+  {
+    id: 29,
+    name: 'Rajni Gupta',
+    skill: 'Makeup Artist',
+    location: 'Pune',
+    experience: 5,
+  },
+  {
+    id: 30,
+    name: 'Sahil Khan',
+    skill: 'Tutor',
+    location: 'Bangalore',
+    experience: 8,
+  },
+  {
+    id: 31,
+    name: 'Tanvi Kulkarni',
+    skill: 'Event Planner',
+    location: 'Hyderabad',
+    experience: 3,
+  },
+  {
+    id: 32,
+    name: 'Yash Kapoor',
+    skill: 'Graphic Designer',
+    location: 'Chennai',
+    experience: 4,
+  },
+  {
+    id: 33,
+    name: 'Shivani Aggarwal',
+    skill: 'Content Writer',
+    location: 'Delhi',
+    experience: 5,
+  },
+  {
+    id: 34,
+    name: 'Asha Devi',
+    skill: 'Housemaid',
+    location: 'Mumbai',
+    experience: 10,
+  },
+  {
+    id: 35,
+    name: 'Manish Yadav',
+    skill: 'Cook',
+    location: 'Bangalore',
+    experience: 7,
+  },
+  {
+    id: 36,
+    name: 'Rekha Chawla',
+    skill: 'Laundry Worker',
+    location: 'Kolkata',
+    experience: 4,
+  },
+  {
+    id: 37,
+    name: 'Prakash Naik',
+    skill: 'Driver',
+    location: 'Nagpur',
+    experience: 3,
+  },
+  {
+    id: 38,
+    name: 'Kavita Jain',
+    skill: 'Data Entry Operator',
+    location: 'Pune',
+    experience: 6,
+  },
+  {
+    id: 39,
+    name: 'Ganesh Rao',
+    skill: 'Security Guard',
+    location: 'Chennai',
+    experience: 8,
+  },
+  {
+    id: 40,
+    name: 'Pankaj Tiwari',
+    skill: 'Car Washer',
+    location: 'Ahmedabad',
+    experience: 2,
+  },
+  {
+    id: 41,
+    name: 'Vandana Mishra',
+    skill: 'Florist',
+    location: 'Lucknow',
+    experience: 3,
+  },
+  {
+    id: 42,
+    name: 'Ashok Sharma',
+    skill: 'Electrician',
+    location: 'Surat',
+    experience: 5,
+  },
+  {
+    id: 43,
+    name: 'Ankur Singh',
+    skill: 'IT Technician',
+    location: 'Noida',
+    experience: 4,
+  },
+  {
+    id: 44,
+    name: 'Kritika Mehra',
+    skill: 'Hair Stylist',
+    location: 'Jaipur',
+    experience: 6,
+  },
+  {
+    id: 45,
+    name: 'Aakash Jain',
+    skill: 'Fitness Coach',
+    location: 'Bhopal',
+    experience: 7,
+  },
+  {
+    id: 46,
+    name: 'Sonali Verma',
+    skill: 'Waitress',
+    location: 'Patna',
+    experience: 2,
+  },
+  {
+    id: 47,
+    name: 'Vivek Gupta',
+    skill: 'Bike Mechanic',
+    location: 'Gurgaon',
+    experience: 5,
+  },
+  {
+    id: 48,
+    name: 'Parul Saxena',
+    skill: 'Event Coordinator',
+    location: 'Chandigarh',
+    experience: 3,
+  },
+  {
+    id: 49,
+    name: 'Ashish Yadav',
+    skill: 'Civil Engineer',
+    location: 'Delhi',
+    experience: 10,
+  },
+  {
+    id: 50,
+    name: 'Anita Sharma',
+    skill: 'Tailor',
+    location: 'Lucknow',
+    experience: 5,
+  },
+  {
+    id: 51,
+    name: 'Abhay Pratap',
+    skill: 'Miscellaneous',
+    location: 'Varanasi',
+    experience: 2,
   },
 ];
 
 export {
-  adminDashboardCardData,
+  skilledWorkers,
+  // adminDashboardCardData,
   DrawerData,
-  freeResourceData,
-  adminStudyResouce,
-  toastConfig,
-  beliefsData,
-  HindiBeliefsData,
+  // freeResourceData,
+  // adminStudyResouce,
+  // toastConfig,
+  // beliefsData,
+  // HindiBeliefsData,
 };

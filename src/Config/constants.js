@@ -10,6 +10,8 @@ export const MapCoordinate = {
   longitude: 73.8405735,
 };
 
+export const GOOGLE_MAP_KEY = 'AIzaSyBaGHp3hW_TgoyCcbkuUogkIQqzolYdpmc';
+
 export const ALL_LINKS = {
   youtubeLink: 'https://www.youtube.com/watch?v=0vJq7cWlEOA',
 

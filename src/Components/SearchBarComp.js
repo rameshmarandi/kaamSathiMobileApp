@@ -4,6 +4,7 @@ import {SearchBar} from 'react-native-elements';
 import theme from '../utility/theme';
 import {useSelector} from 'react-redux';
 import {getFontSize, getResHeight, getResWidth} from '../utility/responsive';
+import MarqueeComp from './MarqueeComp';
 
 const SearchBarComp = ({
   autoFocus = false,
@@ -16,6 +17,7 @@ const SearchBarComp = ({
   autoCapitalize = 'none',
   isLoading,
   onFocus,
+  onClear = () => {},
   round = 10,
 }) => {
   const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
@@ -24,14 +26,12 @@ const SearchBarComp = ({
 
   return (
     <View
-      style={
-        {
-          // marginBottom: '14%',
-        }
-      }>
+      style={{
+        zIndex: 9999,
+      }}>
       <SearchBar
         placeholder={placeholder}
-        placeholderTextColor={placeholderTextColor || theme.color.dimGray}
+        placeholderTextColor={placeholderTextColor || theme.color.charcolBlack}
         searchIcon={{
           iconStyle: {
             fontSize: getFontSize(3),
@@ -45,7 +45,8 @@ const SearchBarComp = ({
         onFocus={onFocus}
         value={value}
         round={round}
-        cursorColor={isDarkMode ? theme.color.darkTheme : currentTextColor}
+        onClear={onClear}
+        cursorColor={isDarkMode ? theme.color.charcolBlack : currentTextColor}
         containerStyle={[
           containerStyle || {
             width: getResWidth(95),
@@ -53,13 +54,15 @@ const SearchBarComp = ({
             alignSelf: 'center',
             borderTopWidth: 0,
             borderBottomWidth: 0,
-            backgroundColor: currentBgColor,
+            backgroundColor:
+              // 'white',
+              currentBgColor,
             margin: 0,
             alignItems: 'center',
           },
         ]}
         inputStyle={{
-          color: theme.color.darkTheme,
+          color: theme.color.charcolBlack,
           fontSize: getFontSize(1.6),
           fontFamily: theme.font.medium,
           alignItems: 'center',
@@ -67,7 +70,9 @@ const SearchBarComp = ({
         }}
         inputContainerStyle={{
           alignItems: 'center',
-          backgroundColor: isDarkMode ? currentTextColor : theme.color.dimWhite,
+          backgroundColor:
+            // isDarkMode ? currentTextColor :
+            theme.color.dimGrey,
         }}
       />
     </View>

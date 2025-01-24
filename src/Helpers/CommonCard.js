@@ -266,4 +266,21 @@ const styles = StyleSheet.create({
     fontSize: getFontSize(1.5),
   },
 });
-export {UserCard, UserBioComponent};
+
+const SectionHeaderName = props => {
+  const {sectionName} = props;
+  return (
+    <>
+      <Text
+        style={{
+          fontFamily: theme.font.semiBold,
+          fontSize: getFontSize(1.7),
+          color: theme.color.charcolBlack,
+          paddingHorizontal: '5%',
+        }}>
+        {sectionName}
+      </Text>
+    </>
+  );
+};
+export {UserCard, UserBioComponent, SectionHeaderName};

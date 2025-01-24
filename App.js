@@ -33,26 +33,45 @@ import {
   checkIsUserLoggedIn,
   generateFCMToken,
 } from './src/Helpers/CommonHelpers';
-import {requestNotificationPermission} from './src/utility/PermissionContoller';
+import {
+  requestLocationPermission,
+  requestMultiplePermissions,
+  requestNotificationPermission,
+} from './src/utility/PermissionContoller';
 import DefaultPopup, {
   renderCustomPopup,
 } from './src/Components/DefaultNotificationPopup';
 import Sound from 'react-native-sound';
+import {handleDarkMode} from './src/Components/commonHelper';
 const Stack = createNativeStackNavigator();
 LogBox.ignoreAllLogs(true);
 
+import Geocoder from 'react-native-geocoding';
+import {GOOGLE_MAP_KEY} from './src/Config/constants';
+
 const App = () => {
-  StatusBar.setBarStyle('light-content');
   StatusBar.setBackgroundColor(theme.color.dardkModeOnBGColor); // Set your desired background color
   const popupRef = useRef();
   const rootDetRef = useRef();
-
+  let {isDarkMode, currentBgColor, currentTextColor} = store.getState().user;
+  // useSelector(
+  //   state => state.user,
+  // );
   const [isLoading, setIsLoading] = useState(true);
   const [isLogedIn, setIsLogedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
+  useEffect(() => {
+    if (isDarkMode) {
+      StatusBar.setBarStyle('light-content');
+    } else {
+      StatusBar.setBarStyle('light-content');
+    }
+  }, [isDarkMode]);
   // const []
   useEffect(() => {
+    Geocoder.init(GOOGLE_MAP_KEY);
+    handleDarkMode();
     checkIsAuthUser();
     InitRender();
     setTimeout(() => {
@@ -61,7 +80,8 @@ const App = () => {
   }, []);
 
   const InitRender = async () => {
-    requestNotificationPermission();
+    requestMultiplePermissions();
+
     generateFCMToken();
   };
 
@@ -204,8 +224,10 @@ function AnimatedSlash() {
         />
         <Text
           style={{
-            color: 'white',
+            color: theme.color.charcolBlack,
             paddingTop: '30%',
+            fontSize: getFontSize(1.5),
+            fontFamily: theme.font.semiBold,
           }}>
           Loading..
         </Text>
