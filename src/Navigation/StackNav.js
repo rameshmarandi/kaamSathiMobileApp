@@ -11,6 +11,14 @@ export function HomeStack(props) {
       <Stack.Navigator screenOptions={{...transitionCard, ...screenOptions}}>
         <Stack.Screen name={'HomePage'} component={AllScreens.HomePage} />
         <Stack.Screen name={'SearchOnMap'} component={AllScreens.SearchOnMap} />
+        <Stack.Screen
+          name={'EmployeeProfileDetails'}
+          component={AllScreens.EmployeeProfileDetails}
+        />
+        <Stack.Screen
+          name={'EmployeeFound'}
+          component={AllScreens.EmployeeFound}
+        />
       </Stack.Navigator>
     </>
   );

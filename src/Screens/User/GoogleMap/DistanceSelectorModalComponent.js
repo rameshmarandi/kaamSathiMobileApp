@@ -33,7 +33,7 @@ const DistanceSelectorModalComponent = ({
           {
             backgroundColor:
               selectedDistance.id === index ? theme.color.lighYellow : 'white',
-            borderRadius: 10,
+            // borderRadius: 10,
           },
         ]}>
         {item}

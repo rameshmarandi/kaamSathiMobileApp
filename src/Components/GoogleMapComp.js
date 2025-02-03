@@ -173,8 +173,8 @@ const GoogleUIComp = props => {
               center={currentLocation}
               radius={200} // Radius in meters
               strokeWidth={2}
-              strokeColor="#FF9800"
-              fillColor="#FFF8E1"
+              strokeColor={'rgba(255, 152, 0, 1)'}
+              fillColor={'rgba(255, 152, 0, 0.1)'}
             />
           </>
         )}

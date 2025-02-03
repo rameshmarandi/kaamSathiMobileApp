@@ -7,10 +7,14 @@ import HomePage from './User/HomePage/index';
 import AdminDashboard from './Admin/AdminDashboard/index';
 import Approval from './Admin/Approval/index';
 import SearchOnMap from './User/GoogleMap/SearchOnMap';
+import EmployeeFound from './User/GoogleMap/EmployeeFound';
+import EmployeeProfileDetails from './User/GoogleMap/EmployeeProfileDetails';
 
 const UserAllScreens = {
   HomePage,
   SearchOnMap,
+  EmployeeFound,
+  EmployeeProfileDetails,
 };
 
 const AdminScreens = {

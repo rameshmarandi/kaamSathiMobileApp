@@ -208,7 +208,7 @@ const CustomHeader = props => {
                     // justifyContent:"center",
                     backgroundColor: currentBgColor,
                     backgroundColor: isDarkMode
-                      ? theme.color.dimWhite
+                      ? theme.color.darkModeOffBGColor
                       : theme.color.primary,
                     borderRadius: getResHeight(100),
                   },
@@ -227,7 +227,7 @@ const CustomHeader = props => {
                   fontSize: getFontSize(2),
                   fontFamily: theme.font.medium,
                   color: currentTextColor,
-                  // marginTop:getResHeight(1),
+                  marginTop: getResHeight(1),
                   marginLeft: '6%',
                 }}>
                 {screenTitle}

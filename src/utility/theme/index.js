@@ -24,7 +24,8 @@ const color = {
   charcolBlack: '#212121',
   whiteText: '#FFFFFF',
   offWhite: '#FAFAFA',
-
+  outlineColor: '#999999',
+  placeholder: '#C0C0C0',
   dardkModeOnBGColor: '#FFC107',
   // '#012537',
   darkModeOffBGColor: '#FFFFFF',

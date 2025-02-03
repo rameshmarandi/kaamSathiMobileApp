@@ -22,13 +22,14 @@ import {VectorIcon} from '../../../Components/VectorIcon';
 import GoogleUIComp from '../../../Components/GoogleMapComp';
 import {skilledWorkers} from '../../../Components/StaticDataHander';
 import DistanceSelectorModalComponent from './DistanceSelectorModalComponent';
-import EmployeeModalComponent from './EmployeeModalComponent';
+import EmployeeModalComponent from './EmployeeFound';
 
 const uniqueSkills = [
   ...new Set(skilledWorkers.map(worker => worker.skill.toLowerCase())),
 ];
 
-const SearchOnMap = ({navigation}) => {
+const SearchOnMap = props => {
+  const {navigation} = props;
   const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
   );
@@ -124,7 +125,7 @@ const SearchOnMap = ({navigation}) => {
             type="Ionicons"
             name="arrow-back-circle"
             size={getFontSize(5)}
-            color={theme.color.charcolBlack}
+            color={'white'}
           />
         </TouchableOpacity>
         <View
@@ -195,13 +196,14 @@ const SearchOnMap = ({navigation}) => {
           setSelectedDistance(item);
 
           setTimeout(() => {
-            setEmployeeModalVisible(true);
+            // setEmployeeModalVisible(true);
+            props.navigation.navigate('EmployeeFound');
           }, 1500);
         }}
         onSelectDistance={item => {}}
       />
 
-      <EmployeeModalComponent
+      {/* <EmployeeModalComponent
         isModalVisible={isEmployeeModalVisible}
         onBackdropPress={() => {
           setEmployeeModalVisible(false);
@@ -211,7 +213,7 @@ const SearchOnMap = ({navigation}) => {
         //   setSelectedEmployee(item);
         // }}
         // onSelectEmployee={item => {}}
-      />
+      /> */}
     </SafeAreaView>
   );
 };
