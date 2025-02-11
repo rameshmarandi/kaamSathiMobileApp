@@ -1,5 +1,3 @@
-import {useSelector} from 'react-redux';
-
 import asyncStorageUtil from '../utility/asyncStorageUtil';
 import {store} from '../redux/store';
 import {setAdmin, setLogedInUserType} from '../redux/reducer/Auth';

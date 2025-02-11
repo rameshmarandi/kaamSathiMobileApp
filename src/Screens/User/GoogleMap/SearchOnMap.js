@@ -100,7 +100,11 @@ const SearchOnMap = props => {
   const renderKey = useCallback(
     ({item}) => (
       <TouchableOpacity
-        onPress={() => handleSkillSelection(item)}
+        onPress={() => {
+          handleSkillSelection(item);
+
+          props.navigation.navigate('EmployeeFound');
+        }}
         style={styles.keyItem}>
         <Text style={[styles.keyText, {color: currentTextColor}]}>
           {item.charAt(0).toUpperCase() + item.slice(1)}
@@ -195,10 +199,10 @@ const SearchOnMap = props => {
         handleSelectDistance={item => {
           setSelectedDistance(item);
 
-          setTimeout(() => {
-            // setEmployeeModalVisible(true);
-            props.navigation.navigate('EmployeeFound');
-          }, 1500);
+          // setTimeout(() => {
+          // setEmployeeModalVisible(true);
+          props.navigation.navigate('EmployeeFound');
+          // }, 500);
         }}
         onSelectDistance={item => {}}
       />

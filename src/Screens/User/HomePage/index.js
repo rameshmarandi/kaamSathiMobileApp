@@ -35,6 +35,7 @@ import {skilledWorkers} from '../../../Components/StaticDataHander';
 import BannerComponent from '../../../Components/BannerComponent';
 import ReviewRatingCard from '../../../Components/ReviewRatingCard';
 import {SectionHeaderName} from '../../../Helpers/CommonCard';
+import TopSkilledProfessonals from './TopSkilledProfessonals';
 
 const uniqueSkills = [
   ...new Set(skilledWorkers.map(worker => worker.skill.toLowerCase())),
@@ -76,26 +77,14 @@ const index = memo(props => {
         }}
       />
 
-      {/* <View style={{}}>
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => {
-            props.navigation.navigate('SearchOnMap');
-          }}>
-          <SearchBarComp
-            placeholder="Search skilled professionals..."
-            disabled={true}
-          />
-        </TouchableOpacity>
-      </View> */}
       <View
         style={{
           flex: 1,
         }}>
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
           <FlatList
             data={[0, 1, 2, 3, 4]}
-            // showsVerticalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
             // onScroll={Animated.event(
             //   [{nativeEvent: {contentOffset: {y: scrollY}}}],
             //   {useNativeDriver: false},
@@ -157,25 +146,32 @@ const index = memo(props => {
                           sectionName={'Kaamsathi recommends'}
                         />
                         <BannerComponent {...props} />
+                      </View>
+                    </>
+                  );
+                case 3:
+                  return (
+                    <>
+                      <View>
+                        <SectionHeaderName
+                          sectionName={'Top skilled professionals near you'}
+                        />
+                        <TopSkilledProfessonals />
+                      </View>
+                    </>
+                  );
 
+                case 4:
+                  return (
+                    <>
+                      <View>
                         <SectionHeaderName
                           sectionName={'Voices of satisfaction'}
                         />
                         <ReviewRatingCard />
-                        {/* <BannerComponent {...props} /> */}
-                        {/* <BannerComponent {...props} /> */}
                       </View>
-                      {/* <View>
-                  <BannerComponent {...props} />
-                </View>
-                <View>
-                  <BannerComponent {...props} />
-                </View> */}
                     </>
                   );
-
-                case 3:
-                  return <></>;
                 // case 3:
                 //   return <></>;
                 // case 2:

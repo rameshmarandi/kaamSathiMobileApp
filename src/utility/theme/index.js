@@ -26,7 +26,9 @@ const color = {
   offWhite: '#FAFAFA',
   outlineColor: '#999999',
   placeholder: '#C0C0C0',
-  dardkModeOnBGColor: '#FFC107',
+  dardkModeOnBGColor:
+    // '#FFDE21',
+    '#FFC107',
   // '#012537',
   darkModeOffBGColor: '#FFFFFF',
 };

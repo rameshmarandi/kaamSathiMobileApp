@@ -41,8 +41,8 @@ const Button = ({text, onPress, isPrimary}) => (
 const EmployeeCard = React.memo(
   ({item, viewBtnPress, index, isSelected, onHeartPress}) => {
     return (
-      <TouchableOpacity
-        activeOpacity={1}
+      <View
+        // activeOpacity={1}
         style={[styles.card, index === 0 && styles.firstCard]}>
         <View style={styles.cardContainer}>
           <Image
@@ -52,27 +52,19 @@ const EmployeeCard = React.memo(
             style={styles.profileImage}
           />
         </View>
-        <View
-          style={
-            {
-              // width: '80%',
-              // flexWrap: 'wrap',
-              // backgroundColor: 'red',
-            }
-          }>
+        <View style={{}}>
           {[
             {label: 'Name', value: 'Ramesh Marandi'},
             {label: 'Languages', value: 'Hindi, English, Bengali'},
             {label: 'Distance', value: item},
             {label: 'Skills', value: 'Electrician, Plumber, Carpenter'},
-            // {label: 'Rating', value: '4.5'},
+            {label: 'Rating', value: '4.5'},
           ].map((detail, idx) => (
             <View key={idx} style={styles.detailRow}>
               <Text style={styles.detailLabel}>{`${detail.label} :`}</Text>
               <Text style={styles.detailValue}>{detail.value}</Text>
             </View>
           ))}
-
           <View style={styles.buttonContainer}>
             <Button text="View Details" onPress={viewBtnPress} />
             <Button text="Hire Now" onPress={() => {}} isPrimary />
@@ -89,7 +81,7 @@ const EmployeeCard = React.memo(
             color={isSelected ? 'red' : theme.color.charcolBlack}
           />
         </TouchableOpacity>
-      </TouchableOpacity>
+      </View>
     );
   },
 );
@@ -121,7 +113,9 @@ const EmployeeFound = ({navigation}) => {
         viewBtnPress={() => {
           // setModalVisible(true);
 
-          navigation.navigate('EmployeeProfileDetails', {});
+          navigation.navigate('EmployeeProfileDetails', {
+            worker: item,
+          });
         }}
       />
     ),
@@ -263,20 +257,27 @@ const styles = StyleSheet.create({
     marginLeft: getResWidth(1),
   },
   buttonContainer: {
+    // backgroundColor: 'red',
     flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: getResHeight(1),
   },
   button: {
+    // width: 90,
     paddingHorizontal: getResWidth(4),
     paddingVertical: getResHeight(1),
     borderRadius: 5,
     marginHorizontal: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   primaryButton: {
     backgroundColor: theme.color.secondary,
+    width: 100,
   },
   secondaryButton: {
     borderWidth: 1,
+    // width: 0,
     borderColor: theme.color.secondary,
     backgroundColor: 'white',
   },

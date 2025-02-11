@@ -28,7 +28,6 @@
     "reinstall": "rm -rf node_modules && npm install",
     "matroClean": "react-native start --reset-cache",
     "clean": "watchman watch-del-all && rm -rf /tmp/metro-bundler-cache-* && rm -rf /tmp/haste-map-react-native-packager-*",
-    "debug": "open 'rndebugger://set-debugger-loc?host=localhost&port=19001'",
     "link": "react-native link react-native-randombytes",
     "android:release": "cd android && ./gradlew app:assembleRelease && open ./android/app/build/outputs/apk/release",
     "build/apk": "open ./android/app/build/outputs/apk/release"
@@ -37,6 +36,7 @@
     "@gorhom/bottom-sheet": "^4.6.3",
     "@react-native-async-storage/async-storage": "^1.22.2",
     "@react-native-clipboard/clipboard": "^1.14.1",
+    "@react-native-community/blur": "^4.4.1",
     "@react-native-firebase/app": "^21.0.0",
     "@react-native-firebase/messaging": "^21.0.0",
     "@react-native-google-signin/google-signin": "^13.1.0",
@@ -51,6 +51,7 @@
     "lottie-ios": "4.4.1",
     "lottie-react-native": "6.7.2",
     "moment": "^2.30.1",
+    "moti": "^0.30.0",
     "prop-types": "^15.8.1",
     "react": "18.2.0",
     "react-native": "0.74.2",

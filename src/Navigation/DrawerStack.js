@@ -21,6 +21,7 @@ export default function DrawerStack(props) {
         drawerContent={props => <DrawerItems {...props} />}
         swipeable={false}
         screenOptions={{
+          gestureEnabled: false,
           drawerStyle: {
             backgroundColor: currentBgColor,
             width: '70%',
