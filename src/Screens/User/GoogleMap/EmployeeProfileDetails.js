@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
-  FlatList,
 } from 'react-native';
 import CustomHeader from '../../../Components/CustomHeader';
 import {VectorIcon} from '../../../Components/VectorIcon';
@@ -19,7 +18,6 @@ import {
 import theme from '../../../utility/theme';
 import {useSelector} from 'react-redux';
 import EmployeeReview from './EmployeeReview';
-import {BlurView} from '@react-native-community/blur';
 
 const worker = {
   id: 1,
@@ -106,274 +104,119 @@ const worker = {
   ],
 };
 
-const EmployeeProfileDetails = props => {
-  const {route, navigation} = props;
-  // const {worker} = route.params; // Pass worker data via navigation
-  let {isDarkMode, currentBgColor, currentTextColor} = useSelector(
-    state => state.user,
-  );
-  return (
-    <>
-      <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: theme.color.white,
-        }}>
-        <CustomHeader
-          backPress={() => navigation.goBack()}
-          screenTitle={`User profile`}
-          // filterIcon={() => {}}
-        />
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.container}
-          style={
-            {
-              // paddingBottom: getResHeight(310),
-            }
-          }>
-          <View style={styles.profileCard}>
-            <View
-              style={{
-                alignItems: 'center',
-                marginBottom: getResHeight(0.5),
-              }}>
-              <Image
-                source={{
-                  uri: 'https://t4.ftcdn.net/jpg/02/20/30/97/360_F_220309764_saqqOIGaPKdnjmQacHmNkDOezY0uyOFg.jpg',
-                }}
-                style={styles.profileImage}
-              />
-              {/* <Image source={{uri: worker.image}} style={styles.profileImage} /> */}
-              <Text style={styles.name}>Ramesh Marandi</Text>
-            </View>
+const EmployeeProfileDetails = ({navigation, route}) => {
+  const {isDarkMode} = useSelector(state => state.user);
+  // const {worker} = route.params;
 
-            {[
-              {label: 'Languages', value: 'Hindi, English, Bengali'},
-              {label: 'Distance', value: '10 KM'},
-              {label: 'Skills', value: 'Electrician, Plumber, Carpenter'},
-              {label: 'Location', value: 'Rajpur'},
-              {label: 'Experience', value: '5 Years'},
-              {label: 'Rating', value: '⭐ 4.5 /5.0'},
-            ].map((detail, idx) => (
-              <View key={idx} style={styles.detailRow}>
-                <Text style={styles.detailLabel}>{`${detail.label} :`}</Text>
-                <Text style={styles.detailValue}>{detail.value}</Text>
-              </View>
-            ))}
-          </View>
-
-          {/* second card */}
-
-          <View style={styles.detailsSection}>
-            <Text style={styles.sectionTitle}>About</Text>
-
-            <Text style={styles.aboutText}>
-              {worker.about ||
-                `I am a skilled and experienced painter with a strong passion for transforming spaces through high-quality painting and finishing work. With 10 years in the industry, I specialize in both residential and commercial painting, delivering exceptional craftsmanship, attention to detail, and durable finishes. From surface preparation to the final coat, I take pride in ensuring every project meets the highest standards of quality and client satisfaction. Whether it's interior or exterior painting, I am committed to using the best materials and techniques to achieve a flawless result. Let’s bring color and life to your space!`}
-            </Text>
-          </View>
-          {/* COntact details */}
-          <ContactInfo />
-          {/* <View
-            style={[
-              styles.detailsSection,
-              {
-                marginBottom: 60,
-              },
-            ]}>
-            <Text style={styles.sectionTitle}>User Reviews</Text>
-            <FlatList
-              data={worker.reviews}
-              keyExtractor={item => item.id.toString()}
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              renderItem={({item}) => (
-                <View style={styles.reviewCard}>
-                  <Image
-                    source={{uri: item.profilePic}}
-                    style={styles.reviewerImage}
-                  />
-                  <Text style={styles.reviewerName}>{item.name}</Text>
-                  <Text style={styles.reviewRating}>⭐ {item.rating} / 5</Text>
-                  <Text style={styles.reviewComment} numberOfLines={2}>
-                    "{item.comment}"
-                  </Text>
-                </View>
-              )}
-            />
-          </View> */}
-
-          <EmployeeReview reviews={worker.reviews || []} />
-        </ScrollView>
-        <View
-          style={{
-            width: '100%',
-            paddingBottom: getResHeight(3),
-
-            backgroundColor: theme.color.white,
-          }}>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={{
-              width: getResWidth(90),
-              alignSelf: 'center',
-
-              backgroundColor: theme.color.secondary,
-              borderRadius: 100,
-
-              paddingVertical: getResHeight(1),
-
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Text
-              style={[
-                styles.hireButtonText,
-                {
-                  color: theme.color.charcolBlack,
-                },
-              ]}>
-              Hire Now
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-    </>
-  );
-};
-
-const ContactInfo = () => {
-  return (
-    <View style={styles.detailsSection}>
-      {/* Unblurred Title */}
-      <Text style={styles.sectionTitle}>Contact Details</Text>
-
-      {/* Blurred Container */}
-      <View style={styles.blurContainer}>
-        {/* Blur Overlay */}
-        <BlurView
-          style={styles.absolute}
-          blurType="light"
-          blurAmount={25}
-          overlayColor="transparent"
-          reducedTransparencyFallbackColor="rgba(255,255,255,0.7)"
-        />
-        {/* Content */}
-        <View style={styles.contentWrapper}>
-          {/* Phone Row */}
-          <View style={styles.contactRow}>
-            <VectorIcon
-              type="Ionicons"
-              name="call"
-              size={getFontSize(3)}
-              color={theme.color.charcolBlack}
-            />
-            <Text style={styles.contactText}>+91 7887706698</Text>
-          </View>
-
-          {/* Email Row */}
-          <View style={styles.contactRow}>
-            <VectorIcon
-              type="MaterialCommunityIcons"
-              name="email"
-              size={getFontSize(3)}
-              color={theme.color.charcolBlack}
-            />
-            <Text style={styles.contactText}>ramesh.marandi@gmail.com</Text>
-          </View>
-        </View>
-
-        {/* Lock Icon */}
-        {/* <VectorIcon
-          type="Ionicons"
-          name="lock-closed"
-          size={getFontSize(2.8)}
-          color={theme.color.charcolBlack}
-          style={styles.lockIcon}
-        /> */}
-      </View>
+  const ProfileDetailRow = ({label, value}) => (
+    <View style={styles.detailRow}>
+      <Text style={styles.detailLabel}>{`${label} :`}</Text>
+      <Text style={styles.detailValue}>{value}</Text>
     </View>
   );
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <CustomHeader
+        backPress={() => navigation.goBack()}
+        screenTitle="User profile"
+      />
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}>
+        <View style={styles.profileCard}>
+          <View style={styles.profileHeader}>
+            <Image
+              source={{
+                uri: 'https://i3.wp.com/www.thebalancemoney.com/thmb/BTv9xPg48VpnxeRm8qkCkO_Fjwg=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-1209681524-1fe805ac87ca4fed9e57a20f020733cb.jpg?ssl=1',
+              }}
+              style={styles.profileImage}
+            />
+            <Text style={styles.name}>{worker.name}</Text>
+          </View>
+
+          {[
+            {label: 'Languages', value: 'Hindi, English, Bengali'},
+            {label: 'Distance', value: '10 KM'},
+            {label: 'Skills', value: 'Electrician, Plumber, Carpenter'},
+            {label: 'Location', value: 'Rajpur'},
+            {label: 'Experience', value: '5 Years'},
+            {label: 'Rating', value: '⭐ 4.5 /5.0'},
+          ].map((detail, idx) => (
+            <ProfileDetailRow key={idx} {...detail} />
+          ))}
+        </View>
+
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>About</Text>
+          <Text style={styles.aboutText}>
+            {worker.about ||
+              'Passionate carpenter with a decade of experience in crafting high-quality furniture and custom woodwork. Specialized in creating elegant and durable designs tailored to clients'}
+          </Text>
+        </View>
+
+        <ContactInfo />
+
+        <EmployeeReview reviews={worker.reviews} />
+      </ScrollView>
+
+      <View style={styles.footer}>
+        <TouchableOpacity activeOpacity={0.8} style={styles.hireButton}>
+          <Text style={styles.hireButtonText}>Hire Now</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
+  );
 };
 
+const ContactInfo = () => (
+  <View style={styles.sectionContainer}>
+    <Text style={styles.sectionTitle}>Contact Details</Text>
+    <View style={styles.contactContainer}>
+      <View style={styles.contactRow}>
+        <VectorIcon
+          type="Ionicons"
+          name="call"
+          size={getFontSize(2.5)}
+          color={theme.color.charcolBlack}
+        />
+        <Text style={styles.contactText}>+91 7887706698</Text>
+      </View>
+
+      <View style={styles.contactRow}>
+        <VectorIcon
+          type="MaterialCommunityIcons"
+          name="email"
+          size={getFontSize(2.5)}
+          color={theme.color.charcolBlack}
+        />
+        <Text style={styles.contactText}>ramesh.marandi@gmail.com</Text>
+      </View>
+    </View>
+  </View>
+);
+
 const styles = StyleSheet.create({
-  //
-  detailsSection: {
-    margin: 16,
+  safeArea: {
+    flex: 1,
+    backgroundColor: theme.color.white,
   },
-  sectionTitle: {
-    fontSize: getFontSize(4),
-    fontWeight: 'bold',
-    marginBottom: 12,
-    color: theme.color.charcolBlack,
-  },
-  blurContainer: {
-    borderRadius: 12,
-    overflow: 'hidden',
-    position: 'relative',
-    backgroundColor: 'rgba(255, 255, 255, 0.5)', // Fallback for Android
-    padding: 16,
-  },
-  absoluteFill: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  contentWrapper: {
-    position: 'relative',
-    zIndex: 1,
-  },
-  contactRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 14,
-  },
-  contactText: {
-    fontSize: getFontSize(2.8),
-    color: theme.color.charcolBlack,
-    marginLeft: 12,
-  },
-  lockIcon: {
-    position: 'absolute',
-    bottom: 10,
-    right: 10,
-    zIndex: 2,
-    backgroundColor: 'rgba(223, 0, 0, 0.3)',
-    padding: 4,
-    borderRadius: 20,
-  },
-  //
-  container: {
-    flexGrow: 1,
-    backgroundColor: '#f8f8f8',
-    alignItems: 'center',
-    // paddingBottom: 20,
-  },
-  detailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: getResWidth(3),
-    marginVertical: getResHeight(0.5),
-  },
-  detailLabel: {
-    fontSize: getFontSize(1.7),
-    fontFamily: theme.font.semiBold,
-    color: theme.color.charcolBlack,
-  },
-  detailValue: {
-    fontSize: getFontSize(1.5),
-    fontFamily: theme.font.medium,
-    color: theme.color.charcolBlack,
-    marginLeft: getResWidth(1),
+  scrollContent: {
+    paddingBottom: getResHeight(2),
   },
   profileCard: {
     backgroundColor: '#fff',
     width: getResWidth(90),
-
     padding: getResWidth(4),
     borderRadius: getResHeight(1),
     elevation: 5,
     marginTop: getResHeight(2),
+    alignSelf: 'center',
+  },
+  profileHeader: {
+    alignItems: 'center',
+    marginBottom: getResHeight(0.5),
   },
   profileImage: {
     width: getResHeight(17),
@@ -387,69 +230,76 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     color: theme.color.charcolBlack,
   },
-  skill: {
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: getResHeight(0.5),
+  },
+  detailLabel: {
     fontSize: getFontSize(1.7),
+    fontFamily: theme.font.semiBold,
+    color: theme.color.charcolBlack,
+    minWidth: getResWidth(20),
+  },
+  detailValue: {
+    fontSize: getFontSize(1.5),
     fontFamily: theme.font.medium,
-    color: 'gray',
-    marginBottom: 5,
+    color: theme.color.charcolBlack,
+    marginLeft: getResWidth(1),
   },
-  location: {
-    fontSize: 14,
-    color: 'gray',
-    marginBottom: 5,
-  },
-  experience: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  rating: {
-    fontSize: 14,
-    color: '#FFA500',
-    marginBottom: 10,
-  },
-  detailsSection: {
-    width: '90%',
+  sectionContainer: {
     backgroundColor: '#fff',
-    borderRadius: 15,
-    padding: 20,
+    borderRadius: getResHeight(1),
+    padding: getResHeight(2),
     elevation: 3,
-    marginTop: 15,
+    marginTop: getResHeight(2),
+    width: '90%',
+    alignSelf: 'center',
   },
   sectionTitle: {
     fontSize: getFontSize(1.9),
     fontFamily: theme.font.semiBold,
     color: theme.color.charcolBlack,
-    marginBottom: 8,
+    marginBottom: getResHeight(1),
   },
   aboutText: {
     fontSize: getFontSize(1.7),
     fontFamily: theme.font.medium,
     color: 'gray',
-    marginBottom: 15,
+    lineHeight: getFontSize(2.5),
+  },
+  contactContainer: {
+    // borderRadius: 12,
+    // padding: 12,
   },
   contactRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: getResHeight(1),
   },
   contactText: {
     fontSize: getFontSize(1.6),
     fontFamily: theme.font.medium,
     color: theme.color.charcolBlack,
-    marginLeft: 10,
+    marginLeft: getResWidth(2),
   },
-
+  footer: {
+    paddingVertical: getResHeight(1.5),
+    backgroundColor: theme.color.white,
+  },
+  hireButton: {
+    width: getResWidth(90),
+    alignSelf: 'center',
+    backgroundColor: theme.color.secondary,
+    borderRadius: getResHeight(1),
+    paddingVertical: getResHeight(1),
+  },
   hireButtonText: {
-    color: '#fff',
-    textAlign: 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
     fontSize: getFontSize(1.8),
-    fontFamily: theme.font.medium,
+    fontFamily: theme.font.semiBold,
+    color: 'white',
+    textAlign: 'center',
   },
-
-  // User Review sections
 });
 
 export default EmployeeProfileDetails;

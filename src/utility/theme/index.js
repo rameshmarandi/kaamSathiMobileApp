@@ -10,13 +10,14 @@ const color = {
   redBRGA: 'rgba(255, 0, 0, 1)',
   // secondary2: '#001F3F',
   secondary2: '#FF9800',
-  secondary: '#FFC107',
-  // #FFC107
-  // accent: '#FFC107',
-  // #FFB300
+  secondary: '#D99A00',
+  // '#E6A700',
+  // secondary: '#FFC107',
+
   lighYellow: '#FFF8E1',
   // #424242
   iceWhite: '#F1F1F1',
+  white: '#FFFFFF',
   naviBlue: '#263238',
   textColor: '#333333',
   black: '#000000',
@@ -26,9 +27,11 @@ const color = {
   offWhite: '#FAFAFA',
   outlineColor: '#999999',
   placeholder: '#C0C0C0',
-  dardkModeOnBGColor:
-    // '#FFDE21',
-    '#FFC107',
+  dardkModeOnBGColor: '#D99A00',
+
+  // '#E6A700',
+  // '#FFDE21',
+  // '#FFC107',
   // '#012537',
   darkModeOffBGColor: '#FFFFFF',
 };

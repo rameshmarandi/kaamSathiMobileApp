@@ -206,18 +206,6 @@ const SearchOnMap = props => {
         }}
         onSelectDistance={item => {}}
       />
-
-      {/* <EmployeeModalComponent
-        isModalVisible={isEmployeeModalVisible}
-        onBackdropPress={() => {
-          setEmployeeModalVisible(false);
-        }}
-        // selectedEmployee={selectedEmployee}
-        // handleSelectEmployee={item => {
-        //   setSelectedEmployee(item);
-        // }}
-        // onSelectEmployee={item => {}}
-      /> */}
     </SafeAreaView>
   );
 };

@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   primaryButtonText: {
-    color: theme.color.charcolBlack,
+    color: theme.color.white,
   },
   heartIconContainer: {
     position: 'absolute',

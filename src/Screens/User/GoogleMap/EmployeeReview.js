@@ -69,7 +69,7 @@ const EmployeeReview = ({reviews}) => {
             type="MaterialIcons"
             name={'chevron-left'}
             size={getFontSize(3)}
-            color={theme.color.charcolBlack}
+            color={theme.color.white}
           />
         </TouchableOpacity>
 
@@ -112,7 +112,7 @@ const EmployeeReview = ({reviews}) => {
             type="MaterialIcons"
             name={'chevron-right'}
             size={getFontSize(3)}
-            color={theme.color.charcolBlack}
+            color={theme.color.white}
           />
         </TouchableOpacity>
       </View>

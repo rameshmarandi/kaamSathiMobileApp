@@ -148,7 +148,7 @@ const CustomHeader = props => {
                         type={'Ionicons'}
                         name={'location'}
                         size={getFontSize(2.9)}
-                        color={theme.color.redBRGA}
+                        color={'#000000'}
                       />
                       <Text
                         style={{
@@ -163,7 +163,7 @@ const CustomHeader = props => {
                     </View>
                     <Text
                       style={{
-                        color: theme.color.charcolBlack,
+                        color: theme.color.white,
 
                         marginTop: getResHeight(0.3),
                         textAlign: 'center',
@@ -226,7 +226,8 @@ const CustomHeader = props => {
                 style={{
                   fontSize: getFontSize(2),
                   fontFamily: theme.font.medium,
-                  color: currentTextColor,
+                  color: theme.color.white,
+                  // color: currentTextColor,
                   marginTop: getResHeight(1),
                   marginLeft: '6%',
                 }}>

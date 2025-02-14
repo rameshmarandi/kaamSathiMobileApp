@@ -224,10 +224,10 @@ function AnimatedSlash() {
         />
         <Text
           style={{
-            color: theme.color.charcolBlack,
+            color: theme.color.iceWhite,
             paddingTop: '30%',
             fontSize: getFontSize(1.5),
-            fontFamily: theme.font.semiBold,
+            fontFamily: theme.font.bold,
           }}>
           Loading..
         </Text>
