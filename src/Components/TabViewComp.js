@@ -1,4 +1,4 @@
-import React, {useState, memo, useRef} from 'react';
+import React, {useState, memo, useRef, useCallback} from 'react';
 import {
   View,
   Text,
@@ -13,8 +13,8 @@ import theme from '../utility/theme';
 
 const initialLayout = {width: Dimensions.get('window').width};
 
-const TabViewComp = memo(props => {
-  const {
+const TabViewComp = memo(
+  ({
     routes,
     scenes,
     indicatorStyle,
@@ -22,105 +22,96 @@ const TabViewComp = memo(props => {
     tabBarContainerStyle,
     labelStyle,
     onIndexChange,
-  } = props;
+  }) => {
+    const [index, setIndex] = useState(0);
+    const flatListRef = useRef(null);
 
-  const [index, setIndex] = useState(0);
-  const flatListRef = useRef(null); // Reference for FlatList
+    const renderScene = SceneMap(scenes);
 
-  const renderScene = SceneMap(scenes);
+    const handleIndexChange = useCallback(
+      newIndex => {
+        setIndex(newIndex);
+        flatListRef.current?.scrollToIndex({
+          index: newIndex,
+          animated: true,
+          viewPosition: 0.5,
+        });
+        if (onIndexChange) onIndexChange(newIndex);
+      },
+      [onIndexChange],
+    );
 
-  // Custom TabBar with scroll-to-active functionality
-  const renderTabBar = () => (
-    <View style={[styles.tabBarContainer, tabBarContainerStyle]}>
-      <FlatList
-        ref={flatListRef}
-        data={routes}
-        horizontal
-        keyExtractor={(item, idx) => idx.toString()}
-        showsHorizontalScrollIndicator={false}
-        renderItem={({item, index: tabIndex}) => (
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={[
-              styles.tabItem,
-              index === tabIndex && styles.activeTab,
+    const renderTabBar = () => (
+      <View style={[styles.tabBarContainer, tabBarContainerStyle]}>
+        <FlatList
+          ref={flatListRef}
+          data={routes}
+          horizontal
+          keyExtractor={(item, idx) => idx.toString()}
+          showsHorizontalScrollIndicator={false}
+          getItemLayout={(data, index) => ({
+            length: getResWidth(50),
+            offset: getResWidth(50) * index,
+            index,
+          })}
+          renderItem={({item, index: tabIndex}) => (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={[styles.tabItem, index === tabIndex && styles.activeTab]}
+              onPress={() => handleIndexChange(tabIndex)}>
+              <Text
+                style={[
+                  styles.tabLabel,
+                  labelStyle,
+                  index === tabIndex && styles.activeLabel,
+                ]}>
+                {item.title}
+              </Text>
+            </TouchableOpacity>
+          )}
+        />
+      </View>
+    );
 
-              {
-                paddingHorizontal:
-                  routes.length == 2
-                    ? getResWidth(11)
-                    : routes.length == 3
-                    ? getResWidth(10)
-                    : getResWidth(8),
-              },
-            ]}
-            onPress={() => handleIndexChange(tabIndex)}>
-            <Text
-              style={[
-                styles.tabLabel,
-                labelStyle,
-                index === tabIndex && styles.activeLabel,
-              ]}>
-              {item.title}
-            </Text>
-          </TouchableOpacity>
-        )}
+    return (
+      <TabView
+        navigationState={{index, routes}}
+        renderScene={renderScene}
+        renderTabBar={renderTabBar}
+        animationEnabled
+        onIndexChange={handleIndexChange}
+        sceneContainerStyle={sceneContainerStyle}
+        initialLayout={initialLayout}
       />
-    </View>
-  );
-
-  const handleIndexChange = newIndex => {
-    setIndex(newIndex);
-
-    flatListRef.current?.scrollToIndex({
-      index: newIndex,
-      animated: true,
-      viewPosition: 0.5, // Center the active tab in the viewport
-    });
-
-    if (onIndexChange) {
-      onIndexChange(newIndex);
-    }
-  };
-
-  return (
-    <TabView
-      navigationState={{index, routes}}
-      renderScene={renderScene}
-      renderTabBar={renderTabBar}
-      animationEnabled
-      onIndexChange={handleIndexChange}
-      sceneContainerStyle={[sceneContainerStyle]}
-      initialLayout={initialLayout}
-    />
-  );
-});
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   tabBarContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: getResHeight(6),
-    backgroundColor: 'transparent', // Default background
+    height: getResHeight(8),
+    backgroundColor: 'transparent',
   },
   tabItem: {
-    paddingVertical: getResHeight(1), // Same padding for all tabs
+    paddingVertical: getResHeight(1),
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 0,
+    width: getResWidth(50),
   },
   activeTab: {
     borderBottomWidth: 2,
-    borderBottomColor: 'white', // Default active underline color
+    borderBottomColor: theme.color.secondary,
   },
   tabLabel: {
     fontSize: getFontSize(1.8),
     fontFamily: theme.font.regular,
-    // color:
     textTransform: 'capitalize',
   },
   activeLabel: {
-    color: 'white', // Default active label color
+    color: theme.color.charcolBlack,
     fontSize: getFontSize(1.8),
     fontFamily: theme.font.bold,
   },

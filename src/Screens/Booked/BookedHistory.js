@@ -1,211 +1,342 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
-  FlatList,
   Image,
-  ActivityIndicator,
-  RefreshControl,
+  SafeAreaView,
   StyleSheet,
+  FlatList,
+  TouchableOpacity,
 } from 'react-native';
-// import {MaterialIcons, FontAwesome5} from '@expo/vector-icons';
-import CustomHeader from '../../Components/CustomHeader';
+import {getFontSize, getResHeight, getResWidth} from '../../utility/responsive';
 import theme from '../../utility/theme';
-import {getResHeight, getResWidth, getFontSize} from '../../utility/responsive';
+import TabViewComp from '../../Components/TabViewComp';
 
-const fetchBookingHistory = async () => {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve([
-        {
-          id: '1',
-          name: 'Ramesh Marandi',
-          service: 'Electrician',
-          serviceType: 'Home Repair',
-          workType: 'Wiring & Switches',
-          urgency: 'High',
-          bookDateTime: '2024-02-10 | 10:30 AM',
-          amount: '$50',
-          status: 'Completed',
-          image:
-            'https://www.gngmodels.com/wp-content/uploads/2023/12/indian-male-models-11-682x1024.jpg',
-        },
-        {
-          id: '2',
-          name: 'Amit Kumar',
-          service: 'Plumber',
-          serviceType: 'Water Supply',
-          workType: 'Leak Fixing',
-          urgency: 'Medium',
-          bookDateTime: '2024-02-08 | 3:45 PM',
-          amount: '$40',
-          status: 'Pending',
-          image:
-            'https://www.gngmodels.com/wp-content/uploads/2023/12/indian-male-models-11-682x1024.jpg',
-        },
-      ]);
-    }, 1500);
-  });
-};
+const BookedHistory = () => {
+  const [activeBookings, setActiveBookings] = useState([]);
+  const [historyBookings, setHistoryBookings] = useState([]);
+  const [simulatedDate, setSimulatedDate] = useState(Date.now());
 
-const BookedHistory = ({navigation}) => {
-  const [history, setHistory] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
+  // Add new booking with future date
+  const addNewBooking = daysToAdd => {
+    const newDate = new Date(simulatedDate);
+    newDate.setDate(newDate.getDate() + daysToAdd);
 
+    const newBooking = {
+      id: Date.now().toString(),
+      laborName: 'Ramesh Kumar',
+      profilePic:
+        'https://www.shutterstock.com/image-photo/engineer-worker-standing-confident-on-260nw-2223884221.jpg',
+      serviceType: 'Electrician',
+      bookingTimestamp: newDate.getTime(),
+      bookingTime: '10:30 AM',
+      location: 'Mumbai, Maharashtra',
+      status: 'Confirmed',
+      cancelable: true,
+      progress: 0,
+      startTime: null,
+    };
+
+    setActiveBookings(prev => [...prev, newBooking]);
+  };
+
+  // Cancel booking
+  const cancelBooking = id => {
+    setActiveBookings(prev =>
+      prev.map(booking =>
+        booking.id === id ? {...booking, status: 'Canceled'} : booking,
+      ),
+    );
+  };
+
+  // Start work progress
+  const startWork = id => {
+    setActiveBookings(prev =>
+      prev.map(booking => {
+        if (booking.id === id) {
+          return {
+            ...booking,
+            status: 'Ongoing',
+            startTime: Date.now(),
+            progress: 0,
+          };
+        }
+        return booking;
+      }),
+    );
+
+    const interval = setInterval(() => {
+      setActiveBookings(prev => {
+        const updatedBookings = prev.map(booking => {
+          if (booking.id === id) {
+            if (booking.progress < 100) {
+              return {...booking, progress: booking.progress + 1};
+            }
+            if (booking.progress >= 100) {
+              clearInterval(interval);
+              const completedBooking = {...booking, status: 'Completed'};
+              setHistoryBookings(prevHistory => [
+                ...prevHistory,
+                completedBooking,
+              ]);
+              return completedBooking;
+            }
+          }
+          return booking;
+        });
+        return updatedBookings.filter(b => b.status !== 'Completed');
+      });
+    }, 600); // 1% every 600ms = 1 minute total
+  };
+
+  // Auto-remove cancel button after 5 minutes
   useEffect(() => {
-    loadHistory();
-  }, []);
+    const cancelTimers = activeBookings
+      .filter(booking => booking.status === 'Confirmed' && booking.cancelable)
+      .map(booking => {
+        return setTimeout(() => {
+          setActiveBookings(prev =>
+            prev.map(b =>
+              b.id === booking.id ? {...b, cancelable: false} : b,
+            ),
+          );
+        }, 15000); // 5 minutes (300000ms)
+      });
 
-  const loadHistory = async () => {
-    setLoading(true);
-    const data = await fetchBookingHistory();
-    setHistory(data);
-    setLoading(false);
-  };
+    return () => cancelTimers.forEach(timer => clearTimeout(timer));
+  }, [activeBookings]);
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await loadHistory();
-    setRefreshing(false);
-  };
+  const BookingCard = ({data}) => {
+    const isBookingDatePassed = true;
+    // Date.now() >= data.bookingTimestamp;
+    const bookingDate = new Date(data.bookingTimestamp).toLocaleDateString(
+      'en-GB',
+    );
 
-  const renderItem = useCallback(({item}) => {
     return (
-      <View style={styles.card}>
-        <Image source={{uri: item.image}} style={styles.profileImage} />
-        <View style={styles.details}>
-          <Text style={styles.name}>{item.name}</Text>
-          <View style={styles.row}>
-            {/* <MaterialIcons name="build" size={16} color={theme.color.primary} /> */}
-            <Text style={styles.text}>{item.service}</Text>
+      <View style={styles.cardContainer}>
+        <View style={styles.row}>
+          <Image source={{uri: data.profilePic}} style={styles.profilePic} />
+          <View style={styles.detailsContainer}>
+            <Text style={styles.laborName}>{data.laborName}</Text>
+            <Text style={styles.serviceType}>{data.serviceType}</Text>
+            <Text style={styles.infoText}>
+              {bookingDate} | {data.bookingTime}
+            </Text>
+            <Text style={styles.infoText}>{data.location}</Text>
           </View>
-          <View style={styles.row}>
-            {/* <FontAwesome5 name="tools" size={14} color={theme.color.darkGray} /> */}
-            <Text style={styles.text}>{item.workType}</Text>
-          </View>
-          <View style={[styles.badge, getUrgencyStyle(item.urgency)]}>
-            <Text style={styles.badgeText}>{item.urgency} Urgency</Text>
-          </View>
-          <Text style={styles.amount}>{item.amount}</Text>
-          <Text
+          <View
             style={[
-              styles.status,
-              item.status === 'Completed' ? styles.completed : styles.pending,
+              styles.statusContainer,
+              {
+                backgroundColor:
+                  data.status === 'Confirmed'
+                    ? '#4CAF50'
+                    : data.status === 'Ongoing'
+                    ? '#FFC107'
+                    : data.status === 'Completed'
+                    ? '#2196F3'
+                    : '#9E9E9E',
+              },
             ]}>
-            {item.status}
-          </Text>
+            <Text style={styles.statusText}>{data.status}</Text>
+          </View>
         </View>
+
+        {data.status === 'Ongoing' && (
+          <View style={styles.progressContainer}>
+            <View style={styles.progressBarBackground}>
+              <View
+                style={[
+                  styles.progressBarFill,
+                  {
+                    width: `${data.progress}%`,
+                    backgroundColor:
+                      data.progress === 100 ? '#4CAF50' : '#FFC107',
+                  },
+                ]}
+              />
+            </View>
+            <Text style={styles.progressText}>{data.progress}% completed</Text>
+          </View>
+        )}
+
+        {data.status === 'Confirmed' && data.cancelable && (
+          <TouchableOpacity
+            onPress={() => cancelBooking(data.id)}
+            style={styles.cancelButton}>
+            <Text style={styles.cancelButtonText}>Cancel Booking</Text>
+          </TouchableOpacity>
+        )}
+
+        {data.status === 'Confirmed' &&
+          !data.cancelable &&
+          isBookingDatePassed && (
+            <TouchableOpacity
+              onPress={() => startWork(data.id)}
+              style={styles.startWorkButton}>
+              <Text style={styles.startWorkButtonText}>Start Work</Text>
+            </TouchableOpacity>
+          )}
       </View>
     );
-  }, []);
+  };
+
+  // Control buttons for simulation
+  const SimulationControls = () => (
+    <View style={styles.controlButtons}>
+      <TouchableOpacity
+        style={styles.simulateButton}
+        onPress={() => addNewBooking(1)}>
+        <Text style={styles.buttonText}>Book for Tomorrow</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.simulateButton}
+        onPress={() => {
+          const newDate = new Date(simulatedDate);
+          newDate.setDate(newDate.getDate() + 1);
+          setSimulatedDate(newDate.getTime());
+        }}>
+        <Text style={styles.buttonText}>Simulate Next Day</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  const FirstRoute = () => (
+    <>
+      <SimulationControls />
+      <FlatList
+        data={activeBookings.filter(b => b.status !== 'Completed')}
+        keyExtractor={item => item.id}
+        renderItem={({item}) => <BookingCard data={item} />}
+        contentContainerStyle={styles.listContainer}
+      />
+    </>
+  );
+
+  const SecondRoute = () => (
+    <FlatList
+      data={historyBookings}
+      keyExtractor={item => item.id}
+      renderItem={({item}) => <BookingCard data={item} />}
+      contentContainerStyle={styles.listContainer}
+    />
+  );
+
+  const routes = [
+    {key: 'first', title: 'Active Bookings'},
+    {key: 'second', title: 'History'},
+  ];
 
   return (
-    <View style={styles.container}>
-      {loading ? (
-        <ActivityIndicator
-          size="large"
-          color={theme.color.secondary}
-          style={{marginTop: 20}}
-        />
-      ) : (
-        <FlatList
-          data={history}
-          keyExtractor={item => item.id}
-          renderItem={renderItem}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          showsVerticalScrollIndicator={false}
-        />
-      )}
-    </View>
+    <SafeAreaView style={styles.container}>
+      <TabViewComp
+        routes={routes}
+        scenes={{first: FirstRoute, second: SecondRoute}}
+      />
+    </SafeAreaView>
   );
 };
 
-const getUrgencyStyle = urgency => {
-  switch (urgency) {
-    case 'High':
-      return {backgroundColor: 'red'};
-    case 'Medium':
-      return {backgroundColor: 'orange'};
-    case 'Low':
-      return {backgroundColor: 'green'};
-    default:
-      return {backgroundColor: 'gray'};
-  }
-};
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  container: {flex: 1, backgroundColor: theme.color.white},
+  listContainer: {padding: getResWidth(3)},
+  cardContainer: {
     backgroundColor: theme.color.white,
-    padding: getResWidth(3),
-  },
-  card: {
-    flexDirection: 'row',
-    backgroundColor: theme.color.white,
-    borderRadius: getResWidth(4),
-    marginVertical: getResHeight(1.5),
+    borderRadius: getResWidth(2),
     padding: getResWidth(4),
-    elevation: 6,
+    marginBottom: getResHeight(2),
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 3},
-    shadowOpacity: 0.15,
-    shadowRadius: 5,
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.08,
+    shadowRadius: 2,
+    elevation: 2,
   },
-  profileImage: {
-    width: getResHeight(14),
-    height: getResHeight(14),
-    borderRadius: getResHeight(7),
+  row: {flexDirection: 'row', alignItems: 'center'},
+  profilePic: {
+    width: getResWidth(12),
+    height: getResWidth(12),
+    borderRadius: getResWidth(6),
   },
-  details: {
-    flex: 1,
-    marginLeft: getResWidth(4),
-  },
-  name: {
-    fontSize: getFontSize(2.2),
-    fontFamily: theme.font.bold,
-    color: theme.color.charcolBlack,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: getResHeight(0.8),
-  },
-  text: {
-    fontSize: getFontSize(1.8),
-    fontFamily: theme.font.medium,
-    color: theme.color.darkGray,
-    marginLeft: getResWidth(2),
-  },
-  badge: {
-    paddingHorizontal: getResWidth(3),
-    paddingVertical: getResHeight(0.8),
-    borderRadius: getResWidth(3),
-    marginTop: getResHeight(1.2),
-    alignSelf: 'flex-start',
-  },
-  badgeText: {
-    color: 'white',
-    fontSize: getFontSize(1.6),
-    fontFamily: theme.font.medium,
-  },
-  amount: {
+  detailsContainer: {marginLeft: getResWidth(4), flex: 1},
+  laborName: {
     fontSize: getFontSize(2),
     fontFamily: theme.font.bold,
-    color: theme.color.primary,
-    marginTop: getResHeight(1.2),
+    color: theme.color.black,
   },
-  status: {
-    marginTop: getResHeight(1),
-    padding: getResHeight(0.8),
+  serviceType: {fontSize: getFontSize(1.6), color: theme.color.gray},
+  infoText: {
+    fontSize: getFontSize(1.4),
+    color: theme.color.darkGray,
+    marginTop: getResHeight(0.5),
+  },
+  statusContainer: {
+    paddingVertical: getResHeight(0.5),
+    paddingHorizontal: getResWidth(2),
     borderRadius: getResWidth(2),
-    textAlign: 'center',
-    color: 'white',
   },
-  completed: {backgroundColor: 'green'},
-  pending: {backgroundColor: 'orange'},
+  statusText: {
+    color: theme.color.white,
+    fontSize: getFontSize(1.5),
+    fontFamily: theme.font.bold,
+  },
+  progressContainer: {marginTop: getResHeight(1)},
+  progressBarBackground: {
+    height: getResHeight(1.5),
+    backgroundColor: '#F5F5F5', // Light gray background
+    borderRadius: getResWidth(1),
+    overflow: 'hidden',
+  },
+  progressBarFill: {
+    height: '100%',
+    borderRadius: getResWidth(1),
+  },
+  progressText: {
+    marginTop: getResHeight(1),
+    fontSize: getFontSize(1.4),
+    textAlign: 'center',
+    color: theme.color.darkGray,
+  },
+  cancelButton: {
+    backgroundColor: '#FF5722',
+    padding: getResHeight(1.5),
+    borderRadius: getResWidth(2),
+    alignItems: 'center',
+    marginTop: getResHeight(1),
+  },
+  cancelButtonText: {
+    color: theme.color.white,
+    fontSize: getFontSize(1.6),
+    fontFamily: theme.font.bold,
+  },
+  startWorkButton: {
+    backgroundColor: '#4CAF50',
+    padding: getResHeight(1.5),
+    borderRadius: getResWidth(2),
+    alignItems: 'center',
+    marginTop: getResHeight(1),
+  },
+  startWorkButtonText: {
+    color: theme.color.white,
+    fontSize: getFontSize(1.6),
+    fontFamily: theme.font.bold,
+  },
+  controlButtons: {
+    padding: getResWidth(3),
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  simulateButton: {
+    backgroundColor: '#3F51B5',
+    padding: 10,
+    borderRadius: 5,
+    margin: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
 });
 
 export default BookedHistory;

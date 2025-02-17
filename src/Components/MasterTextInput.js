@@ -392,9 +392,9 @@ const MasterTextInput = forwardRef(
               borderBottomRightRadius: getResHeight(2),
               borderTopLeftRadius: getResHeight(2),
               borderTopRightRadius: getResHeight(2),
-              marginTop: '-2%',
+              // marginTop: '-2%',
               borderWidth: 1,
-              borderColor: theme.color.grey,
+              borderColor: currentTextColor,
               overflow: 'hidden',
               paddingVertical: 0, // Ensure padding is minimal
             }}

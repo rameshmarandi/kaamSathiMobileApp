@@ -42,7 +42,7 @@ export const verseResourceCommonStyle = StyleSheet.create({
   },
   tabViewContainer: {
     flex: 1,
-    paddingHorizontal: getResWidth(3),
+    // paddingHorizontal: getResWidth(3),
   },
   indicatorStyle: {
     backgroundColor: 'red',
