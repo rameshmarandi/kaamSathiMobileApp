@@ -23,14 +23,42 @@ export function HomeStack(props) {
     </>
   );
 }
-export function AdminHomeStack(props) {
+// export function AdminHomeStack(props) {
+//   return (
+//     <>
+//       <Stack.Navigator screenOptions={{...transitionCard, ...screenOptions}}>
+//         <Stack.Screen
+//           initialRouteName={'AdminDashboard'}
+//           name={'Dashboard'}
+//           component={AllScreens.AdminDashboard}
+//           // options={screenOptions}
+//         />
+//       </Stack.Navigator>
+//     </>
+//   );
+// }
+export function HistoryStack(props) {
   return (
     <>
       <Stack.Navigator screenOptions={{...transitionCard, ...screenOptions}}>
         <Stack.Screen
-          initialRouteName={'AdminDashboard'}
-          name={'Dashboard'}
-          component={AllScreens.AdminDashboard}
+          initialRouteName={'BookedHistory'}
+          name={'BookedHistory'}
+          component={AllScreens.BookedHistory}
+          // options={screenOptions}
+        />
+      </Stack.Navigator>
+    </>
+  );
+}
+export function BookMarksStack(props) {
+  return (
+    <>
+      <Stack.Navigator screenOptions={{...transitionCard, ...screenOptions}}>
+        <Stack.Screen
+          initialRouteName={'BookMarks'}
+          name={'BookMarks'}
+          component={AllScreens.BookMarks}
           // options={screenOptions}
         />
       </Stack.Navigator>
@@ -38,13 +66,16 @@ export function AdminHomeStack(props) {
   );
 }
 
-export function ApprovalStack() {
+// Profile,
+// BookedHistory,
+// BookMarks
+export function ProfileStack() {
   return (
     <>
       <Stack.Navigator screenOptions={{...transitionCard, ...screenOptions}}>
         <Stack.Screen
-          name={'ApprovalScreen'}
-          component={AllScreens.Approval}
+          name={'Profile'}
+          component={AllScreens.Profile}
           // options={screenOptions}
         />
       </Stack.Navigator>

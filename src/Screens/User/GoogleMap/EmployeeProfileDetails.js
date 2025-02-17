@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -18,6 +18,8 @@ import {
 import theme from '../../../utility/theme';
 import {useSelector} from 'react-redux';
 import EmployeeReview from './EmployeeReview';
+import HireNowDetailsModal from './HireNowDetailsModal';
+import CustomButton from '../../../Components/CustomButton';
 
 const worker = {
   id: 1,
@@ -107,6 +109,12 @@ const worker = {
 const EmployeeProfileDetails = ({navigation, route}) => {
   const {isDarkMode} = useSelector(state => state.user);
   // const {worker} = route.params;
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const [selectedDistance, setSelectedDistance] = useState({
+    id: 0,
+    distance: '1 km',
+  });
 
   const ProfileDetailRow = ({label, value}) => (
     <View style={styles.detailRow}>
@@ -121,7 +129,19 @@ const EmployeeProfileDetails = ({navigation, route}) => {
         backPress={() => navigation.goBack()}
         screenTitle="User profile"
       />
+      <HireNowDetailsModal
+        isModalVisible={isModalVisible}
+        onBackdropPress={() => {
+          setIsModalVisible(false);
+        }}
+        selectedDistance={selectedDistance}
+        handleSelectDistance={item => {
+          setSelectedDistance(item);
 
+          props.navigation.navigate('EmployeeFound');
+        }}
+        onSelectDistance={item => {}}
+      />
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}>
@@ -161,11 +181,14 @@ const EmployeeProfileDetails = ({navigation, route}) => {
         <EmployeeReview reviews={worker.reviews} />
       </ScrollView>
 
-      <View style={styles.footer}>
-        <TouchableOpacity activeOpacity={0.8} style={styles.hireButton}>
-          <Text style={styles.hireButtonText}>Hire Now</Text>
-        </TouchableOpacity>
-      </View>
+      <CustomButton
+        title={'Book now'}
+        onPress={() => {
+          setIsModalVisible(true);
+        }}
+        // disabled
+        // loading={true}
+      />
     </SafeAreaView>
   );
 };
@@ -283,23 +306,23 @@ const styles = StyleSheet.create({
     color: theme.color.charcolBlack,
     marginLeft: getResWidth(2),
   },
-  footer: {
-    paddingVertical: getResHeight(1.5),
-    backgroundColor: theme.color.white,
-  },
-  hireButton: {
-    width: getResWidth(90),
-    alignSelf: 'center',
-    backgroundColor: theme.color.secondary,
-    borderRadius: getResHeight(1),
-    paddingVertical: getResHeight(1),
-  },
-  hireButtonText: {
-    fontSize: getFontSize(1.8),
-    fontFamily: theme.font.semiBold,
-    color: 'white',
-    textAlign: 'center',
-  },
+  // footer: {
+  //   paddingVertical: getResHeight(1.5),
+  //   backgroundColor: theme.color.white,
+  // },
+  // hireButton: {
+  //   width: getResWidth(90),
+  //   alignSelf: 'center',
+  //   backgroundColor: theme.color.secondary,
+  //   borderRadius: getResHeight(1),
+  //   paddingVertical: getResHeight(1),
+  // },
+  // hireButtonText: {
+  //   fontSize: getFontSize(1.8),
+  //   fontFamily: theme.font.semiBold,
+  //   color: theme.color.white,
+  //   textAlign: 'center',
+  // },
 });
 
 export default EmployeeProfileDetails;

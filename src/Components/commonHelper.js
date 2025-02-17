@@ -183,11 +183,13 @@ export const handleDarkMode = async () => {
 export const textColorHandler = () => {
   let {isDarkMode} = useSelector(state => state.user);
   console.log('isdevloepr', isDarkMode);
-  if (isDarkMode) {
-    return theme.color.white;
-  } else {
-    return theme.color.white;
-  }
+
+  return theme.color.grey;
+  // if (isDarkMode) {
+  //   return theme.color.white;
+  // } else {
+  //   return theme.color.black;
+  // }
 };
 
 export const dateFormatHander = (date, format) => {

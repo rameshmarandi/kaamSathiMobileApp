@@ -42,6 +42,7 @@ import DefaultPopup, {
   renderCustomPopup,
 } from './src/Components/DefaultNotificationPopup';
 import Sound from 'react-native-sound';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {handleDarkMode} from './src/Components/commonHelper';
 const Stack = createNativeStackNavigator();
 LogBox.ignoreAllLogs(true);
@@ -224,7 +225,7 @@ function AnimatedSlash() {
         />
         <Text
           style={{
-            color: theme.color.iceWhite,
+            color: theme.color.charcolBlack,
             paddingTop: '30%',
             fontSize: getFontSize(1.5),
             fontFamily: theme.font.bold,
@@ -270,9 +271,11 @@ const AllNavContainer = props => {
           <PersistGate persistor={persistor}>
             {/* <MenuProvider> */}
             <ReactionProvider>
-              <NavigationContainer onReady={onNavigationReady}>
-                <RootNavigation isLogedIn={isLogedIn} />
-              </NavigationContainer>
+              <GestureHandlerRootView style={{flex: 1}}>
+                <NavigationContainer onReady={onNavigationReady}>
+                  <RootNavigation isLogedIn={isLogedIn} />
+                </NavigationContainer>
+              </GestureHandlerRootView>
             </ReactionProvider>
             {/* </MenuProvider> */}
           </PersistGate>

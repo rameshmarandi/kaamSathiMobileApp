@@ -7,7 +7,10 @@ import {useSelector} from 'react-redux';
 import {
   AdminHomeStack,
   ApprovalStack,
+  BookMarksStack,
   FamilyStack,
+  HistoryStack,
+  HomeStack,
   ProfileStack,
 } from './StackNav';
 import theme from '../utility/theme';
@@ -19,15 +22,29 @@ const tabArrays = [
     title: 'Home',
     icon: {type: 'Feather', name: 'home'},
     activeIcon: {type: 'Entypo', name: 'home'},
-    routeNames: 'Dashboard',
-    component: AdminHomeStack,
+    routeNames: 'HomePage',
+    component: HomeStack,
   },
   {
-    title: 'Approval',
-    icon: {type: 'Ionicons', name: 'checkmark-circle-outline'},
-    activeIcon: {type: 'Ionicons', name: 'checkmark-circle-sharp'},
-    routeNames: 'ApprovalScreen',
-    component: ApprovalStack,
+    title: 'History',
+    icon: {type: 'MaterialCommunityIcons', name: 'history'},
+    activeIcon: {type: 'MaterialCommunityIcons', name: 'history'},
+    routeNames: 'BookedHistory',
+    component: HistoryStack,
+  },
+  {
+    title: 'Bookmarks',
+    icon: {type: 'Ionicons', name: 'bookmark-outline'},
+    activeIcon: {type: 'Ionicons', name: 'bookmark'},
+    routeNames: 'BookMarks',
+    component: BookMarksStack,
+  },
+  {
+    title: 'Account',
+    icon: {type: 'MaterialCommunityIcons', name: 'account-circle-outline'},
+    activeIcon: {type: 'MaterialCommunityIcons', name: 'account-circle'},
+    routeNames: 'Profile',
+    component: ProfileStack,
   },
   // {
   //   title: 'Family',
@@ -114,9 +131,7 @@ const CustomTabBar = ({
               selectedTab === index && styles.selectedTab,
               {
                 backgroundColor:
-                  selectedTab === index
-                    ? animatedBackgroundColor
-                    : 'transparent',
+                  selectedTab === index ? theme.color.secondary : 'transparent',
                 // zIndex: -9999999,
               },
             ]}>
@@ -128,10 +143,11 @@ const CustomTabBar = ({
                 selectedTab === index ? route.activeIcon.name : route.icon.name
               }
               color={
-                (isDarkMode && selectedTab === index) ||
-                (!isDarkMode && selectedTab !== index)
-                  ? 'black'
-                  : 'white'
+                isDarkMode && selectedTab === index
+                  ? // ||
+                    // (!isDarkMode && selectedTab !== index)
+                    'white'
+                  : theme.color.black
               }
               style={{
                 zIndex: 9999999,
@@ -147,12 +163,12 @@ const CustomTabBar = ({
                   selectedTab === index
                     ? theme.font.semiBold
                     : theme.font.medium,
-                color: isDarkMode ? 'white' : 'black',
+                color: isDarkMode ? theme.color.black : 'black',
               },
             ]}>
             {route.title}
           </Text>
-          {index == 1 && (
+          {/* {index == 1 && (
             <>
               <View
                 style={{
@@ -179,7 +195,7 @@ const CustomTabBar = ({
                 </Text>
               </View>
             </>
-          )}
+          )} */}
         </TouchableOpacity>
       ))}
     </View>
@@ -187,6 +203,12 @@ const CustomTabBar = ({
 };
 
 const TabNav = memo(() => {
+  const hideBottomTabScreens = [
+    'SearchOnMap',
+    'EmployeeProfileDetails',
+    'EmployeeFound',
+  ];
+
   const {currentBgColor, currentTextColor, isDarkMode} = useSelector(
     state => state.user,
   );
@@ -205,6 +227,20 @@ const TabNav = memo(() => {
     <View style={styles.navigatorContainer}>
       <Tab.Navigator
         sceneContainerStyle={styles.sceneContainer}
+        screenOptions={({route}) => ({
+          tabBarStyle: {
+            display:
+              route.name === 'HomeStack' &&
+              route.state?.routes?.length > 1 &&
+              [
+                'SearchOnMap',
+                'EmployeeProfileDetails',
+                'EmployeeFound',
+              ].includes(route.state.routes[route.state.index].name)
+                ? 'none'
+                : 'flex',
+          },
+        })}
         tabBar={navigation => (
           <CustomTabBar
             {...navigation}

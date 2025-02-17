@@ -196,7 +196,7 @@ const CustomHeader = props => {
                     type={'Ionicons'}
                     name={'chevron-back'}
                     size={getFontSize(2.5)}
-                    color={currentBgColor}
+                    color={currentTextColor}
                     style={{}}
                   />
                 }

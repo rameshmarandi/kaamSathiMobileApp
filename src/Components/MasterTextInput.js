@@ -195,30 +195,62 @@ const MasterTextInput = forwardRef(
               locale="en"
               minDate={minDate || new Date('1950-01-01')}
               maxDate={maxDate || new Date('2030-12-31')}
-              style={styles.datePicker}
+              style={[
+                styles.datePicker,
+                {
+                  fontFamily: theme.font.bold,
+                  backgroundColor: 'red',
+                },
+              ]}
               // Styling for today and other components
-              todayTextStyle={{color: 'orange'}}
+              todayTextStyle={
+                {
+                  // color: '#ff0000',
+                  // backgroundColor: 'green',
+                  // backgroundColor: theme.color.secondary,
+                }
+              }
               headerTextStyle={[
                 styles.headerTextStyle,
-                {color: currentBgColor},
+                {color: theme.color.charcolBlack},
               ]}
-              todayContainerStyle={{backgroundColor: 'red', color: 'blue'}}
-              weekDaysTextStyle={{color: 'black'}}
-              yearContainerStyle={{backgroundColor: '#7a7a7a'}}
-              timePickerTextStyle={{color: 'black'}}
-              timePickerIndicatorStyle={{color: 'black'}}
-              dayContainerStyle={{backgroundColor: '#7a7a7a'}}
-              monthContainerStyle={{backgroundColor: '#7a7a7a'}}
-              // Style for unselected and selected dates
-              itemTextStyle={{color: 'gray'}} // Unselected dates
-              selectedTextStyle={{
+              todayContainerStyle={{
+                backgroundColor: theme.color.secondary,
+                color: 'blue',
+                borderColor: theme.color.black,
                 fontFamily: theme.font.semiBold,
+              }}
+              weekDaysTextStyle={{
+                color: 'black',
+                fontFamily: theme.font.semiBold,
+              }}
+              yearContainerStyle={{backgroundColor: theme.color.charcolBlack}}
+              timePickerTextStyle={{color: 'black'}}
+              timePickerIndicatorStyle={{
+                color: 'black',
+                backgroundColor: 'red',
+              }}
+              dayContainerStyle={{
+                backgroundColor: 'black',
+                color: 'black',
+              }}
+              monthContainerStyle={{backgroundColor: theme.color.charcolBlack}}
+              // Style for unselected and selected dates
+              itemTextStyle={{
+                color: '#f90000',
+                backgroundColor: 'red',
+                borderColor: 'red',
+              }} // Unselected dates
+              selectedTextStyle={{
+                fontFamily: theme.font.extraBold,
                 fontSize: getFontSize(1.3),
-                color: currentTextColor, // Selected date color
+                color: '#f30000', // Selected date color
+                borderColor: 'red',
+                // backgroundColor: theme.color.secondary,
               }}
               // Button styles for OK and Close
-              headerButtonColor={currentBgColor}
-              selectedItemColor={currentBgColor}
+              headerButtonColor={theme.color.charcolBlack}
+              selectedItemColor={theme.color.charcolBlack}
             />
 
             <View style={styles.buttonContainer}>
@@ -227,7 +259,8 @@ const MasterTextInput = forwardRef(
                   styles.closeButton,
                   {
                     backgroundColor: 'transparent',
-                    borderColor: theme.color.primary,
+                    borderColor: theme.color.charcolBlack,
+                    //  theme.color.primary,
                     borderWidth: 1,
                   },
                 ]}
@@ -238,7 +271,10 @@ const MasterTextInput = forwardRef(
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.closeButton, {backgroundColor: currentBgColor}]}
+                style={[
+                  styles.closeButton,
+                  {backgroundColor: theme.color.secondary},
+                ]}
                 onPress={() => setShowDatePicker(false)}>
                 <Text style={styles.closeButtonText}>OK</Text>
               </TouchableOpacity>
@@ -259,7 +295,7 @@ const MasterTextInput = forwardRef(
 
     // Define border color based on error presence
     const borderColor = error ? 'red' : currentTextColor;
-
+    let activeBorderColor = error ? 'red' : theme.color.secondary;
     const animatedStyle = {
       transform: [
         {
@@ -313,7 +349,8 @@ const MasterTextInput = forwardRef(
                 style={[
                   styles.dateInputText,
                   {
-                    color: currentTextColor,
+                    color: theme.color.charcolBlack,
+                    // currentTextColor,
                     marginLeft: '4%',
                   },
                 ]}>
@@ -351,48 +388,53 @@ const MasterTextInput = forwardRef(
             containerStyle={{
               backgroundColor: currentBgColor,
               // backgroundColor: 'green', // Ensure this is your intended background color
-              borderBottomLeftRadius: 10,
-              borderBottomRightRadius: 10,
-              borderTopLeftRadius: 5,
-              borderTopRightRadius: 5,
+              borderBottomLeftRadius: getResHeight(2),
+              borderBottomRightRadius: getResHeight(2),
+              borderTopLeftRadius: getResHeight(2),
+              borderTopRightRadius: getResHeight(2),
               marginTop: '-2%',
               borderWidth: 1,
-              borderColor: currentTextColor,
+              borderColor: theme.color.grey,
               overflow: 'hidden',
               paddingVertical: 0, // Ensure padding is minimal
             }}
             itemTextStyle={{
-              color: currentTextColor,
+              color: theme.color.charcolBlack,
+              height: 20,
               fontFamily: theme.font.regular,
-              fontSize: getFontSize(1.8),
+              fontSize: getFontSize(1.6),
               marginVertical: 0, // Remove vertical spacing
               paddingVertical: 0, // Remove padding
             }}
             itemContainerStyle={{
-              // height: 40, // Fixed height
+              maxHeight: getResHeight(7), // Fixed height
               margin: 0,
               padding: 0,
+              backgroundColor: theme.color.offWhite,
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
             placeholderStyle={{
-              color: currentTextColor,
+              color: theme.color.grey,
               fontFamily: theme.font.regular,
-              fontSize: getFontSize(1.9),
+              fontSize: getFontSize(1.6),
             }}
             renderRightIcon={() => (
               <VectorIcon
                 type={'AntDesign'}
                 name={isFocus ? 'upcircle' : 'downcircle'}
                 size={getFontSize(2.1)}
-                color={currentTextColor}
+                color={theme.color.grey}
                 style={{
                   zIndex: 1,
                 }}
               />
             )}
             selectedTextStyle={{
-              color: currentTextColor,
+              color: theme.color.charcolBlack,
               fontFamily: theme.font.regular,
-              fontSize: getFontSize(1.9),
+              fontSize: getFontSize(1.6),
+              // backgroundColor: theme.color.dimGrey,
             }}
           />
         ) : (
@@ -408,7 +450,7 @@ const MasterTextInput = forwardRef(
                 secureTextEntry={isSecureEntry}
                 outlineColor={borderColor}
                 placeholderTextColor={'grey'}
-                activeOutlineColor={borderColor}
+                activeOutlineColor={activeBorderColor}
                 keyboardType={keyboardType}
                 onSubmitEditing={onSubmitEditing}
                 maxLength={maxLength}
@@ -417,6 +459,7 @@ const MasterTextInput = forwardRef(
                 style={{
                   backgroundColor: currentBgColor,
                   textAlignVertical: 'center',
+                  borderRadius: getResHeight(2),
                 }}
                 contentStyle={{
                   width: '75%',
@@ -424,6 +467,7 @@ const MasterTextInput = forwardRef(
                   fontSize: getFontSize(1.8),
                   textAlignVertical: 'center',
                   height: getResHeight(6),
+                  borderRadius: getResHeight(2),
                 }}
                 textColor={currentTextColor}
                 ref={textInputRef}
@@ -486,7 +530,8 @@ const styles = StyleSheet.create({
     marginBottom: getResHeight(1),
   },
   dateInputWrapper: {
-    borderRadius: 4,
+    // borderRadius: 4,
+    borderRadius: getResHeight(2),
     padding: 12,
     borderWidth: 1,
     borderColor: 'gray',
@@ -499,9 +544,11 @@ const styles = StyleSheet.create({
   datePickerContainer: {
     backgroundColor: 'white',
     padding: 20,
-    borderRadius: 10,
+    // borderRadius: 10,
+    borderRadius: getResHeight(2),
     alignSelf: 'center',
-    backgroundColor: '#F4FAF3',
+    backgroundColor: 'white',
+    // '#F4FAF3',
   },
   datePicker: {
     width: '100%',
@@ -511,12 +558,13 @@ const styles = StyleSheet.create({
     // theme.color.green,
     fontFamily: theme.font.bold,
     fontSize: getFontSize(2),
+    // color: 'red',
   },
   yearContainerStyle: {
-    backgroundColor: '#F4FAF3',
+    backgroundColor: 'red',
   },
   monthContainerStyle: {
-    backgroundColor: '#F4FAF3',
+    backgroundColor: 'red',
   },
   textInputWrapper: {
     position: 'relative',
@@ -544,7 +592,7 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     height: getResHeight(6),
-    borderRadius: 4,
+    borderRadius: getResHeight(2),
     padding: 12,
     borderWidth: 1,
     justifyContent: 'center',
