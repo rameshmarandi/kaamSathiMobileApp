@@ -83,6 +83,26 @@ export function ProfileStack({navigation, route}) {
           component={AllScreens.EditProfile}
           options={screenOptions}
         />
+        <Stack.Screen
+          name={'HelpSupport'}
+          component={AllScreens.HelpSupport}
+          options={screenOptions}
+        />
+        <Stack.Screen
+          name={'ChangePassword'}
+          component={AllScreens.ChangePassword}
+          options={screenOptions}
+        />
+        <Stack.Screen
+          name={'PaymentHistory'}
+          component={AllScreens.PaymentHistory}
+          options={screenOptions}
+        />
+        <Stack.Screen
+          name={'PrivacyPolicy'}
+          component={AllScreens.PrivacyPolicy}
+          options={screenOptions}
+        />
       </Stack.Navigator>
     </>
   );

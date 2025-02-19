@@ -1,7 +1,7 @@
 import {View, Text} from 'react-native';
 import React from 'react';
 
-const EditProfile = () => {
+const ChangePassword = () => {
   return (
     <View
       style={{
@@ -13,10 +13,10 @@ const EditProfile = () => {
         style={{
           color: 'grey',
         }}>
-        Edit profile
+        Password change
       </Text>
     </View>
   );
 };
 
-export default EditProfile;
+export default ChangePassword;

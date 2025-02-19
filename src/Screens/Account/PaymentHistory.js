@@ -1,7 +1,7 @@
 import {View, Text} from 'react-native';
 import React from 'react';
 
-const EditProfile = () => {
+const PaymentHistory = () => {
   return (
     <View
       style={{
@@ -13,10 +13,10 @@ const EditProfile = () => {
         style={{
           color: 'grey',
         }}>
-        Edit profile
+        PaymentHistory
       </Text>
     </View>
   );
 };
 
-export default EditProfile;
+export default PaymentHistory;

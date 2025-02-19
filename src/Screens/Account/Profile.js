@@ -18,9 +18,9 @@ import ProfileSection from './ProfileSection';
 const options = [
   {icon: 'user', label: 'Edit Profile', screen: 'EditProfile'},
   {icon: 'key', label: 'Change Password', screen: 'ChangePassword'},
-  {icon: 'credit-card', label: 'Payment history', screen: 'PaymentMethods'},
-  {icon: 'shield', label: 'Privacy & Security', screen: 'PrivacySettings'},
-  {icon: 'headphones', label: 'Help & Support', screen: 'Support'},
+  {icon: 'credit-card', label: 'Payment history', screen: 'PaymentHistory'},
+  {icon: 'shield', label: 'Privacy & Security', screen: 'PrivacyPolicy'},
+  {icon: 'headphones', label: 'Help & Support', screen: 'HelpSupport'},
 ];
 
 const Profile = () => {

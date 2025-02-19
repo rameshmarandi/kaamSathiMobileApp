@@ -494,10 +494,10 @@ const styles = StyleSheet.create({
     fontFamily: theme.font.bold,
     color: theme.color.black,
   },
-  serviceType: {fontSize: getFontSize(1.5), color: theme.color.gray},
+  serviceType: {fontSize: getFontSize(1.5), color: theme.color.dimBlack},
   infoText: {
     fontSize: getFontSize(1.5),
-    color: theme.color.darkGray,
+    color: theme.color.dimBlack,
     marginTop: getResHeight(0.5),
   },
   statusContainer: {

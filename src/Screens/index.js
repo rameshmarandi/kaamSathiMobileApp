@@ -13,6 +13,10 @@ import Profile from './Account/Profile';
 import BookedHistory from './Booked/BookedHistory';
 import BookMarks from './Booked/BookMarks';
 import EditProfile from './Account/EditProfile';
+import ChangePassword from './Account/ChangePassword';
+import HelpSupport from './Account/HelpSupport';
+import PaymentHistory from './Account/PaymentHistory';
+import PrivacyPolicy from './Account/PrivacyPolicy';
 
 const UserAllScreens = {
   //Homepage
@@ -29,6 +33,10 @@ const UserAllScreens = {
 
   Profile,
   EditProfile,
+  ChangePassword,
+  HelpSupport,
+  PaymentHistory,
+  PrivacyPolicy,
 };
 
 const AdminScreens = {
