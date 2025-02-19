@@ -12,15 +12,23 @@ import EmployeeProfileDetails from './User/GoogleMap/EmployeeProfileDetails';
 import Profile from './Account/Profile';
 import BookedHistory from './Booked/BookedHistory';
 import BookMarks from './Booked/BookMarks';
+import EditProfile from './Account/EditProfile';
 
 const UserAllScreens = {
+  //Homepage
   HomePage,
   SearchOnMap,
   EmployeeFound,
   EmployeeProfileDetails,
-  Profile,
+
+  //Bookmark
   BookedHistory,
   BookMarks,
+
+  //Account
+
+  Profile,
+  EditProfile,
 };
 
 const AdminScreens = {

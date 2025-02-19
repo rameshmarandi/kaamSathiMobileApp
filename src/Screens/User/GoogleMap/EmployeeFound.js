@@ -92,18 +92,18 @@ export const EmployeeCard = React.memo(
                 position: 'absolute',
                 bottom: '1%',
                 right: 0,
-                height: getResHeight(4.5),
-                width: getResHeight(4.5),
+                height: getResHeight(4),
+                width: getResHeight(4),
                 borderRadius: getResHeight(100),
                 backgroundColor: 'white',
-                borderColor: theme.color.secondary,
-                borderWidth: 4,
+                borderColor: theme.color.primary,
+                borderWidth: 3,
               }}>
               <VectorIcon
                 type="MaterialIcons"
                 name={'verified'}
-                size={getFontSize(2.9)}
-                color={'green'}
+                size={getFontSize(2.4)}
+                color={theme.color.primary}
               />
             </View>
           </View>
@@ -236,8 +236,8 @@ const styles = StyleSheet.create({
     height: getResHeight(14),
     width: getResHeight(14),
     borderRadius: getResHeight(7),
-    borderWidth: 2,
-    borderColor: theme.color.secondary,
+    borderWidth: 3,
+    borderColor: theme.color.primary,
   },
   detailsContainer: {
     flex: 1,

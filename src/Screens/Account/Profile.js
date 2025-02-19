@@ -13,6 +13,7 @@ import {VectorIcon} from '../../Components/VectorIcon';
 import theme from '../../utility/theme';
 import {getFontSize, getResHeight, getResWidth} from '../../utility/responsive';
 import CustomButton from '../../Components/CustomButton';
+import ProfileSection from './ProfileSection';
 
 const options = [
   {icon: 'user', label: 'Edit Profile', screen: 'EditProfile'},
@@ -37,7 +38,7 @@ const Profile = () => {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled">
         {/* User Info Section */}
-        <View style={styles.profileSection}>
+        {/* <View style={styles.profileSection}>
           <Image
             source={{
               uri: 'https://img.freepik.com/free-photo/smiling-young-afro-american-builder-man-uniform-with-safety-helmet-thumbing-up-isolated-white-background-with-copy-space_141793-105397.jpg',
@@ -48,8 +49,9 @@ const Profile = () => {
             <Text style={styles.userName}>Ramesh Marandi</Text>
             <Text style={styles.userEmail}>ramesh.marandi@aiab.in</Text>
           </View>
-        </View>
+        </View> */}
 
+        <ProfileSection />
         <View style={styles.optionsContainer}>
           {options.map((option, index) => (
             <AccountOption

@@ -4,7 +4,7 @@ import assets from './assets';
 import {getResHeight} from '../responsive';
 
 const color = {
-  primary: '#4CAF50',
+  primary: '#27ae60',
   greenBRGA: 'rgba(17, 255, 0, 0.985)',
   dimGreen: '#a8dcab',
   redBRGA: 'rgba(255, 0, 0, 1)',

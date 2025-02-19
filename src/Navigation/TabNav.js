@@ -1,4 +1,11 @@
-import React, {useState, useCallback, useMemo, memo, useRef} from 'react';
+import React, {
+  useState,
+  useCallback,
+  useMemo,
+  memo,
+  useRef,
+  useEffect,
+} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {StyleSheet, View, Text, Animated, TouchableOpacity} from 'react-native';
 import {VectorIcon} from '../Components/VectorIcon';
@@ -202,7 +209,8 @@ const CustomTabBar = ({
   );
 };
 
-const TabNav = memo(() => {
+const TabNav = memo(props => {
+  const {navigation} = props;
   const hideBottomTabScreens = [
     'SearchOnMap',
     'EmployeeProfileDetails',
@@ -227,20 +235,15 @@ const TabNav = memo(() => {
     <View style={styles.navigatorContainer}>
       <Tab.Navigator
         sceneContainerStyle={styles.sceneContainer}
-        screenOptions={({route}) => ({
-          tabBarStyle: {
-            display:
-              route.name === 'HomeStack' &&
-              route.state?.routes?.length > 1 &&
-              [
-                'SearchOnMap',
-                'EmployeeProfileDetails',
-                'EmployeeFound',
-              ].includes(route.state.routes[route.state.index].name)
-                ? 'none'
-                : 'flex',
-          },
-        })}
+        screenOptions={({route}) => {
+          console.log('navagtion_routes', route.name);
+          // return;
+          return {
+            tabBarStyle: {
+              display: route.name == 'HomePage' ? 'none' : 'flex',
+            },
+          };
+        }}
         tabBar={navigation => (
           <CustomTabBar
             {...navigation}

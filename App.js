@@ -264,6 +264,7 @@ const AllNavContainer = props => {
     // setNavigator(navigationRef.current)
     // NavigationServic.setNavigator(navigationRef.current);
   };
+
   return (
     <>
       <Provider store={store}>
@@ -272,7 +273,13 @@ const AllNavContainer = props => {
             {/* <MenuProvider> */}
             <ReactionProvider>
               <GestureHandlerRootView style={{flex: 1}}>
-                <NavigationContainer onReady={onNavigationReady}>
+                <NavigationContainer
+                  onReady={onNavigationReady}
+                  onStateChange={state => {
+                    const currentRoute = state;
+
+                    console.log('Active Screen:', currentRoute);
+                  }}>
                   <RootNavigation isLogedIn={isLogedIn} />
                 </NavigationContainer>
               </GestureHandlerRootView>

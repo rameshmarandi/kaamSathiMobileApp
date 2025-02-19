@@ -1,6 +1,9 @@
 export const screenOptions = {
   headerShown: false,
   animationEnabled: true,
+  navigationBarHidden: true, // Hide the navigation bar if needed
+  animation: 'fade', //
+  animationDuration: 5000,
 };
 
 export const transitionCard = {

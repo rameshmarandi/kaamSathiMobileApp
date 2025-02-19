@@ -153,11 +153,11 @@ const BookedHistory = props => {
               {
                 backgroundColor:
                   data.status === 'Confirmed'
-                    ? '#4CAF50'
+                    ? theme.color.primary
                     : data.status === 'Ongoing'
                     ? '#FFC107'
                     : data.status === 'Completed'
-                    ? '#4CAF50'
+                    ? theme.color.primary
                     : '#9E9E9E',
               },
             ]}>

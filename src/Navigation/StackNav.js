@@ -69,7 +69,7 @@ export function BookMarksStack(props) {
 // Profile,
 // BookedHistory,
 // BookMarks
-export function ProfileStack() {
+export function ProfileStack({navigation, route}) {
   return (
     <>
       <Stack.Navigator screenOptions={{...transitionCard, ...screenOptions}}>
@@ -77,6 +77,11 @@ export function ProfileStack() {
           name={'Profile'}
           component={AllScreens.Profile}
           // options={screenOptions}
+        />
+        <Stack.Screen
+          name={'EditProfile'}
+          component={AllScreens.EditProfile}
+          options={screenOptions}
         />
       </Stack.Navigator>
     </>
