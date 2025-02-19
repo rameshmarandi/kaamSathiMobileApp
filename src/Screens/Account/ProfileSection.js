@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   },
   userInfo: {
     alignItems: 'center',
-    marginVertical: getResHeight(2),
+    marginVertical: getResHeight(1),
   },
   userName: {
     fontSize: getFontSize(1.8),

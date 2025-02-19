@@ -3,94 +3,108 @@ import {View, Text, ScrollView, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Import icons
 import theme from '../../utility/theme';
 import {getFontSize, getResHeight} from '../../utility/responsive';
+import CustomHeader from '../../Components/CustomHeader';
 
-const PrivacyPolicy = () => {
+const PrivacyPolicy = ({navigation}) => {
   return (
-    <ScrollView style={styles.container}>
-      {/* Main Heading */}
-      <View style={styles.headerContainer}>
-        <Icon
-          name="lock"
-          size={getFontSize(3)}
-          color={theme.color.charcolBlack}
-        />
-        <Text style={styles.heading}>Privacy Policy & Terms of Service</Text>
-      </View>
+    <>
+      <CustomHeader
+        backPress={() => navigation.goBack()}
+        screenTitle={`Privacy Policy `}
+      />
+      <ScrollView style={styles.container}>
+        {/* Main Heading */}
+        <View style={styles.headerContainer}>
+          <Icon
+            name="lock"
+            size={getFontSize(3)}
+            color={theme.color.charcolBlack}
+          />
+          <Text style={styles.heading}>Privacy Policy & Terms of Service</Text>
+        </View>
 
-      {/* English Section */}
-      <View style={styles.subHeaderContainer}>
-        <Icon name="info" size={getFontSize(3)} color={theme.color.dimBlack} />
-        <Text style={styles.subHeading}>
-          General Disclaimer & Responsibility
+        {/* English Section */}
+        <View style={styles.subHeaderContainer}>
+          <Icon
+            name="info"
+            size={getFontSize(3)}
+            color={theme.color.dimBlack}
+          />
+          <Text style={styles.subHeading}>
+            General Disclaimer & Responsibility
+          </Text>
+        </View>
+        <Text style={styles.text}>
+          Our platform acts as an intermediary between laborers and owners. We
+          do not take responsibility for any accidents, injuries, damages, or
+          disputes arising during work engagements. Owners and laborers must
+          establish clear agreements before proceeding.
         </Text>
-      </View>
-      <Text style={styles.text}>
-        Our platform acts as an intermediary between laborers and owners. We do
-        not take responsibility for any accidents, injuries, damages, or
-        disputes arising during work engagements. Owners and laborers must
-        establish clear agreements before proceeding.
-      </Text>
 
-      <View style={styles.subHeaderContainer}>
-        <Icon
-          name="handshake"
-          size={getFontSize(3)}
-          color={theme.color.dimBlack}
-        />
-        <Text style={styles.subHeading}>Labor & Owner Responsibilities</Text>
-      </View>
-      <Text style={styles.text}>
-        - Owners must ensure proper working conditions and safety measures.
-        {'\n'}- Laborers must complete assigned work within the agreed time.
-        {'\n'}- Any disputes must be settled between the involved parties.
-      </Text>
+        <View style={styles.subHeaderContainer}>
+          <Icon
+            name="handshake"
+            size={getFontSize(3)}
+            color={theme.color.dimBlack}
+          />
+          <Text style={styles.subHeading}>Labor & Owner Responsibilities</Text>
+        </View>
+        <Text style={styles.text}>
+          - Owners must ensure proper working conditions and safety measures.
+          {'\n'}- Laborers must complete assigned work within the agreed time.
+          {'\n'}- Any disputes must be settled between the involved parties.
+        </Text>
 
-      <View style={styles.subHeaderContainer}>
-        <Icon
-          name="cancel"
-          size={getFontSize(3)}
-          color={theme.color.dimBlack}
-        />
-        <Text style={styles.subHeading}>Cancellation & Refund Policy</Text>
-      </View>
-      <Text style={styles.text}>
-        - If an owner cancels after booking confirmation, 80% of the coins will
-        be refunded.
-        {'\n'}- If cancellation occurs after the booking timeframe, no refund
-        will be issued.
-        {'\n'}- Refunds are processed only in digital coins and cannot be
-        converted into cash.
-      </Text>
+        <View style={styles.subHeaderContainer}>
+          <Icon
+            name="cancel"
+            size={getFontSize(3)}
+            color={theme.color.dimBlack}
+          />
+          <Text style={styles.subHeading}>Cancellation & Refund Policy</Text>
+        </View>
+        <Text style={styles.text}>
+          - If an owner cancels after booking confirmation, 80% of the coins
+          will be refunded.
+          {'\n'}- If cancellation occurs after the booking timeframe, no refund
+          will be issued.
+          {'\n'}- Refunds are processed only in digital coins and cannot be
+          converted into cash.
+        </Text>
 
-      <View style={styles.subHeaderContainer}>
-        <Icon name="gavel" size={getFontSize(3)} color={theme.color.dimBlack} />
-        <Text style={styles.subHeading}>User Conduct & Platform Rules</Text>
-      </View>
-      <Text style={styles.text}>
-        - Fraud, fake reviews, or misleading job posts will result in permanent
-        account suspension.
-        {'\n'}- Harassment, discrimination, or misconduct leads to immediate
-        account termination.
-        {'\n'}- Users must respect agreements and follow platform policies.
-      </Text>
+        <View style={styles.subHeaderContainer}>
+          <Icon
+            name="gavel"
+            size={getFontSize(3)}
+            color={theme.color.dimBlack}
+          />
+          <Text style={styles.subHeading}>User Conduct & Platform Rules</Text>
+        </View>
+        <Text style={styles.text}>
+          - Fraud, fake reviews, or misleading job posts will result in
+          permanent account suspension.
+          {'\n'}- Harassment, discrimination, or misconduct leads to immediate
+          account termination.
+          {'\n'}- Users must respect agreements and follow platform policies.
+        </Text>
 
-      <View style={styles.subHeaderContainer}>
-        <Icon
-          name="security"
-          size={getFontSize(3)}
-          color={theme.color.dimBlack}
-        />
-        <Text style={styles.subHeading}>Data Protection & Privacy</Text>
-      </View>
-      <Text style={styles.text}>
-        - We collect basic user data (name, contact, work history) for service
-        facilitation.
-        {'\n'}- Your data is not shared with third parties unless legally
-        required.
-        {'\n'}- Users can request data deletion at any time.
-      </Text>
+        <View style={styles.subHeaderContainer}>
+          <Icon
+            name="security"
+            size={getFontSize(3)}
+            color={theme.color.dimBlack}
+          />
+          <Text style={styles.subHeading}>Data Protection & Privacy</Text>
+        </View>
+        <Text style={styles.text}>
+          - We collect basic user data (name, contact, work history) for service
+          facilitation.
+          {'\n'}- Your data is not shared with third parties unless legally
+          required.
+          {'\n'}- Users can request data deletion at any time.
+        </Text>
 
-      {/* Hindi Section
+        {/* Hindi Section
       <View style={styles.headerContainer}>
         <Icon
           name="lock"
@@ -156,7 +170,8 @@ const PrivacyPolicy = () => {
         {'\n'}- आपका डेटा तीसरे पक्ष के साथ साझा नहीं किया जाएगा।
         {'\n'}- उपयोगकर्ता किसी भी समय डेटा हटाने का अनुरोध कर सकते हैं।
       </Text> */}
-    </ScrollView>
+      </ScrollView>
+    </>
   );
 };
 

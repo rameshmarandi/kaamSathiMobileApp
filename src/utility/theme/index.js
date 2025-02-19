@@ -12,7 +12,8 @@ const color = {
   secondary2: '#FF9800',
   secondary: '#e6b42a',
 
-  secondaryRGBA: 'rgba(230, 180, 42, 0.3)',
+  secondaryRGBA: 'rgba(230, 180, 42, 0.8)',
+  // secondaryRGBA: 'rgba(230, 180, 42, 0.3)',
 
   lighYellow: '#FFF8E1',
   dimBlack: '#474545',

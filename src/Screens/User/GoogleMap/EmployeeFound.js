@@ -86,18 +86,17 @@ export const EmployeeCard = React.memo(
             />
             <View
               style={{
+                position: 'absolute',
                 justifyContent: 'center',
                 alignItems: 'center',
-
-                position: 'absolute',
-                bottom: '1%',
-                right: 0,
+                bottom: getResHeight(0.2), // Adjusted for responsiveness
+                right: getResWidth(1.5), // Adjusted for responsiveness
                 height: getResHeight(4),
                 width: getResHeight(4),
-                borderRadius: getResHeight(100),
+                borderRadius: getResHeight(2), // Ensures circular shape
                 backgroundColor: 'white',
                 borderColor: theme.color.primary,
-                borderWidth: 3,
+                borderWidth: 2,
               }}>
               <VectorIcon
                 type="MaterialIcons"

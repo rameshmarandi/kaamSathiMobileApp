@@ -89,6 +89,8 @@ const CustomHeader = props => {
             backgroundColor: isDarkMode
               ? theme.color.dardkModeOnBGColor
               : theme.color.darkModeOffBGColor,
+            // borderBottomLeftRadius: 20,
+            // borderBottomRightRadius: 20,
           }}>
           {Hamburger && (
             <>

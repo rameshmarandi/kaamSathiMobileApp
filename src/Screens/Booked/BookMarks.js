@@ -3,8 +3,9 @@ import {View, SafeAreaView, FlatList, Text, StyleSheet} from 'react-native';
 import theme from '../../utility/theme';
 
 import {EmployeeCard} from '../User/GoogleMap/EmployeeFound';
-import {getResWidth} from '../../utility/responsive';
+import {getFontSize, getResWidth} from '../../utility/responsive';
 import {HireNowDetailsModal} from '../../Components/ModalsComponent';
+import CustomHeader from '../../Components/CustomHeader';
 
 // Static Data with isBookmarked flag
 const employees = [
@@ -112,6 +113,10 @@ const BookMarks = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <CustomHeader
+        backPress={() => navigation.goBack()}
+        screenTitle={`Bookmarks`}
+      />
       {/* Hire Now Modal */}
       <HireNowDetailsModal
         isModalVisible={isModalVisible}
@@ -136,7 +141,9 @@ const BookMarks = ({navigation}) => {
               }}>
               <Text
                 style={{
-                  color: 'black',
+                  color: theme.color.dimBlack,
+                  fontFamily: theme.font.medium,
+                  fontSize: getFontSize(1.4),
                 }}>
                 No Bookmarked Workers
               </Text>

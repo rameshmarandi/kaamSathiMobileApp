@@ -14,6 +14,7 @@ import theme from '../../utility/theme';
 import {getFontSize, getResHeight, getResWidth} from '../../utility/responsive';
 import CustomButton from '../../Components/CustomButton';
 import ProfileSection from './ProfileSection';
+import CustomHeader from '../../Components/CustomHeader';
 
 const options = [
   {icon: 'user', label: 'Edit Profile', screen: 'EditProfile'},
@@ -23,7 +24,7 @@ const options = [
   {icon: 'headphones', label: 'Help & Support', screen: 'HelpSupport'},
 ];
 
-const Profile = () => {
+const Profile = props => {
   const navigation = useNavigation();
 
   const handleLogout = () => {
@@ -32,6 +33,10 @@ const Profile = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <CustomHeader
+        backPress={() => props.navigation.goBack()}
+        screenTitle={`Account Settings`}
+      />
       {/* Scrollable Content */}
       <ScrollView
         contentContainerStyle={styles.scrollContainer}

@@ -16,6 +16,7 @@ import TabViewComp from '../../Components/TabViewComp';
 import {VectorIcon} from '../../Components/VectorIcon';
 import {ReviewModal} from '../../Components/ModalsComponent';
 import {Button} from '../User/GoogleMap/EmployeeFound';
+import CustomHeader from '../../Components/CustomHeader';
 
 const BookedHistory = props => {
   const {navigation} = props;
@@ -430,6 +431,10 @@ const BookedHistory = props => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <CustomHeader
+        backPress={() => navigation.goBack()}
+        screenTitle={`Booking history`}
+      />
       <ReviewModal
         isModalVisible={isReviewModalVisible}
         onBackdropPress={() => setIsReviewModalVisible(false)}

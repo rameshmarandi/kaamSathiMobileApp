@@ -1,21 +1,29 @@
 import {View, Text} from 'react-native';
 import React from 'react';
+import CustomHeader from '../../Components/CustomHeader';
 
-const EditProfile = () => {
+const EditProfile = props => {
+  const {navigation} = props;
   return (
-    <View
-      style={{
-        justifyContent: 'center',
-        flex: 1,
-        alignItems: 'center',
-      }}>
-      <Text
+    <>
+      <CustomHeader
+        backPress={() => navigation.goBack()}
+        screenTitle={`Edit Profile`}
+      />
+      <View
         style={{
-          color: 'grey',
+          justifyContent: 'center',
+          flex: 1,
+          alignItems: 'center',
         }}>
-        Edit profile
-      </Text>
-    </View>
+        <Text
+          style={{
+            color: 'grey',
+          }}>
+          Edit profile
+        </Text>
+      </View>
+    </>
   );
 };
 

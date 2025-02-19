@@ -1,21 +1,28 @@
 import {View, Text} from 'react-native';
 import React from 'react';
+import CustomHeader from '../../Components/CustomHeader';
 
-const ChangePassword = () => {
+const ChangePassword = ({navigation}) => {
   return (
-    <View
-      style={{
-        justifyContent: 'center',
-        flex: 1,
-        alignItems: 'center',
-      }}>
-      <Text
+    <>
+      <CustomHeader
+        backPress={() => navigation.goBack()}
+        screenTitle={`Change password`}
+      />
+      <View
         style={{
-          color: 'grey',
+          justifyContent: 'center',
+          flex: 1,
+          alignItems: 'center',
         }}>
-        Password change
-      </Text>
-    </View>
+        <Text
+          style={{
+            color: 'grey',
+          }}>
+          Password change
+        </Text>
+      </View>
+    </>
   );
 };
 

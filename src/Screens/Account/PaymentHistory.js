@@ -1,21 +1,28 @@
 import {View, Text} from 'react-native';
 import React from 'react';
+import CustomHeader from '../../Components/CustomHeader';
 
-const PaymentHistory = () => {
+const PaymentHistory = ({navigation}) => {
   return (
-    <View
-      style={{
-        justifyContent: 'center',
-        flex: 1,
-        alignItems: 'center',
-      }}>
-      <Text
+    <>
+      <CustomHeader
+        backPress={() => navigation.goBack()}
+        screenTitle={`Payment History`}
+      />
+      <View
         style={{
-          color: 'grey',
+          justifyContent: 'center',
+          flex: 1,
+          alignItems: 'center',
         }}>
-        PaymentHistory
-      </Text>
-    </View>
+        <Text
+          style={{
+            color: 'grey',
+          }}>
+          PaymentHistory
+        </Text>
+      </View>
+    </>
   );
 };
 

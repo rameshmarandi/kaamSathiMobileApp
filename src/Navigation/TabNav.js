@@ -122,7 +122,8 @@ const CustomTabBar = ({
       style={[
         styles.tabBar,
         {
-          backgroundColor: isDarkMode ? currentBgColor : '#F5F5F5',
+          backgroundColor: theme.color.secondaryRGBA,
+          // isDarkMode ? currentBgColor : '#F5F5F5',
           borderTopWidth: 0.5,
           borderTopColor: isDarkMode ? '#F5F5F5' : currentTextColor,
         },
@@ -154,7 +155,8 @@ const CustomTabBar = ({
                   ? // ||
                     // (!isDarkMode && selectedTab !== index)
                     'white'
-                  : theme.color.black
+                  : '#fbf5f5ea'
+                // theme.color.dimBlack
               }
               style={{
                 zIndex: 9999999,
@@ -167,10 +169,10 @@ const CustomTabBar = ({
               styles.tabText,
               {
                 fontFamily:
-                  selectedTab === index
-                    ? theme.font.semiBold
-                    : theme.font.medium,
-                color: isDarkMode ? theme.color.black : 'black',
+                  selectedTab === index ? theme.font.medium : theme.font.medium,
+                color: selectedTab === index ? 'white' : '#fbf5f5ea',
+                // '#d2cece',
+                // isDarkMode ? theme.color.black : 'black',
               },
             ]}>
             {route.title}
