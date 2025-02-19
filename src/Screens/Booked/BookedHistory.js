@@ -6,16 +6,24 @@ import {
   SafeAreaView,
   StyleSheet,
   FlatList,
+  Alert,
   TouchableOpacity,
+  Linking,
 } from 'react-native';
 import {getFontSize, getResHeight, getResWidth} from '../../utility/responsive';
 import theme from '../../utility/theme';
 import TabViewComp from '../../Components/TabViewComp';
+import {VectorIcon} from '../../Components/VectorIcon';
+import {ReviewModal} from '../../Components/ModalsComponent';
+import {Button} from '../User/GoogleMap/EmployeeFound';
 
-const BookedHistory = () => {
+const BookedHistory = props => {
+  const {navigation} = props;
   const [activeBookings, setActiveBookings] = useState([]);
   const [historyBookings, setHistoryBookings] = useState([]);
   const [simulatedDate, setSimulatedDate] = useState(Date.now());
+  const [isReported, setIsReported] = useState([]);
+  const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
 
   // Add new booking with future date
   const addNewBooking = daysToAdd => {
@@ -42,11 +50,25 @@ const BookedHistory = () => {
 
   // Cancel booking
   const cancelBooking = id => {
-    setActiveBookings(prev =>
-      prev.map(booking =>
+    // setActiveBookings(prev =>
+    //   prev.map(booking =>
+    //     booking.id === id ? {...booking, status: 'Canceled'} : booking,
+    //   ),
+    // );
+    setActiveBookings(prev => {
+      const updatedBookings = prev.map(booking =>
         booking.id === id ? {...booking, status: 'Canceled'} : booking,
-      ),
-    );
+      );
+
+      const canceledBooking = updatedBookings.find(
+        booking => booking.id === id,
+      );
+      if (canceledBooking) {
+        setHistoryBookings(prevHistory => [...prevHistory, canceledBooking]);
+      }
+
+      return updatedBookings.filter(booking => booking.id !== id);
+    });
   };
 
   // Start work progress
@@ -70,7 +92,7 @@ const BookedHistory = () => {
         const updatedBookings = prev.map(booking => {
           if (booking.id === id) {
             if (booking.progress < 100) {
-              return {...booking, progress: booking.progress + 1};
+              return {...booking, progress: booking.progress + 10};
             }
             if (booking.progress >= 100) {
               clearInterval(interval);
@@ -100,13 +122,13 @@ const BookedHistory = () => {
               b.id === booking.id ? {...b, cancelable: false} : b,
             ),
           );
-        }, 15000); // 5 minutes (300000ms)
+        }, 5000); // 5 minutes (300000ms)
       });
 
     return () => cancelTimers.forEach(timer => clearTimeout(timer));
   }, [activeBookings]);
 
-  const BookingCard = ({data}) => {
+  const BookingCard = ({data, viewBtnPress, onHireNowBtnPress}) => {
     const isBookingDatePassed = true;
     // Date.now() >= data.bookingTimestamp;
     const bookingDate = new Date(data.bookingTimestamp).toLocaleDateString(
@@ -135,7 +157,7 @@ const BookedHistory = () => {
                     : data.status === 'Ongoing'
                     ? '#FFC107'
                     : data.status === 'Completed'
-                    ? '#2196F3'
+                    ? '#4CAF50'
                     : '#9E9E9E',
               },
             ]}>
@@ -143,27 +165,176 @@ const BookedHistory = () => {
           </View>
         </View>
 
-        {data.status === 'Ongoing' && (
-          <View style={styles.progressContainer}>
-            <View style={styles.progressBarBackground}>
-              <View
-                style={[
-                  styles.progressBarFill,
-                  {
-                    width: `${data.progress}%`,
-                    backgroundColor:
-                      data.progress === 100 ? '#4CAF50' : '#FFC107',
-                  },
-                ]}
+        {/* Display report and review button if completed? */}
+        {data.status === 'Completed' && (
+          <View style={styles.reviewContainer}>
+            <TouchableOpacity
+              activeOpacity={0.5}
+              style={styles.quickActionCard}
+              onPress={() => {
+                Alert.alert(
+                  'Report User', // Title
+                  isReported.includes(data.id)
+                    ? 'Do you want to remove the report for this user?'
+                    : 'Do you want to report this user?', // Message
+                  [
+                    {
+                      text: 'No',
+                      style: 'cancel',
+                    },
+                    {
+                      text: 'Yes',
+                      onPress: () => {
+                        setIsReported(
+                          prevState =>
+                            prevState.includes(data.id)
+                              ? prevState.filter(id => id !== data.id) // Remove if already reported
+                              : [...prevState, data.id], // Add if not reported
+                        );
+                      },
+                    },
+                  ],
+                );
+              }}>
+              <VectorIcon
+                type={'Ionicons'}
+                name={
+                  isReported.includes(data.id) ? 'warning' : 'warning-outline'
+                }
+                size={getFontSize(2.8)}
+                color={theme.color.redBRGA}
               />
-            </View>
-            <Text style={styles.progressText}>{data.progress}% completed</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              activeOpacity={0.5}
+              onPress={() => {
+                setIsReviewModalVisible(true);
+              }}
+              style={styles.quickActionCard}>
+              <VectorIcon
+                type={'MaterialIcons'}
+                name={'reviews'}
+                size={getFontSize(2.8)}
+                color={theme.color.dimBlack}
+              />
+            </TouchableOpacity>
           </View>
         )}
+        {/* Display the ongoing progress work */}
+        <View
+          style={[
+            {
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              //
+            },
+            data.status !== 'Ongoing' && {
+              justifyContent: 'flex-end',
+            },
+          ]}>
+          {data.status === 'Ongoing' && (
+            <View style={styles.progressContainer}>
+              <View style={styles.progressBarBackground}>
+                <View
+                  style={[
+                    styles.progressBarFill,
+                    {
+                      width: `${data.progress}%`,
+                      backgroundColor:
+                        data.progress === 100 ? '#4CAF50' : '#FFC107',
+                    },
+                  ]}
+                />
+              </View>
+              <Text style={styles.progressText}>
+                {data.progress}% completed
+              </Text>
+            </View>
+          )}
 
+          {data.status !== 'Canceled' && (
+            <>
+              {data.status !== 'Completed' && (
+                <View style={styles.reviewContainer}>
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    style={styles.quickActionCard}
+                    onPress={() => {
+                      const phoneNumber = 'tel:9876543210'; // Replace with dynamic labor number
+                      Linking.openURL(phoneNumber);
+                    }}>
+                    <VectorIcon
+                      type={'Feather'}
+                      name={'phone-call'}
+                      size={getFontSize(2.5)}
+                      color={theme.color.dimBlack}
+                    />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    disabled={data.status === 'Confirmed' && data.cancelable}
+                    onPress={() => {
+                      const latitude = 28.6139; // Replace with dynamic latitude
+                      const longitude = 77.209; // Replace with dynamic longitude
+                      const googleMapsURL = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+                      Linking.openURL(googleMapsURL);
+                    }}
+                    style={[
+                      styles.quickActionCard,
+
+                      data.status === 'Confirmed' &&
+                        data.cancelable && {
+                          backgroundColor: '#e8e3e3',
+                        },
+                    ]}>
+                    <VectorIcon
+                      type={'MaterialCommunityIcons'}
+                      name={'map-marker-radius'}
+                      size={getFontSize(3)}
+                      color={theme.color.dimBlack}
+                    />
+                  </TouchableOpacity>
+                </View>
+              )}
+            </>
+          )}
+        </View>
+
+        {/* Display the hire again & view details button on the complete and canceled state? */}
+        {(data.status === 'Completed' || data.status === 'Canceled') && (
+          <>
+            <View
+              style={{
+                flexDirection: 'row',
+                marginTop: getResHeight(2),
+              }}>
+              <Button text="View Details" onPress={viewBtnPress} />
+              <Button text="Hire Again" onPress={onHireNowBtnPress} isPrimary />
+            </View>
+          </>
+        )}
         {data.status === 'Confirmed' && data.cancelable && (
           <TouchableOpacity
-            onPress={() => cancelBooking(data.id)}
+            activeOpacity={0.5}
+            onPress={() => {
+              Alert.alert(
+                'Cancel Booking',
+                'Are you sure you want to cancel this booking?',
+                [
+                  {
+                    text: 'No',
+                    style: 'cancel',
+                  },
+                  {
+                    text: 'Yes',
+                    onPress: () => cancelBooking(data.id),
+                  },
+                ],
+              );
+            }}
             style={styles.cancelButton}>
             <Text style={styles.cancelButtonText}>Cancel Booking</Text>
           </TouchableOpacity>
@@ -173,6 +344,7 @@ const BookedHistory = () => {
           !data.cancelable &&
           isBookingDatePassed && (
             <TouchableOpacity
+              activeOpacity={0.5}
               onPress={() => startWork(data.id)}
               style={styles.startWorkButton}>
               <Text style={styles.startWorkButtonText}>Start Work</Text>
@@ -186,19 +358,10 @@ const BookedHistory = () => {
   const SimulationControls = () => (
     <View style={styles.controlButtons}>
       <TouchableOpacity
+        activeOpacity={0.5}
         style={styles.simulateButton}
         onPress={() => addNewBooking(1)}>
         <Text style={styles.buttonText}>Book for Tomorrow</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.simulateButton}
-        onPress={() => {
-          const newDate = new Date(simulatedDate);
-          newDate.setDate(newDate.getDate() + 1);
-          setSimulatedDate(newDate.getTime());
-        }}>
-        <Text style={styles.buttonText}>Simulate Next Day</Text>
       </TouchableOpacity>
     </View>
   );
@@ -211,6 +374,20 @@ const BookedHistory = () => {
         keyExtractor={item => item.id}
         renderItem={({item}) => <BookingCard data={item} />}
         contentContainerStyle={styles.listContainer}
+        ListEmptyComponent={() => {
+          return (
+            <>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Text style={styles.noBookings}>No booking found!</Text>
+              </View>
+            </>
+          );
+        }}
       />
     </>
   );
@@ -219,18 +396,46 @@ const BookedHistory = () => {
     <FlatList
       data={historyBookings}
       keyExtractor={item => item.id}
-      renderItem={({item}) => <BookingCard data={item} />}
+      renderItem={({item}) => (
+        <BookingCard
+          data={item}
+          onHireNowBtnPress={() => {
+            addNewBooking();
+          }}
+          viewBtnPress={() => navigation.navigate('EmployeeProfileDetails')}
+        />
+      )}
       contentContainerStyle={styles.listContainer}
+      ListEmptyComponent={() => {
+        return (
+          <>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text style={styles.noBookings}>No booking history found!</Text>
+            </View>
+          </>
+        );
+      }}
     />
   );
 
   const routes = [
-    {key: 'first', title: 'Active Bookings'},
+    {key: 'first', title: 'My Bookings'},
     {key: 'second', title: 'History'},
   ];
 
   return (
     <SafeAreaView style={styles.container}>
+      <ReviewModal
+        isModalVisible={isReviewModalVisible}
+        onBackdropPress={() => setIsReviewModalVisible(false)}
+
+        // selectedWorker={selectedWorker}
+      />
       <TabViewComp
         routes={routes}
         scenes={{first: FirstRoute, second: SecondRoute}}
@@ -246,12 +451,36 @@ const styles = StyleSheet.create({
     backgroundColor: theme.color.white,
     borderRadius: getResWidth(2),
     padding: getResWidth(4),
-    marginBottom: getResHeight(2),
+
+    marginHorizontal: getResWidth(2),
+    marginBottom: getResHeight(1.5),
+    elevation: 4, // For subtle shadow on Android
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.08,
-    shadowRadius: 2,
-    elevation: 2,
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  noBookings: {
+    color: theme.color.dimBlack,
+    fontFamily: theme.font.semiBold,
+    fontSize: getFontSize(1.3),
+  },
+  quickActionCard: {
+    height: getResHeight(5),
+    width: getResHeight(5),
+    borderColor: theme.color.dimGrey,
+    borderWidth: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: getResHeight(1),
+    marginLeft: getResWidth(2),
+  },
+  reviewContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginTop: getResHeight(1.5),
+    //
   },
   row: {flexDirection: 'row', alignItems: 'center'},
   profilePic: {
@@ -261,13 +490,13 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {marginLeft: getResWidth(4), flex: 1},
   laborName: {
-    fontSize: getFontSize(2),
+    fontSize: getFontSize(1.5),
     fontFamily: theme.font.bold,
     color: theme.color.black,
   },
-  serviceType: {fontSize: getFontSize(1.6), color: theme.color.gray},
+  serviceType: {fontSize: getFontSize(1.5), color: theme.color.gray},
   infoText: {
-    fontSize: getFontSize(1.4),
+    fontSize: getFontSize(1.5),
     color: theme.color.darkGray,
     marginTop: getResHeight(0.5),
   },
@@ -278,10 +507,10 @@ const styles = StyleSheet.create({
   },
   statusText: {
     color: theme.color.white,
-    fontSize: getFontSize(1.5),
-    fontFamily: theme.font.bold,
+    fontSize: getFontSize(1.2),
+    fontFamily: theme.font.medium,
   },
-  progressContainer: {marginTop: getResHeight(1)},
+  progressContainer: {width: getResWidth(60)},
   progressBarBackground: {
     height: getResHeight(1.5),
     backgroundColor: '#F5F5F5', // Light gray background
@@ -296,31 +525,37 @@ const styles = StyleSheet.create({
     marginTop: getResHeight(1),
     fontSize: getFontSize(1.4),
     textAlign: 'center',
-    color: theme.color.darkGray,
+    fontFamily: theme.font.medium,
+    color: theme.color.dimBlack,
   },
   cancelButton: {
     backgroundColor: '#FF5722',
-    padding: getResHeight(1.5),
+
     borderRadius: getResWidth(2),
     alignItems: 'center',
     marginTop: getResHeight(1),
+    paddingVertical: getResHeight(1),
+    color: theme.color.white,
+    fontSize: getFontSize(1.4),
+    fontFamily: theme.font.medium,
   },
   cancelButtonText: {
     color: theme.color.white,
-    fontSize: getFontSize(1.6),
-    fontFamily: theme.font.bold,
+    fontSize: getFontSize(1.4),
+    fontFamily: theme.font.medium,
   },
   startWorkButton: {
     backgroundColor: '#4CAF50',
-    padding: getResHeight(1.5),
+    // padding: getResHeight(1.5),
+    paddingVertical: getResHeight(1),
     borderRadius: getResWidth(2),
     alignItems: 'center',
     marginTop: getResHeight(1),
   },
   startWorkButtonText: {
     color: theme.color.white,
-    fontSize: getFontSize(1.6),
-    fontFamily: theme.font.bold,
+    fontSize: getFontSize(1.4),
+    fontFamily: theme.font.medium,
   },
   controlButtons: {
     padding: getResWidth(3),
@@ -335,7 +570,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontWeight: 'bold',
+    fontFamily: theme.color.medium,
+    fontSize: getFontSize(1.6),
   },
 });
 

@@ -8,14 +8,15 @@ import {
   StyleSheet,
 } from 'react-native';
 import Modal from 'react-native-modal';
-import {getFontSize, getResHeight} from '../../../utility/responsive';
-import theme from '../../../utility/theme';
-import {VectorIcon} from '../../../Components/VectorIcon';
+import {getFontSize, getResHeight, getResWidth} from '../utility/responsive';
+import theme from '../utility/theme';
+import {VectorIcon} from './VectorIcon';
 import {Formik} from 'formik';
-import {loginValidationSchema} from '../../../utility/theme/validation';
-import MasterTextInput from '../../../Components/MasterTextInput';
+import {loginValidationSchema} from '../utility/theme/validation';
+import MasterTextInput from './MasterTextInput';
 import {TextInput} from 'react-native-paper';
-import CustomButton from '../../../Components/CustomButton';
+import CustomButton from './CustomButton';
+import {AirbnbRating} from 'react-native-ratings';
 
 const HireNowDetailsModal = ({
   isModalVisible,
@@ -257,6 +258,111 @@ const HireNowDetailsModal = ({
     </View>
   );
 };
+const ReviewModal = ({isModalVisible, onBackdropPress}) => {
+  const getRatingText = rating => {
+    if (rating === 1) return 'Very Bad';
+    if (rating === 2) return 'Bad';
+    if (rating === 3) return 'Average';
+    if (rating === 4) return 'Good';
+    if (rating === 5) return 'Excellent';
+    return '';
+  };
+
+  return (
+    <View>
+      <Modal
+        isVisible={isModalVisible}
+        onBackdropPress={onBackdropPress}
+        swipeDirection="down"
+        animationIn="fadeIn"
+        animationOut="fadeOut"
+        animationOutTiming={800}
+        propagateSwipe={true}
+        style={styles.modal}>
+        <View style={styles.smallModalCOntent}>
+          <Text style={styles.modalTitle}>Leave a Review</Text>
+          <TouchableOpacity
+            onPress={onBackdropPress}
+            style={{
+              position: 'absolute',
+              right: getResWidth(3),
+              top: getResHeight(2),
+            }}>
+            <VectorIcon
+              type="Ionicons"
+              name="close-circle-sharp"
+              size={getFontSize(4)}
+              color={theme.color.grey}
+            />
+          </TouchableOpacity>
+
+          <Formik
+            initialValues={{review: '', rating: 5}}
+            onSubmit={values => {
+              console.log('Review Submitted:', values);
+              onBackdropPress();
+            }}>
+            {({handleChange, handleSubmit, setFieldValue, values}) => (
+              <>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      width: '100%',
+                    }}>
+                    <View
+                      style={{
+                        width: '60%',
+                        justifyContent: 'flex-end',
+                        alignItems: 'flex-end',
+                      }}>
+                      <AirbnbRating
+                        count={5}
+                        defaultRating={values.rating}
+                        size={24}
+                        showRating={false}
+                        onFinishRating={rating =>
+                          setFieldValue('rating', rating)
+                        }
+                      />
+                    </View>
+
+                    <View
+                      style={{
+                        width: '50%',
+                        justifyContent: 'center',
+                        // justifyContent: 'center',
+                        // alignItems: 'center',
+                      }}>
+                      <Text
+                        style={[
+                          styles.ratingText,
+                          {
+                            marginLeft: getResWidth(2),
+                          },
+                        ]}>
+                        {getRatingText(values.rating)}
+                      </Text>
+                    </View>
+                  </View>
+                  <MasterTextInput
+                    label="Write a Review"
+                    placeholder="Share your experience..."
+                    multiline
+                    value={values.review}
+                    onChangeText={handleChange('review')}
+                    style={styles.textArea}
+                  />
+                </ScrollView>
+                <CustomButton title={'Submit'} onPress={handleSubmit} />
+              </>
+            )}
+          </Formik>
+        </View>
+      </Modal>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   modal: {
@@ -271,6 +377,20 @@ const styles = StyleSheet.create({
     height: getResHeight(80), // Set a medium height (40% of the screen height)
     // minHeight: getResHeight(50), // Ensure it doesn't grow too tall
     maxHeight: getResHeight(110), // Ensure it doesn't grow too tall
+  },
+  smallModalCOntent: {
+    backgroundColor: '#FFF',
+    padding: 16,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    height: getResHeight(40), // Set a medium height (40% of the screen height)
+    // minHeight: getResHeight(50), // Ensure it doesn't grow too tall
+    maxHeight: getResHeight(60), // Ensure it doesn't grow too tall
+  },
+  ratingText: {
+    fontFamily: theme.font.medium,
+    fontSize: getFontSize(1.5),
+    color: theme.color.charcolBlack,
   },
   modalTitle: {
     fontSize: getFontSize(1.5),
@@ -292,4 +412,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HireNowDetailsModal;
+export {HireNowDetailsModal, ReviewModal};

@@ -57,7 +57,16 @@ const TabViewComp = memo(
           renderItem={({item, index: tabIndex}) => (
             <TouchableOpacity
               activeOpacity={0.8}
-              style={[styles.tabItem, index === tabIndex && styles.activeTab]}
+              style={[
+                styles.tabItem,
+                index === tabIndex && styles.activeTab,
+                index !== tabIndex && {
+                  borderBottomColor: theme.color.dimGrey,
+                  borderBottomWidth: 2,
+                  // marginRight:
+                  // tabIndex === routes.length - 1 ? 0 : getResWidth(2),
+                },
+              ]}
               onPress={() => handleIndexChange(tabIndex)}>
               <Text
                 style={[
@@ -106,14 +115,15 @@ const styles = StyleSheet.create({
     borderBottomColor: theme.color.secondary,
   },
   tabLabel: {
-    fontSize: getFontSize(1.8),
-    fontFamily: theme.font.regular,
+    fontSize: getFontSize(1.5),
+    fontFamily: theme.font.medium,
     textTransform: 'capitalize',
+    color: theme.color.grey,
   },
   activeLabel: {
     color: theme.color.charcolBlack,
-    fontSize: getFontSize(1.8),
-    fontFamily: theme.font.bold,
+    fontSize: getFontSize(1.5),
+    fontFamily: theme.font.semiBold,
   },
 });
 

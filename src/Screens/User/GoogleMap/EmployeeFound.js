@@ -18,14 +18,14 @@ import {
 } from '../../../utility/responsive';
 import theme from '../../../utility/theme';
 import MsgConfig from '../../../Config/MsgConfig';
-import HireNowDetailsModal from './HireNowDetailsModal';
+import {HireNowDetailsModal} from '../../../Components/ModalsComponent';
 
 const distances = [
   ...Array.from({length: 15}, (_, index) => `${index + 1} km`),
   ...Array.from({length: 17}, (_, index) => `${(index + 4) * 5} km`),
 ];
 
-const Button = ({text, onPress, isPrimary}) => (
+export const Button = ({text, onPress, isPrimary}) => (
   <TouchableOpacity
     activeOpacity={0.8}
     onPress={onPress}
@@ -69,7 +69,10 @@ export const EmployeeCard = React.memo(
     return (
       <View style={[styles.card, index === 0 && styles.firstCard]}>
         <View style={styles.cardContent}>
-          <View>
+          <View
+            style={{
+              position: 'relative',
+            }}>
             <Image
               source={{
                 uri: 'https://www.gngmodels.com/wp-content/uploads/2023/12/indian-male-models-11-682x1024.jpg',
@@ -87,7 +90,7 @@ export const EmployeeCard = React.memo(
                 alignItems: 'center',
 
                 position: 'absolute',
-                bottom: getResHeight(8),
+                bottom: '1%',
                 right: 0,
                 height: getResHeight(4.5),
                 width: getResHeight(4.5),
@@ -129,7 +132,7 @@ export const EmployeeCard = React.memo(
             <VectorIcon
               type="MaterialCommunityIcons"
               name={isSelected ? 'heart' : 'cards-heart-outline'}
-              size={getFontSize(2.9)}
+              size={getFontSize(3)}
               color={isSelected ? 'red' : theme.color.charcolBlack}
             />
           </Animated.View>
@@ -243,24 +246,24 @@ const styles = StyleSheet.create({
   detailRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginVertical: getResHeight(0.5),
+    marginVertical: getResHeight(0.2),
   },
   detailLabel: {
     width: getResWidth(20.5),
-    fontSize: getFontSize(1.4),
+    fontSize: getFontSize(1.2),
     fontFamily: theme.font.semiBold,
     color: theme.color.charcolBlack,
   },
   detailValue: {
     flex: 1,
-    fontSize: getFontSize(1.5),
+    fontSize: getFontSize(1.2),
     fontFamily: theme.font.medium,
     color: theme.color.charcolBlack,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: getResHeight(1),
+    marginTop: getResHeight(2.5),
   },
   button: {
     flex: 1,
@@ -279,7 +282,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.color.white,
   },
   buttonText: {
-    fontSize: getFontSize(1.5),
+    fontSize: getFontSize(1.3),
     fontFamily: theme.font.semiBold,
     textAlign: 'center',
     color: theme.color.charcolBlack,

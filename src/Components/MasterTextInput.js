@@ -48,6 +48,7 @@ const MasterTextInput = forwardRef(
       maxDate,
       calendarMode,
       maxLength,
+      multiline,
       isDropdown = false,
       dropdownData = [],
       onDropdownChange,
@@ -449,6 +450,7 @@ const MasterTextInput = forwardRef(
                 autoCapitalize={autoCapitalize}
                 secureTextEntry={isSecureEntry}
                 outlineColor={borderColor}
+                multiline={multiline}
                 placeholderTextColor={'grey'}
                 activeOutlineColor={activeBorderColor}
                 keyboardType={keyboardType}
@@ -461,14 +463,25 @@ const MasterTextInput = forwardRef(
                   textAlignVertical: 'center',
                   borderRadius: getResHeight(2),
                 }}
-                contentStyle={{
-                  width: '75%',
-                  fontFamily: theme.font.regular,
-                  fontSize: getFontSize(1.8),
-                  textAlignVertical: 'center',
-                  height: getResHeight(6),
-                  borderRadius: getResHeight(2),
-                }}
+                contentStyle={[
+                  {
+                    width: '75%',
+                    fontFamily: theme.font.regular,
+                    fontSize: getFontSize(1.8),
+                    textAlignVertical: 'center',
+                    height: getResHeight(6),
+                    borderRadius: getResHeight(2),
+                    fontFamily: theme.font.medium,
+                    color: theme.color.dimBlack,
+                  },
+                  multiline && {
+                    width: '100%',
+                    // minHeight: getResHeight(16),
+                    height: getResHeight(14),
+                    textAlignVertical: 'top',
+                    lineHeight: getResHeight(3),
+                  },
+                ]}
                 textColor={currentTextColor}
                 ref={textInputRef}
                 {...rest}

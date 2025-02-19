@@ -18,93 +18,9 @@ import {
 import theme from '../../../utility/theme';
 import {useSelector} from 'react-redux';
 import EmployeeReview from './EmployeeReview';
-import HireNowDetailsModal from './HireNowDetailsModal';
-import CustomButton from '../../../Components/CustomButton';
 
-const worker = {
-  id: 1,
-  name: 'Amit Kumar',
-  skill: 'Electrician',
-  location: 'Delhi',
-  experience: 5,
-  rating: 4.7,
-  reviews: [
-    {
-      id: 1,
-      name: 'Rahul Sharma',
-      profilePic: 'https://randomuser.me/api/portraits/men/1.jpg',
-      rating: 5,
-      comment: 'Great electrician! Fixed all my wiring issues in no time.',
-    },
-    {
-      id: 2,
-      name: 'Priya Verma',
-      profilePic: 'https://randomuser.me/api/portraits/women/2.jpg',
-      rating: 4,
-      comment: 'Good service, but took a little longer than expected.',
-    },
-    {
-      id: 3,
-      name: 'Vikram Singh',
-      profilePic: 'https://randomuser.me/api/portraits/men/3.jpg',
-      rating: 5,
-      comment: 'Very professional and skilled. Highly recommended!',
-    },
-    {
-      id: 4,
-      name: 'Anjali Mehta',
-      profilePic: 'https://randomuser.me/api/portraits/women/4.jpg',
-      rating: 4.5,
-      comment:
-        'Amit is very knowledgeable and efficient. Did a great job with my new switchboard.',
-    },
-    {
-      id: 5,
-      name: 'Suresh Gupta',
-      profilePic: 'https://randomuser.me/api/portraits/men/5.jpg',
-      rating: 3.5,
-      comment:
-        'Work was good, but he arrived late. Communication could be better.',
-    },
-    {
-      id: 6,
-      name: 'Neha Kapoor',
-      profilePic: 'https://randomuser.me/api/portraits/women/6.jpg',
-      rating: 5,
-      comment:
-        'Excellent service! Very polite and professional. Will definitely hire again.',
-    },
-    {
-      id: 7,
-      name: 'Ravi Dubey',
-      profilePic: 'https://randomuser.me/api/portraits/men/7.jpg',
-      rating: 4.8,
-      comment: 'Fixed my inverter wiring quickly. Knows his work well!',
-    },
-    {
-      id: 8,
-      name: 'Pooja Tiwari',
-      profilePic: 'https://randomuser.me/api/portraits/women/8.jpg',
-      rating: 4.2,
-      comment: 'Did a neat job, but the pricing was slightly high.',
-    },
-    {
-      id: 9,
-      name: 'Arun Mishra',
-      profilePic: 'https://randomuser.me/api/portraits/men/9.jpg',
-      rating: 4.9,
-      comment:
-        'Best electrician I have hired so far! Really impressed with his expertise.',
-    },
-    {
-      id: 10,
-      name: 'Megha Choudhary',
-      profilePic: 'https://randomuser.me/api/portraits/women/10.jpg',
-      rating: 4.6,
-      comment: 'Very patient and skilled. Fixed all issues without any hassle.',
-    },
-  ],
-};
+import CustomButton from '../../../Components/CustomButton';
+import {HireNowDetailsModal} from '../../../Components/ModalsComponent';
 
 const EmployeeProfileDetails = ({navigation, route}) => {
   const {isDarkMode} = useSelector(state => state.user);
@@ -116,6 +32,91 @@ const EmployeeProfileDetails = ({navigation, route}) => {
     distance: '1 km',
   });
 
+  const worker = {
+    id: 1,
+    name: 'Amit Kumar',
+    skill: 'Electrician',
+    location: 'Delhi',
+    experience: 5,
+    rating: 4.7,
+    reviews: [
+      {
+        id: 1,
+        name: 'Rahul Sharma',
+        profilePic: 'https://randomuser.me/api/portraits/men/1.jpg',
+        rating: 5,
+        comment: 'Great electrician! Fixed all my wiring issues in no time.',
+      },
+      {
+        id: 2,
+        name: 'Priya Verma',
+        profilePic: 'https://randomuser.me/api/portraits/women/2.jpg',
+        rating: 4,
+        comment: 'Good service, but took a little longer than expected.',
+      },
+      {
+        id: 3,
+        name: 'Vikram Singh',
+        profilePic: 'https://randomuser.me/api/portraits/men/3.jpg',
+        rating: 5,
+        comment: 'Very professional and skilled. Highly recommended!',
+      },
+      {
+        id: 4,
+        name: 'Anjali Mehta',
+        profilePic: 'https://randomuser.me/api/portraits/women/4.jpg',
+        rating: 4.5,
+        comment:
+          'Amit is very knowledgeable and efficient. Did a great job with my new switchboard.',
+      },
+      {
+        id: 5,
+        name: 'Suresh Gupta',
+        profilePic: 'https://randomuser.me/api/portraits/men/5.jpg',
+        rating: 3.5,
+        comment:
+          'Work was good, but he arrived late. Communication could be better.',
+      },
+      {
+        id: 6,
+        name: 'Neha Kapoor',
+        profilePic: 'https://randomuser.me/api/portraits/women/6.jpg',
+        rating: 5,
+        comment:
+          'Excellent service! Very polite and professional. Will definitely hire again.',
+      },
+      {
+        id: 7,
+        name: 'Ravi Dubey',
+        profilePic: 'https://randomuser.me/api/portraits/men/7.jpg',
+        rating: 4.8,
+        comment: 'Fixed my inverter wiring quickly. Knows his work well!',
+      },
+      {
+        id: 8,
+        name: 'Pooja Tiwari',
+        profilePic: 'https://randomuser.me/api/portraits/women/8.jpg',
+        rating: 4.2,
+        comment: 'Did a neat job, but the pricing was slightly high.',
+      },
+      {
+        id: 9,
+        name: 'Arun Mishra',
+        profilePic: 'https://randomuser.me/api/portraits/men/9.jpg',
+        rating: 4.9,
+        comment:
+          'Best electrician I have hired so far! Really impressed with his expertise.',
+      },
+      {
+        id: 10,
+        name: 'Megha Choudhary',
+        profilePic: 'https://randomuser.me/api/portraits/women/10.jpg',
+        rating: 4.6,
+        comment:
+          'Very patient and skilled. Fixed all issues without any hassle.',
+      },
+    ],
+  };
   const ProfileDetailRow = ({label, value}) => (
     <View style={styles.detailRow}>
       <Text style={styles.detailLabel}>{`${label} :`}</Text>

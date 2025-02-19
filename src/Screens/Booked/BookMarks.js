@@ -1,9 +1,10 @@
 import React, {useState, useCallback} from 'react';
 import {View, SafeAreaView, FlatList, Text, StyleSheet} from 'react-native';
 import theme from '../../utility/theme';
-import HireNowDetailsModal from '../User/GoogleMap/HireNowDetailsModal';
+
 import {EmployeeCard} from '../User/GoogleMap/EmployeeFound';
 import {getResWidth} from '../../utility/responsive';
+import {HireNowDetailsModal} from '../../Components/ModalsComponent';
 
 // Static Data with isBookmarked flag
 const employees = [

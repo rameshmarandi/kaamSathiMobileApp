@@ -1,110 +1,123 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  SafeAreaView,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {VectorIcon} from '../../Components/VectorIcon';
 import theme from '../../utility/theme';
-import {getResHeight, getResWidth} from '../../utility/responsive';
-import {SafeAreaView} from 'react-native';
+import {getFontSize, getResHeight, getResWidth} from '../../utility/responsive';
 import CustomButton from '../../Components/CustomButton';
 
-// import {VectorIcon} from '../../../Components/VectorIcon';
+const options = [
+  {icon: 'user', label: 'Edit Profile', screen: 'EditProfile'},
+  {icon: 'key', label: 'Change Password', screen: 'ChangePassword'},
+  {icon: 'credit-card', label: 'Payment history', screen: 'PaymentMethods'},
+  {icon: 'shield', label: 'Privacy & Security', screen: 'PrivacySettings'},
+  {icon: 'headphones', label: 'Help & Support', screen: 'Support'},
+];
 
 const Profile = () => {
   const navigation = useNavigation();
 
   const handleLogout = () => {
-    // Implement logout logic here
     console.log('User logged out');
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* User Info Section */}
-      <View style={styles.profileSection}>
-        <Image
-          source={{
-            uri: 'https://img.freepik.com/free-photo/smiling-young-afro-american-builder-man-uniform-with-safety-helmet-thumbing-up-isolated-white-background-with-copy-space_141793-105397.jpg',
-          }}
-          style={styles.profileImage}
-        />
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Text style={styles.userName}>Ramesh Marandi</Text>
-          <Text style={styles.userEmail}>ramesh.marandi@aiab.in</Text>
-        </View>
-      </View>
-
-      {/* Account Options */}
-      <View style={styles.optionsContainer}>
-        <AccountOption
-          icon="user"
-          label="Edit Profile"
-          onPress={() => navigation.navigate('EditProfile')}
-        />
-        <AccountOption
-          icon="key"
-          label="Change Password"
-          onPress={() => navigation.navigate('ChangePassword')}
-        />
-        <AccountOption
-          icon="credit-card"
-          label="Payment Methods"
-          onPress={() => navigation.navigate('PaymentMethods')}
-        />
-        <AccountOption
-          icon="shield"
-          label="Privacy & Security"
-          onPress={() => navigation.navigate('PrivacySettings')}
-        />
-        <AccountOption
-          icon="headphones"
-          label="Help & Support"
-          onPress={() => navigation.navigate('Support')}
-        />
-      </View>
-
-      {/* Logout Button */}
-      <CustomButton
-        title={'Logout'}
-        onPress={() => {
-          // setIsModalVisible(true);
-        }}
-        leftIcon={
-          <VectorIcon
-            type="MaterialCommunityIcons"
-            name="logout"
-            size={24}
-            color={theme.color.white}
+      {/* Scrollable Content */}
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled">
+        {/* User Info Section */}
+        <View style={styles.profileSection}>
+          <Image
+            source={{
+              uri: 'https://img.freepik.com/free-photo/smiling-young-afro-american-builder-man-uniform-with-safety-helmet-thumbing-up-isolated-white-background-with-copy-space_141793-105397.jpg',
+            }}
+            style={styles.profileImage}
           />
-        }
-        // disabled
-        // loading={true}
-      />
-      {/* <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <VectorIcon
-          type="MaterialCommunityIcons"
-          name="logout"
-          size={24}
-          color={theme.color.white}
+          <View style={styles.userInfo}>
+            <Text style={styles.userName}>Ramesh Marandi</Text>
+            <Text style={styles.userEmail}>ramesh.marandi@aiab.in</Text>
+          </View>
+        </View>
+
+        <View style={styles.optionsContainer}>
+          {options.map((option, index) => (
+            <AccountOption
+              key={index}
+              icon={option.icon}
+              label={option.label}
+              onPress={() => navigation.navigate(option.screen)}
+            />
+          ))}
+        </View>
+      </ScrollView>
+
+      {/* Fixed Logout Button */}
+      <View style={styles.logoutContainer}>
+        <CustomButton
+          title="Logout"
+          onPress={handleLogout}
+          leftIcon={
+            <VectorIcon
+              type="MaterialCommunityIcons"
+              name="logout"
+              size={24}
+              color={theme.color.white}
+            />
+          }
         />
-        <Text style={styles.logoutText}>Logout</Text>
-      </TouchableOpacity> */}
+      </View>
     </SafeAreaView>
   );
 };
 
 const AccountOption = ({icon, label, onPress}) => (
-  <TouchableOpacity style={styles.option} onPress={onPress}>
+  <TouchableOpacity
+    activeOpacity={0.5}
+    style={[
+      styles.option,
+      {
+        width: '100%',
+        paddingLeft: '9%',
+        paddingRight: '5%',
+      },
+    ]}
+    onPress={onPress}>
+    <View
+      style={{
+        flexDirection: 'row',
+        width: '90%',
+      }}>
+      <View
+        style={{
+          width: '10%',
+          // backgroundColor: 'red',
+        }}>
+        <VectorIcon
+          type="FontAwesome"
+          name={icon}
+          size={20}
+          color={theme.color.grey}
+        />
+      </View>
+      <Text style={styles.optionText}>{label}</Text>
+    </View>
     <VectorIcon
-      type="FontAwesome"
-      name={icon}
+      type="Entypo"
+      name={'chevron-right'}
       size={20}
-      color={theme.color.primary}
+      color={theme.color.grey}
     />
-    <Text style={styles.optionText}>{label}</Text>
   </TouchableOpacity>
 );
 
@@ -112,66 +125,64 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.color.white,
-    // paddingHorizontal: getResWidth(4),
-    padding: getResWidth(5),
+  },
+  scrollContainer: {
+    // padding: getResWidth(5),
+    paddingTop: getResHeight(5),
+    // paddingHorizontal: getResWidth(8),
+
+    // paddingBottom: 80, // Ensure space for the fixed button
   },
   profileSection: {
-    // flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
+    marginBottom: getResHeight(2),
   },
   profileImage: {
     width: getResHeight(18),
     height: getResHeight(18),
     borderRadius: getResHeight(100),
-    marginRight: 15,
     borderWidth: 1,
     borderColor: theme.color.secondary,
-    justifyContent: 'center',
+  },
+  userInfo: {
     alignItems: 'center',
-    alignSelf: 'center',
+    marginTop: getResHeight(2),
   },
   userName: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: getFontSize(1.9),
+    fontFamily: theme.font.semiBold,
     color: theme.color.charcolBlack,
   },
   userEmail: {
-    fontSize: 14,
-    color: theme.color.charcolBlack,
+    fontSize: getFontSize(1.5),
+    fontFamily: theme.font.medium,
+    color: theme.color.dimBlack,
   },
   optionsContainer: {
     backgroundColor: theme.color.white,
-    borderRadius: 10,
-    padding: 10,
-    elevation: 2,
+    // borderRadius: 10,
+    // padding: 10,
+    // elevation: 2,
   },
   option: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: getResHeight(2),
     borderBottomWidth: 1,
-    borderBottomColor: theme.color.lightGray,
+    borderBottomColor: theme.color.dimGrey,
   },
   optionText: {
-    fontSize: 16,
+    fontSize: getFontSize(1.6),
+    fontFamily: theme.font.medium,
     color: theme.color.charcolBlack,
-    marginLeft: 15,
+    // marginLeft: getResWidth(3),
   },
-  logoutButton: {
-    marginTop: 30,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.color.primary,
-    padding: 12,
-    borderRadius: 8,
-    justifyContent: 'center',
-  },
-  logoutText: {
-    fontSize: 16,
-    color: theme.color.white,
-    marginLeft: 10,
+  logoutContainer: {
+    // position: 'absolute',
+    // bottom: 20,
+    // left: 20,
+    // right: 20,
   },
 });
 

@@ -15,6 +15,7 @@ const color = {
   secondaryRGBA: 'rgba(230, 180, 42, 0.3)',
 
   lighYellow: '#FFF8E1',
+  dimBlack: '#474545',
   // #424242
   iceWhite: '#F1F1F1',
   white: '#FFFFFF',
