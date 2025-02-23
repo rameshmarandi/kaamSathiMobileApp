@@ -12,6 +12,7 @@ const initialState = {
   currentTextColor: theme.color.charcolBlack,
   currentBgColor: theme.color.white,
   logedInuserType: '',
+  isUserOnline: false,
 };
 
 const authSlice = createSlice({
@@ -20,6 +21,9 @@ const authSlice = createSlice({
   reducers: {
     setDarkMode(state, action) {
       state.isDarkMode = action.payload;
+    },
+    setIsUserOnline(state, action) {
+      state.isUserOnline = action.payload;
     },
     setLoginUser(state, action) {
       state.loginUser = action.payload;
@@ -50,6 +54,7 @@ const authSlice = createSlice({
 
 export const {
   setLoginUser,
+  setIsUserOnline,
   setDarkMode,
   setAdmin,
   setTextColor,

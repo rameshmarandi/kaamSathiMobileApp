@@ -1,11 +1,19 @@
-import React, {useState, useCallback} from 'react';
-import {View, SafeAreaView, FlatList, Text, StyleSheet} from 'react-native';
+import React, {useState, useRef} from 'react';
+import {
+  View,
+  SafeAreaView,
+  FlatList,
+  Text,
+  StyleSheet,
+  Animated,
+} from 'react-native';
 import theme from '../../utility/theme';
 
 import {EmployeeCard} from '../User/GoogleMap/EmployeeFound';
 import {getFontSize, getResWidth} from '../../utility/responsive';
 import {HireNowDetailsModal} from '../../Components/ModalsComponent';
 import CustomHeader from '../../Components/CustomHeader';
+import NoDataFound from '../../Components/NoDataFound';
 
 // Static Data with isBookmarked flag
 const employees = [
@@ -75,48 +83,73 @@ const BookMarks = ({navigation}) => {
   const [bookmarkedItems, setBookmarkedItems] = useState(employees);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedWorker, setSelectedWorker] = useState(null);
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const lastScrollY = useRef(0);
+  const headerHeight = useRef(new Animated.Value(1)).current; // 1: Visible, 0: Hidden
 
   // Handle Bookmark Toggle (Remove from List when Unbookmarked)
-  const handleHeartPress = useCallback(id => {
-    setBookmarkedItems(
-      prevItems =>
-        prevItems
-          .map(item =>
-            item.id === id ? {...item, isBookmarked: !item.isBookmarked} : item,
-          )
-          .filter(item => item.isBookmarked), // Remove if isBookmarked is false
+  const handleHeartPress = id => {
+    setBookmarkedItems(prevItems =>
+      prevItems
+        .map(item =>
+          item.id === id ? {...item, isBookmarked: !item.isBookmarked} : item,
+        )
+        .filter(item => item.isBookmarked),
     );
-  }, []);
+  };
 
-  // Render Employee Card
-  const renderItem = useCallback(
-    ({item}) => (
-      <EmployeeCard
-        id={item.id}
-        distance={item.distance}
-        isSelected={item.isBookmarked}
-        workerDetails={item.workerDetails}
-        onHeartPress={() => handleHeartPress(item.id)}
-        onHireNowBtnPress={() => {
-          setSelectedWorker(item);
-          setIsModalVisible(true);
-        }}
-        viewBtnPress={() =>
-          navigation.navigate('EmployeeProfileDetails', {
-            worker: item.workerDetails,
-          })
-        }
-      />
-    ),
-    [bookmarkedItems, handleHeartPress],
+  // Handle Scroll Event
+  const handleScroll = Animated.event(
+    [{nativeEvent: {contentOffset: {y: scrollY}}}],
+    {useNativeDriver: false},
   );
+
+  // Detect Scroll Direction
+  const handleMomentumScrollEnd = event => {
+    const currentScrollY = event.nativeEvent.contentOffset.y;
+
+    if (currentScrollY > lastScrollY.current + 10) {
+      // Scrolling down → Hide Header
+      Animated.timing(headerHeight, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    } else if (currentScrollY < lastScrollY.current - 5) {
+      // Slight scroll up → Show Header
+      Animated.timing(headerHeight, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
+
+    lastScrollY.current = currentScrollY;
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <CustomHeader
-        backPress={() => navigation.goBack()}
-        screenTitle={`Bookmarks`}
-      />
+      {/* Animated Header */}
+      <Animated.View
+        style={[
+          styles.headerContainer,
+          {
+            transform: [
+              {
+                translateY: headerHeight.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [-60, 0],
+                }),
+              },
+            ],
+          },
+        ]}>
+        <CustomHeader
+          backPress={() => navigation.goBack()}
+          screenTitle="Bookmarks"
+        />
+      </Animated.View>
+
       {/* Hire Now Modal */}
       <HireNowDetailsModal
         isModalVisible={isModalVisible}
@@ -125,33 +158,38 @@ const BookMarks = ({navigation}) => {
       />
 
       {/* Bookmarked Workers List */}
-      <FlatList
-        data={bookmarkedItems.filter(item => item.isBookmarked)} // Render only bookmarked employees
+      <Animated.FlatList
+        data={bookmarkedItems.filter(item => item.isBookmarked)}
         keyExtractor={item => item.id.toString()}
-        renderItem={renderItem}
+        renderItem={({item}) => (
+          <EmployeeCard
+            id={item.id}
+            distance={item.distance}
+            isSelected={item.isBookmarked}
+            workerDetails={item.workerDetails}
+            onHeartPress={() => handleHeartPress(item.id)}
+            onHireNowBtnPress={() => {
+              setSelectedWorker(item);
+              setIsModalVisible(true);
+            }}
+            viewBtnPress={() =>
+              navigation.navigate('EmployeeProfileDetails', {
+                worker: item.workerDetails,
+              })
+            }
+          />
+        )}
         contentContainerStyle={styles.listContentContainer}
         showsVerticalScrollIndicator={false}
+        onScroll={handleScroll}
+        onMomentumScrollEnd={handleMomentumScrollEnd}
+        scrollEventThrottle={16}
         ListEmptyComponent={() => (
-          <>
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{
-                  color: theme.color.dimBlack,
-                  fontFamily: theme.font.medium,
-                  fontSize: getFontSize(1.4),
-                }}>
-                No Bookmarked Workers
-              </Text>
-            </View>
-          </>
+          <View style={styles.emptyContainer}>
+            <NoDataFound />
+          </View>
         )}
       />
-      {/* </View> */}
     </SafeAreaView>
   );
 };
@@ -161,8 +199,25 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.color.white,
   },
+  headerContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+  },
   listContentContainer: {
-    paddingTop: '5%',
+    paddingTop: 70, // Ensure the list starts below the header
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    color: theme.color.dimBlack,
+    fontFamily: theme.font.medium,
+    fontSize: getFontSize(1.4),
   },
 });
 

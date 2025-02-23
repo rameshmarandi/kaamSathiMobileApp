@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   Image,
   ScrollView,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {VectorIcon} from '../../Components/VectorIcon';
@@ -15,22 +16,61 @@ import {getFontSize, getResHeight, getResWidth} from '../../utility/responsive';
 import CustomButton from '../../Components/CustomButton';
 import ProfileSection from './ProfileSection';
 import CustomHeader from '../../Components/CustomHeader';
+import CustomSwitch from '../../Components/CustomSwitch';
+import WaveButton from '../../Components/WaveButton';
+import {store} from '../../redux/store';
+import {setIsUserOnline} from '../../redux/reducer/Auth';
+import {useSelector} from 'react-redux';
 
 const options = [
-  {icon: 'user', label: 'Edit Profile', screen: 'EditProfile'},
+  {icon: 'user', label: 'Profile Details', screen: 'ProfileDetails'},
   {icon: 'key', label: 'Change Password', screen: 'ChangePassword'},
   {icon: 'credit-card', label: 'Payment history', screen: 'PaymentHistory'},
   {icon: 'shield', label: 'Privacy & Security', screen: 'PrivacyPolicy'},
   {icon: 'headphones', label: 'Help & Support', screen: 'HelpSupport'},
+  {
+    icon: 'trash',
+    label: 'Delecte Account',
+    screen: 'HelpSupport',
+    delete: true,
+  },
 ];
 
 const Profile = props => {
   const navigation = useNavigation();
+  const [isOnline, setIsOnline] = useState(false);
 
+  let {isUserOnline} = useSelector(state => state.user);
   const handleLogout = () => {
     console.log('User logged out');
   };
 
+  const waveButtonProps = useCallback(
+    color => ({
+      onPress: () => {
+        /* Navigation action */
+      },
+      circleContainer: {
+        width: getResHeight(2),
+        height: getResHeight(2),
+        borderRadius: getResHeight(2) / 2,
+        backgroundColor: color,
+      },
+      circleStyle: {
+        width: getResHeight(2),
+        height: getResHeight(2),
+        borderRadius: getResHeight(2) / 2,
+        backgroundColor: color,
+      },
+    }),
+    [],
+  );
+
+  const handleDarkMode = async () => {
+    store.dispatch(setIsUserOnline(!isUserOnline));
+    // setIsOnline(prevState => !prevState);
+  };
+  const waveButtonPropsFirstRoute = waveButtonProps(theme.color.primary);
   return (
     <SafeAreaView style={styles.container}>
       <CustomHeader
@@ -43,27 +83,71 @@ const Profile = props => {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled">
         {/* User Info Section */}
-        {/* <View style={styles.profileSection}>
-          <Image
-            source={{
-              uri: 'https://img.freepik.com/free-photo/smiling-young-afro-american-builder-man-uniform-with-safety-helmet-thumbing-up-isolated-white-background-with-copy-space_141793-105397.jpg',
-            }}
-            style={styles.profileImage}
-          />
-          <View style={styles.userInfo}>
-            <Text style={styles.userName}>Ramesh Marandi</Text>
-            <Text style={styles.userEmail}>ramesh.marandi@aiab.in</Text>
-          </View>
-        </View> */}
 
         <ProfileSection />
+
+        <View
+          style={[
+            styles.statusContainer,
+            {
+              borderColor: isUserOnline
+                ? theme.color.primary
+                : theme.color.redBRGA,
+              marginVertical: getResHeight(1),
+            },
+          ]}>
+          <View style={styles.statusTextContainer}>
+            {isUserOnline ? (
+              <WaveButton {...waveButtonPropsFirstRoute} disabled />
+            ) : (
+              <VectorIcon
+                type="FontAwesome"
+                name={'circle'}
+                size={16}
+                color={theme.color.redBRGA}
+              />
+            )}
+
+            <Text style={styles.statusText}>
+              {isUserOnline ? 'Online' : 'Offline'}
+            </Text>
+          </View>
+          <CustomSwitch value={isUserOnline} onValueChange={handleDarkMode} />
+        </View>
+
         <View style={styles.optionsContainer}>
           {options.map((option, index) => (
             <AccountOption
               key={index}
               icon={option.icon}
               label={option.label}
-              onPress={() => navigation.navigate(option.screen)}
+              onPress={() => {
+                if (option.delete && option.delete == true) {
+                  Alert.alert(
+                    'Delete Account',
+                    'Are you sure you want to permanently delete your account? This action cannot be undone, and all your data will be lost forever.',
+                    [
+                      {text: 'Cancel', style: 'cancel'},
+                      {
+                        text: 'Delete',
+                        onPress: inputText => {
+                          // if (inputText === 'DELETE') {
+                          //   console.log('Account Deleted');
+                          // } else {
+                          //   Alert.alert(
+                          //     'Error',
+                          //     'Incorrect confirmation text.',
+                          //   );
+                          // }
+                        },
+                      },
+                    ],
+                    'plain-text',
+                  );
+                } else {
+                  navigation.navigate(option.screen);
+                }
+              }}
             />
           ))}
         </View>
@@ -84,6 +168,15 @@ const Profile = props => {
           }
         />
       </View>
+      <Text
+        style={{
+          color: theme.color.outlineColor,
+          fontSize: getFontSize(1.5),
+          textAlign: 'center',
+          fontFamily: theme.font.semiBold,
+        }}>
+        Version 1.0.0
+      </Text>
     </SafeAreaView>
   );
 };
@@ -134,11 +227,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.color.white,
   },
   scrollContainer: {
-    // padding: getResWidth(5),
     paddingTop: getResHeight(5),
-    // paddingHorizontal: getResWidth(8),
-
-    // paddingBottom: 80, // Ensure space for the fixed button
   },
   profileSection: {
     alignItems: 'center',
@@ -167,9 +256,6 @@ const styles = StyleSheet.create({
   },
   optionsContainer: {
     backgroundColor: theme.color.white,
-    // borderRadius: 10,
-    // padding: 10,
-    // elevation: 2,
   },
   option: {
     flexDirection: 'row',
@@ -183,13 +269,29 @@ const styles = StyleSheet.create({
     fontSize: getFontSize(1.6),
     fontFamily: theme.font.medium,
     color: theme.color.charcolBlack,
-    // marginLeft: getResWidth(3),
   },
-  logoutContainer: {
-    // position: 'absolute',
-    // bottom: 20,
-    // left: 20,
-    // right: 20,
+
+  // Online?Offline
+  statusContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+
+    paddingVertical: getResHeight(1),
+    paddingHorizontal: getResWidth(5),
+    borderWidth: 1.8,
+    borderRadius: getResWidth(10), // Smooth edges
+    marginHorizontal: getResHeight(3),
+  },
+  statusTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  statusText: {
+    color: theme.color.charcolBlack,
+    fontSize: getFontSize(1.8),
+    fontFamily: theme.font.semiBold,
+    marginLeft: 8,
   },
 });
 

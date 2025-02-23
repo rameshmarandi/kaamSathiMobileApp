@@ -39,8 +39,13 @@ const CustomHeader = props => {
     isDelete,
   } = props;
 
-  let {isDarkMode, userLocation, currentBgColor, currentTextColor} =
-    useSelector(state => state.user);
+  let {
+    isDarkMode,
+    isUserOnline,
+    userLocation,
+    currentBgColor,
+    currentTextColor,
+  } = useSelector(state => state.user);
 
   const {unreadCount} = useSelector(
     state => state.notification.getNotification,
@@ -67,7 +72,7 @@ const CustomHeader = props => {
     [],
   );
 
-  let isOnline = true;
+  // let isOnline = true;
 
   const waveButtonPropsFirstRoute = waveButtonProps(theme.color.greenBRGA);
   return (
@@ -103,7 +108,7 @@ const CustomHeader = props => {
                     borderRadius: getResHeight(8),
                     overflow: 'hidden',
                     borderWidth: 2,
-                    borderColor: isOnline
+                    borderColor: isUserOnline
                       ? theme.color.greenBRGA
                       : theme.color.redBRGA,
 
@@ -127,13 +132,13 @@ const CustomHeader = props => {
                       borderRadius: 100,
                       zIndex: 99999,
                     },
-                    !isOnline && {
+                    !isUserOnline && {
                       backgroundColor: 'red',
                       height: getResHeight(2),
                       width: getResHeight(2),
                     },
                   ]}>
-                  {isOnline && (
+                  {isUserOnline && (
                     <WaveButton {...waveButtonPropsFirstRoute} disabled />
                   )}
                 </View>
@@ -226,7 +231,7 @@ const CustomHeader = props => {
 
               <Text
                 style={{
-                  fontSize: getFontSize(2),
+                  fontSize: getFontSize(1.8),
                   fontFamily: theme.font.medium,
                   color: theme.color.white,
                   // color: currentTextColor,

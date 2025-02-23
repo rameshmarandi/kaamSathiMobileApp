@@ -17,6 +17,7 @@ import {VectorIcon} from '../../Components/VectorIcon';
 import {ReviewModal} from '../../Components/ModalsComponent';
 import {Button} from '../User/GoogleMap/EmployeeFound';
 import CustomHeader from '../../Components/CustomHeader';
+import NoDataFound from '../../Components/NoDataFound';
 
 const BookedHistory = props => {
   const {navigation} = props;
@@ -160,6 +161,9 @@ const BookedHistory = props => {
                     : data.status === 'Completed'
                     ? theme.color.primary
                     : '#9E9E9E',
+                position: 'absolute',
+                right: 0,
+                top: 0,
               },
             ]}>
             <Text style={styles.statusText}>{data.status}</Text>
@@ -236,7 +240,13 @@ const BookedHistory = props => {
             },
           ]}>
           {data.status === 'Ongoing' && (
-            <View style={styles.progressContainer}>
+            <View
+              style={[
+                styles.progressContainer,
+                {
+                  paddingTop: getResHeight(2.2),
+                },
+              ]}>
               <View style={styles.progressBarBackground}>
                 <View
                   style={[
@@ -380,11 +390,9 @@ const BookedHistory = props => {
             <>
               <View
                 style={{
-                  flex: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
+                  marginTop: getResHeight(-10),
                 }}>
-                <Text style={styles.noBookings}>No booking found!</Text>
+                <NoDataFound />
               </View>
             </>
           );
@@ -412,11 +420,9 @@ const BookedHistory = props => {
           <>
             <View
               style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
+                marginTop: getResHeight(-10),
               }}>
-              <Text style={styles.noBookings}>No booking history found!</Text>
+              <NoDataFound />
             </View>
           </>
         );

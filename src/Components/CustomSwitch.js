@@ -6,6 +6,7 @@ import {
   TouchableWithoutFeedback,
   Animated,
 } from 'react-native';
+import theme from '../utility/theme';
 
 const CustomSwitch = ({value, onValueChange}) => {
   const [switchAnim] = useState(new Animated.Value(value ? 1 : 0));
@@ -36,7 +37,14 @@ const CustomSwitch = ({value, onValueChange}) => {
     <TouchableWithoutFeedback onPress={handleToggle}>
       <Animated.View style={[styles.switchContainer, {backgroundColor}]}>
         <Animated.View
-          style={[styles.switchCircle, {transform: [{translateX}]}]}
+          style={[
+            styles.switchCircle,
+            {transform: [{translateX}]},
+            value && {
+              borderWidth: 1.3,
+              borderColor: '#27ae60',
+            },
+          ]}
         />
       </Animated.View>
     </TouchableWithoutFeedback>

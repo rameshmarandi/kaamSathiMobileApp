@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Text, ScrollView, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Import icons
 import theme from '../../utility/theme';
-import {getFontSize, getResHeight} from '../../utility/responsive';
+import {getFontSize, getResHeight, getResWidth} from '../../utility/responsive';
 import CustomHeader from '../../Components/CustomHeader';
 
 const PrivacyPolicy = ({navigation}) => {
@@ -176,7 +176,13 @@ const PrivacyPolicy = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {flex: 1, padding: 20, backgroundColor: '#fff'},
+  container: {
+    flex: 1,
+    // paddingHorizontal: getResWidth(6),
+    // paddinga
+    padding: getResWidth(6),
+    backgroundColor: '#fff',
+  },
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',

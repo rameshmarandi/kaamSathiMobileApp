@@ -10,15 +10,6 @@ export function HomeStack(props) {
     <>
       <Stack.Navigator screenOptions={{...transitionCard, ...screenOptions}}>
         <Stack.Screen name={'HomePage'} component={AllScreens.HomePage} />
-        <Stack.Screen name={'SearchOnMap'} component={AllScreens.SearchOnMap} />
-        <Stack.Screen
-          name={'EmployeeProfileDetails'}
-          component={AllScreens.EmployeeProfileDetails}
-        />
-        <Stack.Screen
-          name={'EmployeeFound'}
-          component={AllScreens.EmployeeFound}
-        />
       </Stack.Navigator>
     </>
   );
@@ -77,31 +68,6 @@ export function ProfileStack({navigation, route}) {
           name={'Profile'}
           component={AllScreens.Profile}
           // options={screenOptions}
-        />
-        <Stack.Screen
-          name={'EditProfile'}
-          component={AllScreens.EditProfile}
-          options={screenOptions}
-        />
-        <Stack.Screen
-          name={'HelpSupport'}
-          component={AllScreens.HelpSupport}
-          options={screenOptions}
-        />
-        <Stack.Screen
-          name={'ChangePassword'}
-          component={AllScreens.ChangePassword}
-          options={screenOptions}
-        />
-        <Stack.Screen
-          name={'PaymentHistory'}
-          component={AllScreens.PaymentHistory}
-          options={screenOptions}
-        />
-        <Stack.Screen
-          name={'PrivacyPolicy'}
-          component={AllScreens.PrivacyPolicy}
-          options={screenOptions}
         />
       </Stack.Navigator>
     </>

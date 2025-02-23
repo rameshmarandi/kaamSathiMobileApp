@@ -17,6 +17,7 @@ import ChangePassword from './Account/ChangePassword';
 import HelpSupport from './Account/HelpSupport';
 import PaymentHistory from './Account/PaymentHistory';
 import PrivacyPolicy from './Account/PrivacyPolicy';
+import ProfileDetails from './Account/ProfileDetails';
 
 const UserAllScreens = {
   //Homepage
@@ -32,6 +33,7 @@ const UserAllScreens = {
   //Account
 
   Profile,
+  ProfileDetails,
   EditProfile,
   ChangePassword,
   HelpSupport,

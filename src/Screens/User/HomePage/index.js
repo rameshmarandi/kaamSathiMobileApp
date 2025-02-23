@@ -70,7 +70,7 @@ const index = memo(props => {
 
       <CustomHeader
         Hamburger={() => {
-          // navigation.openDrawer();
+          navigation.navigate('Profile');
         }}
         onPressNotificaiton={() => {
           navigation.navigate('UserNotification');

@@ -63,9 +63,10 @@ const MasterTextInput = forwardRef(
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [isFocus, setIsFocus] = useState(false);
     // Fetching current theme settings from Redux store
-    const {isDarkMode, currentBgColor, isAdmin, currentTextColor} = useSelector(
+    const {isDarkMode, currentBgColor, isAdmin} = useSelector(
       state => state.user,
     );
+    let currentTextColor = theme.color.outlineColor;
     // State to manage secure text entry visibility
     const [isSecureEntry, setIsSecureEntry] = useState(secureTextEntry);
     // Reference to the text input field
@@ -296,7 +297,7 @@ const MasterTextInput = forwardRef(
 
     // Define border color based on error presence
     const borderColor = error ? 'red' : currentTextColor;
-    let activeBorderColor = error ? 'red' : theme.color.secondary;
+    let activeBorderColor = error ? 'red' : theme.color.charcolBlack;
     const animatedStyle = {
       transform: [
         {
@@ -461,7 +462,9 @@ const MasterTextInput = forwardRef(
                 style={{
                   backgroundColor: currentBgColor,
                   textAlignVertical: 'center',
-                  borderRadius: getResHeight(2),
+
+                  borderRadius: 50,
+                  // borderRadius: getResHeight(2),
                 }}
                 contentStyle={[
                   {
@@ -470,7 +473,9 @@ const MasterTextInput = forwardRef(
                     fontSize: getFontSize(1.8),
                     textAlignVertical: 'center',
                     height: getResHeight(6),
-                    borderRadius: getResHeight(2),
+
+                    borderRadius: 50,
+                    // borderRadius: getResHeight(2),
                     fontFamily: theme.font.medium,
                     color: theme.color.dimBlack,
                   },
@@ -543,8 +548,11 @@ const styles = StyleSheet.create({
     marginBottom: getResHeight(1),
   },
   dateInputWrapper: {
-    // borderRadius: 4,
-    borderRadius: getResHeight(2),
+    borderRadius: 50,
+    borderRadius: 4,
+
+    borderRadius: 50,
+    // borderRadius: getResHeight(2),
     padding: 12,
     borderWidth: 1,
     borderColor: 'gray',
@@ -557,8 +565,12 @@ const styles = StyleSheet.create({
   datePickerContainer: {
     backgroundColor: 'white',
     padding: 20,
-    // borderRadius: 10,
-    borderRadius: getResHeight(2),
+
+    borderRadius: 50,
+    borderRadius: 10,
+
+    borderRadius: 50,
+    // borderRadius: getResHeight(2),
     alignSelf: 'center',
     backgroundColor: 'white',
     // '#F4FAF3',
@@ -596,7 +608,9 @@ const styles = StyleSheet.create({
     width: '48%',
     padding: 10,
     backgroundColor: theme.color.green,
-    borderRadius: 5,
+
+    borderRadius: 50,
+    // borderRadius: 5,
     alignItems: 'center',
   },
   closeButtonText: {
@@ -605,7 +619,9 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     height: getResHeight(6),
-    borderRadius: getResHeight(2),
+
+    borderRadius: 50,
+    // borderRadius: getResHeight(2),
     padding: 12,
     borderWidth: 1,
     justifyContent: 'center',

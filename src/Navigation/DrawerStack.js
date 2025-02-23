@@ -23,26 +23,65 @@ export default function DrawerStack(props) {
 
   return (
     <>
-      {isAdmin ? (
+      {/* {isAdmin ? (
         <>
           <TabNav />
         </>
       ) : (
-        <>
-          {/* <TabNav /> */}
-          <Stack.Navigator
-            screenOptions={{...transitionCard, ...screenOptions}}>
-            <Stack.Screen
-              name="Home"
-              options={{
-                headerShadowVisible: false,
-                headerShown: false,
-              }}
-              component={HomeStack}
-            />
-          </Stack.Navigator>
-        </>
-      )}
+        <> */}
+      {/* <TabNav /> */}
+      <Stack.Navigator screenOptions={{...transitionCard, ...screenOptions}}>
+        <Stack.Screen
+          name="Home"
+          options={{
+            headerShadowVisible: false,
+            headerShown: false,
+          }}
+          component={TabNav}
+        />
+        <Stack.Screen name={'SearchOnMap'} component={AllScreens.SearchOnMap} />
+        <Stack.Screen
+          name={'EmployeeProfileDetails'}
+          component={AllScreens.EmployeeProfileDetails}
+        />
+        <Stack.Screen
+          name={'EmployeeFound'}
+          component={AllScreens.EmployeeFound}
+        />
+
+        <Stack.Screen
+          name={'ProfileDetails'}
+          component={AllScreens.ProfileDetails}
+          options={screenOptions}
+        />
+        <Stack.Screen
+          name={'EditProfile'}
+          component={AllScreens.EditProfile}
+          options={screenOptions}
+        />
+        <Stack.Screen
+          name={'HelpSupport'}
+          component={AllScreens.HelpSupport}
+          options={screenOptions}
+        />
+        <Stack.Screen
+          name={'ChangePassword'}
+          component={AllScreens.ChangePassword}
+          options={screenOptions}
+        />
+        <Stack.Screen
+          name={'PaymentHistory'}
+          component={AllScreens.PaymentHistory}
+          options={screenOptions}
+        />
+        <Stack.Screen
+          name={'PrivacyPolicy'}
+          component={AllScreens.PrivacyPolicy}
+          options={screenOptions}
+        />
+      </Stack.Navigator>
+      {/* </>
+      )} */}
       {/* <Drawer.Navigator
         drawerContent={props => <DrawerItems {...props} />}
         swipeable={false}

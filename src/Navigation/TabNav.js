@@ -33,7 +33,7 @@ const tabArrays = [
     component: HomeStack,
   },
   {
-    title: 'History',
+    title: 'My Bookings',
     icon: {type: 'MaterialCommunityIcons', name: 'history'},
     activeIcon: {type: 'MaterialCommunityIcons', name: 'history'},
     routeNames: 'BookedHistory',
@@ -124,8 +124,8 @@ const CustomTabBar = ({
         {
           backgroundColor: theme.color.secondaryRGBA,
           // isDarkMode ? currentBgColor : '#F5F5F5',
-          borderTopWidth: 0.5,
-          borderTopColor: isDarkMode ? '#F5F5F5' : currentTextColor,
+          // borderTopWidth: 0.5,
+          // borderTopColor: isDarkMode ? '#F5F5F5' : currentTextColor,
         },
       ]}>
       {tabArrays.map((route, index) => (
@@ -139,7 +139,10 @@ const CustomTabBar = ({
               selectedTab === index && styles.selectedTab,
               {
                 backgroundColor:
-                  selectedTab === index ? theme.color.secondary : 'transparent',
+                  selectedTab === index
+                    ? 'white'
+                    : //  theme.color.secondary
+                      'transparent',
                 // zIndex: -9999999,
               },
             ]}>
@@ -154,7 +157,7 @@ const CustomTabBar = ({
                 isDarkMode && selectedTab === index
                   ? // ||
                     // (!isDarkMode && selectedTab !== index)
-                    'white'
+                    'black'
                   : '#fbf5f5ea'
                 // theme.color.dimBlack
               }
@@ -169,8 +172,10 @@ const CustomTabBar = ({
               styles.tabText,
               {
                 fontFamily:
-                  selectedTab === index ? theme.font.medium : theme.font.medium,
-                color: selectedTab === index ? 'white' : '#fbf5f5ea',
+                  selectedTab === index
+                    ? theme.font.semiBold
+                    : theme.font.regular,
+                color: selectedTab === index ? '#000000' : '#fbf5f5ea',
                 // '#d2cece',
                 // isDarkMode ? theme.color.black : 'black',
               },
@@ -213,11 +218,6 @@ const CustomTabBar = ({
 
 const TabNav = memo(props => {
   const {navigation} = props;
-  const hideBottomTabScreens = [
-    'SearchOnMap',
-    'EmployeeProfileDetails',
-    'EmployeeFound',
-  ];
 
   const {currentBgColor, currentTextColor, isDarkMode} = useSelector(
     state => state.user,
@@ -277,12 +277,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    backgroundColor: 'grey',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: getResHeight(2)},
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 5.5,
+    // backgroundColor: 'grey',
+    // shadowColor: '#000',
+    // shadowOffset: {width: 0, height: getResHeight(2)},
+    // shadowOpacity: 0.25,
+    // shadowRadius: 8,
+    // elevation: 5.5,
   },
   iconContainer: {
     flex: 1,
