@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useState, useRef} from 'react';
 import {
   View,
   Text,
@@ -8,8 +8,10 @@ import {
   ScrollView,
   SafeAreaView,
   Alert,
+  FlatList,
+  Animated,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {VectorIcon} from '../../Components/VectorIcon';
 import theme from '../../utility/theme';
 import {getFontSize, getResHeight, getResWidth} from '../../utility/responsive';
@@ -19,7 +21,7 @@ import CustomHeader from '../../Components/CustomHeader';
 import CustomSwitch from '../../Components/CustomSwitch';
 import WaveButton from '../../Components/WaveButton';
 import {store} from '../../redux/store';
-import {setIsUserOnline} from '../../redux/reducer/Auth';
+import {setCurrentActiveTab, setIsUserOnline} from '../../redux/reducer/Auth';
 import {useSelector} from 'react-redux';
 
 const options = [
@@ -41,6 +43,23 @@ const Profile = props => {
   const [isOnline, setIsOnline] = useState(false);
 
   let {isUserOnline} = useSelector(state => state.user);
+  const flatListRef = useRef(null);
+
+  // Scroll to top when the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      if (flatListRef.current) {
+        flatListRef.current.scrollToOffset({animated: true, offset: 0});
+      }
+      store.dispatch(setCurrentActiveTab(3));
+      Animated.timing(headerHeight, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }, []),
+  );
+
   const handleLogout = () => {
     console.log('User logged out');
   };
@@ -71,87 +90,152 @@ const Profile = props => {
     // setIsOnline(prevState => !prevState);
   };
   const waveButtonPropsFirstRoute = waveButtonProps(theme.color.primary);
+
+  // Handle Scroll Event
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const lastScrollY = useRef(0);
+  const headerHeight = useRef(new Animated.Value(1)).current; // 1: Visible, 0: Hidden
+
+  const handleScroll = Animated.event(
+    [{nativeEvent: {contentOffset: {y: scrollY}}}],
+    {useNativeDriver: false},
+  );
+
+  // Detect Scroll Direction
+  const handleMomentumScrollEnd = event => {
+    const currentScrollY = event.nativeEvent.contentOffset.y;
+
+    if (currentScrollY > lastScrollY.current + 10) {
+      // Scrolling down → Hide Header
+      Animated.timing(headerHeight, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    } else if (currentScrollY < lastScrollY.current - 5) {
+      // Slight scroll up → Show Header
+      Animated.timing(headerHeight, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
+
+    lastScrollY.current = currentScrollY;
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <CustomHeader
-        backPress={() => props.navigation.goBack()}
-        screenTitle={`Account Settings`}
-      />
-      {/* Scrollable Content */}
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
+      <Animated.View
+        style={[
+          styles.headerContainer,
+          {
+            transform: [
+              {
+                translateY: headerHeight.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [-60, 0],
+                }),
+              },
+            ],
+          },
+        ]}>
+        <CustomHeader
+          backPress={() => navigation.goBack()}
+          screenTitle="Account Settings"
+        />
+      </Animated.View>
+
+      {/* <ProfileSection /> */}
+      <Animated.FlatList
+        ref={flatListRef}
+        data={[0, 2, 3, 4, 5, 6]}
+        keyExtractor={item => item.toString()} // Ensures unique keys
         showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled">
-        {/* User Info Section */}
+        contentContainerStyle={{
+          paddingTop: getResHeight(10),
+          paddingBottom: getResHeight(10),
+        }}
+        onScroll={handleScroll}
+        onMomentumScrollEnd={handleMomentumScrollEnd}
+        scrollEventThrottle={16}
+        renderItem={({item, index}) => {
+          switch (index) {
+            case 0:
+              return <ProfileSection />;
 
-        <ProfileSection />
+            case 1:
+              return (
+                <View
+                  style={[
+                    styles.statusContainer,
+                    {
+                      borderColor: isUserOnline
+                        ? theme.color.primary
+                        : theme.color.redBRGA,
+                      marginVertical: getResHeight(1),
+                    },
+                  ]}>
+                  <View style={styles.statusTextContainer}>
+                    {isUserOnline ? (
+                      <WaveButton {...waveButtonPropsFirstRoute} disabled />
+                    ) : (
+                      <VectorIcon
+                        type="FontAwesome"
+                        name="circle"
+                        size={16}
+                        color={theme.color.redBRGA}
+                      />
+                    )}
+                    <Text style={styles.statusText}>
+                      {isUserOnline ? 'Online' : 'Offline'}
+                    </Text>
+                  </View>
+                  <CustomSwitch
+                    value={isUserOnline}
+                    onValueChange={handleDarkMode}
+                  />
+                </View>
+              );
 
-        <View
-          style={[
-            styles.statusContainer,
-            {
-              borderColor: isUserOnline
-                ? theme.color.primary
-                : theme.color.redBRGA,
-              marginVertical: getResHeight(1),
-            },
-          ]}>
-          <View style={styles.statusTextContainer}>
-            {isUserOnline ? (
-              <WaveButton {...waveButtonPropsFirstRoute} disabled />
-            ) : (
-              <VectorIcon
-                type="FontAwesome"
-                name={'circle'}
-                size={16}
-                color={theme.color.redBRGA}
-              />
-            )}
+            case 2:
+              return (
+                <View style={styles.optionsContainer}>
+                  {options.map((option, idx) => (
+                    <AccountOption
+                      key={idx}
+                      icon={option.icon}
+                      label={option.label}
+                      onPress={() => {
+                        if (option.delete) {
+                          Alert.alert(
+                            'Delete Account',
+                            'Are you sure you want to permanently delete your account? This action cannot be undone, and all your data will be lost forever.',
+                            [
+                              {text: 'Cancel', style: 'cancel'},
+                              {
+                                text: 'Delete',
+                                onPress: inputText => {
+                                  // Handle account deletion logic
+                                },
+                              },
+                            ],
+                            'plain-text',
+                          );
+                        } else {
+                          navigation.navigate(option.screen);
+                        }
+                      }}
+                    />
+                  ))}
+                </View>
+              );
 
-            <Text style={styles.statusText}>
-              {isUserOnline ? 'Online' : 'Offline'}
-            </Text>
-          </View>
-          <CustomSwitch value={isUserOnline} onValueChange={handleDarkMode} />
-        </View>
-
-        <View style={styles.optionsContainer}>
-          {options.map((option, index) => (
-            <AccountOption
-              key={index}
-              icon={option.icon}
-              label={option.label}
-              onPress={() => {
-                if (option.delete && option.delete == true) {
-                  Alert.alert(
-                    'Delete Account',
-                    'Are you sure you want to permanently delete your account? This action cannot be undone, and all your data will be lost forever.',
-                    [
-                      {text: 'Cancel', style: 'cancel'},
-                      {
-                        text: 'Delete',
-                        onPress: inputText => {
-                          // if (inputText === 'DELETE') {
-                          //   console.log('Account Deleted');
-                          // } else {
-                          //   Alert.alert(
-                          //     'Error',
-                          //     'Incorrect confirmation text.',
-                          //   );
-                          // }
-                        },
-                      },
-                    ],
-                    'plain-text',
-                  );
-                } else {
-                  navigation.navigate(option.screen);
-                }
-              }}
-            />
-          ))}
-        </View>
-      </ScrollView>
+            default:
+              return null; // Ensures no unexpected cases break the UI
+          }
+        }}
+      />
 
       {/* Fixed Logout Button */}
       <View style={styles.logoutContainer}>
@@ -201,7 +285,6 @@ const AccountOption = ({icon, label, onPress}) => (
       <View
         style={{
           width: '10%',
-          // backgroundColor: 'red',
         }}>
         <VectorIcon
           type="FontAwesome"
@@ -225,6 +308,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.color.white,
+  },
+  headerContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
   },
   scrollContainer: {
     paddingTop: getResHeight(5),

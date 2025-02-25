@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useCallback} from 'react';
 import {
   View,
   SafeAreaView,
@@ -14,6 +14,9 @@ import {getFontSize, getResWidth} from '../../utility/responsive';
 import {HireNowDetailsModal} from '../../Components/ModalsComponent';
 import CustomHeader from '../../Components/CustomHeader';
 import NoDataFound from '../../Components/NoDataFound';
+import {useFocusEffect} from '@react-navigation/native';
+import {store} from '../../redux/store';
+import {setCurrentActiveTab} from '../../redux/reducer/Auth';
 
 // Static Data with isBookmarked flag
 const employees = [
@@ -87,6 +90,23 @@ const BookMarks = ({navigation}) => {
   const lastScrollY = useRef(0);
   const headerHeight = useRef(new Animated.Value(1)).current; // 1: Visible, 0: Hidden
 
+  const flatListRef = useRef(null);
+
+  // Scroll to top when the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      if (flatListRef.current) {
+        flatListRef.current.scrollToOffset({animated: true, offset: 0});
+      }
+      store.dispatch(setCurrentActiveTab(2));
+      Animated.timing(headerHeight, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }, []),
+  );
+
   // Handle Bookmark Toggle (Remove from List when Unbookmarked)
   const handleHeartPress = id => {
     setBookmarkedItems(prevItems =>
@@ -112,14 +132,14 @@ const BookMarks = ({navigation}) => {
       // Scrolling down → Hide Header
       Animated.timing(headerHeight, {
         toValue: 0,
-        duration: 300,
+        duration: 200,
         useNativeDriver: true,
       }).start();
     } else if (currentScrollY < lastScrollY.current - 5) {
       // Slight scroll up → Show Header
       Animated.timing(headerHeight, {
         toValue: 1,
-        duration: 300,
+        duration: 200,
         useNativeDriver: true,
       }).start();
     }
@@ -159,6 +179,7 @@ const BookMarks = ({navigation}) => {
 
       {/* Bookmarked Workers List */}
       <Animated.FlatList
+        ref={flatListRef}
         data={bookmarkedItems.filter(item => item.isBookmarked)}
         keyExtractor={item => item.id.toString()}
         renderItem={({item}) => (

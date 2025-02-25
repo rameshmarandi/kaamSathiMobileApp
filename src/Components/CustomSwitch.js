@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 28,
     borderRadius: 15,
-    padding: 2,
+    // padding: 2,
     justifyContent: 'center',
   },
   switchCircle: {

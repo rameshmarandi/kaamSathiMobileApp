@@ -161,6 +161,39 @@ const EmployeeFound = ({navigation}) => {
     distance: '1 km',
   });
 
+  // Handle Scroll Event
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const lastScrollY = useRef(0);
+  const headerHeight = useRef(new Animated.Value(1)).current; // 1: Visible, 0: Hidden
+
+  const handleScroll = Animated.event(
+    [{nativeEvent: {contentOffset: {y: scrollY}}}],
+    {useNativeDriver: false},
+  );
+
+  // Detect Scroll Direction
+  const handleMomentumScrollEnd = event => {
+    const currentScrollY = event.nativeEvent.contentOffset.y;
+
+    if (currentScrollY > lastScrollY.current + 10) {
+      // Scrolling down → Hide Header
+      Animated.timing(headerHeight, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    } else if (currentScrollY < lastScrollY.current - 5) {
+      // Slight scroll up → Show Header
+      Animated.timing(headerHeight, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
+
+    lastScrollY.current = currentScrollY;
+  };
+
   const renderItem = useCallback(
     ({item, index}) => (
       <EmployeeCard
@@ -181,10 +214,25 @@ const EmployeeFound = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <CustomHeader
-        backPress={() => navigation.goBack()}
-        screenTitle={`10 electrician ${MsgConfig.searchLabour}`}
-      />
+      <Animated.View
+        style={[
+          {position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10},
+          {
+            transform: [
+              {
+                translateY: headerHeight.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [-60, 0],
+                }),
+              },
+            ],
+          },
+        ]}>
+        <CustomHeader
+          backPress={() => navigation.goBack()}
+          screenTitle={`10 electrician ${MsgConfig.searchLabour}`}
+        />
+      </Animated.View>
       <HireNowDetailsModal
         isModalVisible={isModalVisible}
         onBackdropPress={() => {
@@ -198,11 +246,18 @@ const EmployeeFound = ({navigation}) => {
         }}
         onSelectDistance={item => {}}
       />
-      <FlatList
+      <Animated.FlatList
         data={distances}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingTop: getResHeight(8),
+          paddingBottom: getResHeight(10),
+        }}
+        onScroll={handleScroll}
+        onMomentumScrollEnd={handleMomentumScrollEnd}
+        scrollEventThrottle={16}
       />
     </SafeAreaView>
   );

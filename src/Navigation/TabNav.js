@@ -21,6 +21,9 @@ import {
   ProfileStack,
 } from './StackNav';
 import theme from '../utility/theme';
+import {useRoute} from '@react-navigation/native';
+import {store} from '../redux/store';
+import {setCurrentActiveTab} from '../redux/reducer/Auth';
 
 const Tab = createBottomTabNavigator();
 
@@ -80,10 +83,13 @@ const CustomTabBar = ({
   const [selectedTab, setSelectedTab] = useState(selectedTabIndex);
   const animatedValue = useRef(new Animated.Value(selectedTabIndex)).current;
   const {getAllPendingUser} = useSelector(state => state.profile);
+  const {currentActiveTab} = useSelector(state => state.user);
 
   const onPress = useCallback(
     index => {
-      setSelectedTab(index);
+      // setSelectedTab(index);
+
+      store.dispatch(setCurrentActiveTab(index));
       Animated.timing(animatedValue, {
         toValue: index,
         duration: 100,
@@ -136,10 +142,10 @@ const CustomTabBar = ({
           style={styles.iconContainer}>
           <Animated.View
             style={[
-              selectedTab === index && styles.selectedTab,
+              currentActiveTab === index && styles.selectedTab,
               {
                 backgroundColor:
-                  selectedTab === index
+                  currentActiveTab === index
                     ? 'white'
                     : //  theme.color.secondary
                       'transparent',
@@ -148,23 +154,27 @@ const CustomTabBar = ({
             ]}>
             <VectorIcon
               type={
-                selectedTab === index ? route.activeIcon.type : route.icon.type
+                currentActiveTab === index
+                  ? route.activeIcon.type
+                  : route.icon.type
               }
               name={
-                selectedTab === index ? route.activeIcon.name : route.icon.name
+                currentActiveTab === index
+                  ? route.activeIcon.name
+                  : route.icon.name
               }
               color={
-                isDarkMode && selectedTab === index
+                isDarkMode && currentActiveTab === index
                   ? // ||
-                    // (!isDarkMode && selectedTab !== index)
+                    // (!isDarkMode && currentActiveTab !== index)
                     'black'
-                  : '#fbf5f5ea'
+                  : theme.color.whiteText
                 // theme.color.dimBlack
               }
               style={{
                 zIndex: 9999999,
               }}
-              size={getFontSize(selectedTab === index ? 2.6 : 2.5)}
+              size={getFontSize(currentActiveTab === index ? 2.5 : 2.3)}
             />
           </Animated.View>
           <Text
@@ -172,10 +182,13 @@ const CustomTabBar = ({
               styles.tabText,
               {
                 fontFamily:
-                  selectedTab === index
+                  currentActiveTab === index
                     ? theme.font.semiBold
                     : theme.font.regular,
-                color: selectedTab === index ? '#000000' : '#fbf5f5ea',
+                color:
+                  currentActiveTab === index
+                    ? '#000000'
+                    : theme.color.whiteText,
                 // '#d2cece',
                 // isDarkMode ? theme.color.black : 'black',
               },
@@ -219,9 +232,8 @@ const CustomTabBar = ({
 const TabNav = memo(props => {
   const {navigation} = props;
 
-  const {currentBgColor, currentTextColor, isDarkMode} = useSelector(
-    state => state.user,
-  );
+  const {currentBgColor, currentActiveTab, currentTextColor, isDarkMode} =
+    useSelector(state => state.user);
 
   const tabBarOptions = useMemo(
     () => ({
@@ -233,6 +245,7 @@ const TabNav = memo(props => {
     [currentBgColor, currentTextColor],
   );
 
+  // console.log('currentActiveTab', currentActiveTab);
   return (
     <View style={styles.navigatorContainer}>
       <Tab.Navigator
@@ -300,7 +313,7 @@ const styles = StyleSheet.create({
   },
   tabText: {
     fontFamily: theme.font.regular,
-    fontSize: getFontSize(1.5),
+    fontSize: getFontSize(1.4),
   },
   sceneContainer: {
     // Additional styles can be added here if needed

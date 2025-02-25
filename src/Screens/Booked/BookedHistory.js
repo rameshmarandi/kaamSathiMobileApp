@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback, useRef} from 'react';
 import {
   View,
   Text,
@@ -18,6 +18,9 @@ import {ReviewModal} from '../../Components/ModalsComponent';
 import {Button} from '../User/GoogleMap/EmployeeFound';
 import CustomHeader from '../../Components/CustomHeader';
 import NoDataFound from '../../Components/NoDataFound';
+import {useFocusEffect} from '@react-navigation/native';
+import {store} from '../../redux/store';
+import {setCurrentActiveTab} from '../../redux/reducer/Auth';
 
 const BookedHistory = props => {
   const {navigation} = props;
@@ -27,6 +30,17 @@ const BookedHistory = props => {
   const [isReported, setIsReported] = useState([]);
   const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
 
+  const flatListRef = useRef(null);
+
+  // Scroll to top when the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      if (flatListRef.current) {
+        flatListRef.current.scrollToOffset({animated: true, offset: 0});
+      }
+      store.dispatch(setCurrentActiveTab(1));
+    }, []),
+  );
   // Add new booking with future date
   const addNewBooking = daysToAdd => {
     const newDate = new Date(simulatedDate);

@@ -47,7 +47,7 @@ const FAQItem = React.memo(({item, index, expandedIndex, setExpandedIndex}) => {
           <VectorIcon
             type={'AntDesign'}
             name={isExpanded ? 'caretup' : 'caretdown'}
-            size={getFontSize(2)}
+            size={getFontSize(1.5)}
             color={isExpanded ? theme.color.secondary : theme.color.dimBlack}
           />
         </TouchableOpacity>

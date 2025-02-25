@@ -1,4 +1,4 @@
-import React, {useState, memo, useRef, useEffect} from 'react';
+import React, {useState, memo, useRef, useCallback, useEffect} from 'react';
 
 import {
   View,
@@ -6,17 +6,9 @@ import {
   Animated,
   TouchableOpacity,
   SafeAreaView,
-  Dimensions,
-  StatusBar,
-  Image,
-  KeyboardAvoidingView,
-  Modal,
-  FlatList,
-  Alert,
-  ScrollView,
 } from 'react-native';
 import theme from '../../../utility/theme';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 
 import CustomHeader from '../../../Components/CustomHeader';
 import {StatusBarComp} from '../../../Components/commonComp';
@@ -36,6 +28,9 @@ import BannerComponent from '../../../Components/BannerComponent';
 import ReviewRatingCard from '../../../Components/ReviewRatingCard';
 import {SectionHeaderName} from '../../../Helpers/CommonCard';
 import TopSkilledProfessonals from './TopSkilledProfessonals';
+import {useFocusEffect} from '@react-navigation/native';
+import {store} from '../../../redux/store';
+import {setCurrentActiveTab} from '../../../redux/reducer/Auth';
 
 const uniqueSkills = [
   ...new Set(skilledWorkers.map(worker => worker.skill.toLowerCase())),
@@ -47,6 +42,22 @@ const index = memo(props => {
   const {navigation} = props;
   let {isDarkMode, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
+  );
+  const flatListRef = useRef(null);
+
+  // Scroll to top when the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      if (flatListRef.current) {
+        flatListRef.current.scrollToOffset({animated: true, offset: 0});
+      }
+      store.dispatch(setCurrentActiveTab(0));
+      Animated.timing(headerHeight, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }, []),
   );
 
   useEffect(() => {
@@ -60,6 +71,38 @@ const index = memo(props => {
     const token = await messaging().getToken();
   };
 
+  // Handle Scroll Event
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const lastScrollY = useRef(0);
+  const headerHeight = useRef(new Animated.Value(1)).current; // 1: Visible, 0: Hidden
+
+  const handleScroll = Animated.event(
+    [{nativeEvent: {contentOffset: {y: scrollY}}}],
+    {useNativeDriver: false},
+  );
+
+  // Detect Scroll Direction
+  const handleMomentumScrollEnd = event => {
+    const currentScrollY = event.nativeEvent.contentOffset.y;
+
+    if (currentScrollY > lastScrollY.current + 10) {
+      // Scrolling down → Hide Header
+      Animated.timing(headerHeight, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    } else if (currentScrollY < lastScrollY.current - 5) {
+      // Slight scroll up → Show Header
+      Animated.timing(headerHeight, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
+
+    lastScrollY.current = currentScrollY;
+  };
   return (
     <SafeAreaView
       style={{
@@ -68,137 +111,111 @@ const index = memo(props => {
       }}>
       <StatusBarComp />
 
-      <CustomHeader
-        Hamburger={() => {
-          navigation.navigate('Profile');
+      <Animated.View
+        style={[
+          {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 10,
+          },
+          {
+            transform: [
+              {
+                translateY: headerHeight.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [-60, 0],
+                }),
+              },
+            ],
+          },
+        ]}>
+        <CustomHeader
+          Hamburger={() => {
+            navigation.navigate('Profile');
+          }}
+          onPressNotificaiton={() => {
+            navigation.navigate('UserNotification');
+          }}
+        />
+      </Animated.View>
+
+      <Animated.FlatList
+        data={[0, 2, 3, 4, 5, 6]}
+        ref={flatListRef}
+        keyExtractor={item => item.toString()} // Ensures unique keys
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingTop: getResHeight(12),
+          paddingBottom: getResHeight(10),
         }}
-        onPressNotificaiton={() => {
-          navigation.navigate('UserNotification');
+        onScroll={handleScroll}
+        onMomentumScrollEnd={handleMomentumScrollEnd}
+        scrollEventThrottle={16}
+        renderItem={({item, index}) => {
+          switch (index) {
+            case 0:
+              return (
+                <>
+                  <View
+                    style={{
+                      paddingBottom: getResHeight(0.5),
+                    }}>
+                    <MarqueeComp textRender={`${plainString}`} />
+                  </View>
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    style={{
+                      marginBottom: '10%',
+                    }}
+                    onPress={() => {
+                      props.navigation.navigate('SearchOnMap');
+                    }}>
+                    <SearchBarComp
+                      placeholder="Search skilled professionals..."
+                      disabled={true}
+                    />
+                  </TouchableOpacity>
+                </>
+              );
+
+            case 2:
+              return (
+                <>
+                  <View
+                    style={{
+                      marginTop: getResHeight(2),
+                    }}>
+                    <SectionHeaderName sectionName={'Kaamsathi recommends'} />
+                    <BannerComponent {...props} />
+                  </View>
+                </>
+              );
+            case 3:
+              return (
+                <>
+                  <View>
+                    <SectionHeaderName
+                      sectionName={'Top skilled professionals near you'}
+                    />
+                    <TopSkilledProfessonals />
+                  </View>
+                </>
+              );
+
+            case 4:
+              return (
+                <>
+                  <View>
+                    <SectionHeaderName sectionName={'Voices of satisfaction'} />
+                    <ReviewRatingCard />
+                  </View>
+                </>
+              );
+          }
         }}
       />
-
-      <View
-        style={{
-          flex: 1,
-        }}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <FlatList
-            data={[0, 1, 2, 3, 4]}
-            showsVerticalScrollIndicator={false}
-            // onScroll={Animated.event(
-            //   [{nativeEvent: {contentOffset: {y: scrollY}}}],
-            //   {useNativeDriver: false},
-            // )}
-
-            contentContainerStyle={{
-              // paddingBottom: getResHeight(20),
-              // marginTop: getResHeight(6),
-              flex: 1,
-              // backgroundColor: 'red',
-            }}
-            renderItem={({item, index}) => {
-              switch (index) {
-                case 0:
-                  return (
-                    <>
-                      <View
-                        style={{
-                          paddingTop: getResHeight(2),
-                          paddingBottom: getResHeight(0.5),
-                        }}>
-                        <MarqueeComp textRender={`${plainString}`} />
-                      </View>
-                      <TouchableOpacity
-                        activeOpacity={0.8}
-                        style={{
-                          marginBottom: '10%',
-                        }}
-                        onPress={() => {
-                          props.navigation.navigate('SearchOnMap');
-                        }}>
-                        <SearchBarComp
-                          placeholder="Search skilled professionals..."
-                          disabled={true}
-                        />
-                      </TouchableOpacity>
-                    </>
-                  );
-                case 1:
-                  return (
-                    <>
-                      <View></View>
-                      {/* <View
-                        style={{
-                          paddingVertical: getResHeight(6),
-                        }}>
-                        <MarqueeComp textRender={`${plainString}`} />
-                      </View> */}
-                    </>
-                  );
-                case 2:
-                  return (
-                    <>
-                      <View
-                        style={{
-                          marginTop: getResHeight(2),
-                        }}>
-                        <SectionHeaderName
-                          sectionName={'Kaamsathi recommends'}
-                        />
-                        <BannerComponent {...props} />
-                      </View>
-                    </>
-                  );
-                case 3:
-                  return (
-                    <>
-                      <View>
-                        <SectionHeaderName
-                          sectionName={'Top skilled professionals near you'}
-                        />
-                        <TopSkilledProfessonals />
-                      </View>
-                    </>
-                  );
-
-                case 4:
-                  return (
-                    <>
-                      <View>
-                        <SectionHeaderName
-                          sectionName={'Voices of satisfaction'}
-                        />
-                        <ReviewRatingCard />
-                      </View>
-                    </>
-                  );
-                // case 3:
-                //   return <></>;
-                // case 2:
-                //   return (
-                //     <>
-                //       <View
-                //         style={{
-                //           marginBottom: getResHeight(40),
-                //         }}>
-                //         <Text
-                //           style={{
-                //             fontFamily: theme.font.semiBold,
-                //             fontSize: getFontSize(2),
-                //             color: theme.color.charcolBlack,
-                //             paddingHorizontal: '5%',
-                //           }}>
-                //           Review
-                //         </Text>
-                //         <ReviewRatingCard />
-                //       </View>
-                //     </>
-                //   );
-              }
-            }}
-          />
-        </ScrollView>
-      </View>
     </SafeAreaView>
   );
 });

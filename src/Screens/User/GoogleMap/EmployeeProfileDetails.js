@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
+  Animated,
 } from 'react-native';
 import CustomHeader from '../../../Components/CustomHeader';
 import {VectorIcon} from '../../../Components/VectorIcon';
@@ -123,13 +124,60 @@ const EmployeeProfileDetails = ({navigation, route}) => {
       <Text style={styles.detailValue}>{value}</Text>
     </View>
   );
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const lastScrollY = useRef(0);
+  const headerHeight = useRef(new Animated.Value(1)).current; // 1: Visible, 0: Hidden
 
+  // Handle Scroll Event
+  const handleScroll = Animated.event(
+    [{nativeEvent: {contentOffset: {y: scrollY}}}],
+    {useNativeDriver: false},
+  );
+
+  // Detect Scroll Direction
+  const handleMomentumScrollEnd = event => {
+    const currentScrollY = event.nativeEvent.contentOffset.y;
+
+    if (currentScrollY > lastScrollY.current + 10) {
+      // Scrolling down → Hide Header
+      Animated.timing(headerHeight, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    } else if (currentScrollY < lastScrollY.current - 5) {
+      // Slight scroll up → Show Header
+      Animated.timing(headerHeight, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
+
+    lastScrollY.current = currentScrollY;
+  };
   return (
     <SafeAreaView style={styles.safeArea}>
-      <CustomHeader
-        backPress={() => navigation.goBack()}
-        screenTitle="User profile"
-      />
+      <Animated.View
+        style={[
+          styles.headerContainer,
+          {
+            transform: [
+              {
+                translateY: headerHeight.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [-60, 0],
+                }),
+              },
+            ],
+          },
+        ]}>
+        <CustomHeader
+          backPress={() => navigation.goBack()}
+          screenTitle="User profile"
+        />
+      </Animated.View>
+
       <HireNowDetailsModal
         isModalVisible={isModalVisible}
         onBackdropPress={() => {
@@ -143,44 +191,76 @@ const EmployeeProfileDetails = ({navigation, route}) => {
         }}
         onSelectDistance={item => {}}
       />
-      <ScrollView
+
+      <Animated.FlatList
+        data={[0, 2, 3, 4, 5, 6]}
+        keyExtractor={item => item.toString()} // Ensures unique keys
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingTop: getResHeight(8),
+          paddingBottom: getResHeight(10),
+        }}
+        onScroll={handleScroll}
+        onMomentumScrollEnd={handleMomentumScrollEnd}
+        scrollEventThrottle={16}
+        renderItem={({item, index}) => {
+          switch (index) {
+            case 0:
+              return (
+                <>
+                  <View style={styles.profileCard}>
+                    <View style={styles.profileHeader}>
+                      <Image
+                        source={{
+                          uri: 'https://i3.wp.com/www.thebalancemoney.com/thmb/BTv9xPg48VpnxeRm8qkCkO_Fjwg=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-1209681524-1fe805ac87ca4fed9e57a20f020733cb.jpg?ssl=1',
+                        }}
+                        style={styles.profileImage}
+                      />
+                      <Text style={styles.name}>{worker.name}</Text>
+                    </View>
+
+                    {[
+                      {label: 'Languages', value: 'Hindi, English, Bengali'},
+                      {label: 'Distance', value: '10 KM'},
+                      {
+                        label: 'Skills',
+                        value: 'Electrician, Plumber, Carpenter',
+                      },
+                      {label: 'Location', value: 'Rajpur'},
+                      {label: 'Experience', value: '5 Years'},
+                      {label: 'Rating', value: '⭐ 4.5 /5.0'},
+                    ].map((detail, idx) => (
+                      <ProfileDetailRow key={idx} {...detail} />
+                    ))}
+                  </View>
+                </>
+              );
+            case 1:
+              return (
+                <>
+                  <View style={styles.sectionContainer}>
+                    <Text style={styles.sectionTitle}>About</Text>
+                    <Text style={styles.aboutText}>
+                      {worker.about ||
+                        'Passionate carpenter with a decade of experience in crafting high-quality furniture and custom woodwork. Specialized in creating elegant and durable designs tailored to clients'}
+                    </Text>
+                  </View>
+                </>
+              );
+            case 2:
+              return <ContactInfo />;
+            case 3:
+              return <EmployeeReview reviews={worker.reviews} />;
+            default:
+              return null; // Ensures no unexpected cases break the UI
+          }
+        }}
+      />
+      {/* <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}>
-        <View style={styles.profileCard}>
-          <View style={styles.profileHeader}>
-            <Image
-              source={{
-                uri: 'https://i3.wp.com/www.thebalancemoney.com/thmb/BTv9xPg48VpnxeRm8qkCkO_Fjwg=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-1209681524-1fe805ac87ca4fed9e57a20f020733cb.jpg?ssl=1',
-              }}
-              style={styles.profileImage}
-            />
-            <Text style={styles.name}>{worker.name}</Text>
-          </View>
-
-          {[
-            {label: 'Languages', value: 'Hindi, English, Bengali'},
-            {label: 'Distance', value: '10 KM'},
-            {label: 'Skills', value: 'Electrician, Plumber, Carpenter'},
-            {label: 'Location', value: 'Rajpur'},
-            {label: 'Experience', value: '5 Years'},
-            {label: 'Rating', value: '⭐ 4.5 /5.0'},
-          ].map((detail, idx) => (
-            <ProfileDetailRow key={idx} {...detail} />
-          ))}
-        </View>
-
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>About</Text>
-          <Text style={styles.aboutText}>
-            {worker.about ||
-              'Passionate carpenter with a decade of experience in crafting high-quality furniture and custom woodwork. Specialized in creating elegant and durable designs tailored to clients'}
-          </Text>
-        </View>
-
-        <ContactInfo />
-
-        <EmployeeReview reviews={worker.reviews} />
-      </ScrollView>
+       
+      </ScrollView> */}
 
       <CustomButton
         title={'Book now'}
@@ -253,6 +333,13 @@ const styles = StyleSheet.create({
     fontFamily: theme.font.extraBold,
     letterSpacing: 1,
     color: theme.color.charcolBlack,
+  },
+  headerContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
   },
   detailRow: {
     flexDirection: 'row',
