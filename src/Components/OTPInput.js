@@ -28,9 +28,9 @@ const OTPInput = forwardRef(
     },
     ref,
   ) => {
-    const {isDarkMode, currentBgColor, currentTextColor} = useSelector(
-      state => state.user,
-    );
+    const {isDarkMode, currentBgColor} = useSelector(state => state.user);
+
+    let currentTextColor = theme.color.secondary;
 
     const [otp, setOtp] = useState(new Array(length).fill(''));
     const [confirmationOtp, setConfirmationOtp] = useState(
@@ -164,7 +164,7 @@ const OTPInput = forwardRef(
             style={[
               styles.label,
               {
-                color: currentTextColor,
+                color: theme.color.dimBlack,
               },
             ]}>
             {otpText}
@@ -185,8 +185,12 @@ const OTPInput = forwardRef(
               style={[
                 styles.input,
 
+                index !== 0 && {
+                  marginLeft: '5%',
+                },
+
                 {
-                  color: currentTextColor,
+                  color: theme.color.charcolBlack,
                   borderColor:
                     focusedIndex === index
                       ? currentTextColor
@@ -261,11 +265,11 @@ const styles = StyleSheet.create({
   },
   otpContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
   },
   input: {
     width: getResHeight(7.9),
-    height: getResHeight(7),
+    height: getResHeight(6),
     borderColor: '#ccc',
     borderWidth: 2,
     borderRadius: 5,

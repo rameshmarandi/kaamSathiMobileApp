@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Alert,
   Platform,
   Keyboard,
   ActivityIndicator,
@@ -18,9 +19,12 @@ import MasterTextInput from '../../Components/MasterTextInput';
 import {VectorIcon} from '../../Components/VectorIcon';
 import LoginWithGoogle from '../../Components/LoginWithGoogle';
 import {Formik} from 'formik';
-import {handleEmailChange} from '../../Components/InputHandlers';
+import {
+  handleEmailChange,
+  handleNumberChange,
+} from '../../Components/InputHandlers';
 import {color} from 'react-native-elements/dist/helpers';
-import AddMemberForm from '../Admin/Members/AddMemberForm';
+// import AddMemberForm from '../Admin/Members/AddMemberForm';
 import {TextInput} from 'react-native-paper';
 // import {
 //   GoogleOneTapSignIn,
@@ -45,13 +49,18 @@ import {getBranchAPIHander} from '../../redux/reducer/ChurchBranch/churchBranchA
 import {CustomAlertModal} from '../../Components/commonComp';
 import asyncStorageUtil from '../../utility/asyncStorageUtil';
 import StorageKeys from '../../Config/StorageKeys';
+import CustomButton from '../../Components/CustomButton';
+import OTPInput from '../../Components/OTPInput';
+import {setIsUserLoggedIn} from '../../redux/reducer/Auth';
 
 const LoginPage = props => {
   const {navigation} = props;
+  const formRef = useRef(null);
   const {isDarkMode, isAdmin, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [isOtpFiledVisible, setIsOtpFiledVisible] = useState(false);
   const [isAlertVisible, setIsAlertVisible] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
 
@@ -65,25 +74,70 @@ const LoginPage = props => {
   const handleClose = () => {
     setIsAlertVisible(false);
   };
+  const otpRef = useRef(null);
+
+  // Handle OTP completion
+  const handleOTPComplete = ({otp, isConfirmed}) => {
+    console.log('OPTI_inputes', otp, otp.length);
+    handleSubmit();
+    // if (isConfirmed) {
+    //   // Alert.alert('OTP Verified', `Entered OTP: ${otp}`);
+    // } else {
+    //   // Alert.alert('Error', 'OTP does not match. Please try again.');
+    // }
+  };
+
+  const handleSubmit = async (values, {resetForm}) => {
+    setIsLoading(true);
+
+    if (isOtpFiledVisible) {
+      setTimeout(() => {
+        setIsLoading(false);
+        store.dispatch(setIsUserLoggedIn(true));
+        navigation.navigate('Home');
+      }, 2000);
+    } else {
+      setTimeout(() => {
+        setIsOtpFiledVisible(true);
+        setIsLoading(false);
+      }, 2000);
+    }
+
+    return;
+    setIsLoading(true);
+
+    try {
+      // Simulate an API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      console.log('Form Submitted:', values);
+      resetForm(); // Reset form after successful submission
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <SafeAreaView style={[styles.container, {backgroundColor: currentBgColor}]}>
-      <View>
-        <AddMemberForm
-          visible={addNewMemberModalVisible}
-          closeModal={() => {
-            setAddNewMemberModalVisible(false);
-          }}
-          navigation={navigation}
-        />
+    <SafeAreaView
+      style={[styles.container, {backgroundColor: theme.color.whiteBg}]}>
+      {/* <View>
         <CustomAlertModal
           visible={isAlertVisible}
           message={alertMessage}
           duration={4000} // duration in milliseconds
           onClose={handleClose}
         />
-      </View>
+      </View> */}
 
-      <View style={styles.header}>
+      <View
+        style={[
+          styles.header,
+          {
+            paddingTop: getResHeight(10),
+          },
+        ]}>
         <Text style={[styles.greetingText, {color: currentTextColor}]}>
           Hey there,
         </Text>
@@ -94,73 +148,99 @@ const LoginPage = props => {
       {/* <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}> */}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 10 : 0}> */}
       <Formik
-        initialValues={{email: '', password: ''}}
+        innerRef={formRef}
+        initialValues={{phone: '', password: ''}}
         validationSchema={loginValidationSchema}
-        onSubmit={async (values, {resetForm}) => {
-          try {
-            setIsLoading(true);
-            const fcmToken = await asyncStorageUtil.getItem(
-              StorageKeys.FCM_TOKEN,
-            );
-            console.log('FCM_tone_logi', fcmToken);
-            const payload = {
-              email: values.email,
-              password: values.password,
-              fcmToken: fcmToken,
-            };
-            const apiRes = await store.dispatch(loginAPIHander(payload));
+        onSubmit={handleSubmit}
+        // onSubmit={async (values, {resetForm}) => {
+        //   setIsLoading(true);
 
-            if (apiRes.payload == true) {
-              setIsLoading(false);
-              const checkTypeOfUser = await checkIsAdmin();
-              if (checkTypeOfUser) {
-                navigation.navigate('Dashboard');
-              } else {
-                navigation.navigate('Home');
-              }
-              // ToastAlertComp('success', `Login successfully`);
-              // setAlertMessage({
-              //   status: 'success',
+        //   if (isOtpFiledVisible) {
+        //     setTimeout(() => {
+        //       setIsLoading(false);
+        //       store.dispatch(setIsUserLoggedIn(true));
+        //       navigation.navigate('Home');
+        //     }, 2000);
+        //   } else {
+        //     setTimeout(() => {
+        //       setIsOtpFiledVisible(true);
+        //       setIsLoading(false);
+        //     }, 2000);
+        //   }
 
-              //   alertMsg: `Logged in successfully.`,
-              // });
-              // setIsAlertVisible(true);
-              setAlertMessage('');
-              resetForm();
-            }
-            if (apiRes.payload.error) {
-              setAlertMessage({
-                status: 'error',
+        //   return;
+        //   try {
+        //     setIsLoading(true);
 
-                alertMsg: `${apiRes.payload.error.message}`,
-              });
-              setIsAlertVisible(true);
-              // ToastAlertComp(
-              //   'error',
+        //     // setTimeout(() => {
+        //     //   setIsOtpFiledVisible(true);
+        //     //   setIsLoading(false);
+        //     // }, 2000);
 
-              //   `${apiRes.payload.error.message}`,
-              // );
-            }
-          } catch (error) {
-            // ToastAlertComp(
-            //   'error',
-            //   `We are facing some technical issue, please try again later`,
-            // );
+        //     return;
+        //     const fcmToken = await asyncStorageUtil.getItem(
+        //       StorageKeys.FCM_TOKEN,
+        //     );
+        //     console.log('FCM_tone_logi', fcmToken);
+        //     const payload = {
+        //       email: values.email,
+        //       password: values.password,
+        //       fcmToken: fcmToken,
+        //     };
+        //     // const apiRes = await store.dispatch(loginAPIHander(payload));
 
-            setAlertMessage({
-              status: 'error',
+        //     if (apiRes.payload == true) {
+        //       setIsLoading(false);
+        //       const checkTypeOfUser = await checkIsAdmin();
+        //       if (checkTypeOfUser) {
+        //         navigation.navigate('Dashboard');
+        //       } else {
+        //         navigation.navigate('Home');
+        //       }
+        //       // ToastAlertComp('success', `Login successfully`);
+        //       // setAlertMessage({
+        //       //   status: 'success',
 
-              alertMsg: `We are facing some technical issue, please try again later`,
-            });
-            setIsAlertVisible(true);
-            console.error('login_api_error', error);
-            setIsLoading(false);
-          } finally {
-            setIsLoading(false);
-          }
-        }}>
+        //       //   alertMsg: `Logged in successfully.`,
+        //       // });
+        //       // setIsAlertVisible(true);
+        //       setAlertMessage('');
+        //       resetForm();
+        //     }
+        //     if (apiRes.payload.error) {
+        //       setAlertMessage({
+        //         status: 'error',
+
+        //         alertMsg: `${apiRes.payload.error.message}`,
+        //       });
+        //       setIsAlertVisible(true);
+        //       // ToastAlertComp(
+        //       //   'error',
+
+        //       //   `${apiRes.payload.error.message}`,
+        //       // );
+        //     }
+        //   } catch (error) {
+        //     // ToastAlertComp(
+        //     //   'error',
+        //     //   `We are facing some technical issue, please try again later`,
+        //     // );
+
+        //     setAlertMessage({
+        //       status: 'error',
+
+        //       alertMsg: `We are facing some technical issue, please try again later`,
+        //     });
+        //     setIsAlertVisible(true);
+        //     console.error('login_api_error', error);
+        //     setIsLoading(false);
+        //   } finally {
+        //     setIsLoading(false);
+        //   }
+        // }}
+      >
         {({
           handleChange,
           handleBlur,
@@ -187,100 +267,53 @@ const LoginPage = props => {
               contentContainerStyle={styles.scrollViewContent}
               showsVerticalScrollIndicator={false}>
               <MasterTextInput
-                label="Email*"
-                placeholder="Enter email address"
-                ref={inputRefs.email}
-                keyboardType="email-address"
+                label="Mobile number*"
+                placeholder="Enter mobile number"
+                ref={inputRefs.phone}
+                keyboardType="numeric"
                 autoCapitalize="none"
-                value={values.email}
+                autoFocus={true}
+                maxLength={10}
+                value={values.phone}
                 onChangeText={text =>
-                  setFieldValue('email', handleEmailChange(text))
+                  setFieldValue('phone', handleNumberChange(text))
                 }
-                onBlur={handleBlur('email')}
-                onSubmitEditing={() => inputRefs.password.current.focus()}
-                error={touched.email && errors.email}
-                isValid={isFieldValid('email')}
-                left={<TextInput.Icon icon="email" color={currentTextColor} />}
+                onBlur={handleBlur('phone')}
+                error={touched.phone && errors.phone}
+                isValid={isFieldValid('phone')}
+                left={<TextInput.Icon icon="phone" color={currentTextColor} />}
               />
-              <MasterTextInput
-                label="Password*"
-                placeholder="Enter your password"
-                secureTextEntry
-                ref={inputRefs.password}
-                value={values.password}
-                onChangeText={handleChange('password')}
-                onBlur={handleBlur('password')}
-                onSubmitEditing={handleSubmit}
-                error={touched.password && errors.password}
-                left={<TextInput.Icon icon="lock" color={currentTextColor} />}
-              />
-              <TouchableOpacity
-                activeOpacity={0.8}
-                style={{
-                  width: '35%',
-                }}
-                onPress={() => {
-                  navigation.navigate('ForgotPassword');
-                }}>
-                <Text
-                  style={[
-                    styles.forgotPasswordText,
-                    {color: currentTextColor},
-                  ]}>
-                  Forgot password
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                activeOpacity={0.9}
-                disabled={isLoading || isLoginDisabled}
-                hitSlop={{
-                  top: 10,
-                  bottom: 10,
-                  left: 10,
-                  right: 10,
-                }}
-                // hitSlop={{
-                //   top: 10,
-                //   bottom: 10,
-                //   left: 10,
-                //   right: 10,
-                //   backgroundColor: 'red',
-                // }}
-                style={[
-                  styles.loginButton,
-                  {
-                    backgroundColor: currentTextColor,
-                  },
 
-                  isLoading ||
-                    (isLoginDisabled && {
-                      opacity: 0.8,
-                    }),
-                ]}
-                onPress={handleSubmit}>
-                {isLoading ? (
-                  <>
-                    <ActivityIndicator
-                      size={getFontSize(3)}
-                      color={currentBgColor}
-                      // style={{opacity: errors.email || errors.password ? 1 : 0}}
-                    />
-                  </>
-                ) : (
-                  <>
+              {isOtpFiledVisible && (
+                <OTPInput
+                  ref={otpRef}
+                  length={4} // Set the number of OTP digits
+                  onComplete={handleOTPComplete} // Callback function when OTP is completed
+                  otpText="Enter OTP" // Label for OTP input
+                  secureTextEntry={false} // Set true to hide OTP (like a password)
+                />
+              )}
+
+              <View
+                style={{
+                  marginTop: getResHeight(5),
+                }}>
+                <CustomButton
+                  title="Login"
+                  onPress={handleSubmit}
+                  disabled={isLoading || isLoginDisabled}
+                  loading={isLoading}
+                  leftIcon={
                     <VectorIcon
                       type="MaterialCommunityIcons"
                       name="login"
-                      size={getFontSize(3.3)}
-                      color={currentBgColor}
+                      size={24}
+                      color={theme.color.white}
                     />
-                    <Text
-                      style={[styles.loginButtonText, {color: currentBgColor}]}>
-                      Login
-                    </Text>
-                  </>
-                )}
-              </TouchableOpacity>
+                  }
+                />
+              </View>
+
               <View style={styles.separatorContainer}>
                 <View
                   style={[
@@ -292,7 +325,7 @@ const LoginPage = props => {
                   style={[
                     styles.separatorText,
                     {
-                      backgroundColor: currentBgColor,
+                      backgroundColor: theme.color.whiteBg,
                       color: currentTextColor,
                       fontFamily: theme.font.semiBold,
                       fontSize: getFontSize(1.5),
@@ -304,8 +337,8 @@ const LoginPage = props => {
 
               {Platform.OS == 'android' && (
                 <LoginWithGoogle
-                  currentTextColor={currentTextColor}
-                  currentBgColor={currentBgColor}
+                  currentTextColor={theme.color.dimBlack}
+                  currentBgColor={theme.color.whiteBg}
                   btnTitle={'Singin with Google'}
                   onPress={async () => {
                     try {
@@ -381,12 +414,15 @@ const LoginPage = props => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: '5%',
+    alignItems: 'center',
   },
-  keyboardAvoidingView: {
-    flex: 1,
-  },
+  // keyboardAvoidingView: {
+  //   flex: 1,
+  // },
   scrollView: {
-    width: '90%',
+    width: '100%',
     alignSelf: 'center',
   },
   scrollViewContent: {
@@ -435,7 +471,7 @@ const styles = StyleSheet.create({
   },
   separatorLine: {
     flex: 1,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.4,
     zIndex: -1,
   },
   separatorText: {

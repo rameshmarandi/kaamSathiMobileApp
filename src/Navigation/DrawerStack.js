@@ -39,11 +39,15 @@ export default function DrawerStack(props) {
           }}
           component={TabNav}
         />
+        {/* auth stack  start*/}
+        <Stack.Screen name={'LoginPage'} component={AllScreens.LoginPage} />
+        {/* auth stack  end*/}
         <Stack.Screen name={'SearchOnMap'} component={AllScreens.SearchOnMap} />
         <Stack.Screen
           name={'EmployeeProfileDetails'}
           component={AllScreens.EmployeeProfileDetails}
         />
+
         <Stack.Screen
           name={'EmployeeFound'}
           component={AllScreens.EmployeeFound}

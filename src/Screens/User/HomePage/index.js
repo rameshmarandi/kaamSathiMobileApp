@@ -31,6 +31,7 @@ import TopSkilledProfessonals from './TopSkilledProfessonals';
 import {useFocusEffect} from '@react-navigation/native';
 import {store} from '../../../redux/store';
 import {setCurrentActiveTab} from '../../../redux/reducer/Auth';
+import {showLoginAlert} from '../../../utility/AlertService';
 
 const uniqueSkills = [
   ...new Set(skilledWorkers.map(worker => worker.skill.toLowerCase())),
@@ -40,9 +41,8 @@ const plainString = uniqueSkills.join(', ');
 
 const index = memo(props => {
   const {navigation} = props;
-  let {isDarkMode, currentBgColor, currentTextColor} = useSelector(
-    state => state.user,
-  );
+  let {isDarkMode, isUserLoggedIn, currentBgColor, currentTextColor} =
+    useSelector(state => state.user);
   const flatListRef = useRef(null);
 
   // Scroll to top when the screen comes into focus
@@ -113,10 +113,10 @@ const index = memo(props => {
       <Animated.View
         style={[
           {
-            // position: 'absolute',
-            // top: 0,
-            // left: 0,
-            // right: 0,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
             zIndex: 10,
           },
           {
@@ -132,10 +132,18 @@ const index = memo(props => {
         ]}>
         <CustomHeader
           Hamburger={() => {
-            navigation.navigate('Profile');
+            if (isUserLoggedIn == false) {
+              showLoginAlert();
+            } else {
+              navigation.navigate('Profile');
+            }
           }}
           onPressNotificaiton={() => {
-            navigation.navigate('Notification');
+            if (isUserLoggedIn == false) {
+              showLoginAlert();
+            } else {
+              navigation.navigate('Notification');
+            }
           }}
         />
       </Animated.View>

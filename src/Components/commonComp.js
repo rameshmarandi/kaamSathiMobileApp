@@ -30,9 +30,9 @@ const StatusBarComp = memo(() => {
     <StatusBar
       animated={true}
       backgroundColor={
-        'red'
+        // 'red'
         // isDarkMode ?
-        // theme.color.secondary
+        theme.color.secondary
         // : theme.color.white
       }
       barStyle={

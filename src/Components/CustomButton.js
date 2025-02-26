@@ -28,7 +28,7 @@ const CustomButton = ({
           (disabled || loading) && styles.disabledButton,
         ]}>
         {loading ? (
-          <ActivityIndicator size="small" color={theme.color.charcolBlack} />
+          <ActivityIndicator size="small" color={theme.color.white} />
         ) : (
           <>
             <View

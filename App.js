@@ -50,6 +50,7 @@ LogBox.ignoreAllLogs(true);
 
 import Geocoder from 'react-native-geocoding';
 import {GOOGLE_MAP_KEY} from './src/Config/constants';
+import {NavigationRef} from './src/Navigation/NavigationService';
 
 const App = () => {
   StatusBar.setBackgroundColor(theme.color.dardkModeOnBGColor); // Set your desired background color
@@ -278,6 +279,7 @@ const AllNavContainer = props => {
               <GestureHandlerRootView style={{flex: 1}}>
                 <NavigationContainer
                   onReady={onNavigationReady}
+                  ref={NavigationRef}
                   onStateChange={state => {
                     const currentRoute = state;
 

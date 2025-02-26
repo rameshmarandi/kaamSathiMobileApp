@@ -47,6 +47,7 @@ const CustomHeader = props => {
     userLocation,
     currentBgColor,
     currentTextColor,
+    isUserLoggedIn,
   } = useSelector(state => state.user);
 
   const {unreadCount} = useSelector(
@@ -103,47 +104,71 @@ const CustomHeader = props => {
             <>
               <TouchableOpacity activeOpacity={0.8} onPress={Hamburger}>
                 <View
-                  style={{
-                    height: getResHeight(6),
-                    width: getResHeight(6),
-                    backgroundColor: currentBgColor,
-                    borderRadius: getResHeight(8),
-                    overflow: 'hidden',
-                    borderWidth: 2,
-                    borderColor: isUserOnline
-                      ? theme.color.greenBRGA
-                      : theme.color.redBRGA,
-
-                    zIndex: -99999,
-                  }}>
-                  <Image
-                    source={{
-                      uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQn9zilY2Yu2hc19pDZFxgWDTUDy5DId7ITqA&s',
-                      height: '100%',
-                      width: '100%',
-                    }}
-                  />
-                </View>
-
-                <View
                   style={[
                     {
-                      position: 'absolute',
-                      bottom: 0,
-                      right: 0,
-                      borderRadius: 100,
-                      zIndex: 99999,
+                      height: getResHeight(6),
+                      width: getResHeight(6),
+
+                      borderRadius: getResHeight(8),
+                      overflow: 'hidden',
+
+                      justifyContent: 'center',
+                      alignItems: 'center',
                     },
-                    !isUserOnline && {
-                      backgroundColor: 'red',
-                      height: getResHeight(2),
-                      width: getResHeight(2),
+                    isUserLoggedIn && {
+                      borderWidth: 2,
+                      borderColor: isUserOnline
+                        ? theme.color.greenBRGA
+                        : theme.color.redBRGA,
+
+                      zIndex: -99999,
+                      backgroundColor: currentBgColor,
                     },
                   ]}>
-                  {isUserOnline && (
-                    <WaveButton {...waveButtonPropsFirstRoute} disabled />
+                  {!isUserLoggedIn ? (
+                    <>
+                      <VectorIcon
+                        type={'FontAwesome'}
+                        name={'user-circle'}
+                        size={getFontSize(5.5)}
+                        color={theme.color.black}
+                        style={{}}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <Image
+                        source={{
+                          uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQn9zilY2Yu2hc19pDZFxgWDTUDy5DId7ITqA&s',
+                          height: '100%',
+                          width: '100%',
+                        }}
+                      />
+                    </>
                   )}
                 </View>
+
+                {isUserLoggedIn && (
+                  <View
+                    style={[
+                      {
+                        position: 'absolute',
+                        bottom: 0,
+                        right: 0,
+                        borderRadius: 100,
+                        zIndex: 99999,
+                      },
+                      !isUserOnline && {
+                        backgroundColor: 'red',
+                        height: getResHeight(2),
+                        width: getResHeight(2),
+                      },
+                    ]}>
+                    {isUserOnline && (
+                      <WaveButton {...waveButtonPropsFirstRoute} disabled />
+                    )}
+                  </View>
+                )}
               </TouchableOpacity>
               {userLocation.address !== 'error' && (
                 <>

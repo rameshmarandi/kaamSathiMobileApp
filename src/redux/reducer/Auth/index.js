@@ -14,6 +14,7 @@ const initialState = {
   logedInuserType: '',
   isUserOnline: false,
   currentActiveTab: 0,
+  isUserLoggedIn: false,
 };
 
 const authSlice = createSlice({
@@ -28,6 +29,9 @@ const authSlice = createSlice({
     },
     setCurrentActiveTab(state, action) {
       state.currentActiveTab = action.payload;
+    },
+    setIsUserLoggedIn(state, action) {
+      state.isUserLoggedIn = action.payload;
     },
     setLoginUser(state, action) {
       state.loginUser = action.payload;
@@ -66,5 +70,6 @@ export const {
   setUserLocation,
   setBackgroundColor,
   setCurrentActiveTab,
+  setIsUserLoggedIn,
 } = authSlice.actions;
 export default authSlice.reducer;

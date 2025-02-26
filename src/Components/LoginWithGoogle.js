@@ -24,7 +24,7 @@ const LoginWithGoogle = ({
       style={[
         styles.button,
         {
-          backgroundColor: currentTextColor,
+          backgroundColor: currentBgColor,
           borderColor: currentTextColor,
           borderRadius: getResWidth(10),
           // marginBottom: '15%',
@@ -36,7 +36,7 @@ const LoginWithGoogle = ({
         style={[
           styles.text,
           {
-            color: currentBgColor,
+            color: currentTextColor,
             fontSize: getFontSize(1.8),
             marginLeft: getResWidth(2),
           },

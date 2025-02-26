@@ -1,29 +1,20 @@
-import React, {
-  useState,
-  useCallback,
-  useMemo,
-  memo,
-  useRef,
-  useEffect,
-} from 'react';
+import React, {useCallback, useMemo, memo, useRef} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {StyleSheet, View, Text, Animated, TouchableOpacity} from 'react-native';
 import {VectorIcon} from '../Components/VectorIcon';
 import {getFontSize, getResHeight, getResWidth} from '../utility/responsive';
 import {useSelector} from 'react-redux';
 import {
-  AdminHomeStack,
-  ApprovalStack,
   BookMarksStack,
-  FamilyStack,
   HistoryStack,
   HomeStack,
   ProfileStack,
 } from './StackNav';
 import theme from '../utility/theme';
-import {useRoute} from '@react-navigation/native';
+
 import {store} from '../redux/store';
 import {setCurrentActiveTab} from '../redux/reducer/Auth';
+import {showLoginAlert} from '../utility/AlertService';
 
 const Tab = createBottomTabNavigator();
 
@@ -56,72 +47,36 @@ const tabArrays = [
     routeNames: 'Profile',
     component: ProfileStack,
   },
-  // {
-  //   title: 'Family',
-  //   icon: {type: 'MaterialIcons', name: 'family-restroom'},
-  //   activeIcon: {type: 'MaterialIcons', name: 'family-restroom'},
-  //   routeNames: 'MyFamily',
-  //   component: FamilyStack,
-  // },
-
-  // {
-  //   title: 'Profile',
-  //   icon: {type: 'FontAwesome', name: 'user-o'},
-  //   activeIcon: {type: 'FontAwesome', name: 'user'},
-  //   routeNames: 'Profile',
-  //   component: ProfileStack,
-  // },
 ];
 
 const CustomTabBar = ({
   navigation,
   selectedTabIndex,
-  currentBgColor,
-  currentTextColor,
+
   isDarkMode,
 }) => {
-  const [selectedTab, setSelectedTab] = useState(selectedTabIndex);
   const animatedValue = useRef(new Animated.Value(selectedTabIndex)).current;
-  const {getAllPendingUser} = useSelector(state => state.profile);
-  const {currentActiveTab} = useSelector(state => state.user);
+
+  const {currentActiveTab, isUserLoggedIn} = useSelector(state => state.user);
 
   const onPress = useCallback(
     index => {
       // setSelectedTab(index);
-
-      store.dispatch(setCurrentActiveTab(index));
-      Animated.timing(animatedValue, {
-        toValue: index,
-        duration: 100,
-        useNativeDriver: false,
-      }).start();
-      navigation.navigate(tabArrays[index].routeNames);
+      if (isUserLoggedIn == false && index !== 0) {
+        showLoginAlert();
+      } else {
+        console.log('isUserLoggedIn_fron_redux', isUserLoggedIn);
+        store.dispatch(setCurrentActiveTab(index));
+        Animated.timing(animatedValue, {
+          toValue: index,
+          duration: 100,
+          useNativeDriver: false,
+        }).start();
+        navigation.navigate(tabArrays[index].routeNames);
+      }
     },
-    [navigation, animatedValue],
+    [navigation, animatedValue, isUserLoggedIn],
   );
-
-  // const animatedBackgroundColor = useMemo(
-  //   () =>
-  //     animatedValue.interpolate({
-  //       inputRange: tabArrays.map((_, i) => i),
-  //       outputRange: tabArrays.map(() =>
-  //         isDarkMode ? 'rgb(240,248,255)' : 'rgba(0, 0, 0, 0.4)',
-  //       ),
-  //     }),
-  //   [animatedValue, isDarkMode],
-  // );
-
-  const animatedBackgroundColor = useMemo(() => {
-    const totalTabs = tabArrays.length;
-
-    return animatedValue.interpolate({
-      inputRange: tabArrays.map((_, i) => i),
-      outputRange: tabArrays.map((_, i) =>
-        isDarkMode ? `rgb(240,248,255)` : `rgba(0, 0, 0)`,
-      ),
-      extrapolate: 'clamp', // Prevents the animation from going beyond the input range
-    });
-  }, [animatedValue, isDarkMode, selectedTabIndex]);
 
   return (
     <View
@@ -129,9 +84,6 @@ const CustomTabBar = ({
         styles.tabBar,
         {
           backgroundColor: theme.color.secondaryRGBA,
-          // isDarkMode ? currentBgColor : '#F5F5F5',
-          // borderTopWidth: 0.5,
-          // borderTopColor: isDarkMode ? '#F5F5F5' : currentTextColor,
         },
       ]}>
       {tabArrays.map((route, index) => (
@@ -145,11 +97,7 @@ const CustomTabBar = ({
               currentActiveTab === index && styles.selectedTab,
               {
                 backgroundColor:
-                  currentActiveTab === index
-                    ? 'white'
-                    : //  theme.color.secondary
-                      'transparent',
-                // zIndex: -9999999,
+                  currentActiveTab === index ? 'white' : 'transparent',
               },
             ]}>
             <VectorIcon
@@ -165,11 +113,8 @@ const CustomTabBar = ({
               }
               color={
                 isDarkMode && currentActiveTab === index
-                  ? // ||
-                    // (!isDarkMode && currentActiveTab !== index)
-                    'black'
+                  ? 'black'
                   : theme.color.whiteText
-                // theme.color.dimBlack
               }
               style={{
                 zIndex: 9999999,
@@ -189,40 +134,10 @@ const CustomTabBar = ({
                   currentActiveTab === index
                     ? '#000000'
                     : theme.color.whiteText,
-                // '#d2cece',
-                // isDarkMode ? theme.color.black : 'black',
               },
             ]}>
             {route.title}
           </Text>
-          {/* {index == 1 && (
-            <>
-              <View
-                style={{
-                  position: 'absolute',
-                  right:
-                    selectedTab === index ? getResWidth(5) : getResWidth(7),
-                  top: getResHeight(0.3),
-                  height: getResHeight(2.4),
-                  width: getResHeight(2.4),
-                  backgroundColor: 'red',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: 100,
-                  borderColor: currentTextColor,
-                  borderWidth: 1,
-                }}>
-                <Text
-                  style={{
-                    color: 'white',
-                    fontFamily: theme.font.semiBold,
-                    fontSize: getFontSize(1.4),
-                  }}>
-                  {getAllPendingUser.length}
-                </Text>
-              </View>
-            </>
-          )} */}
         </TouchableOpacity>
       ))}
     </View>
@@ -244,8 +159,6 @@ const TabNav = memo(props => {
     }),
     [currentBgColor, currentTextColor],
   );
-
-  // console.log('currentActiveTab', currentActiveTab);
   return (
     <View style={styles.navigatorContainer}>
       <Tab.Navigator
@@ -290,12 +203,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    // backgroundColor: 'grey',
-    // shadowColor: '#000',
-    // shadowOffset: {width: 0, height: getResHeight(2)},
-    // shadowOpacity: 0.25,
-    // shadowRadius: 8,
-    // elevation: 5.5,
   },
   iconContainer: {
     flex: 1,
@@ -304,7 +211,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: getResHeight(1), // Dynamic padding to adjust for smaller screens
     minWidth: getResHeight(6),
-    // backgroundColor: 'red',
   },
   selectedTab: {
     paddingHorizontal: getResHeight(2),
@@ -314,9 +220,6 @@ const styles = StyleSheet.create({
   tabText: {
     fontFamily: theme.font.regular,
     fontSize: getFontSize(1.4),
-  },
-  sceneContainer: {
-    // Additional styles can be added here if needed
   },
 });
 

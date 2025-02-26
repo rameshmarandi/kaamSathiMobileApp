@@ -73,10 +73,40 @@ export const forgotPasswordValidation = Yup.object().shape({
   }),
 });
 
-// Define validation schema
+// // Define validation schema
+// export const loginValidationSchema = Yup.object().shape({
+//   phone: Yup.string()
+//     .email('Please enter a valid email address')
+//     .required('Email is required'),
+//   password: Yup.string().required('Password is required'),
+// });
+
 export const loginValidationSchema = Yup.object().shape({
-  email: Yup.string()
-    .email('Please enter a valid email address')
-    .required('Email is required'),
-  password: Yup.string().required('Password is required'),
+  phone: Yup.string()
+    .transform((value, originalValue) => {
+      // Remove all non-digits except leading '+'
+      const cleaned = originalValue.replace(/[^\d+]/g, '');
+      // Preserve '+' and following digits
+      return cleaned.startsWith('+')
+        ? '+' + cleaned.slice(1).replace(/\D/g, '')
+        : cleaned.replace(/\D/g, '');
+    })
+    .test('is-indian-number', 'Invalid phone number', value => {
+      if (!value) return false;
+
+      // Check for +91 followed by 10 digits starting with 6-9
+      if (value.startsWith('+91')) {
+        return value.length === 13 && /^\+91[6-9]\d{9}$/.test(value);
+      }
+      // Check for 0 followed by 10 digits starting with 6-9
+      else if (value.startsWith('0')) {
+        return value.length === 11 && /^0[6-9]\d{9}$/.test(value);
+      }
+      // Check standard 10-digit number starting with 6-9
+      else {
+        return value.length === 10 && /^[6-9]\d{9}$/.test(value);
+      }
+    })
+    .required('Phone number is required'),
+  // password: Yup.string().required('Password is required'),
 });

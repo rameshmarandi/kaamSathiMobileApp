@@ -297,7 +297,7 @@ const MasterTextInput = forwardRef(
 
     // Define border color based on error presence
     const borderColor = error ? 'red' : currentTextColor;
-    let activeBorderColor = error ? 'red' : theme.color.charcolBlack;
+    let activeBorderColor = error ? 'red' : theme.color.dimBlack;
     const animatedStyle = {
       transform: [
         {
@@ -457,8 +457,8 @@ const MasterTextInput = forwardRef(
                 keyboardType={keyboardType}
                 onSubmitEditing={onSubmitEditing}
                 maxLength={maxLength}
-                selectionColor={currentTextColor}
-                cursorColor={currentTextColor}
+                selectionColor={theme.color.dimBlack}
+                cursorColor={theme.color.dimBlack}
                 style={{
                   backgroundColor: currentBgColor,
                   textAlignVertical: 'center',
@@ -533,7 +533,7 @@ const MasterTextInput = forwardRef(
           <Icon
             name="check-circle"
             size={getResHeight(2.7)}
-            color={theme.color.green}
+            color={theme.color.primary}
             style={styles.eyeIcon}
           />
         )}

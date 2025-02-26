@@ -19,6 +19,7 @@ import PaymentHistory from './Account/PaymentHistory';
 import PrivacyPolicy from './Account/PrivacyPolicy';
 import ProfileDetails from './Account/ProfileDetails';
 import Notification from './Notification/index';
+import LoginPage from './Auth/LoginPage';
 
 const UserAllScreens = {
   //Homepage
@@ -33,7 +34,7 @@ const UserAllScreens = {
   Notification,
 
   //Account
-
+  LoginPage,
   Profile,
   ProfileDetails,
   EditProfile,

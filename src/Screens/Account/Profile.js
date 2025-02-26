@@ -21,7 +21,11 @@ import CustomHeader from '../../Components/CustomHeader';
 import CustomSwitch from '../../Components/CustomSwitch';
 import WaveButton from '../../Components/WaveButton';
 import {store} from '../../redux/store';
-import {setCurrentActiveTab, setIsUserOnline} from '../../redux/reducer/Auth';
+import {
+  setCurrentActiveTab,
+  setIsUserLoggedIn,
+  setIsUserOnline,
+} from '../../redux/reducer/Auth';
 import {useSelector} from 'react-redux';
 import {onShareClick} from '../../Helpers/CommonHelpers';
 
@@ -68,6 +72,9 @@ const Profile = props => {
 
   const handleLogout = () => {
     console.log('User logged out');
+    store.dispatch(setIsUserLoggedIn(false));
+    store.dispatch(setCurrentActiveTab(0));
+    navigation.goBack();
   };
 
   const waveButtonProps = useCallback(

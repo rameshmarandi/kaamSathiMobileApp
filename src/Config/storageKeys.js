@@ -7,6 +7,7 @@ const StorageKeys = {
   REFRESH_TOKEN: 'APP_STORAGE_REFRESH_TOKEN',
   FCM_TOKEN: 'APP_STORAGE_FCM_TOKEN',
   LOCATION_PERMISSION: 'LOCATION_PERMISSION',
+  isUserLoggedIn: 'isUserLoggedIn',
   // Add more keys as needed
 };
 
