@@ -36,7 +36,9 @@ const CustomHeader = props => {
     centerLogo,
     filterIcon,
     rightNumber,
+    onPressShare,
     isDelete,
+    shareDisabled,
   } = props;
 
   let {
@@ -355,10 +357,50 @@ const CustomHeader = props => {
                   </Text>
                 </View>
               </TouchableOpacity>
+              {rightNumber && (
+                <Text style={{color: currentTextColor}}>{rightNumber}</Text>
+              )}
             </>
           )}
-          {rightNumber && (
-            <Text style={{color: currentTextColor}}>{rightNumber}</Text>
+          {onPressShare && (
+            <>
+              <TouchableOpacity
+                disabled={shareDisabled}
+                activeOpacity={0.8}
+                onPress={onPressShare}>
+                <Button
+                  type={'clear'}
+                  onPress={onPressShare}
+                  iconPosition="right"
+                  icon={
+                    <VectorIcon
+                      type={'MaterialIcons'}
+                      name={'share'}
+                      size={getFontSize(3.5)}
+                      color={theme.color.offWhite}
+                      style={{}}
+                    />
+                  }
+                  iconContainerStyle={{}}
+                  containerStyle={[
+                    {
+                      width: getResHeight(5),
+                      height: getResHeight(5),
+                      justifyContent: 'center',
+
+                      borderRadius: getResHeight(100),
+                    },
+                  ]}
+                  buttonStyle={[
+                    {
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 100,
+                    },
+                  ]}
+                />
+              </TouchableOpacity>
+            </>
           )}
         </View>
       </SafeAreaView>

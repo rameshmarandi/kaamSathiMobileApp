@@ -265,7 +265,7 @@ const EmployeeFound = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.color.white,
+    backgroundColor: theme.color.whiteBg,
   },
   card: {
     width: getResWidth(90),

@@ -179,37 +179,37 @@
 //     amount: '',
 //   };
 
-//   const handleSubmit = values => {
-//     try {
-//       setIsPayBtnLoading(true);
-//       // setTimeout(() => {
-//       //   bottomSheetRef.current?.close();
-//       //   initiatePayment(
-//       //     values.amount,
-//       //     myProfile,
-//       //     async data => {
-//       //       // console.log('Payment_Success_front', data);
-//       //       if (data?.razorpay_payment_id) {
-//       //         const res = await store.dispatch(
-//       //           createTransactionAPIHandler({
-//       //             amount: values.amount,
-//       //             transactionID: data?.razorpay_payment_id,
-//       //             donationMessage: 'Church offering',
-//       //             paymentStatus: 'success',
-//       //           }),
-//       //         );
-//       //       }
-//       //     },
-//       //     async data => {
-//       //       console.error('API_FES', data);
-//       //     },
-//       //   );
-//       //   setIsPayBtnLoading(false);
-//       // }, 300);
-//     } catch (error) {
-//       console.error('Initialite_payment_error', error);
-//     }
-//   };
+// const handleSubmit = values => {
+//   try {
+//     setIsPayBtnLoading(true);
+//     setTimeout(() => {
+//       // bottomSheetRef.current?.close();
+//       initiatePayment(
+//         values.amount,
+//         myProfile,
+//         async data => {
+//           // console.log('Payment_Success_front', data);
+//           if (data?.razorpay_payment_id) {
+//             // const res = await store.dispatch(
+//             //   createTransactionAPIHandler({
+//             //     amount: values.amount,
+//             //     transactionID: data?.razorpay_payment_id,
+//             //     donationMessage: 'Church offering',
+//             //     paymentStatus: 'success',
+//             //   }),
+//             // );
+//           }
+//         },
+//         async data => {
+//           console.error('API_FES', data);
+//         },
+//       );
+//       setIsPayBtnLoading(false);
+//     }, 300);
+//   } catch (error) {
+//     console.error('Initialite_payment_error', error);
+//   }
+// };
 
 //   const formatCurrency = value => {
 //     let val = value.replace(/[^0-9]/g, ''); // Remove any non-numeric characters

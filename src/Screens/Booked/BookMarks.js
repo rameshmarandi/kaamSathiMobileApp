@@ -17,6 +17,7 @@ import NoDataFound from '../../Components/NoDataFound';
 import {useFocusEffect} from '@react-navigation/native';
 import {store} from '../../redux/store';
 import {setCurrentActiveTab} from '../../redux/reducer/Auth';
+import {initiatePayment} from '../../Components/PaymentHandler';
 
 // Static Data with isBookmarked flag
 const employees = [
@@ -95,15 +96,15 @@ const BookMarks = ({navigation}) => {
   // Scroll to top when the screen comes into focus
   useFocusEffect(
     useCallback(() => {
-      if (flatListRef.current) {
-        flatListRef.current.scrollToOffset({animated: true, offset: 0});
-      }
       store.dispatch(setCurrentActiveTab(2));
       Animated.timing(headerHeight, {
         toValue: 1,
         duration: 200,
         useNativeDriver: true,
       }).start();
+      if (flatListRef.current) {
+        flatListRef.current.scrollToOffset({animated: true, offset: 0});
+      }
     }, []),
   );
 
@@ -146,7 +147,37 @@ const BookMarks = ({navigation}) => {
 
     lastScrollY.current = currentScrollY;
   };
-
+  const handlePaymentGateway = values => {
+    try {
+      // setIsPayBtnLoading(true);
+      // setTimeout(() => {
+      // bottomSheetRef.current?.close();
+      initiatePayment(
+        '100',
+        {},
+        async data => {
+          // console.log('Payment_Success_front', data);
+          if (data?.razorpay_payment_id) {
+            // const res = await store.dispatch(
+            //   createTransactionAPIHandler({
+            //     amount: values.amount,
+            //     transactionID: data?.razorpay_payment_id,
+            //     donationMessage: 'Church offering',
+            //     paymentStatus: 'success',
+            //   }),
+            // );
+          }
+        },
+        async data => {
+          console.error('API_FES', data);
+        },
+      );
+      // setIsPayBtnLoading(false);
+      // }, 300);
+    } catch (error) {
+      console.error('Initialite_payment_error', error);
+    }
+  };
   return (
     <SafeAreaView style={styles.container}>
       {/* Animated Header */}
@@ -190,8 +221,9 @@ const BookMarks = ({navigation}) => {
             workerDetails={item.workerDetails}
             onHeartPress={() => handleHeartPress(item.id)}
             onHireNowBtnPress={() => {
-              setSelectedWorker(item);
-              setIsModalVisible(true);
+              handlePaymentGateway();
+              // setSelectedWorker(item);
+              // setIsModalVisible(true);
             }}
             viewBtnPress={() =>
               navigation.navigate('EmployeeProfileDetails', {
@@ -218,7 +250,7 @@ const BookMarks = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.color.white,
+    backgroundColor: theme.color.whiteBg,
   },
   headerContainer: {
     position: 'absolute',

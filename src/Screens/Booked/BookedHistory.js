@@ -35,10 +35,10 @@ const BookedHistory = props => {
   // Scroll to top when the screen comes into focus
   useFocusEffect(
     useCallback(() => {
+      store.dispatch(setCurrentActiveTab(1));
       if (flatListRef.current) {
         flatListRef.current.scrollToOffset({animated: true, offset: 0});
       }
-      store.dispatch(setCurrentActiveTab(1));
     }, []),
   );
   // Add new booking with future date
@@ -397,6 +397,7 @@ const BookedHistory = props => {
       <FlatList
         data={activeBookings.filter(b => b.status !== 'Completed')}
         keyExtractor={item => item.id}
+        showsVerticalScrollIndicator={false}
         renderItem={({item}) => <BookingCard data={item} />}
         contentContainerStyle={styles.listContainer}
         ListEmptyComponent={() => {
@@ -418,6 +419,7 @@ const BookedHistory = props => {
   const SecondRoute = () => (
     <FlatList
       data={historyBookings}
+      showsVerticalScrollIndicator={false}
       keyExtractor={item => item.id}
       renderItem={({item}) => (
         <BookingCard
@@ -470,7 +472,7 @@ const BookedHistory = props => {
 };
 
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: theme.color.white},
+  container: {flex: 1, backgroundColor: theme.color.whiteBg},
   listContainer: {padding: getResWidth(3)},
   cardContainer: {
     backgroundColor: theme.color.white,

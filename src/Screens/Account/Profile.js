@@ -23,13 +23,19 @@ import WaveButton from '../../Components/WaveButton';
 import {store} from '../../redux/store';
 import {setCurrentActiveTab, setIsUserOnline} from '../../redux/reducer/Auth';
 import {useSelector} from 'react-redux';
+import {onShareClick} from '../../Helpers/CommonHelpers';
 
 const options = [
   {icon: 'user', label: 'Profile Details', screen: 'ProfileDetails'},
   {icon: 'key', label: 'Change Password', screen: 'ChangePassword'},
+
   {icon: 'credit-card', label: 'Payment history', screen: 'PaymentHistory'},
+
+  {icon: 'share', label: 'Share & Earn', screen: 'HelpSupport', ishare: true},
+  {icon: 'feedback', label: 'Feedback', screen: 'HelpSupport'},
   {icon: 'shield', label: 'Privacy & Security', screen: 'PrivacyPolicy'},
   {icon: 'headphones', label: 'Help & Support', screen: 'HelpSupport'},
+
   {
     icon: 'trash',
     label: 'Delecte Account',
@@ -48,15 +54,15 @@ const Profile = props => {
   // Scroll to top when the screen comes into focus
   useFocusEffect(
     useCallback(() => {
-      if (flatListRef.current) {
-        flatListRef.current.scrollToOffset({animated: true, offset: 0});
-      }
       store.dispatch(setCurrentActiveTab(3));
       Animated.timing(headerHeight, {
         toValue: 1,
         duration: 200,
         useNativeDriver: true,
       }).start();
+      if (flatListRef.current) {
+        flatListRef.current.scrollToOffset({animated: true, offset: 0});
+      }
     }, []),
   );
 
@@ -90,7 +96,7 @@ const Profile = props => {
     // setIsOnline(prevState => !prevState);
   };
   const waveButtonPropsFirstRoute = waveButtonProps(theme.color.primary);
-
+  const [isSharing, setIsSharing] = useState(false);
   // Handle Scroll Event
   const scrollY = useRef(new Animated.Value(0)).current;
   const lastScrollY = useRef(0);
@@ -123,7 +129,42 @@ const Profile = props => {
 
     lastScrollY.current = currentScrollY;
   };
+  const onMenuPress = option => {
+    try {
+      if (option.delete) {
+        Alert.alert(
+          'Delete Account',
+          'Are you sure you want to permanently delete your account? This action cannot be undone, and all your data will be lost forever.',
+          [
+            {text: 'Cancel', style: 'cancel'},
+            {
+              text: 'Delete',
+              onPress: inputText => {
+                // Handle account deletion logic
+              },
+            },
+          ],
+          'plain-text',
+        );
+      } else if (option.ishare) {
+        onSharePress();
+      } else {
+        navigation.navigate(option.screen);
+      }
+    } catch (error) {}
+  };
 
+  const onSharePress = () => {
+    onShareClick(
+      '🚀 *KaamSathi* - Your Ultimate Earning Partner! 💰\n\n' +
+        '✨ Refer & Earn BIG! Share this app with your friends and get exciting rewards. 🎁\n\n' +
+        '🔥 *Your Exclusive Referral Code:* *123456* 🔥\n\n' +
+        '📲 Download now:\n',
+      'https://www.google.com',
+      'Share & Earn',
+      setIsSharing,
+    );
+  };
   return (
     <SafeAreaView style={styles.container}>
       <Animated.View
@@ -142,7 +183,9 @@ const Profile = props => {
         ]}>
         <CustomHeader
           backPress={() => navigation.goBack()}
+          onPressShare={onSharePress}
           screenTitle="Account Settings"
+          shareDisabled={isSharing}
         />
       </Animated.View>
 
@@ -200,35 +243,25 @@ const Profile = props => {
 
             case 2:
               return (
-                <View style={styles.optionsContainer}>
-                  {options.map((option, idx) => (
-                    <AccountOption
-                      key={idx}
-                      icon={option.icon}
-                      label={option.label}
-                      onPress={() => {
-                        if (option.delete) {
-                          Alert.alert(
-                            'Delete Account',
-                            'Are you sure you want to permanently delete your account? This action cannot be undone, and all your data will be lost forever.',
-                            [
-                              {text: 'Cancel', style: 'cancel'},
-                              {
-                                text: 'Delete',
-                                onPress: inputText => {
-                                  // Handle account deletion logic
-                                },
-                              },
-                            ],
-                            'plain-text',
-                          );
-                        } else {
-                          navigation.navigate(option.screen);
-                        }
-                      }}
-                    />
-                  ))}
-                </View>
+                <>
+                  <View
+                    style={[
+                      styles.optionsContainer,
+                      {
+                        marginTop: getResHeight(1),
+                      },
+                    ]}>
+                    {options.map((option, idx) => (
+                      <AccountOption
+                        key={idx}
+                        icon={option.icon}
+                        label={option.label}
+                        disabled={isSharing}
+                        onPress={() => onMenuPress(option)}
+                      />
+                    ))}
+                  </View>
+                </>
               );
 
             default:
@@ -265,9 +298,10 @@ const Profile = props => {
   );
 };
 
-const AccountOption = ({icon, label, onPress}) => (
+const AccountOption = ({icon, label, onPress, disabled}) => (
   <TouchableOpacity
     activeOpacity={0.5}
+    disabled={disabled}
     style={[
       styles.option,
       {
@@ -286,12 +320,25 @@ const AccountOption = ({icon, label, onPress}) => (
         style={{
           width: '10%',
         }}>
-        <VectorIcon
-          type="FontAwesome"
-          name={icon}
-          size={20}
-          color={theme.color.grey}
-        />
+        {icon == 'feedback' ? (
+          <>
+            <VectorIcon
+              type="MaterialIcons"
+              name={icon}
+              size={getFontSize(2.7)}
+              color={theme.color.grey}
+            />
+          </>
+        ) : (
+          <>
+            <VectorIcon
+              type="FontAwesome"
+              name={icon}
+              size={getFontSize(2.7)}
+              color={theme.color.grey}
+            />
+          </>
+        )}
       </View>
       <Text style={styles.optionText}>{label}</Text>
     </View>
@@ -307,7 +354,7 @@ const AccountOption = ({icon, label, onPress}) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.color.white,
+    backgroundColor: theme.color.whiteBg,
   },
   headerContainer: {
     position: 'absolute',
@@ -346,6 +393,17 @@ const styles = StyleSheet.create({
   },
   optionsContainer: {
     backgroundColor: theme.color.white,
+    marginHorizontal: getResWidth(5),
+    // borderRadius: getResHeight(2),
+    backgroundColor: 'white',
+    borderRadius: getResHeight(2),
+    // padding: 20,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+    overflow: 'hidden',
   },
   option: {
     flexDirection: 'row',
@@ -358,7 +416,9 @@ const styles = StyleSheet.create({
   optionText: {
     fontSize: getFontSize(1.6),
     fontFamily: theme.font.medium,
+    marginLeft: '2%',
     color: theme.color.charcolBlack,
+    textAlignVertical: 'center',
   },
 
   // Online?Offline

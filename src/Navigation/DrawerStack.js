@@ -79,6 +79,11 @@ export default function DrawerStack(props) {
           component={AllScreens.PrivacyPolicy}
           options={screenOptions}
         />
+        <Stack.Screen
+          name={'Notification'}
+          component={AllScreens.Notification}
+          options={screenOptions}
+        />
       </Stack.Navigator>
       {/* </>
       )} */}

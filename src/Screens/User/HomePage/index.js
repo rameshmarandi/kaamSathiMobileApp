@@ -48,15 +48,15 @@ const index = memo(props => {
   // Scroll to top when the screen comes into focus
   useFocusEffect(
     useCallback(() => {
-      if (flatListRef.current) {
-        flatListRef.current.scrollToOffset({animated: true, offset: 0});
-      }
       store.dispatch(setCurrentActiveTab(0));
       Animated.timing(headerHeight, {
         toValue: 1,
         duration: 200,
         useNativeDriver: true,
       }).start();
+      if (flatListRef.current) {
+        flatListRef.current.scrollToOffset({animated: true, offset: 0});
+      }
     }, []),
   );
 
@@ -65,10 +65,9 @@ const index = memo(props => {
   }, []);
 
   const InitRender = async () => {
-    requestUserPermission();
-
-    await messaging().registerDeviceForRemoteMessages();
-    const token = await messaging().getToken();
+    // requestUserPermission();
+    // await messaging().registerDeviceForRemoteMessages();
+    // const token = await messaging().getToken();
   };
 
   // Handle Scroll Event
@@ -107,17 +106,17 @@ const index = memo(props => {
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor: theme.color.darkModeOffBGColor,
+        backgroundColor: theme.color.whiteBg,
       }}>
       <StatusBarComp />
 
       <Animated.View
         style={[
           {
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
+            // position: 'absolute',
+            // top: 0,
+            // left: 0,
+            // right: 0,
             zIndex: 10,
           },
           {
@@ -136,7 +135,7 @@ const index = memo(props => {
             navigation.navigate('Profile');
           }}
           onPressNotificaiton={() => {
-            navigation.navigate('UserNotification');
+            navigation.navigate('Notification');
           }}
         />
       </Animated.View>

@@ -56,7 +56,7 @@ const SearchBarComp = ({
             borderBottomWidth: 0,
             backgroundColor:
               // 'white',
-              currentBgColor,
+              theme.color.whiteBg,
             margin: 0,
             alignItems: 'center',
           },

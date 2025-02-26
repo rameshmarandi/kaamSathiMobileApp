@@ -12,7 +12,10 @@ import {CircularProgress} from 'react-native-circular-progress';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomHeader from '../../Components/CustomHeader';
 import theme from '../../utility/theme';
+
 import {getFontSize, getResHeight, getResWidth} from '../../utility/responsive';
+import {VectorIcon} from '../../Components/VectorIcon';
+import {initiatePayment} from '../../Components/PaymentHandler';
 
 const PaymentHistory = props => {
   const {navigation} = props;
@@ -127,7 +130,37 @@ const PaymentHistory = props => {
         );
     }
   };
-
+  const handlePaymentGateway = values => {
+    try {
+      // setIsPayBtnLoading(true);
+      // setTimeout(() => {
+      // bottomSheetRef.current?.close();
+      initiatePayment(
+        '100',
+        {},
+        async data => {
+          // console.log('Payment_Success_front', data);
+          if (data?.razorpay_payment_id) {
+            // const res = await store.dispatch(
+            //   createTransactionAPIHandler({
+            //     amount: values.amount,
+            //     transactionID: data?.razorpay_payment_id,
+            //     donationMessage: 'Church offering',
+            //     paymentStatus: 'success',
+            //   }),
+            // );
+          }
+        },
+        async data => {
+          console.error('API_FES', data);
+        },
+      );
+      // setIsPayBtnLoading(false);
+      // }, 300);
+    } catch (error) {
+      console.error('Initialite_payment_error', error);
+    }
+  };
   return (
     <SafeAreaView style={styles.container}>
       <CustomHeader
@@ -137,9 +170,48 @@ const PaymentHistory = props => {
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
           <Text style={styles.title}>Wallet Overview</Text>
-          <View style={styles.balanceCard}>
-            <Text style={styles.balanceText}>Available Points</Text>
-            <Text style={styles.balanceValue}>{100 - spent}</Text>
+          <View
+            style={[
+              styles.balanceCard,
+              {
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              },
+            ]}>
+            <View>
+              <Text style={styles.balanceText}>Available Points</Text>
+              <Text style={styles.balanceValue}>{100 - spent}</Text>
+            </View>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={handlePaymentGateway}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: getResHeight(5),
+                paddingVertical: getResHeight(0.3),
+                paddingHorizontal: getResWidth(2),
+                borderRadius: 12,
+                backgroundColor: theme.color.secondary2,
+              }}>
+              <VectorIcon
+                type={'MaterialCommunityIcons'}
+                name={'hand-coin'}
+                size={getFontSize(3)}
+                color={theme.color.white}
+              />
+              <Text
+                style={{
+                  fontFamily: theme.font.semiBold,
+                  fontSize: getFontSize(1.7),
+                  color: theme.color.white,
+                  marginLeft: getResWidth(1),
+                }}>
+                Buy coins
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
 

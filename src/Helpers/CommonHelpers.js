@@ -28,28 +28,46 @@ export const convertImageToBase64 = async (url, filePath) => {
   }
 };
 
-export const onShareClick = async (message, url, title) => {
+export const onShareClick = async (message, url, title, setIsSharing) => {
+  if (setIsSharing) setIsSharing(true); // Disable button
+
   try {
     const shareOptions = {};
 
-    // Include message only if it's provided
-    if (message !== '') {
-      shareOptions.message = message;
-    }
-    // Include URL only if it's provided
-    if (url !== '') {
-      shareOptions.url = url;
-    }
-    // Include title only if it's provided
-    if (title !== '') {
-      shareOptions.title = title;
-    }
+    if (message) shareOptions.message = message;
+    if (url) shareOptions.url = url;
+    if (title) shareOptions.title = title;
 
-    const result = await Share.share(shareOptions);
+    await Share.open(shareOptions);
   } catch (error) {
     Alert.alert('Error', error.message);
+  } finally {
+    if (setIsSharing) setIsSharing(false); // Enable button
   }
 };
+
+// export const onShareClick = async (message, url, title) => {
+//   try {
+//     const shareOptions = {};
+
+//     // Include message only if it's provided
+//     if (message !== '') {
+//       shareOptions.message = message;
+//     }
+//     // Include URL only if it's provided
+//     if (url !== '') {
+//       shareOptions.url = url;
+//     }
+//     // Include title only if it's provided
+//     if (title !== '') {
+//       shareOptions.title = title;
+//     }
+
+//     const result = await Share.open(shareOptions);
+//   } catch (error) {
+//     Alert.alert('Error', error.message);
+//   }
+// };
 export const updateState = newState =>
   setState(prevState => ({...prevState, ...newState}));
 export const capitalizeFirstLetter = fullName => {

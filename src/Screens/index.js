@@ -18,6 +18,7 @@ import HelpSupport from './Account/HelpSupport';
 import PaymentHistory from './Account/PaymentHistory';
 import PrivacyPolicy from './Account/PrivacyPolicy';
 import ProfileDetails from './Account/ProfileDetails';
+import Notification from './Notification/index';
 
 const UserAllScreens = {
   //Homepage
@@ -29,6 +30,7 @@ const UserAllScreens = {
   //Bookmark
   BookedHistory,
   BookMarks,
+  Notification,
 
   //Account
 

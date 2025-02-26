@@ -25,6 +25,7 @@ const color = {
   textColor: '#333333',
   black: '#000000',
   dimGrey: '#ECEFF1',
+  whiteBg: '#f8f9fe',
   charcolBlack: '#212121',
   whiteText: '#FFFFFF',
   offWhite: '#FAFAFA',

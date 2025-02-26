@@ -6,6 +6,7 @@ import {
   StatusBar,
   Linking,
   LogBox,
+  Platform,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import LottieView from 'lottie-react-native';
@@ -71,10 +72,12 @@ const App = () => {
   }, [isDarkMode]);
   // const []
   useEffect(() => {
-    Geocoder.init(GOOGLE_MAP_KEY);
-    handleDarkMode();
-    checkIsAuthUser();
-    InitRender();
+    if (Platform.OS === 'android') {
+      Geocoder.init(GOOGLE_MAP_KEY);
+      handleDarkMode();
+      checkIsAuthUser();
+      InitRender();
+    }
     setTimeout(() => {
       setIsLoading(false);
     }, 2000);
