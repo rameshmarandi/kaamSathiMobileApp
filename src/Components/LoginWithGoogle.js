@@ -27,7 +27,6 @@ const LoginWithGoogle = ({
           backgroundColor: currentBgColor,
           borderColor: currentTextColor,
           borderRadius: getResWidth(10),
-          // marginBottom: '15%',
         },
       ]}
       onPress={onPress}>
@@ -49,7 +48,7 @@ const LoginWithGoogle = ({
 
 const styles = StyleSheet.create({
   button: {
-    width: '95%',
+    width: '100%',
     paddingVertical: '2.5%',
     borderWidth: 1,
     flexDirection: 'row',

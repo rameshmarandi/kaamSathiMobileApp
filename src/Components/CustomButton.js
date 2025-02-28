@@ -56,11 +56,11 @@ const CustomButton = ({
 
 const styles = StyleSheet.create({
   footer: {
-    paddingVertical: getResHeight(1.5),
+    // paddingVertical: getResHeight(1.5),
     backgroundColor: theme.color.whiteBg,
   },
   hireButton: {
-    width: getResWidth(90),
+    width: '100%',
     alignSelf: 'center',
     backgroundColor: theme.color.secondary,
     borderRadius: getResHeight(1),

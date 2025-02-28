@@ -20,6 +20,7 @@ import PrivacyPolicy from './Account/PrivacyPolicy';
 import ProfileDetails from './Account/ProfileDetails';
 import Notification from './Notification/index';
 import LoginPage from './Auth/LoginPage';
+import Registration from './Auth/Registration';
 
 const UserAllScreens = {
   //Homepage
@@ -35,6 +36,7 @@ const UserAllScreens = {
 
   //Account
   LoginPage,
+  Registration,
   Profile,
   ProfileDetails,
   EditProfile,

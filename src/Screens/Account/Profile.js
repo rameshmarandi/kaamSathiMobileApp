@@ -278,7 +278,11 @@ const Profile = props => {
       />
 
       {/* Fixed Logout Button */}
-      <View style={styles.logoutContainer}>
+      <View
+        style={{
+          width: '90%',
+          alignSelf: 'center',
+        }}>
         <CustomButton
           title="Logout"
           onPress={handleLogout}

@@ -262,14 +262,21 @@ const EmployeeProfileDetails = ({navigation, route}) => {
        
       </ScrollView> */}
 
-      <CustomButton
-        title={'Book now'}
-        onPress={() => {
-          setIsModalVisible(true);
-        }}
-        // disabled
-        // loading={true}
-      />
+      <View
+        style={{
+          width: '90%',
+          alignSelf: 'center',
+          paddingBottom: '5%',
+        }}>
+        <CustomButton
+          title={'Book now'}
+          onPress={() => {
+            setIsModalVisible(true);
+          }}
+          // disabled
+          // loading={true}
+        />
+      </View>
     </SafeAreaView>
   );
 };

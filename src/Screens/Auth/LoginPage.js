@@ -1,16 +1,12 @@
-import React, {useRef, useState} from 'react';
+import React, {useCallback, useRef, memo, useState} from 'react';
 import {
   View,
   Text,
   SafeAreaView,
-  KeyboardAvoidingView,
   StyleSheet,
-  TouchableOpacity,
   ScrollView,
-  Alert,
   Platform,
-  Keyboard,
-  ActivityIndicator,
+  Image,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {getFontSize, getResHeight, getResWidth} from '../../utility/responsive';
@@ -19,19 +15,9 @@ import MasterTextInput from '../../Components/MasterTextInput';
 import {VectorIcon} from '../../Components/VectorIcon';
 import LoginWithGoogle from '../../Components/LoginWithGoogle';
 import {Formik} from 'formik';
-import {
-  handleEmailChange,
-  handleNumberChange,
-} from '../../Components/InputHandlers';
-import {color} from 'react-native-elements/dist/helpers';
-// import AddMemberForm from '../Admin/Members/AddMemberForm';
+import {handleNumberChange} from '../../Components/InputHandlers';
+
 import {TextInput} from 'react-native-paper';
-// import {
-//   GoogleOneTapSignIn,
-//   statusCodes,
-//   isErrorWithCode,
-//   GoogleSignin,
-// } from '@react-native-google-signin/google-signin';
 
 import {
   GoogleOneTapSignIn,
@@ -39,7 +25,7 @@ import {
   isErrorWithCode,
   GoogleSignin,
 } from '@react-native-google-signin/google-signin';
-import {loginAPIHander} from '../../redux/reducer/Auth/AuthAPI';
+
 import {store} from '../../redux/store';
 import ToastAlertComp from '../../Components/ToastAlertComp';
 import {checkIsAdmin} from '../../Helpers/CommonHelpers';
@@ -52,10 +38,35 @@ import StorageKeys from '../../Config/StorageKeys';
 import CustomButton from '../../Components/CustomButton';
 import OTPInput from '../../Components/OTPInput';
 import {setIsUserLoggedIn} from '../../redux/reducer/Auth';
+import LottieView from 'lottie-react-native';
+
+const AnimatedSlash = memo(() => {
+  return (
+    <View
+      style={{
+        height: getResHeight(35),
+        width: getResWidth(100),
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+      <LottieView
+        source={require('../../assets/animationLoader/login.json')}
+        autoPlay
+        loop
+        style={{
+          height: '100%',
+          width: '100%',
+        }}
+      />
+    </View>
+  );
+});
 
 const LoginPage = props => {
   const {navigation} = props;
   const formRef = useRef(null);
+  const formSubmitRef = useRef(null);
+
   const {isDarkMode, isAdmin, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
   );
@@ -78,13 +89,13 @@ const LoginPage = props => {
 
   // Handle OTP completion
   const handleOTPComplete = ({otp, isConfirmed}) => {
-    console.log('OPTI_inputes', otp, otp.length);
-    handleSubmit();
-    // if (isConfirmed) {
-    //   // Alert.alert('OTP Verified', `Entered OTP: ${otp}`);
-    // } else {
-    //   // Alert.alert('Error', 'OTP does not match. Please try again.');
-    // }
+    if (otp.length === 4) {
+      if (formSubmitRef.current) {
+        formSubmitRef.current(); // ✅ Calls Formik's handleSubmit
+      } else {
+        console.log('❌ handleSubmit is not ready yet');
+      }
+    }
   };
 
   const handleSubmit = async (values, {resetForm}) => {
@@ -121,7 +132,14 @@ const LoginPage = props => {
 
   return (
     <SafeAreaView
-      style={[styles.container, {backgroundColor: theme.color.whiteBg}]}>
+      style={[
+        styles.container,
+        {
+          backgroundColor:
+            // 'red',
+            theme.color.whiteBg,
+        },
+      ]}>
       {/* <View>
         <CustomAlertModal
           visible={isAlertVisible}
@@ -130,25 +148,8 @@ const LoginPage = props => {
           onClose={handleClose}
         />
       </View> */}
+      <AnimatedSlash />
 
-      <View
-        style={[
-          styles.header,
-          {
-            paddingTop: getResHeight(10),
-          },
-        ]}>
-        <Text style={[styles.greetingText, {color: currentTextColor}]}>
-          Hey there,
-        </Text>
-        <Text style={[styles.welcomeText, {color: currentTextColor}]}>
-          Welcome Back
-        </Text>
-      </View>
-      {/* <KeyboardAvoidingView
-        style={styles.keyboardAvoidingView}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 10 : 0}> */}
       <Formik
         innerRef={formRef}
         initialValues={{phone: '', password: ''}}
@@ -251,6 +252,7 @@ const LoginPage = props => {
           resetForm,
           setFieldValue,
         }) => {
+          formSubmitRef.current = handleSubmit;
           const isFieldValid = field => touched[field] && !errors[field];
 
           // Disable button if there are any errors
@@ -381,20 +383,21 @@ const LoginPage = props => {
                 ]}>
                 <Text
                   style={{
-                    fontFamily: theme.font.regular,
+                    fontFamily: theme.font.medium,
                     color: currentTextColor,
                     fontSize: getFontSize(1.5),
                   }}>
                   Don’t have an account yet? {/* <TouchableOpacity> */}
                   <Text
                     onPress={async () => {
-                      setAddNewMemberModalVisible(true);
-                      await store.dispatch(getBranchAPIHander());
+                      navigation.navigate('Registration');
+                      // setAddNewMemberModalVisible(true);
+                      // await store.dispatch(getBranchAPIHander());
                     }}
                     style={[
                       styles.registerText,
                       {
-                        fontFamily: theme.font.bold,
+                        fontFamily: theme.font.semiBold,
                         fontSize: getFontSize(2),
                       },
                     ]}>
@@ -406,7 +409,6 @@ const LoginPage = props => {
           );
         }}
       </Formik>
-      {/* </KeyboardAvoidingView> */}
     </SafeAreaView>
   );
 };
@@ -414,30 +416,12 @@ const LoginPage = props => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: '5%',
-    alignItems: 'center',
   },
-  // keyboardAvoidingView: {
-  //   flex: 1,
-  // },
-  scrollView: {
-    width: '100%',
-    alignSelf: 'center',
-  },
+
   scrollViewContent: {
-    // paddingTop: getResHeight(10),
+    paddingHorizontal: getResWidth(6),
   },
-  header: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: getResHeight(4),
-    marginTop: getResHeight(5),
-  },
-  greetingText: {
-    fontFamily: theme.font.medium,
-    fontSize: getFontSize(1.3),
-  },
+
   welcomeText: {
     fontFamily: theme.font.bold,
     fontSize: getFontSize(2),
@@ -464,7 +448,7 @@ const styles = StyleSheet.create({
     marginLeft: getResWidth(2),
   },
   separatorContainer: {
-    marginVertical: getResHeight(7),
+    marginVertical: getResHeight(5),
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
