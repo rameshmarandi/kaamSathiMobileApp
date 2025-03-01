@@ -297,7 +297,7 @@ const MasterTextInput = forwardRef(
 
     // Define border color based on error presence
     const borderColor = error ? 'red' : currentTextColor;
-    let activeBorderColor = error ? 'red' : theme.color.dimBlack;
+    let activeBorderColor = error ? 'red' : theme.color.secondary;
     const animatedStyle = {
       transform: [
         {
@@ -456,9 +456,30 @@ const MasterTextInput = forwardRef(
                 activeOutlineColor={activeBorderColor}
                 keyboardType={keyboardType}
                 onSubmitEditing={onSubmitEditing}
+                // cursorColor={theme.color.dimBlack}
                 maxLength={maxLength}
                 selectionColor={theme.color.dimBlack}
-                cursorColor={theme.color.dimBlack}
+                cursorColor={theme.color.secondary}
+                labelStyle={{
+                  color: 'red',
+                }}
+                theme={{
+                  roundness: 25,
+                }}
+                // labelStyle={{
+                //   fontSize: getFontSize(1.5), // Label font size
+                // }}
+                // theme={{
+                //   roundness: 25,
+                //   fonts: {
+                //     bold: {
+                //       fontFamily: theme.font.bold,
+                //     },
+                //   },
+                //   colors: {
+                //     primary: 'red',
+                //   },
+                // }}
                 style={{
                   backgroundColor: currentBgColor,
                   textAlignVertical: 'center',
@@ -470,11 +491,11 @@ const MasterTextInput = forwardRef(
                   {
                     width: '75%',
                     fontFamily: theme.font.regular,
-                    fontSize: getFontSize(1.8),
+                    fontSize: getFontSize(1.5),
                     textAlignVertical: 'center',
                     height: getResHeight(6),
 
-                    borderRadius: 50,
+                    // borderRadius: 50,
                     // borderRadius: getResHeight(2),
                     fontFamily: theme.font.medium,
                     color: theme.color.dimBlack,
@@ -511,6 +532,7 @@ const MasterTextInput = forwardRef(
               style={{
                 fontFamily: theme.font.medium,
                 marginTop: '2%',
+                marginLeft: '4%',
                 fontSize: getFontSize(1.5),
                 color: '#ff0038',
               }}>

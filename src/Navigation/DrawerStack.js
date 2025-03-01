@@ -31,6 +31,16 @@ export default function DrawerStack(props) {
         <> */}
       {/* <TabNav /> */}
       <Stack.Navigator screenOptions={{...transitionCard, ...screenOptions}}>
+        {/* <Stack.Screen
+          name="Home"
+          options={{
+            headerShadowVisible: false,
+            headerShown: false,
+          }}
+          component={TabNav}
+        /> */}
+
+        {/* auth stack  start*/}
         <Stack.Screen
           name="Home"
           options={{
@@ -39,12 +49,13 @@ export default function DrawerStack(props) {
           }}
           component={TabNav}
         />
-        {/* auth stack  start*/}
         <Stack.Screen name={'LoginPage'} component={AllScreens.LoginPage} />
+
         <Stack.Screen
           name={'Registration'}
           component={AllScreens.Registration}
         />
+
         {/* auth stack  end*/}
         <Stack.Screen name={'SearchOnMap'} component={AllScreens.SearchOnMap} />
         <Stack.Screen

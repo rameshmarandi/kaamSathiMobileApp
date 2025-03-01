@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ScrollView,
   Platform,
+  Keyboard,
   Image,
 } from 'react-native';
 import {useSelector} from 'react-redux';
@@ -31,23 +32,27 @@ import ToastAlertComp from '../../Components/ToastAlertComp';
 import {checkIsAdmin} from '../../Helpers/CommonHelpers';
 import {loginValidationSchema} from '../../utility/theme/validation';
 import {useFocusEffect} from '@react-navigation/native';
-import {getBranchAPIHander} from '../../redux/reducer/ChurchBranch/churchBranchAPI';
-import {CustomAlertModal} from '../../Components/commonComp';
-import asyncStorageUtil from '../../utility/asyncStorageUtil';
-import StorageKeys from '../../Config/StorageKeys';
+// import {getBranchAPIHander} from '../../redux/reducer/ChurchBranch/churchBranchAPI';
+// import {CustomAlertModal} from '../../Components/commonComp';
+// import asyncStorageUtil from '../../utility/asyncStorageUtil';
+// import StorageKeys from '../../Config/StorageKeys';
 import CustomButton from '../../Components/CustomButton';
 import OTPInput from '../../Components/OTPInput';
 import {setIsUserLoggedIn} from '../../redux/reducer/Auth';
 import LottieView from 'lottie-react-native';
+import RegistrationHeader from './RegistrationHeader';
 
 const AnimatedSlash = memo(() => {
   return (
     <View
       style={{
-        height: getResHeight(35),
+        height: getResHeight(30),
         width: getResWidth(100),
         justifyContent: 'center',
         alignItems: 'center',
+        zIndex: -99999,
+        // backgroundColor: 'red',
+        marginTop: getResHeight(-2),
       }}>
       <LottieView
         source={require('../../assets/animationLoader/login.json')}
@@ -91,6 +96,7 @@ const LoginPage = props => {
   const handleOTPComplete = ({otp, isConfirmed}) => {
     if (otp.length === 4) {
       if (formSubmitRef.current) {
+        Keyboard.dismiss();
         formSubmitRef.current(); // ✅ Calls Formik's handleSubmit
       } else {
         console.log('❌ handleSubmit is not ready yet');
@@ -102,11 +108,18 @@ const LoginPage = props => {
     setIsLoading(true);
 
     if (isOtpFiledVisible) {
-      setTimeout(() => {
-        setIsLoading(false);
-        store.dispatch(setIsUserLoggedIn(true));
-        navigation.navigate('Home');
-      }, 2000);
+      console.log('Clues', values);
+      //If not registered
+      navigation.navigate('Registration', {
+        contact: values.contact,
+      });
+
+      setIsOtpFiledVisible(false);
+      // setTimeout(() => {
+      setIsLoading(false);
+      //   store.dispatch(setIsUserLoggedIn(true));
+      //   navigation.navigate('Home');
+      // }, 2000);
     } else {
       setTimeout(() => {
         setIsOtpFiledVisible(true);
@@ -148,11 +161,69 @@ const LoginPage = props => {
           onClose={handleClose}
         />
       </View> */}
-      <AnimatedSlash />
 
+      {/* <View
+        style={{
+          width: '100%',
+          // flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingTop: getResHeight(2),
+        }}>
+        <View>
+          <Text
+            style={{
+              color: theme.color.dimBlack,
+              fontSize: getFontSize(2),
+              fontFamily: theme.font.medium,
+            }}>
+            Welcome to{' '}
+          </Text>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Text
+            style={{
+              color: theme.color.dimBlack,
+              fontSize: getFontSize(4),
+              fontFamily: theme.font.semiBold,
+            }}>
+            Kaam
+          </Text>
+          <Text
+            style={{
+              color: theme.color.secondary,
+              fontSize: getFontSize(4),
+              fontFamily: theme.font.semiBold,
+            }}>
+            sathi
+          </Text>
+        </View>
+        <AnimatedSlash />
+      </View> */}
+      <View
+        style={{
+          marginTop: '5%',
+        }}>
+        <RegistrationHeader
+          mainText="Welcome to"
+          firstWord="Kaam"
+          secondWord="sathi"
+          mainTextStyle={{color: '#000'}}
+          firstWordStyle={{fontSize: getFontSize(3)}}
+          secondWordStyle={{
+            fontSize: getFontSize(3),
+          }}
+        />
+        <AnimatedSlash />
+      </View>
       <Formik
         innerRef={formRef}
-        initialValues={{phone: '', password: ''}}
+        initialValues={{contact: '', password: ''}}
         validationSchema={loginValidationSchema}
         onSubmit={handleSubmit}
         // onSubmit={async (values, {resetForm}) => {
@@ -271,19 +342,24 @@ const LoginPage = props => {
               <MasterTextInput
                 label="Mobile number*"
                 placeholder="Enter mobile number"
-                ref={inputRefs.phone}
+                ref={inputRefs.contact}
                 keyboardType="numeric"
                 autoCapitalize="none"
-                autoFocus={true}
+                // autoFocus={true}
                 maxLength={10}
-                value={values.phone}
+                value={values.contact}
                 onChangeText={text =>
-                  setFieldValue('phone', handleNumberChange(text))
+                  setFieldValue('contact', handleNumberChange(text))
                 }
-                onBlur={handleBlur('phone')}
-                error={touched.phone && errors.phone}
-                isValid={isFieldValid('phone')}
-                left={<TextInput.Icon icon="phone" color={currentTextColor} />}
+                onBlur={handleBlur('contact')}
+                error={touched.contact && errors.contact}
+                isValid={isFieldValid('contact')}
+                left={
+                  <TextInput.Icon
+                    icon="phone"
+                    color={theme.color.outlineColor}
+                  />
+                }
               />
 
               {isOtpFiledVisible && (
@@ -316,7 +392,7 @@ const LoginPage = props => {
                 />
               </View>
 
-              <View style={styles.separatorContainer}>
+              {/* <View style={styles.separatorContainer}>
                 <View
                   style={[
                     styles.separatorLine,
@@ -372,39 +448,7 @@ const LoginPage = props => {
                     }
                   }}
                 />
-              )}
-
-              <View
-                style={[
-                  styles.registerContainer,
-                  {
-                    marginTop: '5%',
-                  },
-                ]}>
-                <Text
-                  style={{
-                    fontFamily: theme.font.medium,
-                    color: currentTextColor,
-                    fontSize: getFontSize(1.5),
-                  }}>
-                  Don’t have an account yet? {/* <TouchableOpacity> */}
-                  <Text
-                    onPress={async () => {
-                      navigation.navigate('Registration');
-                      // setAddNewMemberModalVisible(true);
-                      // await store.dispatch(getBranchAPIHander());
-                    }}
-                    style={[
-                      styles.registerText,
-                      {
-                        fontFamily: theme.font.semiBold,
-                        fontSize: getFontSize(2),
-                      },
-                    ]}>
-                    Register
-                  </Text>
-                </Text>
-              </View>
+              )} */}
             </ScrollView>
           );
         }}
@@ -420,6 +464,8 @@ const styles = StyleSheet.create({
 
   scrollViewContent: {
     paddingHorizontal: getResWidth(6),
+
+    zIndex: 99,
   },
 
   welcomeText: {

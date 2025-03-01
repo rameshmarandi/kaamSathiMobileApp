@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignSelf: 'center',
     backgroundColor: theme.color.secondary,
-    borderRadius: getResHeight(1),
+    borderRadius: getResHeight(3),
     paddingVertical: getResHeight(1),
     justifyContent: 'center',
     alignItems: 'center',

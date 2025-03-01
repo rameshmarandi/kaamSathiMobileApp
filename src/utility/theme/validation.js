@@ -82,7 +82,7 @@ export const forgotPasswordValidation = Yup.object().shape({
 // });
 
 export const loginValidationSchema = Yup.object().shape({
-  phone: Yup.string()
+  contact: Yup.string()
     .transform((value, originalValue) => {
       // Remove all non-digits except leading '+'
       const cleaned = originalValue.replace(/[^\d+]/g, '');

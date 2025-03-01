@@ -317,7 +317,7 @@ const AccountOption = ({icon, label, onPress, disabled}) => (
       styles.option,
       {
         width: '100%',
-        paddingLeft: '9%',
+        paddingLeft: '3%',
         paddingRight: '5%',
       },
     ]}
@@ -329,15 +329,21 @@ const AccountOption = ({icon, label, onPress, disabled}) => (
       }}>
       <View
         style={{
-          width: '10%',
+          width: getResHeight(4.5),
+          height: getResHeight(4.5),
+
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'rgba(230, 180, 42, 0.5)',
+          borderRadius: getResHeight(100),
         }}>
         {icon == 'feedback' ? (
           <>
             <VectorIcon
               type="MaterialIcons"
               name={icon}
-              size={getFontSize(2.7)}
-              color={theme.color.grey}
+              size={getFontSize(2.5)}
+              color={theme.color.charcolBlack}
             />
           </>
         ) : (
@@ -345,8 +351,8 @@ const AccountOption = ({icon, label, onPress, disabled}) => (
             <VectorIcon
               type="FontAwesome"
               name={icon}
-              size={getFontSize(2.7)}
-              color={theme.color.grey}
+              size={getFontSize(2.5)}
+              color={theme.color.charcolBlack}
             />
           </>
         )}

@@ -1,22 +1,32 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
-  Image,
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Picker} from '@react-native-picker/picker';
-import ImagePicker from 'react-native-image-crop-picker';
-import LinearGradient from 'react-native-linear-gradient';
-import {skilledWorkers} from '../../Components/StaticDataHander';
+import {Formik} from 'formik';
+import {useFocusEffect} from '@react-navigation/native';
+import theme from '../../utility/theme';
+import {getFontSize, getResHeight, getResWidth} from '../../utility/responsive';
+import MasterTextInput from '../../Components/MasterTextInput';
+import CustomButton from '../../Components/CustomButton';
+import {VectorIcon} from '../../Components/VectorIcon';
+import {TextInput} from 'react-native-paper';
+import {
+  handleEmailChange,
+  handleNumberChange,
+  handleTextChange,
+} from '../../Components/InputHandlers';
+import OTPInput from '../../Components/OTPInput';
+import StepProgressBarComp from '../../Components/StepProgressBarComp';
+import RegistrationHeader from './RegistrationHeader';
 import SkillInput from './SkillInput';
+import {skilledWorkers} from '../../Components/StaticDataHander';
 
 const COLORS = {
   primary: '#FF6B35',
@@ -26,491 +36,294 @@ const COLORS = {
   muted: '#ADB5BD',
 };
 
-const Registration = () => {
+const Registration = props => {
+  const {navigation} = props;
+  const {contact} = props.route.params;
+  const formRef = useRef(null);
+  const [isOtpFiledVisible, setIsOtpFiledVisible] = useState(false);
+  const formSubmitRef = useRef(null);
+  const otpRef = useRef(null);
   const [step, setStep] = useState(1);
-  const [otpSent, setOtpSent] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    otp: '',
-    role: 'worker',
-    skills: '',
-    experience: '0-1',
-    image: null,
-  });
+  const totalSteps = 4;
 
-  const handleNext = () => step < 5 && setStep(prev => prev + 1);
+  const formData = {
+    experience: '0-1',
+  };
+
+  const handleNext = () => step < totalSteps && setStep(prev => prev + 1);
   const handleBack = () => step > 1 && setStep(prev => prev - 1);
 
-  const handleImageUpload = () => {
-    ImagePicker.openPicker({
-      width: 300,
-      height: 300,
-      cropping: true,
-      cropperCircleOverlay: true,
-    }).then(image => {
-      setFormData({...formData, image: {uri: image.path}});
-    });
+  const inputRefs = {
+    email: useRef(null),
   };
 
-  const sendOtp = () => {
-    if (/^\d{10}$/.test(formData.phone)) {
-      setOtpSent(true);
-      Alert.alert('OTP Sent', '1234');
+  const handleSubmit = async (values, {resetForm}) => {
+    if (isOtpFiledVisible) {
+      setIsOtpFiledVisible(false);
     } else {
-      Alert.alert('Invalid Number', 'Please enter 10-digit phone number');
-    }
-  };
-
-  const verifyOtp = () => {
-    if (formData.otp === '1234') {
+      setIsOtpFiledVisible(true);
       handleNext();
-    } else {
-      Alert.alert('Wrong OTP', 'Please enter correct OTP');
     }
   };
-  // Update skills handling
-  const handleSkillsChange = newSkills => {
-    setFormData({...formData, skills: newSkills});
-  };
 
-  const ProgressBar = () => (
-    <View style={styles.progressContainer}>
-      {[1, 2, 3, 4, 5].map(num => (
-        <React.Fragment key={num}>
-          <LinearGradient
-            colors={
-              num <= step
-                ? [COLORS.primary, COLORS.secondary]
-                : ['#E9ECEF', '#E9ECEF']
-            }
-            style={styles.progressCircle}>
-            <Text style={styles.progressText}>{num}</Text>
-          </LinearGradient>
-          {num !== 5 && (
-            <LinearGradient
-              colors={
-                num < step
-                  ? [COLORS.primary, COLORS.secondary]
-                  : ['#E9ECEF', '#E9ECEF']
-              }
-              style={styles.progressLine}
-            />
-          )}
-        </React.Fragment>
-      ))}
-    </View>
-  );
+  const handleOTPComplete = ({otp}) => {
+    if (otp.length === 4 && formSubmitRef.current) {
+      setIsOtpFiledVisible(false);
+      formSubmitRef.current();
+    }
+  };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <ProgressBar />
+    <SafeAreaView style={{flex: 1, backgroundColor: theme.color.whiteBg}}>
+      <StepProgressBarComp step={step} totalSteps={totalSteps} />
 
-        {step === 1 && (
-          <View style={styles.stepContainer}>
-            <Text style={styles.header}>Welcome to Kaamsathi! 👋</Text>
-            <Text style={styles.subHeader}>
-              Enter your mobile number to begin your journey
-            </Text>
+      {step == 1 && (
+        <View style={{marginTop: '5%'}}>
+          <RegistrationHeader
+            mainText="Registration with"
+            firstWord="Kaam"
+            secondWord="sathi"
+            mainTextStyle={{color: '#000'}}
+            firstWordStyle={{fontSize: getFontSize(3)}}
+            secondWordStyle={{fontSize: getFontSize(3)}}
+          />
+        </View>
+      )}
 
-            <View style={styles.phoneContainer}>
-              <View style={styles.countryCode}>
-                <Image
-                  source={{uri: 'https://flagcdn.com/in.svg'}}
-                  style={styles.flag}
-                />
-                <Text style={styles.countryCodeText}>+91</Text>
-              </View>
-              <TextInput
-                style={styles.phoneInput}
-                placeholder="Enter 10-digit number"
-                placeholderTextColor={COLORS.muted}
-                keyboardType="phone-pad"
-                maxLength={10}
-                value={formData.phone}
-                onChangeText={text => setFormData({...formData, phone: text})}
-              />
-            </View>
+      <Formik
+        innerRef={formRef}
+        initialValues={{
+          contact: contact ? contact : '',
+          fullName: '',
+          email: '',
+          otp: '',
+          userRole: '',
+          experience: '0-1Year',
+        }}
+        onSubmit={handleSubmit}>
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          values,
+          errors,
+          touched,
+          resetForm,
+          setFieldValue,
+        }) => {
+          formSubmitRef.current = handleSubmit;
+          const isFieldValid = field => touched[field] && !errors[field];
 
-            <LinearGradient
-              colors={[COLORS.primary, COLORS.secondary]}
-              style={styles.primaryButton}>
-              <TouchableOpacity onPress={sendOtp}>
-                <Text style={styles.buttonText}>Send OTP</Text>
-              </TouchableOpacity>
-            </LinearGradient>
+          useFocusEffect(
+            React.useCallback(() => {
+              resetForm();
+            }, [resetForm]),
+          );
 
-            {otpSent && (
-              <>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter OTP"
-                  placeholderTextColor={COLORS.muted}
-                  keyboardType="numeric"
-                  value={formData.otp}
-                  onChangeText={text => setFormData({...formData, otp: text})}
-                />
-                <TouchableOpacity
-                  style={styles.secondaryButton}
-                  onPress={verifyOtp}>
-                  <Text style={[styles.buttonText, {color: COLORS.primary}]}>
-                    Verify OTP
-                  </Text>
-                </TouchableOpacity>
-              </>
-            )}
-          </View>
-        )}
+          return (
+            <>
+              <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={styles.scrollViewContent}
+                showsVerticalScrollIndicator={false}>
+                {step == 1 && (
+                  <>
+                    <MasterTextInput
+                      label="Mobile number*"
+                      placeholder="Enter mobile number"
+                      ref={inputRefs.contact}
+                      keyboardType="number-pad"
+                      autoCapitalize="none"
+                      maxLength={10}
+                      value={values.contact}
+                      onChangeText={text =>
+                        setFieldValue('contact', handleNumberChange(text))
+                      }
+                      onBlur={handleBlur('contact')}
+                      error={touched.contact && errors.contact}
+                      isValid={isFieldValid('contact')}
+                      left={
+                        <TextInput.Icon
+                          icon="phone"
+                          color={theme.color.outlineColor}
+                        />
+                      }
+                    />
+                    <MasterTextInput
+                      label="Full name"
+                      placeholder="Enter full name"
+                      ref={inputRefs.fullName}
+                      autoCapitalize="none"
+                      autoFocus={true}
+                      value={values.fullName}
+                      onChangeText={text =>
+                        setFieldValue('fullName', handleTextChange(text))
+                      }
+                      onBlur={handleBlur('fullName')}
+                      error={touched.fullName && errors.fullName}
+                      isValid={isFieldValid('fullName')}
+                      left={
+                        <TextInput.Icon
+                          icon="account"
+                          color={theme.color.outlineColor}
+                        />
+                      }
+                    />
+                    <MasterTextInput
+                      label="Email*"
+                      placeholder="Enter email"
+                      ref={inputRefs.email}
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                      value={values.email}
+                      onChangeText={text =>
+                        setFieldValue('email', handleEmailChange(text))
+                      }
+                      onBlur={handleBlur('email')}
+                      error={touched.email && errors.email}
+                      isValid={isFieldValid('email')}
+                      left={
+                        <TextInput.Icon
+                          icon="email"
+                          color={theme.color.outlineColor}
+                        />
+                      }
+                    />
 
-        {step === 2 && (
-          <View style={styles.stepContainer}>
-            <Text style={styles.header}>Create Your Profile 🎨</Text>
-            <Text style={styles.subHeader}>Add your photo and full name</Text>
+                    {isOtpFiledVisible && (
+                      <OTPInput
+                        ref={otpRef}
+                        length={4}
+                        onComplete={handleOTPComplete}
+                        otpText="Enter OTP"
+                      />
+                    )}
 
-            <TouchableOpacity
-              style={styles.avatarContainer}
-              onPress={handleImageUpload}>
-              {formData.image ? (
-                <Image source={formData.image} style={styles.avatar} />
-              ) : (
-                <>
-                  <Icon name="camera" size={32} color={COLORS.muted} />
-                  <Text style={styles.avatarText}>Add Photo</Text>
-                </>
+                    <View style={{marginTop: getResHeight(5)}}>
+                      <CustomButton
+                        title={
+                          step == 1 && isOtpFiledVisible ? 'Verify OTP' : 'Next'
+                        }
+                        onPress={handleSubmit}
+                        rightIcon={
+                          <VectorIcon
+                            type="MaterialCommunityIcons"
+                            name="arrow-right"
+                            size={getFontSize(2.5)}
+                            color={theme.color.white}
+                          />
+                        }
+                      />
+                    </View>
+                  </>
+                )}
+
+                {step === 2 && (
+                  <View style={styles.stepContainer}>
+                    <Text style={styles.header}>Professional Details 💼</Text>
+                    <Text style={styles.subHeader}>
+                      Help us understand your expertise
+                    </Text>
+
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.label}>Select Your Role</Text>
+                      <View style={[styles.pickerContainer, styles.elevated]}>
+                        <Picker
+                          selectedValue={values.userRole}
+                          onValueChange={value =>
+                            setFieldValue('userRole', value)
+                          }>
+                          <Picker.Item label="Worker (Labour)" value="worker" />
+                          <Picker.Item
+                            label="Skilled Worker"
+                            value="skilledWorker"
+                          />
+                        </Picker>
+                      </View>
+                    </View>
+
+                    {values.userRole === 'skilledWorker' && (
+                      <View style={styles.inputGroup}>
+                        <Text style={styles.label}>Primary Skills</Text>
+                        {/* <SkillInput
+                          skilledWorkers={skilledWorkers}
+                          // selectedSkills={values.skills}
+                          // setSelectedSkills={skills =>
+                          //   setFieldValue('skills', skills)
+                          // }
+                        /> */}
+                      </View>
+                    )}
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.label}>Years of Experience</Text>
+                      <View style={[styles.pickerContainer, styles.elevated]}>
+                        <Picker
+                          selectedValue={values.experience}
+                          onValueChange={value => {
+                            setFieldValue('experience', value);
+                          }}>
+                          <Picker.Item label="0-1 years" value="0-1" />
+                          <Picker.Item label="1-3 years" value="1-3" />
+                          <Picker.Item label="3-5 years" value="3-5" />
+                          <Picker.Item label="5+ years" value="5+" />
+                        </Picker>
+                      </View>
+                    </View>
+                  </View>
+                )}
+              </ScrollView>
+
+              {step !== 1 && (
+                <View style={styles.footer}>
+                  <TouchableOpacity
+                    onPress={handleBack}
+                    style={styles.buttonArrow}>
+                    <VectorIcon
+                      type="MaterialCommunityIcons"
+                      name="arrow-left"
+                      size={getFontSize(2.5)}
+                      color={theme.color.white}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={handleNext}
+                    style={styles.buttonArrow}>
+                    <VectorIcon
+                      type="MaterialCommunityIcons"
+                      name="arrow-right"
+                      size={getFontSize(2.5)}
+                      color={theme.color.white}
+                    />
+                  </TouchableOpacity>
+                </View>
               )}
-            </TouchableOpacity>
-
-            <TextInput
-              style={styles.input}
-              placeholder="Full Name"
-              placeholderTextColor={COLORS.muted}
-              value={formData.name}
-              onChangeText={text => setFormData({...formData, name: text})}
-            />
-
-            <View style={styles.buttonRow}>
-              <TouchableOpacity
-                style={styles.secondaryButton}
-                onPress={handleBack}>
-                <Text style={[styles.buttonText, {color: COLORS.primary}]}>
-                  Back
-                </Text>
-              </TouchableOpacity>
-              <LinearGradient
-                colors={[COLORS.primary, COLORS.secondary]}
-                style={styles.primaryButton}>
-                <TouchableOpacity onPress={handleNext}>
-                  <Text style={styles.buttonText}>Continue</Text>
-                </TouchableOpacity>
-              </LinearGradient>
-            </View>
-          </View>
-        )}
-
-        {step === 3 && (
-          <View style={styles.stepContainer}>
-            <Text style={styles.header}>Professional Details 💼</Text>
-            <Text style={styles.subHeader}>
-              Help us understand your expertise
-            </Text>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Select Your Role</Text>
-              <View style={[styles.pickerContainer, styles.elevated]}>
-                <Picker
-                  selectedValue={formData.role}
-                  onValueChange={value =>
-                    setFormData({...formData, role: value})
-                  }>
-                  <Picker.Item label="Worker" value="worker" />
-                  <Picker.Item label="Supervisor" value="supervisor" />
-                  <Picker.Item label="Contractor" value="contractor" />
-                </Picker>
-              </View>
-            </View>
-
-            {/* <View style={styles.inputGroup}>
-              <Text style={styles.label}>Primary Skills</Text>
-              <TextInput
-                style={[styles.input, styles.elevated]}
-                placeholder="e.g., Plumbing, Electrical Work"
-                placeholderTextColor={COLORS.muted}
-                value={formData.skills}
-                onChangeText={text => setFormData({...formData, skills: text})}
-              />
-            </View> */}
-            {/* 
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Primary Skills</Text>
-              <SkillInput
-                selectedSkills={formData.skills}
-                setSelectedSkills={skills => setFormData({...formData, skills})}
-                skilledWorkers={skilledWorkers}
-              />
-            </View> */}
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Primary Skills</Text>
-              <SkillInput
-                selectedSkills={formData.skills}
-                setSelectedSkills={handleSkillsChange}
-                skilledWorkers={skilledWorkers}
-              />
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Years of Experience</Text>
-              <View style={[styles.pickerContainer, styles.elevated]}>
-                <Picker
-                  selectedValue={formData.experience}
-                  onValueChange={value =>
-                    setFormData({...formData, experience: value})
-                  }>
-                  <Picker.Item label="0-1 years" value="0-1" />
-                  <Picker.Item label="1-3 years" value="1-3" />
-                  <Picker.Item label="3-5 years" value="3-5" />
-                  <Picker.Item label="5+ years" value="5+" />
-                </Picker>
-              </View>
-            </View>
-
-            <View style={styles.buttonRow}>
-              <TouchableOpacity
-                style={styles.secondaryButton}
-                onPress={handleBack}>
-                <Text style={[styles.buttonText, {color: COLORS.primary}]}>
-                  Back
-                </Text>
-              </TouchableOpacity>
-              <LinearGradient
-                colors={[COLORS.primary, COLORS.secondary]}
-                style={styles.primaryButton}>
-                <TouchableOpacity onPress={handleNext}>
-                  <Text style={styles.buttonText}>Continue</Text>
-                </TouchableOpacity>
-              </LinearGradient>
-            </View>
-          </View>
-        )}
-
-        {step === 4 && (
-          <View style={styles.stepContainer}>
-            <Text style={styles.header}>Review & Submit ✅</Text>
-            <Text style={styles.subHeader}>
-              Verify your information before submitting
-            </Text>
-
-            <View style={styles.reviewCard}>
-              <View style={styles.reviewRow}>
-                <Text style={styles.reviewLabel}>Name:</Text>
-                <Text style={styles.reviewValue}>{formData.name}</Text>
-              </View>
-              <View style={styles.reviewRow}>
-                <Text style={styles.reviewLabel}>Phone:</Text>
-                <Text style={styles.reviewValue}>+91 {formData.phone}</Text>
-              </View>
-              <View style={styles.reviewRow}>
-                <Text style={styles.reviewLabel}>Role:</Text>
-                <Text style={styles.reviewValue}>
-                  {formData.role.charAt(0).toUpperCase() +
-                    formData.role.slice(1)}
-                </Text>
-              </View>
-              <View style={styles.reviewRow}>
-                <Text style={styles.reviewLabel}>Skills:</Text>
-                <Text style={styles.reviewValue}>
-                  {' '}
-                  {formData.skills.join(', ')}
-                </Text>
-              </View>
-              <View style={styles.reviewRow}>
-                <Text style={styles.reviewLabel}>Experience:</Text>
-                <Text style={styles.reviewValue}>
-                  {formData.experience} years
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.buttonRow}>
-              <TouchableOpacity
-                style={styles.secondaryButton}
-                onPress={handleBack}>
-                <Text style={[styles.buttonText, {color: COLORS.primary}]}>
-                  Back
-                </Text>
-              </TouchableOpacity>
-              <LinearGradient
-                colors={[COLORS.primary, COLORS.secondary]}
-                style={styles.primaryButton}>
-                <TouchableOpacity
-                  onPress={() =>
-                    Alert.alert('Success!', 'Registration Completed')
-                  }>
-                  <Text style={styles.buttonText}>Submit</Text>
-                </TouchableOpacity>
-              </LinearGradient>
-            </View>
-          </View>
-        )}
-      </ScrollView>
-    </KeyboardAvoidingView>
+            </>
+          );
+        }}
+      </Formik>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  scrollView: {
     flex: 1,
-    backgroundColor: COLORS.background,
   },
-  scrollContainer: {
-    padding: 25,
-    paddingTop: 40,
-  },
-  progressContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 30,
-  },
-  progressCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  progressText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  progressLine: {
-    width: 50,
-    height: 4,
-    borderRadius: 2,
+  scrollViewContent: {
+    paddingHorizontal: getResWidth(6),
   },
   stepContainer: {
     marginBottom: 40,
   },
   header: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: COLORS.text,
-    marginBottom: 8,
-    fontFamily: 'Inter-Bold',
+    fontSize: getFontSize(1.8),
+    fontFamily: theme.font.semiBold,
+    color: theme.color.charcolBlack,
   },
   subHeader: {
-    fontSize: 16,
-    color: COLORS.muted,
-    marginBottom: 40,
-    fontFamily: 'Inter-Regular',
-    lineHeight: 24,
-  },
-  phoneContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    borderRadius: 15,
-    padding: 10,
-    marginBottom: 20,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  countryCode: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingRight: 15,
-    borderRightWidth: 1,
-    borderColor: '#E9ECEF',
-  },
-  flag: {
-    width: 24,
-    height: 18,
-    marginRight: 8,
-    borderRadius: 2,
-  },
-  countryCodeText: {
-    fontSize: 16,
-    color: COLORS.text,
-  },
-  phoneInput: {
-    flex: 1,
-    paddingLeft: 15,
-    fontSize: 16,
-    color: COLORS.text,
-    fontFamily: 'Inter-Regular',
-  },
-  primaryButton: {
-    borderRadius: 12,
-    padding: 18,
-    alignItems: 'center',
-    marginVertical: 10,
-    elevation: 3,
-    shadowColor: COLORS.primary,
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '600',
-    fontFamily: 'Inter-SemiBold',
-  },
-  avatarContainer: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    backgroundColor: '#E9ECEF',
-    alignSelf: 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 30,
-    elevation: 3,
-    borderWidth: 2,
-    borderColor: COLORS.primary,
-  },
-  avatar: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-  },
-  avatarText: {
-    color: COLORS.muted,
-    marginTop: 8,
-    fontSize: 14,
-  },
-  input: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    color: COLORS.text,
-    marginVertical: 10,
-    fontFamily: 'Inter-Regular',
-    borderWidth: 1,
-    borderColor: '#E9ECEF',
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 30,
-    gap: 15,
-  },
-  secondaryButton: {
-    borderWidth: 2,
-    borderColor: COLORS.primary,
-    borderRadius: 12,
-    padding: 16,
-    flex: 1,
-    alignItems: 'center',
-    backgroundColor: 'white',
+    fontSize: getFontSize(1.4),
+    fontFamily: theme.font.regular,
+    color: theme.color.charcolBlack,
   },
   inputGroup: {
     marginBottom: 20,
@@ -535,196 +348,21 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
-  reviewCard: {
-    backgroundColor: 'white',
-    borderRadius: 16,
-    padding: 20,
-    marginVertical: 15,
+  buttonArrow: {
+    height: getResHeight(6),
+    width: getResHeight(6),
+    backgroundColor: theme.color.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: getResHeight(100),
   },
-  reviewRow: {
+  footer: {
+    paddingHorizontal: '5%',
+    paddingBottom: '5%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 8,
-  },
-  reviewLabel: {
-    color: COLORS.muted,
-    fontSize: 14,
-    fontFamily: 'Inter-Medium',
-  },
-  reviewValue: {
-    color: COLORS.text,
-    fontSize: 14,
-    fontFamily: 'Inter-SemiBold',
-    maxWidth: '60%',
-    textAlign: 'right',
+    alignItems: 'center',
   },
 });
 
 export default Registration;
-
-// import React, {useState, useMemo} from 'react';
-// import {
-//   View,
-//   Text,
-//   TextInput,
-//   TouchableOpacity,
-//   FlatList,
-//   StyleSheet,
-//   ScrollView,
-// } from 'react-native';
-// import {skilledWorkers} from '../../Components/StaticDataHander';
-
-// const Registration = () => {
-//   const [inputValue, setInputValue] = useState('');
-//   const [selectedSkills, setSelectedSkills] = useState([]);
-//   const [showSuggestions, setShowSuggestions] = useState(false);
-
-//   // Get unique skills
-//   const uniqueSkills = useMemo(() => {
-//     const skills = skilledWorkers.map(worker => worker.skill);
-//     return [...new Set(skills)];
-//   }, []);
-
-//   // Filter suggestions
-//   const filteredSuggestions = useMemo(() => {
-//     if (!inputValue) return [];
-//     return uniqueSkills.filter(skill =>
-//       skill.toLowerCase().includes(inputValue.toLowerCase()),
-//     );
-//   }, [inputValue, uniqueSkills]);
-
-//   const handleSkillSelect = skill => {
-//     if (!selectedSkills.includes(skill)) {
-//       setSelectedSkills([...selectedSkills, skill]);
-//     }
-//     setInputValue('');
-//     setShowSuggestions(true);
-//   };
-
-//   const removeSkill = skillToRemove => {
-//     setSelectedSkills(selectedSkills.filter(skill => skill !== skillToRemove));
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       <View style={styles.inputContainer}>
-//         <ScrollView
-//           horizontal={false} // Wraps content properly
-//           contentContainerStyle={styles.selectedSkillsContainer}
-//           keyboardShouldPersistTaps="handled">
-//           <View style={styles.skillWrapper}>
-//             {selectedSkills.map(skill => (
-//               <View key={skill} style={styles.skillPill}>
-//                 <Text style={styles.skillText}>{skill}</Text>
-//                 <TouchableOpacity
-//                   onPress={() => removeSkill(skill)}
-//                   style={styles.removeButton}>
-//                   <Text style={styles.removeText}>×</Text>
-//                 </TouchableOpacity>
-//               </View>
-//             ))}
-//             <TextInput
-//               style={[
-//                 styles.input,
-//                 {
-//                   width: selectedSkills.length ? 100 : '100%', // Adjust input width dynamically
-//                 },
-//               ]}
-//               value={inputValue}
-//               onChangeText={text => {
-//                 setInputValue(text);
-//                 setShowSuggestions(true);
-//               }}
-//               placeholder={selectedSkills.length ? '' : 'Type a skill...'} // Hide placeholder if skills exist
-//               onFocus={() => setShowSuggestions(true)}
-//             />
-//           </View>
-//         </ScrollView>
-//       </View>
-
-//       {showSuggestions && filteredSuggestions.length > 0 && (
-//         <View style={styles.suggestionsContainer}>
-//           <FlatList
-//             data={filteredSuggestions}
-//             keyExtractor={item => item}
-//             renderItem={({item}) => (
-//               <TouchableOpacity
-//                 style={styles.suggestionItem}
-//                 onPress={() => handleSkillSelect(item)}>
-//                 <Text style={styles.suggestionText}>{item}</Text>
-//               </TouchableOpacity>
-//             )}
-//             keyboardShouldPersistTaps="handled"
-//           />
-//         </View>
-//       )}
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     width: '100%',
-//     paddingHorizontal: 16,
-//     marginVertical: 8,
-//   },
-//   inputContainer: {
-//     borderWidth: 1,
-//     borderColor: '#ccc',
-//     borderRadius: 8,
-//     minHeight: 50,
-//     padding: 8,
-//   },
-//   selectedSkillsContainer: {
-//     flexDirection: 'row',
-//     flexWrap: 'wrap',
-//     alignItems: 'center',
-//   },
-//   skillWrapper: {
-//     flexDirection: 'row',
-//     flexWrap: 'wrap',
-//     alignItems: 'center',
-//   },
-//   skillPill: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     backgroundColor: '#e1ecf4',
-//     borderRadius: 15,
-//     paddingVertical: 6,
-//     paddingHorizontal: 12,
-//     margin: 4,
-//   },
-//   skillText: {
-//     fontSize: 14,
-//     color: '#1a73e8',
-//   },
-//   removeButton: {
-//     marginLeft: 8,
-//   },
-//   removeText: {
-//     color: '#666',
-//     fontSize: 16,
-//   },
-//   input: {
-//     fontSize: 16,
-//     padding: 8,
-//     margin: 4,
-//   },
-//   suggestionsContainer: {
-//     marginTop: 4,
-//     borderWidth: 1,
-//     borderColor: '#ccc',
-//     borderRadius: 8,
-//     maxHeight: 200,
-//   },
-//   suggestionItem: {
-//     padding: 12,
-//     borderBottomWidth: 1,
-//     borderBottomColor: '#eee',
-//   },
-//   suggestionText: {
-//     fontSize: 16,
-//   },
-// });
-
-// export default Registration;

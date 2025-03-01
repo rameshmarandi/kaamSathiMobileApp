@@ -269,10 +269,24 @@ const AllNavContainer = props => {
     // NavigationServic.setNavigator(navigationRef.current);
   };
 
+  const theme = {
+    // ...MD3LightTheme,
+
+    // Specify a custom property
+    custom: 'property',
+
+    // Specify a custom property in nested object
+    colors: {
+      // ...MD3LightTheme.colors,
+      brandPrimary: '#fefefe',
+      brandSecondary: 'red',
+    },
+  };
+
   return (
     <>
       <Provider store={store}>
-        <PaperProvider>
+        <PaperProvider theme={theme}>
           <PersistGate persistor={persistor}>
             {/* <MenuProvider> */}
             <ReactionProvider>

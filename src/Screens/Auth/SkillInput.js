@@ -63,36 +63,47 @@ const SkillInput = ({selectedSkills, setSelectedSkills, skilledWorkers}) => {
             <TextInput
               style={[
                 styles.input,
-                {width: selectedSkills.length ? 100 : '100%'},
+                {
+                  width:
+                    Array.isArray(selectedSkills) && selectedSkills.length > 0
+                      ? 100
+                      : '100%',
+                },
               ]}
               value={inputValue}
               onChangeText={text => {
                 setInputValue(text);
                 setShowSuggestions(true);
               }}
-              placeholder={selectedSkills.length ? '' : 'Type a skill...'}
+              placeholder={
+                Array.isArray(selectedSkills) && selectedSkills.length > 0
+                  ? ''
+                  : 'Type a skill...'
+              }
               onFocus={() => setShowSuggestions(true)}
             />
           </View>
         </ScrollView>
       </View>
 
-      {showSuggestions && filteredSuggestions.length > 0 && (
-        <View style={styles.suggestionsContainer}>
-          <FlatList
-            data={filteredSuggestions}
-            keyExtractor={item => item}
-            renderItem={({item}) => (
-              <TouchableOpacity
-                style={styles.suggestionItem}
-                onPress={() => handleSkillSelect(item)}>
-                <Text style={styles.suggestionText}>{item}</Text>
-              </TouchableOpacity>
-            )}
-            keyboardShouldPersistTaps="handled"
-          />
-        </View>
-      )}
+      {showSuggestions &&
+        Array.isArray(filteredSuggestions) &&
+        filteredSuggestions.length > 0 && (
+          <View style={styles.suggestionsContainer}>
+            <FlatList
+              data={filteredSuggestions}
+              keyExtractor={item => item}
+              renderItem={({item}) => (
+                <TouchableOpacity
+                  style={styles.suggestionItem}
+                  onPress={() => handleSkillSelect(item)}>
+                  <Text style={styles.suggestionText}>{item}</Text>
+                </TouchableOpacity>
+              )}
+              keyboardShouldPersistTaps="handled"
+            />
+          </View>
+        )}
     </View>
   );
 };

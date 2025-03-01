@@ -131,7 +131,7 @@ const CustomHeader = props => {
                         type={'FontAwesome'}
                         name={'user-circle'}
                         size={getFontSize(5.5)}
-                        color={theme.color.black}
+                        color={theme.color.white}
                         style={{}}
                       />
                     </>

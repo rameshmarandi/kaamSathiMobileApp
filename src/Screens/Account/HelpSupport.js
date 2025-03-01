@@ -205,7 +205,7 @@ const ContactSupport = () => {
           <VectorIcon
             type={option.type}
             name={option.icon}
-            size={getFontSize(2)}
+            size={getFontSize(2.8)}
             color={theme.color.black}
           />
           <Text style={styles.buttonText}>{option.label}</Text>
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
     marginVertical: getResHeight(0.8),
   },
   buttonText: {
-    fontSize: getFontSize(1.7),
+    fontSize: getFontSize(1.6),
     fontFamily: theme.font.medium,
     color: theme.color.black,
     marginLeft: getResWidth(2),

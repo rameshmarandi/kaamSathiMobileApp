@@ -37,7 +37,7 @@ const FAQItem = React.memo(({item, index, expandedIndex, setExpandedIndex}) => {
           <Text
             style={[
               styles.itemTitle,
-              {color: theme.color.black, fontSize: getFontSize(1.6)},
+              {color: theme.color.black, fontSize: getFontSize(1.5)},
             ]}>
             {item.lableName}
           </Text>
@@ -64,7 +64,7 @@ const FAQItem = React.memo(({item, index, expandedIndex, setExpandedIndex}) => {
                 ? theme.color.secondary
                 : theme.color.grey,
               color: theme.color.dimBlack,
-              fontSize: getFontSize(1.6),
+              fontSize: getFontSize(1.5),
             },
           ]}>
           {item.lableValue}
