@@ -28,10 +28,11 @@ import {
 } from '../../redux/reducer/Auth';
 import {useSelector} from 'react-redux';
 import {onShareClick} from '../../Helpers/CommonHelpers';
+import {resetNavigation} from '../../Services/NavigationService';
 
 const options = [
   {icon: 'user', label: 'Profile Details', screen: 'ProfileDetails'},
-  {icon: 'key', label: 'Change Password', screen: 'ChangePassword'},
+  // {icon: 'key', label: 'Change Password', screen: 'ChangePassword'},
 
   {icon: 'credit-card', label: 'Payment history', screen: 'PaymentHistory'},
 
@@ -74,7 +75,9 @@ const Profile = props => {
     console.log('User logged out');
     store.dispatch(setIsUserLoggedIn(false));
     store.dispatch(setCurrentActiveTab(0));
-    navigation.goBack();
+    // navigation.goBack();
+    // resetNavigation('LoginPage');
+    navigation.navigate('LoginPage');
   };
 
   const waveButtonProps = useCallback(

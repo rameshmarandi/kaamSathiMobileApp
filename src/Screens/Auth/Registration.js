@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   Text,
@@ -27,12 +27,9 @@ import StepProgressBarComp from '../../Components/StepProgressBarComp';
 import RegistrationHeader from './RegistrationHeader';
 import SkillInput from './SkillInput';
 import {skilledWorkers} from '../../Components/StaticDataHander';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 const COLORS = {
-  primary: '#FF6B35',
-  secondary: '#FF1D15',
-  background: '#F8F9FA',
-  text: '#2D3142',
   muted: '#ADB5BD',
 };
 
@@ -42,9 +39,11 @@ const Registration = props => {
   const formRef = useRef(null);
   const [isOtpFiledVisible, setIsOtpFiledVisible] = useState(false);
   const formSubmitRef = useRef(null);
+  const [gmailUserData, setGmailUserData] = useState('');
   const otpRef = useRef(null);
   const [step, setStep] = useState(1);
-  const totalSteps = 4;
+  const [minimumStep, setMinimumStep] = useState(3);
+  const totalSteps = minimumStep;
 
   const formData = {
     experience: '0-1',
@@ -72,6 +71,40 @@ const Registration = props => {
       formSubmitRef.current();
     }
   };
+
+  const extractUserDetailsFromGmail = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      // const response = await GoogleOneTapSignIn.signIn();
+      const response = await GoogleSignin.signIn();
+
+      if (
+        response.type == 'success' &&
+        response.data &&
+        response.data?.idToken
+      ) {
+        setGmailUserData(response.data.user);
+      }
+    } catch (error) {
+      console.log('GmailError', error);
+    }
+  };
+  // Update Formik values when gmailUserData changes
+  useEffect(() => {
+    if (gmailUserData?.name && gmailUserData?.email) {
+      formRef.current?.setFieldValue('fullName', gmailUserData.name);
+      formRef.current?.setFieldValue('email', gmailUserData.email);
+    }
+  }, [gmailUserData]);
+
+  // useEffect(()=>{
+
+  // },[])
+  useEffect(() => {
+    if (step === 1) {
+      extractUserDetailsFromGmail();
+    }
+  }, []);
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: theme.color.whiteBg}}>
@@ -154,7 +187,7 @@ const Registration = props => {
                       placeholder="Enter full name"
                       ref={inputRefs.fullName}
                       autoCapitalize="none"
-                      autoFocus={true}
+                      // autoFocus={true}
                       value={values.fullName}
                       onChangeText={text =>
                         setFieldValue('fullName', handleTextChange(text))
@@ -198,23 +231,6 @@ const Registration = props => {
                         otpText="Enter OTP"
                       />
                     )}
-
-                    <View style={{marginTop: getResHeight(5)}}>
-                      <CustomButton
-                        title={
-                          step == 1 && isOtpFiledVisible ? 'Verify OTP' : 'Next'
-                        }
-                        onPress={handleSubmit}
-                        rightIcon={
-                          <VectorIcon
-                            type="MaterialCommunityIcons"
-                            name="arrow-right"
-                            size={getFontSize(2.5)}
-                            color={theme.color.white}
-                          />
-                        }
-                      />
-                    </View>
                   </>
                 )}
 
@@ -245,13 +261,13 @@ const Registration = props => {
                     {values.userRole === 'skilledWorker' && (
                       <View style={styles.inputGroup}>
                         <Text style={styles.label}>Primary Skills</Text>
-                        {/* <SkillInput
+                        <SkillInput
                           skilledWorkers={skilledWorkers}
                           // selectedSkills={values.skills}
                           // setSelectedSkills={skills =>
                           //   setFieldValue('skills', skills)
                           // }
-                        /> */}
+                        />
                       </View>
                     )}
                     <View style={styles.inputGroup}>
@@ -273,6 +289,37 @@ const Registration = props => {
                 )}
               </ScrollView>
 
+              {/* BUttons sections */}
+
+              {step == 1 && (
+                <>
+                  <View
+                    style={[
+                      {
+                        width: '90%',
+                        alignSelf: 'center',
+
+                        position: 'absolute',
+                        bottom: '5%',
+                      },
+                    ]}>
+                    <CustomButton
+                      title={
+                        step == 1 && isOtpFiledVisible ? 'Verify OTP' : 'Next'
+                      }
+                      onPress={handleSubmit}
+                      rightIcon={
+                        <VectorIcon
+                          type="MaterialCommunityIcons"
+                          name="arrow-right"
+                          size={getFontSize(2.5)}
+                          color={theme.color.white}
+                        />
+                      }
+                    />
+                  </View>
+                </>
+              )}
               {step !== 1 && (
                 <View style={styles.footer}>
                   <TouchableOpacity

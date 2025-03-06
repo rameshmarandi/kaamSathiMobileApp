@@ -12,12 +12,17 @@ import {
   TouchableOpacity,
   Text,
   Animated,
+  useColorScheme,
   Easing,
 } from 'react-native';
-import {TextInput as PaperTextInput, TextInput} from 'react-native-paper';
+import {
+  TextInput as PaperTextInput,
+  TextInput,
+  useTheme,
+} from 'react-native-paper';
 import DatePicker from 'react-native-ui-datepicker';
 import Modal from 'react-native-modal';
-import moment from 'moment';
+
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import theme from '../utility/theme';
@@ -66,6 +71,9 @@ const MasterTextInput = forwardRef(
     const {isDarkMode, currentBgColor, isAdmin} = useSelector(
       state => state.user,
     );
+    let colorScheme = useColorScheme();
+    const isDarkModeAvailable = colorScheme == 'dark' ? true : false;
+
     let currentTextColor = theme.color.outlineColor;
     // State to manage secure text entry visibility
     const [isSecureEntry, setIsSecureEntry] = useState(secureTextEntry);
@@ -296,7 +304,8 @@ const MasterTextInput = forwardRef(
     );
 
     // Define border color based on error presence
-    const borderColor = error ? 'red' : currentTextColor;
+    const borderColor = error ? 'red' : 'grey';
+    // currentTextColor;
     let activeBorderColor = error ? 'red' : theme.color.secondary;
     const animatedStyle = {
       transform: [
@@ -352,7 +361,7 @@ const MasterTextInput = forwardRef(
                   styles.dateInputText,
                   {
                     color: theme.color.charcolBlack,
-                    // currentTextColor,
+
                     marginLeft: '4%',
                   },
                 ]}>
@@ -453,6 +462,12 @@ const MasterTextInput = forwardRef(
                 outlineColor={borderColor}
                 multiline={multiline}
                 placeholderTextColor={'grey'}
+                // placeholderTextColor={
+                //   isDarkMode
+                //     ? // && !isFocused
+                //       '#1f4d00' // Dark mode placeholder color
+                //     : '#8af300' // Default placeholder color
+                // }
                 activeOutlineColor={activeBorderColor}
                 keyboardType={keyboardType}
                 onSubmitEditing={onSubmitEditing}

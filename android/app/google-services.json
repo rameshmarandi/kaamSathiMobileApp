@@ -1,33 +1,41 @@
 {
   "project_info": {
-    "project_number": "547818049971",
-    "project_id": "church-of-life",
-    "storage_bucket": "church-of-life.appspot.com"
+    "project_number": "983551644958",
+    "project_id": "kaamsathi-f426f",
+    "storage_bucket": "kaamsathi-f426f.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:547818049971:android:cb232a54ee5179a884fbc6",
+        "mobilesdk_app_id": "1:983551644958:android:104855e416c07916d9250f",
         "android_client_info": {
           "package_name": "com.kaamsathi"
         }
       },
       "oauth_client": [
         {
-          "client_id": "547818049971-o024j2rnfudfanen3m2p8dh0p3vn7mve.apps.googleusercontent.com",
+          "client_id": "983551644958-6c66ogjhs5j2pfb3necr3ch9p83d05d1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kaamsathi",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "983551644958-agvfvfthmrdqontdp53m3teekn33a3fh.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAyeQ5pS_L3kx1-fJldKUTI6tx-lKxhUIM"
+          "current_key": "AIzaSyDHeaYPpBQ-X8SleVqYyqZ3M_ck2Uo4JMc"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "547818049971-o024j2rnfudfanen3m2p8dh0p3vn7mve.apps.googleusercontent.com",
+              "client_id": "983551644958-agvfvfthmrdqontdp53m3teekn33a3fh.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

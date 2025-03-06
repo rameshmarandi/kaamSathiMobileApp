@@ -1,4 +1,4 @@
-import { CommonActions } from '@react-navigation/native';
+import {CommonActions} from '@react-navigation/native';
 
 let navigator;
 
@@ -11,7 +11,7 @@ function navigate(routeName, params) {
     CommonActions.navigate({
       name: routeName,
       params: params,
-    })
+    }),
   );
 }
 
@@ -23,8 +23,8 @@ function resetNavigation(routeName, params) {
   navigator.dispatch(
     CommonActions.reset({
       index: 0,
-      routes: [{ name: routeName, params: params }],
-    })
+      routes: [{name: routeName, params: params}],
+    }),
   );
 }
 
@@ -33,24 +33,30 @@ function replaceScreen(routeName, params) {
     CommonActions.replace({
       name: routeName,
       params: params,
-    })
+    }),
   );
 }
 
 function pushScreen(routeName, params = {}) {
-
-    console.log("navigator0" ,navigator)
-    console.log("Navigator" ,routeName)
-    if (navigator) {
-        navigator.dispatch(
-          CommonActions.push({
-            name: routeName,
-            params: params,
-          })
-        );
-      } else {
-        console.error("Navigator is not set properly."); // Log an error if navigator is not set
-      }
+  console.log('navigator0', navigator);
+  console.log('Navigator', routeName);
+  if (navigator) {
+    navigator.dispatch(
+      CommonActions.push({
+        name: routeName,
+        params: params,
+      }),
+    );
+  } else {
+    console.error('Navigator is not set properly.'); // Log an error if navigator is not set
+  }
 }
 
-export { navigate, navigateBack, resetNavigation, replaceScreen, pushScreen, setNavigator };
+export {
+  navigate,
+  navigateBack,
+  resetNavigation,
+  replaceScreen,
+  pushScreen,
+  setNavigator,
+};

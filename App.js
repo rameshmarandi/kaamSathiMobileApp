@@ -51,6 +51,7 @@ LogBox.ignoreAllLogs(true);
 import Geocoder from 'react-native-geocoding';
 import {GOOGLE_MAP_KEY} from './src/Config/constants';
 import {NavigationRef} from './src/Navigation/NavigationService';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 const App = () => {
   StatusBar.setBackgroundColor(theme.color.dardkModeOnBGColor); // Set your desired background color
@@ -71,6 +72,13 @@ const App = () => {
       StatusBar.setBarStyle('light-content');
     }
   }, [isDarkMode]);
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId:
+        '983551644958-agvfvfthmrdqontdp53m3teekn33a3fh.apps.googleusercontent.com',
+      // '547818049971-o024j2rnfudfanen3m2p8dh0p3vn7mve.apps.googleusercontent.com',
+    });
+  }, []);
   // const []
   useEffect(() => {
     if (Platform.OS === 'android') {

@@ -98,6 +98,7 @@ const LoginPage = props => {
       if (formSubmitRef.current) {
         Keyboard.dismiss();
         formSubmitRef.current(); // ✅ Calls Formik's handleSubmit
+        // if(values.contact)
       } else {
         console.log('❌ handleSubmit is not ready yet');
       }
@@ -108,18 +109,24 @@ const LoginPage = props => {
     setIsLoading(true);
 
     if (isOtpFiledVisible) {
-      console.log('Clues', values);
-      //If not registered
-      navigation.navigate('Registration', {
-        contact: values.contact,
-      });
+      // console.log('Clues', values);
 
-      setIsOtpFiledVisible(false);
-      // setTimeout(() => {
-      setIsLoading(false);
-      //   store.dispatch(setIsUserLoggedIn(true));
-      //   navigation.navigate('Home');
-      // }, 2000);
+      let defaultContact = '7887706698';
+      if (values.contact == defaultContact) {
+        setTimeout(() => {
+          setIsLoading(false);
+          store.dispatch(setIsUserLoggedIn(true));
+          navigation.navigate('Home');
+        }, 2000);
+      } else {
+        navigation.navigate('Registration', {
+          contact: values.contact,
+        });
+
+        setIsOtpFiledVisible(false);
+
+        setIsLoading(false);
+      }
     } else {
       setTimeout(() => {
         setIsOtpFiledVisible(true);
@@ -391,7 +398,40 @@ const LoginPage = props => {
                   }
                 />
               </View>
-
+              {/* <LoginWithGoogle
+                currentTextColor={theme.color.dimBlack}
+                currentBgColor={theme.color.whiteBg}
+                btnTitle={'Singin with Google'}
+                onPress={async () => {
+                  try {
+                    await GoogleSignin.hasPlayServices();
+                    // const response = await GoogleOneTapSignIn.signIn();
+                    const response = await GoogleSignin.signIn();
+                    console.log('google_API_es', response);
+                    // if (isSuccessResponse(response)) {
+                    //   // setState({userInfo: response.data});
+                    // } else {
+                    //   // sign in was cancelled by user
+                    // }
+                  } catch (error) {
+                    console.log('Failed', error.code, error.message);
+                    // if (isErrorWithCode(error)) {
+                    //   switch (error.code) {
+                    //     case statusCodes.IN_PROGRESS:
+                    //       // operation (eg. sign in) already in progress
+                    //       break;
+                    //     case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+                    //       // Android only, play services not available or outdated
+                    //       break;
+                    //     default:
+                    //     // some other error happened
+                    //   }
+                    // } else {
+                    //   // an error that's not related to google sign in occurred
+                    // }
+                  }
+                }}
+              /> */}
               {/* <View style={styles.separatorContainer}>
                 <View
                   style={[
@@ -413,42 +453,42 @@ const LoginPage = props => {
                 </Text>
               </View>
 
-              {Platform.OS == 'android' && (
-                <LoginWithGoogle
-                  currentTextColor={theme.color.dimBlack}
-                  currentBgColor={theme.color.whiteBg}
-                  btnTitle={'Singin with Google'}
-                  onPress={async () => {
-                    try {
-                      await GoogleSignin.hasPlayServices();
-                      // const response = await GoogleOneTapSignIn.signIn();
-                      const response = await GoogleSignin.signIn();
-                      console.log('google_API_es', response);
-                      // if (isSuccessResponse(response)) {
-                      //   // setState({userInfo: response.data});
-                      // } else {
-                      //   // sign in was cancelled by user
-                      // }
-                    } catch (error) {
-                      console.log('Failed', error.code, error.message);
-                      // if (isErrorWithCode(error)) {
-                      //   switch (error.code) {
-                      //     case statusCodes.IN_PROGRESS:
-                      //       // operation (eg. sign in) already in progress
-                      //       break;
-                      //     case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-                      //       // Android only, play services not available or outdated
-                      //       break;
-                      //     default:
-                      //     // some other error happened
-                      //   }
-                      // } else {
-                      //   // an error that's not related to google sign in occurred
-                      // }
-                    }
-                  }}
-                />
-              )} */}
+              // {Platform.OS == 'android' && (
+              //   <LoginWithGoogle
+              //     currentTextColor={theme.color.dimBlack}
+              //     currentBgColor={theme.color.whiteBg}
+              //     btnTitle={'Singin with Google'}
+              //     onPress={async () => {
+              //       try {
+              //         await GoogleSignin.hasPlayServices();
+              //         // const response = await GoogleOneTapSignIn.signIn();
+              //         const response = await GoogleSignin.signIn();
+              //         console.log('google_API_es', response);
+              //         // if (isSuccessResponse(response)) {
+              //         //   // setState({userInfo: response.data});
+              //         // } else {
+              //         //   // sign in was cancelled by user
+              //         // }
+              //       } catch (error) {
+              //         console.log('Failed', error.code, error.message);
+              //         // if (isErrorWithCode(error)) {
+              //         //   switch (error.code) {
+              //         //     case statusCodes.IN_PROGRESS:
+              //         //       // operation (eg. sign in) already in progress
+              //         //       break;
+              //         //     case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+              //         //       // Android only, play services not available or outdated
+              //         //       break;
+              //         //     default:
+              //         //     // some other error happened
+              //         //   }
+              //         // } else {
+              //         //   // an error that's not related to google sign in occurred
+              //         // }
+              //       }
+              //     }}
+              //   />
+              // )} */}
             </ScrollView>
           );
         }}
