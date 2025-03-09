@@ -48,6 +48,7 @@ const MasterTextInput = forwardRef(
       onSubmitEditing,
       topLableName,
       style,
+      roundness,
       error,
       minDate,
       maxDate,
@@ -320,7 +321,8 @@ const MasterTextInput = forwardRef(
         {topLableName && (
           <Text
             style={{
-              color: currentTextColor,
+              color: theme.color.charcolBlack,
+
               fontFamily: theme.font.medium,
               marginVertical: getResHeight(1),
             }}>
@@ -403,7 +405,7 @@ const MasterTextInput = forwardRef(
               borderBottomRightRadius: getResHeight(2),
               borderTopLeftRadius: getResHeight(2),
               borderTopRightRadius: getResHeight(2),
-              // marginTop: '-2%',
+              marginTop: '-2%',
               borderWidth: 1,
               borderColor: currentTextColor,
               overflow: 'hidden',
@@ -479,7 +481,7 @@ const MasterTextInput = forwardRef(
                   color: 'red',
                 }}
                 theme={{
-                  roundness: 25,
+                  roundness: roundness ? roundness : 23,
                 }}
                 // labelStyle={{
                 //   fontSize: getFontSize(1.5), // Label font size
@@ -603,10 +605,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 20,
 
-    borderRadius: 50,
     borderRadius: 10,
-
-    borderRadius: 50,
     // borderRadius: getResHeight(2),
     alignSelf: 'center',
     backgroundColor: 'white',
@@ -616,11 +615,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   headerTextStyle: {
-    // color: 'red',
-    // theme.color.green,
     fontFamily: theme.font.bold,
     fontSize: getFontSize(2),
-    // color: 'red',
   },
   yearContainerStyle: {
     backgroundColor: 'red',

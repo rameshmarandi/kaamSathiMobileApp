@@ -36,11 +36,13 @@ import {useFocusEffect} from '@react-navigation/native';
 // import {CustomAlertModal} from '../../Components/commonComp';
 // import asyncStorageUtil from '../../utility/asyncStorageUtil';
 // import StorageKeys from '../../Config/StorageKeys';
+
 import CustomButton from '../../Components/CustomButton';
 import OTPInput from '../../Components/OTPInput';
 import {setIsUserLoggedIn} from '../../redux/reducer/Auth';
 import LottieView from 'lottie-react-native';
 import RegistrationHeader from './RegistrationHeader';
+import DocumentScanner from '../../Components/DocumentScanner';
 
 const AnimatedSlash = memo(() => {
   return (
@@ -71,7 +73,8 @@ const LoginPage = props => {
   const {navigation} = props;
   const formRef = useRef(null);
   const formSubmitRef = useRef(null);
-
+  // const [mode, setMode] = useState('face');
+  const [mode, setMode] = useState('document');
   const {isDarkMode, isAdmin, currentBgColor, currentTextColor} = useSelector(
     state => state.user,
   );
@@ -228,6 +231,7 @@ const LoginPage = props => {
         />
         <AnimatedSlash />
       </View>
+      <DocumentScanner mode={mode} />
       <Formik
         innerRef={formRef}
         initialValues={{contact: '', password: ''}}

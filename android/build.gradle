@@ -13,6 +13,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+         maven { url "$rootDir/../node_modules/react-native-vision-camera/android/src/main/jniLibs" }
 
     }
     dependencies {

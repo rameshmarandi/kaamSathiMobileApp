@@ -15,10 +15,10 @@ import {PersistGate} from 'redux-persist/integration/react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import RootNavigation from './src/Navigation';
-import {PaperProvider} from 'react-native-paper';
+import {MD3LightTheme, PaperProvider} from 'react-native-paper';
 import {ReactionProvider} from 'react-native-reactions';
 import Toast, {BaseToast, ErrorToast} from 'react-native-toast-message';
-
+import {ToastProvider} from 'react-native-toast-notifications';
 // import AllScreens from './src/Screens/index';
 import {createStackNavigator} from '@react-navigation/stack';
 
@@ -91,6 +91,8 @@ const App = () => {
       setIsLoading(false);
     }, 2000);
   }, []);
+
+  // Custom theme configuration
 
   const InitRender = async () => {
     requestMultiplePermissions();
@@ -277,43 +279,40 @@ const AllNavContainer = props => {
     // NavigationServic.setNavigator(navigationRef.current);
   };
 
-  const theme = {
-    // ...MD3LightTheme,
-
-    // Specify a custom property
-    custom: 'property',
-
-    // Specify a custom property in nested object
+  const lightTheme = {
+    ...MD3LightTheme,
     colors: {
-      // ...MD3LightTheme.colors,
-      brandPrimary: '#fefefe',
-      brandSecondary: 'red',
+      ...MD3LightTheme.colors,
+      text: '#000000', // Primary text
+      onSurface: '#444444', // Secondary text
     },
   };
 
   return (
     <>
       <Provider store={store}>
-        <PaperProvider theme={theme}>
-          <PersistGate persistor={persistor}>
-            {/* <MenuProvider> */}
-            <ReactionProvider>
-              <GestureHandlerRootView style={{flex: 1}}>
-                <NavigationContainer
-                  onReady={onNavigationReady}
-                  ref={NavigationRef}
-                  onStateChange={state => {
-                    const currentRoute = state;
+        <ToastProvider>
+          <PaperProvider theme={lightTheme}>
+            <PersistGate persistor={persistor}>
+              {/* <MenuProvider> */}
+              <ReactionProvider>
+                <GestureHandlerRootView style={{flex: 1}}>
+                  <NavigationContainer
+                    onReady={onNavigationReady}
+                    ref={NavigationRef}
+                    onStateChange={state => {
+                      const currentRoute = state;
 
-                    console.log('Active Screen:', currentRoute);
-                  }}>
-                  <RootNavigation isLogedIn={isLogedIn} />
-                </NavigationContainer>
-              </GestureHandlerRootView>
-            </ReactionProvider>
-            {/* </MenuProvider> */}
-          </PersistGate>
-        </PaperProvider>
+                      console.log('Active Screen:', currentRoute);
+                    }}>
+                    <RootNavigation isLogedIn={isLogedIn} />
+                  </NavigationContainer>
+                </GestureHandlerRootView>
+              </ReactionProvider>
+              {/* </MenuProvider> */}
+            </PersistGate>
+          </PaperProvider>
+        </ToastProvider>
       </Provider>
       <Toast config={toastConfig} />
     </>

@@ -5,13 +5,9 @@ import theme from '../../utility/theme';
 import {getFontSize, getResHeight, getResWidth} from '../../utility/responsive';
 import CustomHeader from '../../Components/CustomHeader';
 
-const PrivacyPolicy = ({navigation}) => {
+export const PrivacyPolicyComponent = () => {
   return (
     <>
-      <CustomHeader
-        backPress={() => navigation.goBack()}
-        screenTitle={`Privacy Policy `}
-      />
       <ScrollView style={styles.container}>
         {/* Main Heading */}
         <View style={styles.headerContainer}>
@@ -171,6 +167,18 @@ const PrivacyPolicy = ({navigation}) => {
         {'\n'}- उपयोगकर्ता किसी भी समय डेटा हटाने का अनुरोध कर सकते हैं।
       </Text> */}
       </ScrollView>
+    </>
+  );
+};
+
+const PrivacyPolicy = ({navigation}) => {
+  return (
+    <>
+      <CustomHeader
+        backPress={() => navigation.goBack()}
+        screenTitle={`Privacy Policy `}
+      />
+      <PrivacyPolicyComponent />
     </>
   );
 };

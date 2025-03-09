@@ -6,63 +6,66 @@ import {
   ScrollView,
   StyleSheet,
   SafeAreaView,
+  TextInput,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import {Picker} from '@react-native-picker/picker';
 import {Formik} from 'formik';
 import {useFocusEffect} from '@react-navigation/native';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import theme from '../../utility/theme';
 import {getFontSize, getResHeight, getResWidth} from '../../utility/responsive';
 import MasterTextInput from '../../Components/MasterTextInput';
 import CustomButton from '../../Components/CustomButton';
-import {VectorIcon} from '../../Components/VectorIcon';
-import {TextInput} from 'react-native-paper';
-import {
-  handleEmailChange,
-  handleNumberChange,
-  handleTextChange,
-} from '../../Components/InputHandlers';
 import OTPInput from '../../Components/OTPInput';
 import StepProgressBarComp from '../../Components/StepProgressBarComp';
 import RegistrationHeader from './RegistrationHeader';
 import SkillInput from './SkillInput';
 import {skilledWorkers} from '../../Components/StaticDataHander';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {formatCurrency} from '../../Components/commonHelper';
+import {TextInput as PaperTextInput} from 'react-native-paper';
+import {TermAndConditionModal} from '../../Components/ModalsComponent';
 
-const COLORS = {
-  muted: '#ADB5BD',
-};
-
-const Registration = props => {
-  const {navigation} = props;
-  const {contact} = props.route.params;
+const Registration = ({navigation, route}) => {
+  const {contact} = route.params;
   const formRef = useRef(null);
   const [isOtpFiledVisible, setIsOtpFiledVisible] = useState(false);
   const formSubmitRef = useRef(null);
   const [gmailUserData, setGmailUserData] = useState('');
   const otpRef = useRef(null);
   const [step, setStep] = useState(1);
-  const [minimumStep, setMinimumStep] = useState(3);
-  const totalSteps = minimumStep;
+  const [selectedSkills, setSelectedSkills] = useState([]);
+  const [termConditionModalVisible, setTermConditionModalVisible] =
+    useState(false);
+  const maxAmount = 5000;
+  // let totalSteps = 2;
 
-  const formData = {
-    experience: '0-1',
-  };
-
-  const handleNext = () => step < totalSteps && setStep(prev => prev + 1);
-  const handleBack = () => step > 1 && setStep(prev => prev - 1);
+  const [totalSteps, setTotalSteps] = useState(3);
 
   const inputRefs = {
     email: useRef(null),
   };
 
-  const handleSubmit = async (values, {resetForm}) => {
-    if (isOtpFiledVisible) {
-      setIsOtpFiledVisible(false);
+  const handleNext = () => {
+    if (totalSteps == step) {
+      setTermConditionModalVisible(true);
     } else {
-      setIsOtpFiledVisible(true);
-      handleNext();
+      return step < totalSteps && setStep(prev => prev + 1);
     }
+  };
+
+  const handleBack = () => step > 1 && setStep(prev => prev - 1);
+
+  // Update totalSteps whenever userRole changes
+  const updateSteps = userRole => {
+    const newTotal = ['labour', 'skilledWorker'].includes(userRole) ? 3 : 2;
+    setTotalSteps(newTotal);
+  };
+
+  const handleSubmit = values => {
+    isOtpFiledVisible
+      ? setIsOtpFiledVisible(false)
+      : setIsOtpFiledVisible(true);
+    if (!isOtpFiledVisible) handleNext();
   };
 
   const handleOTPComplete = ({otp}) => {
@@ -75,21 +78,13 @@ const Registration = props => {
   const extractUserDetailsFromGmail = async () => {
     try {
       await GoogleSignin.hasPlayServices();
-      // const response = await GoogleOneTapSignIn.signIn();
       const response = await GoogleSignin.signIn();
-
-      if (
-        response.type == 'success' &&
-        response.data &&
-        response.data?.idToken
-      ) {
-        setGmailUserData(response.data.user);
-      }
+      if (response?.data?.user) setGmailUserData(response.data.user);
     } catch (error) {
       console.log('GmailError', error);
     }
   };
-  // Update Formik values when gmailUserData changes
+
   useEffect(() => {
     if (gmailUserData?.name && gmailUserData?.email) {
       formRef.current?.setFieldValue('fullName', gmailUserData.name);
@@ -97,28 +92,29 @@ const Registration = props => {
     }
   }, [gmailUserData]);
 
-  // useEffect(()=>{
-
-  // },[])
   useEffect(() => {
-    if (step === 1) {
-      extractUserDetailsFromGmail();
-    }
+    extractUserDetailsFromGmail();
   }, []);
 
-  return (
-    <SafeAreaView style={{flex: 1, backgroundColor: theme.color.whiteBg}}>
-      <StepProgressBarComp step={step} totalSteps={totalSteps} />
+  useEffect(() => {
+    formRef.current?.setFieldValue('skills', selectedSkills);
+  }, [selectedSkills]);
 
-      {step == 1 && (
-        <View style={{marginTop: '5%'}}>
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <StepProgressBarComp step={step} totalSteps={totalSteps} />
+      <TermAndConditionModal
+        isModalVisible={termConditionModalVisible}
+        onBackdropPress={() => {
+          setTermConditionModalVisible(false);
+        }}
+      />
+      {step === 1 && (
+        <View style={styles.headerContainer}>
           <RegistrationHeader
             mainText="Registration with"
             firstWord="Kaam"
             secondWord="sathi"
-            mainTextStyle={{color: '#000'}}
-            firstWordStyle={{fontSize: getFontSize(3)}}
-            secondWordStyle={{fontSize: getFontSize(3)}}
           />
         </View>
       )}
@@ -126,12 +122,17 @@ const Registration = props => {
       <Formik
         innerRef={formRef}
         initialValues={{
-          contact: contact ? contact : '',
+          contact: contact || '',
           fullName: '',
           email: '',
           otp: '',
-          userRole: '',
+          userRole: 'labour',
           experience: '0-1Year',
+          skills: [],
+          userBio: '',
+          priceType: '',
+          hourlyPrice: '',
+          fullDayPrice: '',
         }}
         onSubmit={handleSubmit}>
         {({
@@ -141,16 +142,19 @@ const Registration = props => {
           values,
           errors,
           touched,
-          resetForm,
           setFieldValue,
+          setFieldError,
         }) => {
           formSubmitRef.current = handleSubmit;
           const isFieldValid = field => touched[field] && !errors[field];
 
+          // totalSteps =
+          // Update steps when userRole changes
+          useEffect(() => {
+            updateSteps(values.userRole);
+          }, [values.userRole]);
           useFocusEffect(
-            React.useCallback(() => {
-              resetForm();
-            }, [resetForm]),
+            React.useCallback(() => formRef.current?.resetForm(), []),
           );
 
           return (
@@ -159,7 +163,7 @@ const Registration = props => {
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollViewContent}
                 showsVerticalScrollIndicator={false}>
-                {step == 1 && (
+                {step === 1 && (
                   <>
                     <MasterTextInput
                       label="Mobile number*"
@@ -170,53 +174,42 @@ const Registration = props => {
                       maxLength={10}
                       value={values.contact}
                       onChangeText={text =>
-                        setFieldValue('contact', handleNumberChange(text))
+                        setFieldValue('contact', text.replace(/[^0-9]/g, ''))
                       }
-                      onBlur={handleBlur('contact')}
-                      error={touched.contact && errors.contact}
-                      isValid={isFieldValid('contact')}
                       left={
-                        <TextInput.Icon
+                        <PaperTextInput.Icon
                           icon="phone"
                           color={theme.color.outlineColor}
                         />
                       }
                     />
+
                     <MasterTextInput
                       label="Full name"
                       placeholder="Enter full name"
-                      ref={inputRefs.fullName}
-                      autoCapitalize="none"
-                      // autoFocus={true}
                       value={values.fullName}
                       onChangeText={text =>
-                        setFieldValue('fullName', handleTextChange(text))
+                        setFieldValue(
+                          'fullName',
+                          text.replace(/[^a-zA-Z ]/g, ''),
+                        )
                       }
-                      onBlur={handleBlur('fullName')}
-                      error={touched.fullName && errors.fullName}
-                      isValid={isFieldValid('fullName')}
                       left={
-                        <TextInput.Icon
+                        <PaperTextInput.Icon
                           icon="account"
                           color={theme.color.outlineColor}
                         />
                       }
                     />
+
                     <MasterTextInput
                       label="Email*"
                       placeholder="Enter email"
-                      ref={inputRefs.email}
                       keyboardType="email-address"
-                      autoCapitalize="none"
                       value={values.email}
-                      onChangeText={text =>
-                        setFieldValue('email', handleEmailChange(text))
-                      }
-                      onBlur={handleBlur('email')}
-                      error={touched.email && errors.email}
-                      isValid={isFieldValid('email')}
+                      onChangeText={text => setFieldValue('email', text.trim())}
                       left={
-                        <TextInput.Icon
+                        <PaperTextInput.Icon
                           icon="email"
                           color={theme.color.outlineColor}
                         />
@@ -242,104 +235,191 @@ const Registration = props => {
                     </Text>
 
                     <View style={styles.inputGroup}>
-                      <Text style={styles.label}>Select Your Role</Text>
-                      <View style={[styles.pickerContainer, styles.elevated]}>
-                        <Picker
-                          selectedValue={values.userRole}
-                          onValueChange={value =>
-                            setFieldValue('userRole', value)
-                          }>
-                          <Picker.Item label="Worker (Labour)" value="worker" />
-                          <Picker.Item
-                            label="Skilled Worker"
-                            value="skilledWorker"
-                          />
-                        </Picker>
-                      </View>
-                    </View>
+                      <MasterTextInput
+                        label="Select your role"
+                        topLableName="Select your role"
+                        isDropdown
+                        dropdownData={[
+                          {label: 'House Owner', value: 'homeowner'},
+                          {label: 'Worker (Labour)', value: 'labour'},
+                          {label: 'Skilled Worker', value: 'skilledWorker'},
+                          {label: 'Contractor', value: 'contractor'},
+                        ]}
+                        value={values.userRole}
+                        onDropdownChange={item => {
+                          setSelectedSkills([]);
 
-                    {values.userRole === 'skilledWorker' && (
-                      <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Primary Skills</Text>
-                        <SkillInput
-                          skilledWorkers={skilledWorkers}
-                          // selectedSkills={values.skills}
-                          // setSelectedSkills={skills =>
-                          //   setFieldValue('skills', skills)
-                          // }
-                        />
-                      </View>
-                    )}
-                    <View style={styles.inputGroup}>
-                      <Text style={styles.label}>Years of Experience</Text>
-                      <View style={[styles.pickerContainer, styles.elevated]}>
-                        <Picker
-                          selectedValue={values.experience}
-                          onValueChange={value => {
-                            setFieldValue('experience', value);
-                          }}>
-                          <Picker.Item label="0-1 years" value="0-1" />
-                          <Picker.Item label="1-3 years" value="1-3" />
-                          <Picker.Item label="3-5 years" value="3-5" />
-                          <Picker.Item label="5+ years" value="5+" />
-                        </Picker>
-                      </View>
+                          setFieldValue('userRole', item.value);
+                        }}
+                      />
+
+                      {values.userRole === 'skilledWorker' && (
+                        <>
+                          <View
+                            style={{
+                              width: '100%',
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+
+                              marginTop: getResHeight(1),
+                            }}>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                              }}>
+                              <Text style={styles.label}>Primary Skills</Text>
+                              <Text
+                                style={{
+                                  color: 'red',
+                                  marginTop: '-3%',
+                                }}>
+                                *
+                              </Text>
+                            </View>
+                            <Text
+                              style={{
+                                color: theme.color.redBRGA,
+                                fontFamily: theme.font.medium,
+                                fontSize: getFontSize(1.5),
+                                paddingRight: '3%',
+                              }}>{`${selectedSkills.length}/5`}</Text>
+                          </View>
+                          <SkillInput
+                            selectedSkills={selectedSkills}
+                            setSelectedSkills={setSelectedSkills}
+                            skilledWorkers={skilledWorkers}
+                            maxSkills={5}
+                          />
+                        </>
+                      )}
+
+                      {['skilledWorker', 'labour'].includes(
+                        values.userRole,
+                      ) && (
+                        <>
+                          <MasterTextInput
+                            label="Years of experience"
+                            topLableName="Years of experience"
+                            isDropdown
+                            dropdownData={[
+                              {label: '0-1 years', value: '0-1'},
+                              {label: '1-3 years', value: '1-3'},
+                              {label: '3-5 years', value: '3-5'},
+                              {label: '5+ years', value: '5+'},
+                            ]}
+                            value={values.experience}
+                            onDropdownChange={item =>
+                              setFieldValue('experience', item.value)
+                            }
+                          />
+
+                          <MasterTextInput
+                            label="Pricing Model"
+                            topLableName="How do you want to charge for your services?"
+                            isDropdown
+                            dropdownData={[
+                              {
+                                label: 'Full day (Fixed rate per day)',
+                                value: 'fullDay',
+                              },
+                              {
+                                label: 'Hourly Basis (Rate per hour)',
+                                value: 'hourlyBasis',
+                              },
+                              {label: 'Both', value: 'both'},
+                            ]}
+                            value={values.priceType}
+                            onDropdownChange={item => {
+                              setFieldValue('priceType', item.value);
+                              setFieldValue('fullDayPrice', '');
+                              setFieldValue('hourlyPrice', '');
+                            }}
+                          />
+
+                          <View style={styles.priceRow}>
+                            {(values.priceType === 'fullDay' ||
+                              values.priceType === 'both') && (
+                              <PriceInput
+                                label="Full day price"
+                                value={values.fullDayPrice}
+                                onChange={value =>
+                                  handlePriceChange(
+                                    value,
+                                    'fullDayPrice',
+                                    setFieldValue,
+                                    setFieldError,
+                                    maxAmount,
+                                  )
+                                }
+                              />
+                            )}
+
+                            {(values.priceType === 'hourlyBasis' ||
+                              values.priceType === 'both') && (
+                              <PriceInput
+                                label="Hourly price"
+                                value={values.hourlyPrice}
+                                onChange={value =>
+                                  handlePriceChange(
+                                    value,
+                                    'hourlyPrice',
+                                    setFieldValue,
+                                    setFieldError,
+                                    maxAmount,
+                                  )
+                                }
+                              />
+                            )}
+                          </View>
+
+                          <MasterTextInput
+                            label="Write a Bio"
+                            placeholder="Tell us about yourself..."
+                            multiline
+                            roundness={10}
+                            value={values.userBio}
+                            onChangeText={handleChange('userBio')}
+                          />
+                        </>
+                      )}
                     </View>
                   </View>
                 )}
               </ScrollView>
 
-              {/* BUttons sections */}
-
-              {step == 1 && (
-                <>
-                  <View
-                    style={[
-                      {
-                        width: '90%',
-                        alignSelf: 'center',
-
-                        position: 'absolute',
-                        bottom: '5%',
-                      },
-                    ]}>
-                    <CustomButton
-                      title={
-                        step == 1 && isOtpFiledVisible ? 'Verify OTP' : 'Next'
-                      }
-                      onPress={handleSubmit}
-                      rightIcon={
-                        <VectorIcon
-                          type="MaterialCommunityIcons"
-                          name="arrow-right"
-                          size={getFontSize(2.5)}
-                          color={theme.color.white}
-                        />
-                      }
-                    />
-                  </View>
-                </>
-              )}
-              {step !== 1 && (
+              {step === 1 ? (
+                <View style={styles.step1Footer}>
+                  <CustomButton
+                    title={isOtpFiledVisible ? 'Verify OTP' : 'Next'}
+                    onPress={handleSubmit}
+                    rightIcon={
+                      <Icon
+                        name="arrow-right"
+                        size={getFontSize(2.5)}
+                        color="white"
+                      />
+                    }
+                  />
+                </View>
+              ) : (
                 <View style={styles.footer}>
                   <TouchableOpacity
                     onPress={handleBack}
-                    style={styles.buttonArrow}>
-                    <VectorIcon
-                      type="MaterialCommunityIcons"
+                    style={styles.navButton}>
+                    <Icon
                       name="arrow-left"
                       size={getFontSize(2.5)}
-                      color={theme.color.white}
+                      color="white"
                     />
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={handleNext}
-                    style={styles.buttonArrow}>
-                    <VectorIcon
-                      type="MaterialCommunityIcons"
+                    style={styles.navButton}>
+                    <Icon
                       name="arrow-right"
                       size={getFontSize(2.5)}
-                      color={theme.color.white}
+                      color="white"
                     />
                   </TouchableOpacity>
                 </View>
@@ -352,7 +432,60 @@ const Registration = props => {
   );
 };
 
+const PriceInput = ({label, value, onChange}) => (
+  <View style={styles.priceContainer}>
+    <Text style={styles.priceLabel}>{label}</Text>
+    <View style={styles.inputWrapper}>
+      <Text style={styles.currencySymbol}>₹</Text>
+      <TextInput
+        style={[
+          styles.priceInput,
+          {
+            fontSize: value ? getFontSize(1.9) : getFontSize(1.3),
+          },
+        ]}
+        cursorColor={theme.color.secondary}
+        selectionColor={theme.color.secondary}
+        placeholderTextColor={theme.color.placeholder}
+        keyboardType="numeric"
+        placeholder={label}
+        value={value ? formatCurrency(value) : ''}
+        onChangeText={onChange}
+      />
+    </View>
+  </View>
+);
+
+const handlePriceChange = (
+  text,
+  field,
+  setFieldValue,
+  setFieldError,
+  maxAmount,
+) => {
+  const numericValue = parseInt(text.replace(/[^0-9]/g, ''), 10) || '';
+  if (numericValue <= maxAmount) {
+    setFieldError(field, '');
+    setFieldValue(field, numericValue.toString());
+  } else {
+    setFieldError(field, `Amount cannot exceed ₹${maxAmount}`);
+  }
+};
+
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: theme.color.whiteBg,
+  },
+  headerContainer: {
+    marginTop: '5%',
+    paddingHorizontal: getResWidth(6),
+  },
+  label: {
+    fontFamily: theme.font.medium,
+    fontSize: getFontSize(1.6),
+    color: theme.color.charcolBlack,
+  },
   scrollView: {
     flex: 1,
   },
@@ -360,7 +493,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: getResWidth(6),
   },
   stepContainer: {
-    marginBottom: 40,
+    marginBottom: getResHeight(4),
   },
   header: {
     fontSize: getFontSize(1.8),
@@ -371,31 +504,54 @@ const styles = StyleSheet.create({
     fontSize: getFontSize(1.4),
     fontFamily: theme.font.regular,
     color: theme.color.charcolBlack,
+    marginBottom: getResHeight(2),
   },
   inputGroup: {
-    marginBottom: 20,
+    paddingTop: getResHeight(1),
   },
-  label: {
-    fontSize: 14,
-    color: COLORS.muted,
-    marginBottom: 8,
-    fontFamily: 'Inter-Medium',
+  priceRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: getResHeight(1),
   },
-  pickerContainer: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    overflow: 'hidden',
+  priceContainer: {
+    width: getResWidth(40),
+    marginVertical: getResHeight(1),
+  },
+  priceLabel: {
+    fontSize: getFontSize(1.4),
+    fontFamily: theme.font.medium,
+    color: theme.color.charcolBlack,
+    marginBottom: getResHeight(1),
+  },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: getResHeight(6),
+    borderRadius: getResHeight(2),
     borderWidth: 1,
-    borderColor: '#E9ECEF',
+    borderColor: theme.color.outlineColor,
+    backgroundColor: 'white',
   },
-  elevated: {
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+  currencySymbol: {
+    fontSize: getFontSize(2.5),
+    marginHorizontal: getResWidth(2),
+    marginTop: '-2%',
+    color: theme.color.outlineColor,
   },
-  buttonArrow: {
+  priceInput: {
+    flex: 1,
+
+    fontFamily: theme.font.medium,
+    color: theme.color.charcolBlack,
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: getResWidth(5),
+    paddingBottom: getResHeight(5),
+  },
+  navButton: {
     height: getResHeight(6),
     width: getResHeight(6),
     backgroundColor: theme.color.secondary,
@@ -403,12 +559,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: getResHeight(100),
   },
-  footer: {
-    paddingHorizontal: '5%',
-    paddingBottom: '5%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  step1Footer: {
+    paddingHorizontal: getResWidth(5),
+    paddingBottom: getResHeight(5),
   },
 });
 

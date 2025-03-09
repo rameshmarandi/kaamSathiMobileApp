@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useMemo, useState, useRef} from 'react';
 import {
   View,
   Text,
@@ -7,21 +7,34 @@ import {
   FlatList,
   StyleSheet,
   ScrollView,
+  Alert,
 } from 'react-native';
+import theme from '../../utility/theme';
+import {getFontSize, getResHeight, getResWidth} from '../../utility/responsive';
+import {VectorIcon} from '../../Components/VectorIcon';
 
-const SkillInput = ({selectedSkills, setSelectedSkills, skilledWorkers}) => {
+const SkillInput = ({
+  selectedSkills = [],
+  setSelectedSkills,
+  skilledWorkers = [],
+}) => {
   const [inputValue, setInputValue] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const inputRef = useRef(null);
 
-  // Get unique skills
+  // Get unique skills from skilledWorkers
   const uniqueSkills = useMemo(() => {
-    const skills = skilledWorkers.map(worker => worker.skill);
-    return [...new Set(skills)];
+    if (!Array.isArray(skilledWorkers)) return [];
+    const validSkills = skilledWorkers
+      .map(worker => worker?.skill)
+      .filter(Boolean);
+    return [...new Set(validSkills)];
   }, [skilledWorkers]);
 
-  // Filter suggestions
+  // Filter suggestions based on input
   const filteredSuggestions = useMemo(() => {
-    if (!inputValue) return [];
+    if (!inputValue.trim()) return [];
     return uniqueSkills.filter(skill =>
       skill.toLowerCase().includes(inputValue.toLowerCase()),
     );
@@ -29,98 +42,118 @@ const SkillInput = ({selectedSkills, setSelectedSkills, skilledWorkers}) => {
 
   const handleSkillSelect = skill => {
     if (!selectedSkills.includes(skill)) {
-      setSelectedSkills([...selectedSkills, skill]);
+      setSelectedSkills(prev => [...prev, skill]);
     }
     setInputValue('');
-    setShowSuggestions(true);
+    setShowSuggestions(false);
+    inputRef.current?.focus();
   };
 
   const removeSkill = skillToRemove => {
-    setSelectedSkills(selectedSkills.filter(skill => skill !== skillToRemove));
+    setSelectedSkills(prev => prev.filter(skill => skill !== skillToRemove));
+    inputRef.current?.focus();
   };
 
-  console.log('selectedSkills_comp', selectedSkills);
   return (
     <View style={styles.container}>
-      <View style={styles.inputContainer}>
+      <View
+        style={[
+          styles.inputContainer,
+          {
+            borderRadius:
+              selectedSkills.length > 1 ? getResHeight(2) : getResHeight(5),
+          },
+        ]}>
         <ScrollView
           horizontal={false}
           contentContainerStyle={styles.selectedSkillsContainer}
           keyboardShouldPersistTaps="handled">
           <View style={styles.skillWrapper}>
-            {Array.isArray(selectedSkills) &&
-              selectedSkills.length > 0 &&
-              selectedSkills.map(skill => (
-                <View key={skill} style={styles.skillPill}>
-                  <Text style={styles.skillText}>{skill}</Text>
-                  <TouchableOpacity
-                    onPress={() => removeSkill(skill)}
-                    style={styles.removeButton}>
-                    <Text style={styles.removeText}>×</Text>
-                  </TouchableOpacity>
-                </View>
-              ))}
+            {selectedSkills.map(skill => (
+              <View key={skill} style={styles.skillPill}>
+                <Text style={styles.skillText}>{skill}</Text>
+                <TouchableOpacity
+                  onPress={() => removeSkill(skill)}
+                  style={styles.removeButton}>
+                  <VectorIcon
+                    type="Ionicons"
+                    name="close"
+                    size={getFontSize(3)}
+                    color={'grey'}
+                  />
+                </TouchableOpacity>
+              </View>
+            ))}
             <TextInput
+              ref={inputRef}
               style={[
                 styles.input,
-                {
-                  width:
-                    Array.isArray(selectedSkills) && selectedSkills.length > 0
-                      ? 100
-                      : '100%',
-                },
+                {width: selectedSkills.length > 0 ? 100 : '100%'},
               ]}
+              cursorColor={theme.color.secondary}
+              selectionColor={theme.color.secondary}
               value={inputValue}
               onChangeText={text => {
+                if (selectedSkills.length == 5) {
+                  return Alert.alert("You can't add more than 5 skills");
+                }
                 setInputValue(text);
                 setShowSuggestions(true);
               }}
               placeholder={
-                Array.isArray(selectedSkills) && selectedSkills.length > 0
-                  ? ''
-                  : 'Type a skill...'
+                selectedSkills.length > 0 ? '' : 'Type your skills...'
               }
-              onFocus={() => setShowSuggestions(true)}
+              placeholderTextColor={theme.color.outlineColor}
+              onFocus={() => {
+                setIsFocused(true);
+                setShowSuggestions(true);
+              }}
+              onBlur={() => {
+                setIsFocused(false);
+                setTimeout(() => setShowSuggestions(false), 200);
+              }}
             />
           </View>
         </ScrollView>
       </View>
 
-      {showSuggestions &&
-        Array.isArray(filteredSuggestions) &&
-        filteredSuggestions.length > 0 && (
-          <View style={styles.suggestionsContainer}>
-            <FlatList
-              data={filteredSuggestions}
-              keyExtractor={item => item}
-              renderItem={({item}) => (
-                <TouchableOpacity
-                  style={styles.suggestionItem}
-                  onPress={() => handleSkillSelect(item)}>
-                  <Text style={styles.suggestionText}>{item}</Text>
-                </TouchableOpacity>
-              )}
-              keyboardShouldPersistTaps="handled"
-            />
-          </View>
-        )}
+      {showSuggestions && filteredSuggestions.length > 0 && (
+        <View style={styles.suggestionsContainer}>
+          <FlatList
+            data={filteredSuggestions}
+            keyExtractor={item => item}
+            renderItem={({item}) => (
+              <TouchableOpacity
+                style={styles.suggestionItem}
+                onPressIn={() => setIsFocused(true)}
+                onPress={() => handleSkillSelect(item)}
+                activeOpacity={0.7}>
+                <Text style={styles.suggestionText}>{item}</Text>
+              </TouchableOpacity>
+            )}
+            keyboardShouldPersistTaps="handled"
+          />
+        </View>
+      )}
     </View>
   );
 };
 
-// Keep the same styles as in your working code
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    paddingHorizontal: 16,
-    marginVertical: 8,
+
+    marginVertical: getResHeight(1),
+    zIndex: 1,
   },
   inputContainer: {
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    minHeight: 50,
-    padding: 8,
+    borderColor: theme.color.outlineColor,
+    backgroundColor: 'white',
+    minHeight: getResHeight(2),
+    paddingHorizontal: '3%',
+
+    overflow: 'hidden',
   },
   selectedSkillsContainer: {
     flexDirection: 'row',
@@ -135,42 +168,49 @@ const styles = StyleSheet.create({
   skillPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#e1ecf4',
-    borderRadius: 15,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    margin: 4,
+    backgroundColor: theme.color.dimGrey,
+    borderRadius: getResHeight(2),
+    paddingVertical: getResHeight(0.5),
+    paddingHorizontal: getResWidth(2.5),
+    margin: getResHeight(0.5),
   },
   skillText: {
-    fontSize: 14,
-    color: '#1a73e8',
+    fontSize: getFontSize(1.5),
+    fontFamily: theme.font.medium,
+    color: theme.color.dimBlack,
   },
   removeButton: {
-    marginLeft: 8,
+    marginLeft: '1.4%',
   },
   removeText: {
     color: '#666',
-    fontSize: 16,
+    fontSize: getFontSize(1.5),
   },
   input: {
-    fontSize: 16,
-    padding: 8,
-    margin: 4,
+    backgroundColor: 'white',
+    color: theme.color.charcolBlack,
   },
   suggestionsContainer: {
-    marginTop: 4,
+    position: 'absolute',
+    width: '100%',
+    top: '100%',
+
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 8,
-    maxHeight: 200,
+    borderRadius: getResHeight(2),
+    maxHeight: getResHeight(30),
+    backgroundColor: theme.color.white,
+    zIndex: 9999999,
   },
   suggestionItem: {
-    padding: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
+    padding: getResHeight(1.5),
   },
   suggestionText: {
-    fontSize: 16,
+    fontSize: getFontSize(1.6),
+    fontFamily: theme.font.medium,
+    color: theme.color.dimBlack,
   },
 });
 
