@@ -1,0 +1,10 @@
+{
+  "loginWelcomeMsg": "ସ୍ବାଗତ",
+  "welcomeMsgFirstHalf": "କାମ",
+  "welcomeMsgSecondHalf": "ସାଥୀ",
+  "loginLabel": "ମୋବାଇଲ୍ ନମ୍ବର",
+  "loginPlaceHolder": "ମୋବାଇଲ୍ ନମ୍ବର ଭରଣ କରନ୍ତୁ",
+  "loginErrorMsg": "ଫୋନ୍ ନମ୍ବର ଆବଶ୍ୟକ",
+  "loginBtnMsg": "ଲଗଇନ୍ କରନ୍ତୁ",
+  "otpLabel": "OTP ଭରଣ କରନ୍ତୁ"
+}

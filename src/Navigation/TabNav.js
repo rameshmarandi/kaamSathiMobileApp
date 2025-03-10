@@ -9,6 +9,7 @@ import {
   HistoryStack,
   HomeStack,
   ProfileStack,
+  SearchStack,
 } from './StackNav';
 import theme from '../utility/theme';
 
@@ -25,6 +26,13 @@ const tabArrays = [
     activeIcon: {type: 'Entypo', name: 'home'},
     routeNames: 'HomePage',
     component: HomeStack,
+  },
+  {
+    title: 'Search',
+    icon: {type: 'Ionicons', name: 'search-outline'},
+    activeIcon: {type: 'Ionicons', name: 'search-sharp'},
+    routeNames: 'SearchOnMap',
+    component: SearchStack,
   },
   {
     title: 'My Bookings',
@@ -48,6 +56,13 @@ const tabArrays = [
     component: ProfileStack,
   },
 ];
+export const defaultIndexCount = {
+  home: 0,
+  search: 1,
+  history: 2,
+  bookmark: 3,
+  profile: 4,
+};
 
 const CustomTabBar = ({
   navigation,
@@ -59,13 +74,14 @@ const CustomTabBar = ({
 
   const {currentActiveTab, isUserLoggedIn} = useSelector(state => state.user);
 
+  console.log('state_redux_active', currentActiveTab);
   const onPress = useCallback(
     index => {
       // setSelectedTab(index);
-      if (isUserLoggedIn == false && index !== 0) {
+      if (isUserLoggedIn == false && [2, 3, 4].includes(index)) {
         showLoginAlert();
       } else {
-        console.log('isUserLoggedIn_fron_redux', isUserLoggedIn);
+        console.log('isUserLoggedIn_fron_redux', {index, isUserLoggedIn});
         store.dispatch(setCurrentActiveTab(index));
         Animated.timing(animatedValue, {
           toValue: index,
@@ -94,32 +110,32 @@ const CustomTabBar = ({
           style={styles.iconContainer}>
           <Animated.View
             style={[
-              currentActiveTab === index && styles.selectedTab,
+              currentActiveTab == index && styles.selectedTab,
               {
                 backgroundColor:
-                  currentActiveTab === index ? 'white' : 'transparent',
+                  currentActiveTab == index ? 'white' : 'transparent',
               },
             ]}>
             <VectorIcon
               type={
-                currentActiveTab === index
+                currentActiveTab == index
                   ? route.activeIcon.type
                   : route.icon.type
               }
               name={
-                currentActiveTab === index
+                currentActiveTab == index
                   ? route.activeIcon.name
                   : route.icon.name
               }
               color={
-                isDarkMode && currentActiveTab === index
+                isDarkMode && currentActiveTab == index
                   ? 'black'
                   : theme.color.whiteText
               }
               style={{
                 zIndex: 9999999,
               }}
-              size={getFontSize(currentActiveTab === index ? 2.5 : 2.3)}
+              size={getFontSize(currentActiveTab == index ? 2.5 : 2.3)}
             />
           </Animated.View>
           <Text
@@ -162,7 +178,7 @@ const TabNav = memo(props => {
   return (
     <View style={styles.navigatorContainer}>
       <Tab.Navigator
-        sceneContainerStyle={styles.sceneContainer}
+        // sceneContainerStyle={styles.sceneContainer}
         screenOptions={({route}) => {
           console.log('navagtion_routes', route.name);
           // return;

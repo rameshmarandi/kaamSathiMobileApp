@@ -1,0 +1,10 @@
+{
+  "loginWelcomeMsg": "Welcome to",
+  "welcomeMsgFirstHalf": "Kaam",
+  "welcomeMsgSecondHalf": "sathi",
+  "loginLabel": "Mobile number",
+  "loginPlaceHolder": "Enter mobile number",
+  "loginErrorMsg": "Phone number is required",
+  "loginBtnMsg": "Login",
+  "otpLabel": "Enter OTP"
+}

@@ -1,0 +1,10 @@
+{
+  "loginWelcomeMsg": "आपले स्वागत आहे",
+  "welcomeMsgFirstHalf": "काम",
+  "welcomeMsgSecondHalf": "साथी",
+  "loginLabel": "मोबाईल नंबर",
+  "loginPlaceHolder": "मोबाईल नंबर टाका",
+  "loginErrorMsg": "फोन नंबर आवश्यक आहे",
+  "loginBtnMsg": "लॉगिन करा",
+  "otpLabel": "OTP टाका"
+}

@@ -78,7 +78,7 @@ const SkillInput = ({
                   <VectorIcon
                     type="Ionicons"
                     name="close"
-                    size={getFontSize(3)}
+                    size={getFontSize(2.7)}
                     color={'grey'}
                   />
                 </TouchableOpacity>

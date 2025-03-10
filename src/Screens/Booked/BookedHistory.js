@@ -21,6 +21,7 @@ import NoDataFound from '../../Components/NoDataFound';
 import {useFocusEffect} from '@react-navigation/native';
 import {store} from '../../redux/store';
 import {setCurrentActiveTab} from '../../redux/reducer/Auth';
+import {defaultIndexCount} from '../../Navigation/TabNav';
 
 const BookedHistory = props => {
   const {navigation} = props;
@@ -35,7 +36,7 @@ const BookedHistory = props => {
   // Scroll to top when the screen comes into focus
   useFocusEffect(
     useCallback(() => {
-      store.dispatch(setCurrentActiveTab(1));
+      store.dispatch(setCurrentActiveTab(defaultIndexCount.history));
       if (flatListRef.current) {
         flatListRef.current.scrollToOffset({animated: true, offset: 0});
       }

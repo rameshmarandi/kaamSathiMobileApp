@@ -23,6 +23,10 @@ import GoogleUIComp from '../../../Components/GoogleMapComp';
 import {skilledWorkers} from '../../../Components/StaticDataHander';
 import DistanceSelectorModalComponent from './DistanceSelectorModalComponent';
 import EmployeeModalComponent from './EmployeeFound';
+import {store} from '../../../redux/store';
+import {useFocusEffect} from '@react-navigation/native';
+import {setCurrentActiveTab} from '../../../redux/reducer/Auth';
+import {defaultIndexCount} from '../../../Navigation/TabNav';
 
 const uniqueSkills = [
   ...new Set(skilledWorkers.map(worker => worker.skill.toLowerCase())),
@@ -53,6 +57,15 @@ const SearchOnMap = props => {
 
   const dispatch = useDispatch();
 
+  // Scroll to top when the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      store.dispatch(setCurrentActiveTab(defaultIndexCount.search));
+      // if (flatListRef.current) {
+      //   flatListRef.current.scrollToOffset({animated: true, offset: 0});
+      // }
+    }, []),
+  );
   useEffect(() => {
     const initialize = async () => {
       await requestUserPermission();

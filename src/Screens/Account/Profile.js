@@ -29,6 +29,7 @@ import {
 import {useSelector} from 'react-redux';
 import {onShareClick} from '../../Helpers/CommonHelpers';
 import {resetNavigation} from '../../Services/NavigationService';
+import {defaultIndexCount} from '../../Navigation/TabNav';
 
 const options = [
   {icon: 'user', label: 'Profile Details', screen: 'ProfileDetails'},
@@ -59,7 +60,7 @@ const Profile = props => {
   // Scroll to top when the screen comes into focus
   useFocusEffect(
     useCallback(() => {
-      store.dispatch(setCurrentActiveTab(3));
+      store.dispatch(setCurrentActiveTab(defaultIndexCount.profile));
       Animated.timing(headerHeight, {
         toValue: 1,
         duration: 200,
@@ -337,7 +338,7 @@ const AccountOption = ({icon, label, onPress, disabled}) => (
 
           justifyContent: 'center',
           alignItems: 'center',
-          backgroundColor: 'rgba(230, 180, 42, 0.5)',
+          backgroundColor: 'rgba(230, 180, 42, 0.3)',
           borderRadius: getResHeight(100),
         }}>
         {icon == 'feedback' ? (

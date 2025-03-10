@@ -24,11 +24,14 @@ import {skilledWorkers} from '../../Components/StaticDataHander';
 import {formatCurrency} from '../../Components/commonHelper';
 import {TextInput as PaperTextInput} from 'react-native-paper';
 import {TermAndConditionModal} from '../../Components/ModalsComponent';
+import {store} from '../../redux/store';
+import {setIsUserLoggedIn} from '../../redux/reducer/Auth';
 
 const Registration = ({navigation, route}) => {
   const {contact} = route.params;
   const formRef = useRef(null);
   const [isOtpFiledVisible, setIsOtpFiledVisible] = useState(false);
+  const [isCheckBoxMarked, setIsCheckBoxMarked] = useState(false);
   const formSubmitRef = useRef(null);
   const [gmailUserData, setGmailUserData] = useState('');
   const otpRef = useRef(null);
@@ -100,14 +103,26 @@ const Registration = ({navigation, route}) => {
     formRef.current?.setFieldValue('skills', selectedSkills);
   }, [selectedSkills]);
 
+  const onPressSubmitBtn = () => {
+    store.dispatch(setIsUserLoggedIn(true));
+    navigation.navigate('Home');
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StepProgressBarComp step={step} totalSteps={totalSteps} />
       <TermAndConditionModal
         isModalVisible={termConditionModalVisible}
+        isCheckBox={true}
+        isCheckBoxMarked={isCheckBoxMarked}
+        setIsCheckBoxMarked={() => {
+          setIsCheckBoxMarked(!isCheckBoxMarked);
+        }}
         onBackdropPress={() => {
+          console.log('onBackdropPress__');
           setTermConditionModalVisible(false);
         }}
+        handleSubmit={onPressSubmitBtn}
       />
       {step === 1 && (
         <View style={styles.headerContainer}>
@@ -161,6 +176,7 @@ const Registration = ({navigation, route}) => {
             <>
               <ScrollView
                 style={styles.scrollView}
+                keyboardShouldPersistTaps={'handled'}
                 contentContainerStyle={styles.scrollViewContent}
                 showsVerticalScrollIndicator={false}>
                 {step === 1 && (
@@ -385,6 +401,16 @@ const Registration = ({navigation, route}) => {
                       )}
                     </View>
                   </View>
+                )}
+                {step == 3 && (
+                  <>
+                    <Text
+                      style={{
+                        color: 'red',
+                      }}>
+                      Please upload your profile picture and your aadhar card{' '}
+                    </Text>
+                  </>
                 )}
               </ScrollView>
 

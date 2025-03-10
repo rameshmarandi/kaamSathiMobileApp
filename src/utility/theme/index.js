@@ -1,7 +1,7 @@
 import {StyleSheet} from 'react-native';
 
 import assets from './assets';
-import {getResHeight} from '../responsive';
+import {getFontSize, getResHeight} from '../responsive';
 
 const color = {
   primary: '#27ae60',
@@ -84,12 +84,19 @@ const styles = StyleSheet.create({
   },
 });
 
+const fontSize = {
+  small: getFontSize(1.4),
+  medium: getFontSize(1.6),
+  large: getFontSize(1.8),
+  extraLarge: getFontSize(2),
+};
+
 const theme = {
   color,
   font: englishFont,
   styles,
-
   assets,
+  fontSize,
 };
 
 export default theme;

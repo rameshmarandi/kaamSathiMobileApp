@@ -405,7 +405,7 @@ const MasterTextInput = forwardRef(
               borderBottomRightRadius: getResHeight(2),
               borderTopLeftRadius: getResHeight(2),
               borderTopRightRadius: getResHeight(2),
-              marginTop: '-2%',
+              marginTop: getResHeight(-0.1),
               borderWidth: 1,
               borderColor: currentTextColor,
               overflow: 'hidden',

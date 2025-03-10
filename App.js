@@ -303,7 +303,7 @@ const AllNavContainer = props => {
                     onStateChange={state => {
                       const currentRoute = state;
 
-                      console.log('Active Screen:', currentRoute);
+                      // console.log('Active Screen:', currentRoute);
                     }}>
                     <RootNavigation isLogedIn={isLogedIn} />
                   </NavigationContainer>

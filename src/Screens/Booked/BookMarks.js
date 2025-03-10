@@ -18,6 +18,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {store} from '../../redux/store';
 import {setCurrentActiveTab} from '../../redux/reducer/Auth';
 import {initiatePayment} from '../../Components/PaymentHandler';
+import {defaultIndexCount} from '../../Navigation/TabNav';
 
 // Static Data with isBookmarked flag
 const employees = [
@@ -96,7 +97,7 @@ const BookMarks = ({navigation}) => {
   // Scroll to top when the screen comes into focus
   useFocusEffect(
     useCallback(() => {
-      store.dispatch(setCurrentActiveTab(2));
+      store.dispatch(setCurrentActiveTab(defaultIndexCount.bookmark));
       Animated.timing(headerHeight, {
         toValue: 1,
         duration: 200,

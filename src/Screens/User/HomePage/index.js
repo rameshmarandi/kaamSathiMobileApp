@@ -32,6 +32,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {store} from '../../../redux/store';
 import {setCurrentActiveTab} from '../../../redux/reducer/Auth';
 import {showLoginAlert} from '../../../utility/AlertService';
+import {defaultIndexCount} from '../../../Navigation/TabNav';
 
 const uniqueSkills = [
   ...new Set(skilledWorkers.map(worker => worker.skill.toLowerCase())),
@@ -48,7 +49,7 @@ const index = memo(props => {
   // Scroll to top when the screen comes into focus
   useFocusEffect(
     useCallback(() => {
-      store.dispatch(setCurrentActiveTab(0));
+      store.dispatch(setCurrentActiveTab(defaultIndexCount.home));
       Animated.timing(headerHeight, {
         toValue: 1,
         duration: 200,
@@ -161,66 +162,65 @@ const index = memo(props => {
         onMomentumScrollEnd={handleMomentumScrollEnd}
         scrollEventThrottle={16}
         renderItem={({item, index}) => {
-          switch (index) {
-            case 0:
-              return (
-                <>
-                  <View
-                    style={{
-                      paddingBottom: getResHeight(0.5),
-                    }}>
-                    <MarqueeComp textRender={`${plainString}`} />
-                  </View>
-                  <TouchableOpacity
-                    activeOpacity={0.8}
-                    style={{
-                      marginBottom: '10%',
-                    }}
-                    onPress={() => {
-                      props.navigation.navigate('SearchOnMap');
-                    }}>
-                    <SearchBarComp
-                      placeholder="Search skilled professionals..."
-                      disabled={true}
-                    />
-                  </TouchableOpacity>
-                </>
-              );
-
-            case 2:
-              return (
-                <>
-                  <View
-                    style={{
-                      marginTop: getResHeight(2),
-                    }}>
-                    <SectionHeaderName sectionName={'Kaamsathi recommends'} />
-                    <BannerComponent {...props} />
-                  </View>
-                </>
-              );
-            case 3:
-              return (
-                <>
-                  <View>
-                    <SectionHeaderName
-                      sectionName={'Top skilled professionals near you'}
-                    />
-                    <TopSkilledProfessonals />
-                  </View>
-                </>
-              );
-
-            case 4:
-              return (
-                <>
-                  <View>
-                    <SectionHeaderName sectionName={'Voices of satisfaction'} />
-                    <ReviewRatingCard />
-                  </View>
-                </>
-              );
-          }
+          //old UI
+          // switch (index) {
+          //   case 0:
+          //     return (
+          //       <>
+          //         <View
+          //           style={{
+          //             paddingBottom: getResHeight(0.5),
+          //           }}>
+          //           <MarqueeComp textRender={`${plainString}`} />
+          //         </View>
+          //         <TouchableOpacity
+          //           activeOpacity={0.8}
+          //           style={{
+          //             marginBottom: '10%',
+          //           }}
+          //           onPress={() => {
+          //             props.navigation.navigate('SearchOnMap');
+          //           }}>
+          //           <SearchBarComp
+          //             placeholder="Search skilled professionals..."
+          //             disabled={true}
+          //           />
+          //         </TouchableOpacity>
+          //       </>
+          //     );
+          //   case 2:
+          //     return (
+          //       <>
+          //         <View
+          //           style={{
+          //             marginTop: getResHeight(2),
+          //           }}>
+          //           <SectionHeaderName sectionName={'Kaamsathi recommends'} />
+          //           <BannerComponent {...props} />
+          //         </View>
+          //       </>
+          //     );
+          //   case 3:
+          //     return (
+          //       <>
+          //         <View>
+          //           <SectionHeaderName
+          //             sectionName={'Top skilled professionals near you'}
+          //           />
+          //           <TopSkilledProfessonals />
+          //         </View>
+          //       </>
+          //     );
+          //   case 4:
+          //     return (
+          //       <>
+          //         <View>
+          //           <SectionHeaderName sectionName={'Voices of satisfaction'} />
+          //           <ReviewRatingCard />
+          //         </View>
+          //       </>
+          //     );
+          // }
         }}
       />
     </SafeAreaView>

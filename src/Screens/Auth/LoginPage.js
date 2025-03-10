@@ -14,28 +14,16 @@ import {getFontSize, getResHeight, getResWidth} from '../../utility/responsive';
 import theme from '../../utility/theme';
 import MasterTextInput from '../../Components/MasterTextInput';
 import {VectorIcon} from '../../Components/VectorIcon';
-import LoginWithGoogle from '../../Components/LoginWithGoogle';
+
 import {Formik} from 'formik';
 import {handleNumberChange} from '../../Components/InputHandlers';
 
 import {TextInput} from 'react-native-paper';
 
-import {
-  GoogleOneTapSignIn,
-  statusCodes,
-  isErrorWithCode,
-  GoogleSignin,
-} from '@react-native-google-signin/google-signin';
-
 import {store} from '../../redux/store';
-import ToastAlertComp from '../../Components/ToastAlertComp';
-import {checkIsAdmin} from '../../Helpers/CommonHelpers';
+
 import {loginValidationSchema} from '../../utility/theme/validation';
 import {useFocusEffect} from '@react-navigation/native';
-// import {getBranchAPIHander} from '../../redux/reducer/ChurchBranch/churchBranchAPI';
-// import {CustomAlertModal} from '../../Components/commonComp';
-// import asyncStorageUtil from '../../utility/asyncStorageUtil';
-// import StorageKeys from '../../Config/StorageKeys';
 
 import CustomButton from '../../Components/CustomButton';
 import OTPInput from '../../Components/OTPInput';
@@ -43,6 +31,7 @@ import {setIsUserLoggedIn} from '../../redux/reducer/Auth';
 import LottieView from 'lottie-react-native';
 import RegistrationHeader from './RegistrationHeader';
 import DocumentScanner from '../../Components/DocumentScanner';
+import {KeyboardAvoidingView} from 'react-native';
 
 const AnimatedSlash = memo(() => {
   return (
@@ -53,7 +42,7 @@ const AnimatedSlash = memo(() => {
         justifyContent: 'center',
         alignItems: 'center',
         zIndex: -99999,
-        // backgroundColor: 'red',
+
         marginTop: getResHeight(-2),
       }}>
       <LottieView
@@ -75,9 +64,7 @@ const LoginPage = props => {
   const formSubmitRef = useRef(null);
   // const [mode, setMode] = useState('face');
   const [mode, setMode] = useState('document');
-  const {isDarkMode, isAdmin, currentBgColor, currentTextColor} = useSelector(
-    state => state.user,
-  );
+
   const [isLoading, setIsLoading] = useState(false);
   const [isOtpFiledVisible, setIsOtpFiledVisible] = useState(false);
   const [isAlertVisible, setIsAlertVisible] = useState(false);
@@ -215,23 +202,8 @@ const LoginPage = props => {
         </View>
         <AnimatedSlash />
       </View> */}
-      <View
-        style={{
-          marginTop: '5%',
-        }}>
-        <RegistrationHeader
-          mainText="Welcome to"
-          firstWord="Kaam"
-          secondWord="sathi"
-          mainTextStyle={{color: '#000'}}
-          firstWordStyle={{fontSize: getFontSize(3)}}
-          secondWordStyle={{
-            fontSize: getFontSize(3),
-          }}
-        />
-        <AnimatedSlash />
-      </View>
-      <DocumentScanner mode={mode} />
+
+      {/* <DocumentScanner mode={mode} /> */}
       <Formik
         innerRef={formRef}
         initialValues={{contact: '', password: ''}}
@@ -346,154 +318,109 @@ const LoginPage = props => {
           );
 
           return (
-            <ScrollView
-              style={styles.scrollView}
-              contentContainerStyle={styles.scrollViewContent}
-              showsVerticalScrollIndicator={false}>
-              <MasterTextInput
-                label="Mobile number*"
-                placeholder="Enter mobile number"
-                ref={inputRefs.contact}
-                keyboardType="numeric"
-                autoCapitalize="none"
-                // autoFocus={true}
-                maxLength={10}
-                value={values.contact}
-                onChangeText={text =>
-                  setFieldValue('contact', handleNumberChange(text))
-                }
-                onBlur={handleBlur('contact')}
-                error={touched.contact && errors.contact}
-                isValid={isFieldValid('contact')}
-                left={
-                  <TextInput.Icon
-                    icon="phone"
-                    color={theme.color.outlineColor}
-                  />
-                }
-              />
-
-              {isOtpFiledVisible && (
-                <OTPInput
-                  ref={otpRef}
-                  length={4} // Set the number of OTP digits
-                  onComplete={handleOTPComplete} // Callback function when OTP is completed
-                  otpText="Enter OTP" // Label for OTP input
-                  secureTextEntry={false} // Set true to hide OTP (like a password)
-                />
-              )}
-
-              <View
+            <>
+              <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
                 style={{
-                  marginTop: getResHeight(5),
+                  flex: 1,
                 }}>
-                <CustomButton
-                  title="Login"
-                  onPress={handleSubmit}
-                  disabled={isLoading || isLoginDisabled}
-                  loading={isLoading}
-                  leftIcon={
-                    <VectorIcon
-                      type="MaterialCommunityIcons"
-                      name="login"
-                      size={24}
-                      color={theme.color.white}
-                    />
-                  }
-                />
-              </View>
-              {/* <LoginWithGoogle
-                currentTextColor={theme.color.dimBlack}
-                currentBgColor={theme.color.whiteBg}
-                btnTitle={'Singin with Google'}
-                onPress={async () => {
-                  try {
-                    await GoogleSignin.hasPlayServices();
-                    // const response = await GoogleOneTapSignIn.signIn();
-                    const response = await GoogleSignin.signIn();
-                    console.log('google_API_es', response);
-                    // if (isSuccessResponse(response)) {
-                    //   // setState({userInfo: response.data});
-                    // } else {
-                    //   // sign in was cancelled by user
-                    // }
-                  } catch (error) {
-                    console.log('Failed', error.code, error.message);
-                    // if (isErrorWithCode(error)) {
-                    //   switch (error.code) {
-                    //     case statusCodes.IN_PROGRESS:
-                    //       // operation (eg. sign in) already in progress
-                    //       break;
-                    //     case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-                    //       // Android only, play services not available or outdated
-                    //       break;
-                    //     default:
-                    //     // some other error happened
-                    //   }
-                    // } else {
-                    //   // an error that's not related to google sign in occurred
-                    // }
-                  }
-                }}
-              /> */}
-              {/* <View style={styles.separatorContainer}>
-                <View
-                  style={[
-                    styles.separatorLine,
-                    {borderColor: currentTextColor},
-                  ]}
-                />
-                <Text
-                  style={[
-                    styles.separatorText,
-                    {
-                      backgroundColor: theme.color.whiteBg,
-                      color: currentTextColor,
-                      fontFamily: theme.font.semiBold,
-                      fontSize: getFontSize(1.5),
-                    },
-                  ]}>
-                  OR
-                </Text>
-              </View>
+                <ScrollView
+                  // style={styles.scrollView}
+                  keyboardShouldPersistTaps="always"
+                  contentContainerStyle={{
+                    // flexGrow: 1,
+                    flex: 1,
+                  }}
+                  showsVerticalScrollIndicator={false}>
+                  <View
+                    style={{
+                      // flexGrow: 1,
+                      flex: 1,
+                      justifyContent: 'flex-end',
+                      //
+                    }}>
+                    <View
+                      style={
+                        {
+                          // flexGrow: 9,
+                          // marginTop: '-35%',
+                        }
+                      }>
+                      <RegistrationHeader
+                        mainText="Welcome to"
+                        firstWord="Kaam"
+                        secondWord="sathi"
+                        mainTextStyle={{color: '#000'}}
+                        firstWordStyle={{fontSize: getFontSize(3)}}
+                        secondWordStyle={{
+                          fontSize: getFontSize(3),
+                        }}
+                      />
+                      <AnimatedSlash />
+                    </View>
+                    <View
+                      style={{
+                        paddingHorizontal: getResWidth(6),
+                      }}>
+                      <MasterTextInput
+                        label="Mobile number*"
+                        placeholder="Enter mobile number"
+                        ref={inputRefs.contact}
+                        keyboardType="numeric"
+                        autoCapitalize="none"
+                        // autoFocus={true}
+                        maxLength={10}
+                        value={values.contact}
+                        onChangeText={text =>
+                          setFieldValue('contact', handleNumberChange(text))
+                        }
+                        onBlur={handleBlur('contact')}
+                        error={touched.contact && errors.contact}
+                        isValid={isFieldValid('contact')}
+                        left={
+                          <TextInput.Icon
+                            icon="phone"
+                            color={theme.color.outlineColor}
+                          />
+                        }
+                      />
 
-              // {Platform.OS == 'android' && (
-              //   <LoginWithGoogle
-              //     currentTextColor={theme.color.dimBlack}
-              //     currentBgColor={theme.color.whiteBg}
-              //     btnTitle={'Singin with Google'}
-              //     onPress={async () => {
-              //       try {
-              //         await GoogleSignin.hasPlayServices();
-              //         // const response = await GoogleOneTapSignIn.signIn();
-              //         const response = await GoogleSignin.signIn();
-              //         console.log('google_API_es', response);
-              //         // if (isSuccessResponse(response)) {
-              //         //   // setState({userInfo: response.data});
-              //         // } else {
-              //         //   // sign in was cancelled by user
-              //         // }
-              //       } catch (error) {
-              //         console.log('Failed', error.code, error.message);
-              //         // if (isErrorWithCode(error)) {
-              //         //   switch (error.code) {
-              //         //     case statusCodes.IN_PROGRESS:
-              //         //       // operation (eg. sign in) already in progress
-              //         //       break;
-              //         //     case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-              //         //       // Android only, play services not available or outdated
-              //         //       break;
-              //         //     default:
-              //         //     // some other error happened
-              //         //   }
-              //         // } else {
-              //         //   // an error that's not related to google sign in occurred
-              //         // }
-              //       }
-              //     }}
-              //   />
-              // )} */}
-            </ScrollView>
+                      {isOtpFiledVisible && (
+                        <OTPInput
+                          ref={otpRef}
+                          length={4} // Set the number of OTP digits
+                          onComplete={handleOTPComplete} // Callback function when OTP is completed
+                          otpText="Enter OTP" // Label for OTP input
+                          secureTextEntry={false} // Set true to hide OTP (like a password)
+                        />
+                      )}
+                    </View>
+                  </View>
+                </ScrollView>
+                <View
+                  style={{
+                    marginTop: getResHeight(5),
+                    paddingHorizontal: getResWidth(6),
+                    paddingBottom: getResHeight(6),
+                  }}>
+                  <CustomButton
+                    title={isOtpFiledVisible ? 'Verify OTP' : 'Get OTP'}
+                    onPress={handleSubmit}
+                    disabled={isLoading || isLoginDisabled}
+                    loading={isLoading}
+                    leftIcon={
+                      <VectorIcon
+                        type="MaterialCommunityIcons"
+                        name={isOtpFiledVisible ? 'shield-check' : 'login'}
+                        size={24}
+                        color={theme.color.white}
+                      />
+                    }
+                  />
+                </View>
+              </KeyboardAvoidingView>
+            </>
           );
         }}
       </Formik>
@@ -507,8 +434,11 @@ const styles = StyleSheet.create({
   },
 
   scrollViewContent: {
+    flexGrow: 1,
+    justifyContent: 'flex-end',
     paddingHorizontal: getResWidth(6),
 
+    paddingBottom: getResHeight(6),
     zIndex: 99,
   },
 

@@ -38,7 +38,7 @@ const HireNowDetailsModal = ({
     <View>
       <Modal
         isVisible={isModalVisible}
-        onBackdropPress={onBackdropPress} // Close modal when tapping outside
+        onBackButtonPress={onBackdropPress} // Close modal when tapping outside
         onSwipeComplete={onBackdropPress} // Swipe down to close
         swipeDirection="down"
         animationIn="fadeIn"
@@ -279,7 +279,7 @@ const SkilledModal = ({
     <View>
       <Modal
         isVisible={isModalVisible}
-        onBackdropPress={onBackdropPress} // Close modal when tapping outside
+        onBackButtonPress={onBackdropPress} // Close modal when tapping outside
         onSwipeComplete={onBackdropPress} // Swipe down to close
         swipeDirection="down"
         animationIn="fadeIn"
@@ -514,7 +514,7 @@ const ReviewModal = ({isModalVisible, onBackdropPress}) => {
     <View>
       <Modal
         isVisible={isModalVisible}
-        onBackdropPress={onBackdropPress}
+        onBackButtonPress={onBackdropPress}
         swipeDirection="down"
         animationIn="fadeIn"
         animationOut="fadeOut"
@@ -605,30 +605,26 @@ const ReviewModal = ({isModalVisible, onBackdropPress}) => {
     </View>
   );
 };
-const TermAndConditionModal = ({isModalVisible, onBackdropPress}) => {
+const TermAndConditionModal = props => {
+  const {
+    isModalVisible,
+    onBackdropPress,
+    isCheckBoxMarked,
+    isCheckBox,
+    setIsCheckBoxMarked,
+  } = props;
   return (
     <View>
       <Modal
         isVisible={isModalVisible}
-        onBackdropPress={onBackdropPress}
-        swipeDirection="down"
+        onBackButtonPress={onBackdropPress}
+        // swipeDirection="down"
         animationIn="fadeIn"
         animationOut="fadeOut"
         animationOutTiming={800}
         propagateSwipe={true}
         style={styles.modal}>
-        <View
-          style={[
-            // styles.smallModalCOntent,
-            {
-              height: getResHeight(100),
-              width: getResWidth(100),
-              // flex: 1,
-              backgroundColor: 'red',
-            },
-          ]}>
-          <PrivacyPolicyComponent />
-        </View>
+        <PrivacyPolicyComponent {...props} />
       </Modal>
     </View>
   );

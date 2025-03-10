@@ -1,11 +1,25 @@
 import React from 'react';
-import {View, Text, ScrollView, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Import icons
 import theme from '../../utility/theme';
+import {Checkbox} from 'react-native-paper';
+
 import {getFontSize, getResHeight, getResWidth} from '../../utility/responsive';
 import CustomHeader from '../../Components/CustomHeader';
+import CustomButton from '../../Components/CustomButton';
 
-export const PrivacyPolicyComponent = () => {
+export const PrivacyPolicyComponent = ({
+  isCheckBoxMarked,
+  setIsCheckBoxMarked,
+  isCheckBox,
+  handleSubmit,
+}) => {
   return (
     <>
       <ScrollView style={styles.container}>
@@ -166,7 +180,45 @@ export const PrivacyPolicyComponent = () => {
         {'\n'}- आपका डेटा तीसरे पक्ष के साथ साझा नहीं किया जाएगा।
         {'\n'}- उपयोगकर्ता किसी भी समय डेटा हटाने का अनुरोध कर सकते हैं।
       </Text> */}
+
+        {isCheckBox && (
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Checkbox
+              status={isCheckBoxMarked ? 'checked' : 'unchecked'}
+              color={theme.color.secondary}
+              uncheckedColor={theme.color.charcolBlack}
+              onPress={() => setIsCheckBoxMarked(!isCheckBoxMarked)}
+            />
+            <Text
+              style={{
+                color: '#555',
+              }}>
+              I agree to the <Text style={{color: 'blue'}}>Privacy Policy</Text>
+            </Text>
+          </View>
+        )}
       </ScrollView>
+
+      {isCheckBox && (
+        <>
+          <View
+            style={{
+              padding: '5%',
+              backgroundColor: '#fff',
+            }}>
+            <CustomButton
+              disabled={isCheckBoxMarked == false}
+              title="Submit"
+              onPress={handleSubmit}
+            />
+          </View>
+        </>
+      )}
     </>
   );
 };
@@ -186,15 +238,17 @@ const PrivacyPolicy = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // paddingHorizontal: getResWidth(6),
-    // paddinga
-    padding: getResWidth(6),
+
+    paddingHorizontal: getResWidth(6),
+
     backgroundColor: '#fff',
   },
+
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: getResHeight(2),
+    paddingTop: '5%',
+    // marginBottom: getResHeight(2),
   },
   subHeaderContainer: {
     flexDirection: 'row',
