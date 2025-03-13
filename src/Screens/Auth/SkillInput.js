@@ -12,6 +12,7 @@ import {
 import theme from '../../utility/theme';
 import {getFontSize, getResHeight, getResWidth} from '../../utility/responsive';
 import {VectorIcon} from '../../Components/VectorIcon';
+import {useTranslation} from 'react-i18next';
 
 const SkillInput = ({
   selectedSkills = [],
@@ -22,7 +23,7 @@ const SkillInput = ({
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef(null);
-
+  const {t, i18n} = useTranslation();
   // Get unique skills from skilledWorkers
   const uniqueSkills = useMemo(() => {
     if (!Array.isArray(skilledWorkers)) return [];
@@ -101,7 +102,7 @@ const SkillInput = ({
                 setShowSuggestions(true);
               }}
               placeholder={
-                selectedSkills.length > 0 ? '' : 'Type your skills...'
+                selectedSkills.length > 0 ? '' : t('primarySkillLabel')
               }
               placeholderTextColor={theme.color.outlineColor}
               onFocus={() => {

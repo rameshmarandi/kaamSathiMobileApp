@@ -52,7 +52,8 @@ import Geocoder from 'react-native-geocoding';
 import {GOOGLE_MAP_KEY} from './src/Config/constants';
 import {NavigationRef} from './src/Navigation/NavigationService';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-
+import {LanguageProvider} from './src/Hooks/LanguageSelector';
+import './i18n';
 const App = () => {
   StatusBar.setBackgroundColor(theme.color.dardkModeOnBGColor); // Set your desired background color
   const popupRef = useRef();
@@ -291,6 +292,7 @@ const AllNavContainer = props => {
   return (
     <>
       <Provider store={store}>
+        {/* <LanguageProvider> */}
         <ToastProvider>
           <PaperProvider theme={lightTheme}>
             <PersistGate persistor={persistor}>
@@ -313,6 +315,7 @@ const AllNavContainer = props => {
             </PersistGate>
           </PaperProvider>
         </ToastProvider>
+        {/* </LanguageProvider> */}
       </Provider>
       <Toast config={toastConfig} />
     </>

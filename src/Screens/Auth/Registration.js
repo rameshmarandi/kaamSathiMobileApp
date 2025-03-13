@@ -26,6 +26,7 @@ import {TextInput as PaperTextInput} from 'react-native-paper';
 import {TermAndConditionModal} from '../../Components/ModalsComponent';
 import {store} from '../../redux/store';
 import {setIsUserLoggedIn} from '../../redux/reducer/Auth';
+import {useTranslation} from 'react-i18next';
 
 const Registration = ({navigation, route}) => {
   const {contact} = route.params;
@@ -47,7 +48,7 @@ const Registration = ({navigation, route}) => {
   const inputRefs = {
     email: useRef(null),
   };
-
+  const {t, i18n} = useTranslation();
   const handleNext = () => {
     if (totalSteps == step) {
       setTermConditionModalVisible(true);
@@ -127,9 +128,9 @@ const Registration = ({navigation, route}) => {
       {step === 1 && (
         <View style={styles.headerContainer}>
           <RegistrationHeader
-            mainText="Registration with"
-            firstWord="Kaam"
-            secondWord="sathi"
+            mainText={t('registerWelcomeMsg')}
+            firstWord={t('welcomeMsgFirstHalf')}
+            secondWord={t('welcomeMsgSecondHalf')}
           />
         </View>
       )}
@@ -182,8 +183,8 @@ const Registration = ({navigation, route}) => {
                 {step === 1 && (
                   <>
                     <MasterTextInput
-                      label="Mobile number*"
-                      placeholder="Enter mobile number"
+                      label={t('loginLabel')}
+                      placeholder={t('loginPlaceHolder')}
                       ref={inputRefs.contact}
                       keyboardType="number-pad"
                       autoCapitalize="none"
@@ -201,8 +202,8 @@ const Registration = ({navigation, route}) => {
                     />
 
                     <MasterTextInput
-                      label="Full name"
-                      placeholder="Enter full name"
+                      label={t('fullName')}
+                      placeholder={t('fullNameLable')}
                       value={values.fullName}
                       onChangeText={text =>
                         setFieldValue(
@@ -219,8 +220,8 @@ const Registration = ({navigation, route}) => {
                     />
 
                     <MasterTextInput
-                      label="Email*"
-                      placeholder="Enter email"
+                      label={t('emailFiled')}
+                      placeholder={t('emailFiledLable')}
                       keyboardType="email-address"
                       value={values.email}
                       onChangeText={text => setFieldValue('email', text.trim())}
@@ -237,7 +238,7 @@ const Registration = ({navigation, route}) => {
                         ref={otpRef}
                         length={4}
                         onComplete={handleOTPComplete}
-                        otpText="Enter OTP"
+                        otpText={t('otpLabel')}
                       />
                     )}
                   </>
@@ -245,15 +246,17 @@ const Registration = ({navigation, route}) => {
 
                 {step === 2 && (
                   <View style={styles.stepContainer}>
-                    <Text style={styles.header}>Professional Details 💼</Text>
+                    <Text style={styles.header}>
+                      {t('professionalDetails')} 💼
+                    </Text>
                     <Text style={styles.subHeader}>
-                      Help us understand your expertise
+                      {t('professionalLabel')}
                     </Text>
 
                     <View style={styles.inputGroup}>
                       <MasterTextInput
-                        label="Select your role"
-                        topLableName="Select your role"
+                        label={t('workerRole')}
+                        topLableName={t('workerRole')}
                         isDropdown
                         dropdownData={[
                           {label: 'House Owner', value: 'homeowner'},
@@ -284,7 +287,9 @@ const Registration = ({navigation, route}) => {
                               style={{
                                 flexDirection: 'row',
                               }}>
-                              <Text style={styles.label}>Primary Skills</Text>
+                              <Text style={styles.label}>
+                                {t('primarySkills')}
+                              </Text>
                               <Text
                                 style={{
                                   color: 'red',
@@ -315,8 +320,8 @@ const Registration = ({navigation, route}) => {
                       ) && (
                         <>
                           <MasterTextInput
-                            label="Years of experience"
-                            topLableName="Years of experience"
+                            label={t('yearOfExperience')}
+                            topLableName={t('yearOfExperience')}
                             isDropdown
                             dropdownData={[
                               {label: '0-1 years', value: '0-1'},
@@ -332,7 +337,7 @@ const Registration = ({navigation, route}) => {
 
                           <MasterTextInput
                             label="Pricing Model"
-                            topLableName="How do you want to charge for your services?"
+                            topLableName={t('feeAmountLabel')}
                             isDropdown
                             dropdownData={[
                               {
@@ -357,7 +362,7 @@ const Registration = ({navigation, route}) => {
                             {(values.priceType === 'fullDay' ||
                               values.priceType === 'both') && (
                               <PriceInput
-                                label="Full day price"
+                                label={t('fullDayFee')}
                                 value={values.fullDayPrice}
                                 onChange={value =>
                                   handlePriceChange(
@@ -374,7 +379,7 @@ const Registration = ({navigation, route}) => {
                             {(values.priceType === 'hourlyBasis' ||
                               values.priceType === 'both') && (
                               <PriceInput
-                                label="Hourly price"
+                                label={t('hourlyFee')}
                                 value={values.hourlyPrice}
                                 onChange={value =>
                                   handlePriceChange(
@@ -390,8 +395,8 @@ const Registration = ({navigation, route}) => {
                           </View>
 
                           <MasterTextInput
-                            label="Write a Bio"
-                            placeholder="Tell us about yourself..."
+                            label={t('bioLabel')}
+                            placeholder={t('bioPlaceholder')}
                             multiline
                             roundness={10}
                             value={values.userBio}
@@ -417,7 +422,7 @@ const Registration = ({navigation, route}) => {
               {step === 1 ? (
                 <View style={styles.step1Footer}>
                   <CustomButton
-                    title={isOtpFiledVisible ? 'Verify OTP' : 'Next'}
+                    title={isOtpFiledVisible ? t('verifyOTP') : t('next')}
                     onPress={handleSubmit}
                     rightIcon={
                       <Icon

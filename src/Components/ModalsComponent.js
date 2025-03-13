@@ -14,10 +14,12 @@ import {VectorIcon} from './VectorIcon';
 import {Formik} from 'formik';
 import {loginValidationSchema} from '../utility/theme/validation';
 import MasterTextInput from './MasterTextInput';
-import {TextInput} from 'react-native-paper';
+import {RadioButton, TextInput} from 'react-native-paper';
 import CustomButton from './CustomButton';
 import {AirbnbRating} from 'react-native-ratings';
 import {PrivacyPolicyComponent} from '../Screens/Account/PrivacyPolicy';
+import {useTranslation} from 'react-i18next';
+import {languageOptions} from '../../i18n';
 
 const HireNowDetailsModal = ({
   isModalVisible,
@@ -281,10 +283,13 @@ const SkilledModal = ({
         isVisible={isModalVisible}
         onBackButtonPress={onBackdropPress} // Close modal when tapping outside
         onSwipeComplete={onBackdropPress} // Swipe down to close
-        swipeDirection="down"
         animationIn="fadeIn"
         animationOut="fadeOut"
-        animationOutTiming={800}
+        animationInTiming={300} // Smooth fade-in
+        animationOutTiming={500} // Slow fade-out for better visibility
+        backdropTransitionOutTiming={500} // Smooth backdrop fade-out
+        propagateSwipe={true}
+        useNativeDriver={true} // Enable native driver for better performance
         style={styles.modal}>
         <View style={styles.modalContent}>
           <View>
@@ -515,11 +520,13 @@ const ReviewModal = ({isModalVisible, onBackdropPress}) => {
       <Modal
         isVisible={isModalVisible}
         onBackButtonPress={onBackdropPress}
-        swipeDirection="down"
         animationIn="fadeIn"
         animationOut="fadeOut"
-        animationOutTiming={800}
+        animationInTiming={300} // Smooth fade-in
+        animationOutTiming={500} // Slow fade-out for better visibility
+        backdropTransitionOutTiming={500} // Smooth backdrop fade-out
         propagateSwipe={true}
+        useNativeDriver={true} // Enable native driver for better performance
         style={styles.modal}>
         <View style={styles.smallModalCOntent}>
           <Text style={styles.modalTitle}>Leave a Review</Text>
@@ -618,11 +625,13 @@ const TermAndConditionModal = props => {
       <Modal
         isVisible={isModalVisible}
         onBackButtonPress={onBackdropPress}
-        // swipeDirection="down"
         animationIn="fadeIn"
         animationOut="fadeOut"
-        animationOutTiming={800}
+        animationInTiming={300} // Smooth fade-in
+        animationOutTiming={500} // Slow fade-out for better visibility
+        backdropTransitionOutTiming={500} // Smooth backdrop fade-out
         propagateSwipe={true}
+        useNativeDriver={true} // Enable native driver for better performance
         style={styles.modal}>
         <PrivacyPolicyComponent {...props} />
       </Modal>
@@ -630,11 +639,95 @@ const TermAndConditionModal = props => {
   );
 };
 
+const MultiLngModal = ({isModalVisible, onBackdropPress}) => {
+  const {t, i18n} = useTranslation();
+  const [selectedLanguage, setSelectedLanguage] = useState(i18n.language);
+
+  const handleLanguageChange = language => {
+    setSelectedLanguage(language);
+    i18n.changeLanguage(language);
+  };
+
+  return (
+    <Modal
+      isVisible={isModalVisible}
+      onBackButtonPress={onBackdropPress}
+      onBackdropPress={onBackdropPress}
+      animationIn="fadeIn"
+      animationOut="fadeOut"
+      animationInTiming={300} // Smooth fade-in
+      animationOutTiming={500} // Slow fade-out for better visibility
+      backdropTransitionOutTiming={500} // Smooth backdrop fade-out
+      propagateSwipe={true}
+      useNativeDriver={true} // Enable native driver for better performance
+      style={styles.modal}>
+      <View style={styles.lngOptionContainer}>
+        <Text style={styles.lngHeaderText}>{'Select Language'}</Text>
+        <RadioButton.Group
+          onValueChange={handleLanguageChange}
+          value={selectedLanguage}>
+          {languageOptions.map(lang => (
+            <TouchableOpacity
+              key={lang.code}
+              style={styles.lngOptionButton}
+              onPress={() => {
+                handleLanguageChange(lang.code);
+
+                onBackdropPress();
+              }}
+              activeOpacity={0.7}>
+              <RadioButton
+                value={lang.code}
+                color={theme.color.secondary} // Color when checked
+                uncheckedColor="#ccc" // Color when unchecked
+              />
+              <Text style={styles.lngOptionText}>{lang.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </RadioButton.Group>
+      </View>
+    </Modal>
+  );
+};
 const styles = StyleSheet.create({
   modal: {
     justifyContent: 'flex-end', // Align modal at the bottom
     margin: 0,
   },
+
+  //Lng modales styles start
+  lngOptionContainer: {
+    width: '100%',
+    paddingTop: getResHeight(2),
+    paddingHorizontal: '5%',
+    backgroundColor: 'white',
+    borderTopLeftRadius: getResHeight(3),
+    borderTopRightRadius: getResHeight(3),
+  },
+  lngHeaderText: {
+    fontSize: getFontSize(1.8),
+    fontFamily: theme.font.bold,
+    // fontWeight: 'bold',
+    // marginBottom: 15,
+    marginBottom: '3%',
+    color: '#333',
+  },
+  lngOptionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+    paddingVertical: getResHeight(0.8),
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 15,
+  },
+  lngOptionText: {
+    fontSize: getFontSize(1.4),
+    fontFamily: theme.font.semiBold,
+    color: '#555',
+    marginLeft: '1%', // Added margin for better spacing
+  },
+  //Lng modales styles end
   modalContent: {
     backgroundColor: '#FFF',
     padding: 16,
@@ -678,4 +771,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export {HireNowDetailsModal, ReviewModal, SkilledModal, TermAndConditionModal};
+export {
+  HireNowDetailsModal,
+  ReviewModal,
+  SkilledModal,
+  MultiLngModal,
+  TermAndConditionModal,
+};

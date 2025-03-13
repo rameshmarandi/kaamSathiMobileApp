@@ -7,6 +7,7 @@ import {
   Animated,
 } from 'react-native';
 import theme from '../utility/theme';
+import {VectorIcon} from './VectorIcon';
 
 const CustomSwitch = ({value, onValueChange}) => {
   const [switchAnim] = useState(new Animated.Value(value ? 1 : 0));
@@ -44,8 +45,14 @@ const CustomSwitch = ({value, onValueChange}) => {
               borderWidth: 1.3,
               borderColor: '#27ae60',
             },
-          ]}
-        />
+          ]}>
+          {/* <VectorIcon
+            type="MaterialCommunityIcons"
+            name="logout"
+            size={2}
+            color={'black'}
+          /> */}
+        </Animated.View>
       </Animated.View>
     </TouchableWithoutFeedback>
   );

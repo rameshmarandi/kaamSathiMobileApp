@@ -16,40 +16,43 @@ import theme from '../utility/theme';
 import {store} from '../redux/store';
 import {setCurrentActiveTab} from '../redux/reducer/Auth';
 import {showLoginAlert} from '../utility/AlertService';
+import {useTranslation} from 'react-i18next';
 
 const Tab = createBottomTabNavigator();
 
 const tabArrays = [
   {
-    title: 'Home',
+    // title: 'Home',
+    translationKey: 'homeTab',
     icon: {type: 'Feather', name: 'home'},
     activeIcon: {type: 'Entypo', name: 'home'},
     routeNames: 'HomePage',
     component: HomeStack,
   },
   {
-    title: 'Search',
+    // title: 'Search',
+    translationKey: 'searchTab',
     icon: {type: 'Ionicons', name: 'search-outline'},
     activeIcon: {type: 'Ionicons', name: 'search-sharp'},
     routeNames: 'SearchOnMap',
     component: SearchStack,
   },
   {
-    title: 'My Bookings',
+    translationKey: 'bookingTab',
     icon: {type: 'MaterialCommunityIcons', name: 'history'},
     activeIcon: {type: 'MaterialCommunityIcons', name: 'history'},
     routeNames: 'BookedHistory',
     component: HistoryStack,
   },
   {
-    title: 'Bookmarks',
+    translationKey: 'bookmarkTab',
     icon: {type: 'Ionicons', name: 'bookmark-outline'},
     activeIcon: {type: 'Ionicons', name: 'bookmark'},
     routeNames: 'BookMarks',
     component: BookMarksStack,
   },
   {
-    title: 'Account',
+    translationKey: 'accountTab',
     icon: {type: 'MaterialCommunityIcons', name: 'account-circle-outline'},
     activeIcon: {type: 'MaterialCommunityIcons', name: 'account-circle'},
     routeNames: 'Profile',
@@ -73,8 +76,8 @@ const CustomTabBar = ({
   const animatedValue = useRef(new Animated.Value(selectedTabIndex)).current;
 
   const {currentActiveTab, isUserLoggedIn} = useSelector(state => state.user);
+  const {t, i18n} = useTranslation();
 
-  console.log('state_redux_active', currentActiveTab);
   const onPress = useCallback(
     index => {
       // setSelectedTab(index);
@@ -130,7 +133,8 @@ const CustomTabBar = ({
               color={
                 isDarkMode && currentActiveTab == index
                   ? 'black'
-                  : theme.color.whiteText
+                  : theme.color.charcolBlack
+                // theme.color.whiteText
               }
               style={{
                 zIndex: 9999999,
@@ -145,14 +149,15 @@ const CustomTabBar = ({
                 fontFamily:
                   currentActiveTab === index
                     ? theme.font.semiBold
-                    : theme.font.regular,
+                    : theme.font.medium,
                 color:
                   currentActiveTab === index
-                    ? '#000000'
-                    : theme.color.whiteText,
+                    ? theme.color.charcolBlack
+                    : theme.color.charcolBlack,
               },
             ]}>
-            {route.title}
+            {t(route.translationKey)}
+            {/* {route.title} */}
           </Text>
         </TouchableOpacity>
       ))}
@@ -236,6 +241,7 @@ const styles = StyleSheet.create({
   tabText: {
     fontFamily: theme.font.regular,
     fontSize: getFontSize(1.4),
+    // marginTop: '5%',
   },
 });
 

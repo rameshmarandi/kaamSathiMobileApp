@@ -30,21 +30,28 @@ import {useSelector} from 'react-redux';
 import {onShareClick} from '../../Helpers/CommonHelpers';
 import {resetNavigation} from '../../Services/NavigationService';
 import {defaultIndexCount} from '../../Navigation/TabNav';
+import LanguageSelector from '../../Hooks/LanguageSelector';
+import {useTranslation} from 'react-i18next';
 
 const options = [
-  {icon: 'user', label: 'Profile Details', screen: 'ProfileDetails'},
+  {icon: 'user', translationKey: 'profile', screen: 'ProfileDetails'},
   // {icon: 'key', label: 'Change Password', screen: 'ChangePassword'},
 
-  {icon: 'credit-card', label: 'Payment history', screen: 'PaymentHistory'},
+  {
+    icon: 'credit-card',
+    translationKey: 'paymentHistory',
+    screen: 'PaymentHistory',
+  },
 
-  {icon: 'share', label: 'Share & Earn', screen: 'HelpSupport', ishare: true},
-  {icon: 'feedback', label: 'Feedback', screen: 'HelpSupport'},
-  {icon: 'shield', label: 'Privacy & Security', screen: 'PrivacyPolicy'},
-  {icon: 'headphones', label: 'Help & Support', screen: 'HelpSupport'},
+  {icon: 'share', translationKey: 'share', screen: 'HelpSupport', ishare: true},
+  {icon: 'feedback', translationKey: 'feedback', screen: 'HelpSupport'},
+  {icon: 'shield', translationKey: 'privacy', screen: 'PrivacyPolicy'},
+  {icon: 'headphones', translationKey: 'help', screen: 'HelpSupport'},
+  {icon: 'language', translationKey: 'language', isLanguage: true},
 
   {
     icon: 'trash',
-    label: 'Delecte Account',
+    translationKey: 'Delecte Account',
     screen: 'HelpSupport',
     delete: true,
   },
@@ -53,10 +60,10 @@ const options = [
 const Profile = props => {
   const navigation = useNavigation();
   const [isOnline, setIsOnline] = useState(false);
-
+  const {t, i18n} = useTranslation();
   let {isUserOnline} = useSelector(state => state.user);
   const flatListRef = useRef(null);
-
+  const langSelectorRef = useRef(null);
   // Scroll to top when the screen comes into focus
   useFocusEffect(
     useCallback(() => {
@@ -157,6 +164,8 @@ const Profile = props => {
           ],
           'plain-text',
         );
+      } else if (option.isLanguage) {
+        langSelectorRef.current?.openModal();
       } else if (option.ishare) {
         onSharePress();
       } else {
@@ -242,7 +251,7 @@ const Profile = props => {
                       />
                     )}
                     <Text style={styles.statusText}>
-                      {isUserOnline ? 'Online' : 'Offline'}
+                      {isUserOnline ? t('isOnline') : t('isOffline')}
                     </Text>
                   </View>
                   <CustomSwitch
@@ -266,7 +275,7 @@ const Profile = props => {
                       <AccountOption
                         key={idx}
                         icon={option.icon}
-                        label={option.label}
+                        translationKey={option.translationKey}
                         disabled={isSharing}
                         onPress={() => onMenuPress(option)}
                       />
@@ -281,6 +290,7 @@ const Profile = props => {
         }}
       />
 
+      <LanguageSelector ref={langSelectorRef} isOnlyIcon={true} />
       {/* Fixed Logout Button */}
       <View
         style={{
@@ -313,64 +323,67 @@ const Profile = props => {
   );
 };
 
-const AccountOption = ({icon, label, onPress, disabled}) => (
-  <TouchableOpacity
-    activeOpacity={0.5}
-    disabled={disabled}
-    style={[
-      styles.option,
-      {
-        width: '100%',
-        paddingLeft: '3%',
-        paddingRight: '5%',
-      },
-    ]}
-    onPress={onPress}>
-    <View
-      style={{
-        flexDirection: 'row',
-        width: '90%',
-      }}>
+const AccountOption = ({icon, translationKey, onPress, disabled}) => {
+  const {t, i18n} = useTranslation();
+  return (
+    <TouchableOpacity
+      activeOpacity={0.5}
+      disabled={disabled}
+      style={[
+        styles.option,
+        {
+          width: '100%',
+          paddingLeft: '3%',
+          paddingRight: '5%',
+        },
+      ]}
+      onPress={onPress}>
       <View
         style={{
-          width: getResHeight(4.5),
-          height: getResHeight(4.5),
-
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: 'rgba(230, 180, 42, 0.3)',
-          borderRadius: getResHeight(100),
+          flexDirection: 'row',
+          width: '90%',
         }}>
-        {icon == 'feedback' ? (
-          <>
-            <VectorIcon
-              type="MaterialIcons"
-              name={icon}
-              size={getFontSize(2.5)}
-              color={theme.color.charcolBlack}
-            />
-          </>
-        ) : (
-          <>
-            <VectorIcon
-              type="FontAwesome"
-              name={icon}
-              size={getFontSize(2.5)}
-              color={theme.color.charcolBlack}
-            />
-          </>
-        )}
+        <View
+          style={{
+            width: getResHeight(4.5),
+            height: getResHeight(4.5),
+
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(230, 180, 42, 0.3)',
+            borderRadius: getResHeight(100),
+          }}>
+          {icon == 'feedback' ? (
+            <>
+              <VectorIcon
+                type="MaterialIcons"
+                name={icon}
+                size={getFontSize(2.5)}
+                color={theme.color.charcolBlack}
+              />
+            </>
+          ) : (
+            <>
+              <VectorIcon
+                type="FontAwesome"
+                name={icon}
+                size={getFontSize(2.5)}
+                color={theme.color.charcolBlack}
+              />
+            </>
+          )}
+        </View>
+        <Text style={styles.optionText}> {t(translationKey)}</Text>
       </View>
-      <Text style={styles.optionText}>{label}</Text>
-    </View>
-    <VectorIcon
-      type="Entypo"
-      name={'chevron-right'}
-      size={20}
-      color={theme.color.grey}
-    />
-  </TouchableOpacity>
-);
+      <VectorIcon
+        type="Entypo"
+        name={'chevron-right'}
+        size={20}
+        color={theme.color.grey}
+      />
+    </TouchableOpacity>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {

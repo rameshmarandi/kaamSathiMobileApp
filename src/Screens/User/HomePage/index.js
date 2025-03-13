@@ -163,64 +163,64 @@ const index = memo(props => {
         scrollEventThrottle={16}
         renderItem={({item, index}) => {
           //old UI
-          // switch (index) {
-          //   case 0:
-          //     return (
-          //       <>
-          //         <View
-          //           style={{
-          //             paddingBottom: getResHeight(0.5),
-          //           }}>
-          //           <MarqueeComp textRender={`${plainString}`} />
-          //         </View>
-          //         <TouchableOpacity
-          //           activeOpacity={0.8}
-          //           style={{
-          //             marginBottom: '10%',
-          //           }}
-          //           onPress={() => {
-          //             props.navigation.navigate('SearchOnMap');
-          //           }}>
-          //           <SearchBarComp
-          //             placeholder="Search skilled professionals..."
-          //             disabled={true}
-          //           />
-          //         </TouchableOpacity>
-          //       </>
-          //     );
-          //   case 2:
-          //     return (
-          //       <>
-          //         <View
-          //           style={{
-          //             marginTop: getResHeight(2),
-          //           }}>
-          //           <SectionHeaderName sectionName={'Kaamsathi recommends'} />
-          //           <BannerComponent {...props} />
-          //         </View>
-          //       </>
-          //     );
-          //   case 3:
-          //     return (
-          //       <>
-          //         <View>
-          //           <SectionHeaderName
-          //             sectionName={'Top skilled professionals near you'}
-          //           />
-          //           <TopSkilledProfessonals />
-          //         </View>
-          //       </>
-          //     );
-          //   case 4:
-          //     return (
-          //       <>
-          //         <View>
-          //           <SectionHeaderName sectionName={'Voices of satisfaction'} />
-          //           <ReviewRatingCard />
-          //         </View>
-          //       </>
-          //     );
-          // }
+          switch (index) {
+            case 0:
+              return (
+                <>
+                  <View
+                    style={{
+                      paddingBottom: getResHeight(0.5),
+                    }}>
+                    <MarqueeComp textRender={`${plainString}`} />
+                  </View>
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    style={{
+                      marginBottom: '10%',
+                    }}
+                    onPress={() => {
+                      props.navigation.navigate('SearchOnMap');
+                    }}>
+                    <SearchBarComp
+                      placeholder="Search skilled professionals..."
+                      disabled={true}
+                    />
+                  </TouchableOpacity>
+                </>
+              );
+            case 2:
+              return (
+                <>
+                  <View
+                    style={{
+                      marginTop: getResHeight(2),
+                    }}>
+                    <SectionHeaderName sectionName={'Kaamsathi recommends'} />
+                    <BannerComponent {...props} />
+                  </View>
+                </>
+              );
+            case 3:
+              return (
+                <>
+                  <View>
+                    <SectionHeaderName
+                      sectionName={'Top skilled professionals near you'}
+                    />
+                    <TopSkilledProfessonals />
+                  </View>
+                </>
+              );
+            case 4:
+              return (
+                <>
+                  <View>
+                    <SectionHeaderName sectionName={'Voices of satisfaction'} />
+                    <ReviewRatingCard />
+                  </View>
+                </>
+              );
+          }
         }}
       />
     </SafeAreaView>

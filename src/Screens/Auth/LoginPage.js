@@ -8,6 +8,7 @@ import {
   Platform,
   Keyboard,
   Image,
+  TouchableOpacity,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {getFontSize, getResHeight, getResWidth} from '../../utility/responsive';
@@ -32,6 +33,10 @@ import LottieView from 'lottie-react-native';
 import RegistrationHeader from './RegistrationHeader';
 import DocumentScanner from '../../Components/DocumentScanner';
 import {KeyboardAvoidingView} from 'react-native';
+
+import LanguageSelector, {useLanguage} from '../../Hooks/LanguageSelector';
+import {useTranslation} from 'react-i18next';
+import {MultiLngModal} from '../../Components/ModalsComponent';
 
 const AnimatedSlash = memo(() => {
   return (
@@ -68,8 +73,12 @@ const LoginPage = props => {
   const [isLoading, setIsLoading] = useState(false);
   const [isOtpFiledVisible, setIsOtpFiledVisible] = useState(false);
   const [isAlertVisible, setIsAlertVisible] = useState(false);
+  const [isMultiLngModalVisible, setMultiLngModalVisible] = useState(false);
+
   const [alertMessage, setAlertMessage] = useState('');
 
+  const {t, i18n} = useTranslation();
+  const langSelectorRef = useRef();
   const [addNewMemberModalVisible, setAddNewMemberModalVisible] =
     useState(false);
   const inputRefs = {
@@ -150,152 +159,55 @@ const LoginPage = props => {
             theme.color.whiteBg,
         },
       ]}>
-      {/* <View>
-        <CustomAlertModal
-          visible={isAlertVisible}
-          message={alertMessage}
-          duration={4000} // duration in milliseconds
-          onClose={handleClose}
-        />
-      </View> */}
-
-      {/* <View
+      {/* <MultiLngModal
+        isModalVisible={isMultiLngModalVisible}
+        onBackdropPress={() => {
+          setMultiLngModalVisible(false);
+        }}
+      />
+      <View
         style={{
           width: '100%',
-          // flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'center',
-          paddingTop: getResHeight(2),
+          justifyContent: 'flex-end',
         }}>
-        <View>
-          <Text
-            style={{
-              color: theme.color.dimBlack,
-              fontSize: getFontSize(2),
-              fontFamily: theme.font.medium,
-            }}>
-            Welcome to{' '}
-          </Text>
-        </View>
-        <View
+        <TouchableOpacity
+          onPress={() => {
+            // changeLanguage('bn');
+            // i18n.changeLanguage('en');
+            setMultiLngModalVisible(true);
+          }}
           style={{
+            width: '13%',
             flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'center',
+            borderWidth: 1,
           }}>
-          <Text
-            style={{
-              color: theme.color.dimBlack,
-              fontSize: getFontSize(4),
-              fontFamily: theme.font.semiBold,
-            }}>
-            Kaam
-          </Text>
-          <Text
-            style={{
-              color: theme.color.secondary,
-              fontSize: getFontSize(4),
-              fontFamily: theme.font.semiBold,
-            }}>
-            sathi
-          </Text>
-        </View>
-        <AnimatedSlash />
+          <Text>English</Text>
+          <VectorIcon
+            type="MaterialCommunityIcons"
+            name={'chevron-down'}
+            size={24}
+            color={theme.color.charcolBlack}
+          />
+        </TouchableOpacity>
       </View> */}
+      <View
+        style={{
+          width: '100%',
+          justifyContent: 'flex-end',
+          paddingHorizontal: '5%',
+          paddingTop: '5%',
 
+          alignItems: 'flex-end',
+        }}>
+        <LanguageSelector ref={langSelectorRef} />
+      </View>
       {/* <DocumentScanner mode={mode} /> */}
       <Formik
         innerRef={formRef}
         initialValues={{contact: '', password: ''}}
         validationSchema={loginValidationSchema}
-        onSubmit={handleSubmit}
-        // onSubmit={async (values, {resetForm}) => {
-        //   setIsLoading(true);
-
-        //   if (isOtpFiledVisible) {
-        //     setTimeout(() => {
-        //       setIsLoading(false);
-        //       store.dispatch(setIsUserLoggedIn(true));
-        //       navigation.navigate('Home');
-        //     }, 2000);
-        //   } else {
-        //     setTimeout(() => {
-        //       setIsOtpFiledVisible(true);
-        //       setIsLoading(false);
-        //     }, 2000);
-        //   }
-
-        //   return;
-        //   try {
-        //     setIsLoading(true);
-
-        //     // setTimeout(() => {
-        //     //   setIsOtpFiledVisible(true);
-        //     //   setIsLoading(false);
-        //     // }, 2000);
-
-        //     return;
-        //     const fcmToken = await asyncStorageUtil.getItem(
-        //       StorageKeys.FCM_TOKEN,
-        //     );
-        //     console.log('FCM_tone_logi', fcmToken);
-        //     const payload = {
-        //       email: values.email,
-        //       password: values.password,
-        //       fcmToken: fcmToken,
-        //     };
-        //     // const apiRes = await store.dispatch(loginAPIHander(payload));
-
-        //     if (apiRes.payload == true) {
-        //       setIsLoading(false);
-        //       const checkTypeOfUser = await checkIsAdmin();
-        //       if (checkTypeOfUser) {
-        //         navigation.navigate('Dashboard');
-        //       } else {
-        //         navigation.navigate('Home');
-        //       }
-        //       // ToastAlertComp('success', `Login successfully`);
-        //       // setAlertMessage({
-        //       //   status: 'success',
-
-        //       //   alertMsg: `Logged in successfully.`,
-        //       // });
-        //       // setIsAlertVisible(true);
-        //       setAlertMessage('');
-        //       resetForm();
-        //     }
-        //     if (apiRes.payload.error) {
-        //       setAlertMessage({
-        //         status: 'error',
-
-        //         alertMsg: `${apiRes.payload.error.message}`,
-        //       });
-        //       setIsAlertVisible(true);
-        //       // ToastAlertComp(
-        //       //   'error',
-
-        //       //   `${apiRes.payload.error.message}`,
-        //       // );
-        //     }
-        //   } catch (error) {
-        //     // ToastAlertComp(
-        //     //   'error',
-        //     //   `We are facing some technical issue, please try again later`,
-        //     // );
-
-        //     setAlertMessage({
-        //       status: 'error',
-
-        //       alertMsg: `We are facing some technical issue, please try again later`,
-        //     });
-        //     setIsAlertVisible(true);
-        //     console.error('login_api_error', error);
-        //     setIsLoading(false);
-        //   } finally {
-        //     setIsLoading(false);
-        //   }
-        // }}
-      >
+        onSubmit={handleSubmit}>
         {({
           handleChange,
           handleBlur,
@@ -329,28 +241,20 @@ const LoginPage = props => {
                   // style={styles.scrollView}
                   keyboardShouldPersistTaps="always"
                   contentContainerStyle={{
-                    // flexGrow: 1,
                     flex: 1,
                   }}
                   showsVerticalScrollIndicator={false}>
                   <View
                     style={{
-                      // flexGrow: 1,
                       flex: 1,
                       justifyContent: 'flex-end',
                       //
                     }}>
-                    <View
-                      style={
-                        {
-                          // flexGrow: 9,
-                          // marginTop: '-35%',
-                        }
-                      }>
+                    <View style={{}}>
                       <RegistrationHeader
-                        mainText="Welcome to"
-                        firstWord="Kaam"
-                        secondWord="sathi"
+                        mainText={t('loginWelcomeMsg')}
+                        firstWord={t('welcomeMsgFirstHalf')}
+                        secondWord={t('welcomeMsgSecondHalf')}
                         mainTextStyle={{color: '#000'}}
                         firstWordStyle={{fontSize: getFontSize(3)}}
                         secondWordStyle={{
@@ -364,8 +268,8 @@ const LoginPage = props => {
                         paddingHorizontal: getResWidth(6),
                       }}>
                       <MasterTextInput
-                        label="Mobile number*"
-                        placeholder="Enter mobile number"
+                        label={t('loginLabel')}
+                        placeholder={t('loginPlaceHolder')}
                         ref={inputRefs.contact}
                         keyboardType="numeric"
                         autoCapitalize="none"
@@ -391,7 +295,7 @@ const LoginPage = props => {
                           ref={otpRef}
                           length={4} // Set the number of OTP digits
                           onComplete={handleOTPComplete} // Callback function when OTP is completed
-                          otpText="Enter OTP" // Label for OTP input
+                          otpText={t('otpLabel')} // Label for OTP input
                           secureTextEntry={false} // Set true to hide OTP (like a password)
                         />
                       )}
@@ -405,7 +309,9 @@ const LoginPage = props => {
                     paddingBottom: getResHeight(6),
                   }}>
                   <CustomButton
-                    title={isOtpFiledVisible ? 'Verify OTP' : 'Get OTP'}
+                    title={
+                      isOtpFiledVisible ? t('verifyOTP') : t('loginBtnMsg')
+                    }
                     onPress={handleSubmit}
                     disabled={isLoading || isLoginDisabled}
                     loading={isLoading}
